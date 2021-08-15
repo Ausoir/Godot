@@ -24,6 +24,9 @@ signal connection_succeeded()
 signal game_ended()
 signal game_error(what)
 
+var rng = RandomNumberGenerator.new()
+
+
 # Callback from SceneTree.
 func _player_connected(id):
 	# Registration of a client beings here, tell the connected player that we are here.
@@ -75,7 +78,9 @@ func unregister_player(id):
 
 remote func pre_start_game():
 	# Change scene.
+	var globals = get_node("/root/globals")
 	var world = load("res://world.tscn").instance()
+	globals.world = world
 	get_tree().get_root().add_child(world)
 
 	get_tree().get_root().get_node("Lobby").hide()
@@ -93,12 +98,14 @@ remote func pre_start_game():
 		var player = player_scene.instance()
 		var player_unit = player.get_node("unit")
 		player.set_name(str(p_id)) # Use unique ID as node name.
-		player_unit.position = Vector2(640, 640)
 		player_unit.set_network_master(p_id) #set unique id as master.
+		player_unit.position = world.get_spawn_point()
 
 		if p_id == get_tree().get_network_unique_id():
 			# If node for this peer id, set name.
 			player_unit.set_player_name(player_name)
+			globals.you = player
+			globals.younit = player_unit
 		else:
 			# Otherwise set name from peer.
 			player_unit.set_player_name(players[p_id])

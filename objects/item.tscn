@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://images/items.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Area2D
+
+
+var held = false
+var action
+
+
+func get_action():
+	return action.duplicate()
+
+
+func make(item_name, pos):
+	var item_dict = load(\"res://data/item_list.gd\").items
+	var item = item_dict[item_name]
+	$Sprite.region_rect = Rect2(item.x * 32, item.y * 32, 32, 32)
+	rotation = OS.get_ticks_msec() % 360
+	position = pos
+	action = item.action
+
+
+func _input_event(_viewport, _event, _shape_idx):
+	if Input.is_action_just_pressed(\"move\") and !held:
+		var globals = get_node(\"/root/globals\")
+		globals.younit.set_task([\"move\", -1, position])
+		globals.younit.add_task([\"grab\", 40, self])
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 16.0
+
+[node name="object" type="Area2D"]
+gravity_vec = Vector2( 0, 0 )
+gravity = 0.0
+script = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 32, 32 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )

@@ -1,0 +1,68 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://images/items.png" type="Texture" id=1]
+[ext_resource path="res://data/font1.tres" type="DynamicFont" id=2]
+[ext_resource path="res://objects/resource.tscn" type="PackedScene" id=3]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Button
+
+
+func set_reqs(wood, stone, food):
+	$wood.set_type(\"wood\")
+	$stone.set_type(\"stone\")
+	$food.set_type(\"food\")
+	$wood.set_amount(wood)
+	$stone.set_amount(stone)
+	$food.set_amount(food)
+"
+
+[node name="button" type="Button"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -644.0
+margin_bottom = -480.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sprite" type="Sprite" parent="."]
+position = Vector2( 64, 64 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 64, 64, 32, 32 )
+
+[node name="name" type="Label" parent="."]
+margin_left = 128.0
+margin_top = 16.0
+margin_right = 168.0
+margin_bottom = 32.0
+rect_scale = Vector2( 2, 2 )
+custom_fonts/font = ExtResource( 2 )
+text = "Name"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="wood" parent="." instance=ExtResource( 3 )]
+margin_left = 120.0
+margin_top = 64.0
+margin_right = -72.0
+margin_bottom = -8.0
+mouse_filter = 1
+
+[node name="stone" parent="." instance=ExtResource( 3 )]
+margin_left = 200.0
+margin_top = 64.0
+margin_right = 8.0
+margin_bottom = -8.0
+mouse_filter = 1
+
+[node name="food" parent="." instance=ExtResource( 3 )]
+margin_left = 280.0
+margin_top = 64.0
+margin_right = 88.0
+margin_bottom = -8.0
+mouse_filter = 1

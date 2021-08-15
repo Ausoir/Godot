@@ -1,0 +1,93 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://images/items.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends KinematicBody2D
+
+
+var item_list = preload(\"res://data/item_list.gd\").items
+var action = [\"grab\"]
+var workload = 0
+var workload_max = 0
+var faction = 0
+
+
+func set_workload(arg):
+	workload = arg
+	workload_max = arg
+
+
+func make(item_name, pos):
+	var item = item_list[item_name]
+	$Sprite.region_rect = Rect2(item.x * 32, item.y * 32, 32, 32)
+	if item.has(\"work\"):
+		set_workload(item.work)
+	action = item.interact
+	rotation = OS.get_ticks_msec() % 360
+	position = pos
+	if item.r == 0:
+		set_collision_layer_bit(0, false)
+		set_collision_mask_bit(0, false)
+	else:
+		$CollisionShape2D.shape.radius = item.r
+
+func onfinish():
+	var globals = get_node(\"/root/globals\")
+	if action[0] == \"find\":
+		var newitem = globals.world.make_item(action[1], position)
+		globals.younit.set_task([\"grab\", 50, newitem])
+	elif action[0] == \"craft\":
+		if item_list[action[1]].has(\"interact\"):
+			var newitem = globals.world.make_object(action[1], position)
+			globals.factions[faction].append(newitem)
+		else:
+			var newitem = globals.world.make_item(action[1], position)
+			globals.younit.set_task([\"grab\", 50, newitem])
+		queue_free()
+	elif action[0] == \"gather\":
+		globals.add_resource(action[1][0], action[1][1], action[1][2])
+		globals.you.get_node(\"menu\").display_gather(action[1][0], action[1][1])
+	elif action[0] == \"menu\":
+		globals.you.get_node(\"menu\").display(action[1], globals.younit)
+	elif action[0] == \"spawn\":
+		var newitem = globals.world.make_unit(action[1], position)
+		globals.factions[faction].append(newitem)
+
+
+func work(unit):
+	workload -= 1
+	if workload <= 0:
+		workload = workload_max
+		onfinish()
+	else:
+		unit.add_task([\"work\", 85, self])
+
+
+func interact(unit):
+	unit.set_task([\"move\", -1, position])
+	unit.add_task([\"work\", 1, self])
+
+
+func _input_event(_viewport, _event, _shape_idx):
+	if Input.is_action_just_pressed(\"move\"):
+		var globals = get_node(\"/root/globals\")
+		interact(globals.younit)
+		globals.world.make_particle(\"smoke\", position)
+"
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 16.0
+
+[node name="object" type="KinematicBody2D"]
+input_pickable = true
+collision_layer = 3
+script = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 0, 0, 32, 32 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 2 )

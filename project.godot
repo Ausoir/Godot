@@ -13,17 +13,21 @@ _global_script_classes=[ {
 "class": "GitAPI",
 "language": "NativeScript",
 "path": "res://git_api.gdns"
+}, {
+"base": "Reference",
+"class": "Pathing",
+"language": "GDScript",
+"path": "res://objects/pathing.gd"
 } ]
 _global_script_class_icons={
-"GitAPI": ""
+"GitAPI": "",
+"Pathing": ""
 }
 
 [application]
 
-config/name="Multiplayer Bomber"
-config/description="A multiplayer implementation of the classical bomberman game.
-One of the players should press 'host', while the other
-should type in his address and press 'play'."
+config/name="Yayayoyo"
+config/description="A multiplayer game."
 run/main_scene="res://lobby.tscn"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://Icon.png"
@@ -31,6 +35,7 @@ config/icon="res://Icon.png"
 [autoload]
 
 gamestate="*res://gamestate.gd"
+globals="*res://globals.gd"
 
 [debug]
 
@@ -82,7 +87,13 @@ move={
 , Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
+use={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":2,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
 
 [rendering]
 
 2d/snapping/use_gpu_pixel_snap=true
+environment/default_clear_color=Color( 0, 0, 0, 1 )
