@@ -1,0 +1,27 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=7]
+code = "shader_type canvas_item;
+
+uniform float size = 32.0;
+uniform float shade_UP = 0;
+uniform float shade_DOWN = 0;
+uniform float shade_LEFT = 0;
+uniform float shade_RIGHT = 0;
+
+void fragment(){
+	vec4 input_color = texture(TEXTURE, UV);
+	float intensity = max(UV.x * shade_RIGHT, UV.y * shade_DOWN);
+	intensity += max((1.0 - UV.x) * shade_LEFT, (1.0 - UV.y) * shade_UP);
+	COLOR.rgba = mix(input_color.rgba, vec4(1,0,0,1), intensity);
+}
+"
+
+[resource]
+resource_local_to_scene = true
+shader = SubResource( 7 )
+shader_param/size = 32.0
+shader_param/shade_UP = 0.0
+shader_param/shade_DOWN = 0.0
+shader_param/shade_LEFT = 0.0
+shader_param/shade_RIGHT = 0.0

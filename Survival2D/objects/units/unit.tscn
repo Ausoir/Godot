@@ -1,0 +1,143 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://objects/units/unit.gd" type="Script" id=5]
+[ext_resource path="res://assets/images/man.png" type="Texture" id=6]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 20.0
+
+[sub_resource type="Animation" id=2]
+resource_name = "attack"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Leg:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 2.11893, -10.3298 ), Vector2( -5.82704, -19.0703 ), Vector2( 2.11893, -10.3298 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Leg:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ -0.793526, -16.9862, -0.793526 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "grab"
+length = 0.5
+
+[sub_resource type="Animation" id=4]
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Leg:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 1 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -0.793526 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Leg/Body:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 1 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( -0.632738, -38.2234 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+length = 0.6
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Leg:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, -10.5268, 15.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Leg/Body:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( -0.0249267, -38.9155 ), Vector2( -8.08803, -29.734 ), Vector2( 2.5996, -42.5943 ), Vector2( -1.16675, -28.3698 ), Vector2( -0.0249271, -38.9155 ) ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "work"
+length = 1.5
+loop = true
+
+[node name="unit" type="KinematicBody2D"]
+scale = Vector2( 0.75, 0.75 )
+z_index = 1
+script = ExtResource( 5 )
+
+[node name="shape" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="anim" type="AnimationPlayer" parent="."]
+anims/attack = SubResource( 2 )
+anims/grab = SubResource( 3 )
+anims/standing = SubResource( 4 )
+anims/walk = SubResource( 5 )
+anims/work = SubResource( 6 )
+
+[node name="Skeleton2D" type="Skeleton2D" parent="."]
+
+[node name="Leg" type="Bone2D" parent="Skeleton2D"]
+position = Vector2( 2.11893, -10.3298 )
+rotation = -0.0138496
+rest = Transform2D( 1, 0, 0, 1, 0, 0 )
+
+[node name="Body" type="Bone2D" parent="Skeleton2D/Leg"]
+position = Vector2( -6.89388, -31.0938 )
+rest = Transform2D( 1, 0, 0, 1, 0, -39 )
+
+[node name="Head" type="Bone2D" parent="Skeleton2D/Leg/Body"]
+position = Vector2( 0, -24.75 )
+rest = Transform2D( 1, 0, 0, 1, 0, -24.75 )
+default_length = 1.0
+
+[node name="Hand" type="Bone2D" parent="Skeleton2D/Leg/Body"]
+position = Vector2( -28.25, 18 )
+rest = Transform2D( 1, 0, 0, 1, -28.25, 18 )
+default_length = 1.0
+
+[node name="Sprite" type="Polygon2D" parent="."]
+position = Vector2( 0.25, 0.5 )
+offset = Vector2( -35.75, -76.5 )
+texture = ExtResource( 6 )
+skeleton = NodePath("../Skeleton2D")
+polygon = PoolVector2Array( 10.6583, -6.58308, 53.9185, -6.89655, 63.3229, 46.0815, 59.8746, 100.627, 6.89655, 100.94, -2.82131, 57.6802 )
+uv = PoolVector2Array( 10.6583, -6.58308, 53.9185, -6.89655, 63.3229, 46.0815, 59.8746, 100.627, 6.89655, 100.94, -2.82131, 57.6802 )
+bones = [ NodePath("Leg"), PoolRealArray( 0, 0, 0, 1, 1, 0 ), NodePath("Leg/Body"), PoolRealArray( 0.5, 0.5, 0.5, 0, 0, 0.5 ), NodePath("Leg/Body/Head"), PoolRealArray( 1, 1, 0, 0, 0, 0 ), NodePath("Leg/Body/Hand"), PoolRealArray( 0, 0, 0, 0, 0, 1 ) ]
