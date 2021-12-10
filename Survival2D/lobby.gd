@@ -74,7 +74,6 @@ func _on_game_error(errtxt):
 	$Connect/Host.disabled = false
 	$Connect/Join.disabled = false
 
-
 func refresh_lobby():
 	var players = gamestate.get_player_names()
 	players.sort()
@@ -85,10 +84,8 @@ func refresh_lobby():
 
 	$Players/Start.disabled = not get_tree().is_network_server()
 
-
 func _on_start_pressed():
 	gamestate.begin_game()
-
 
 func _on_find_public_ip_pressed():
 	OS.shell_open("https://icanhazip.com/")

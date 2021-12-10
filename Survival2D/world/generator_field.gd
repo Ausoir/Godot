@@ -16,8 +16,7 @@ func generate():
 				field.set_terrain(x, y, 'field')
 			else:
 				field.set_terrain(x, y, 'water')
-			if x == 0 or y == 0:
-				field.add_item(x, y, G.factory.make('@'))
+	field.spawn_points.append(G.field.tiles[2][2])
 	field.terrain = terrain
 	print(G.field.terrain)
 

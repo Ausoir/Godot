@@ -2,6 +2,8 @@ extends Node
 
 
 const items = {
+	"man": preload("res://assets/images/man.png"),
+
 	"site": {x=0, y=0, r=0, health=1, interact=["craft", "site"]},
 	"bed": {x=0, y=4, r=16, interact=["spawn", "person"], req=[5, 1, 0, 0]},
 	"bed occupied": {x=1, y=4, r=16, health=2, work=1, interact=["spawn", "person"], req=[0, 1, 0, 0]},
@@ -68,3 +70,6 @@ const items = {
 	"axe2": {x=0, y=0, action=["attack", -1, 0]},
 	"axe3": {x=0, y=5, action=["attack", -1, 0]},
 }
+
+func get(p):
+	return items[p]

@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops, ImageEnhance
 
 def run():
-    process('design/rocky.png', 'Survival2D/assets/images/rocky.png')
+    process('rocky.png', '../Survival2D/assets/images/rocky.png')
 
 def process(dir_in, dir_out):
     img = Image.open(dir_in).convert('RGBA').resize((64, 64))
@@ -22,7 +22,7 @@ def process(dir_in, dir_out):
     image_mapping["left"] = apply_gradient(image_mapping["h"], 'L')
     image_mapping["right"] = apply_gradient(image_mapping["h"], 'R')
     image_mapping["top"] = apply_gradient(image_mapping["v"], 'U')
-    image_mapping["bottom"] = apply_gradient(image_mapping["v"], 'D')
+    image_mapping["bottom"] = apply_gradient(image_mapping["bottomleft"], 'R')
     image_mapping["single"] = apply_gradient(image_mapping["top"], 'D')
     image_mapping["all"] = v
     coord_mapping = (

@@ -1,0 +1,21 @@
+{
+	"step": ["item", "step1", {}],
+	"branch": ["item", "site", {
+		"actives": ["ACT_CONSTRUCT"],
+		"passives": ["BUFF_BLOCK"],
+		"onattack": [["die"]],
+		"mat": "wood",
+		"weight": 10,
+		"damage": [1, 4],
+		"haste": 1,
+		"tags": ["blunt"],
+	}],
+	"hoodie": ["item", "site", {
+		"actives": ["ACT_EQUIP"],
+		"defense": [1, 2],
+		"size": 2,
+		"weight": 4,
+		"part": "torso",
+		"skin": "hoodie",
+	}]
+}

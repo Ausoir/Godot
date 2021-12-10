@@ -1,0 +1,5 @@
+{
+	"player": ["unit", "man", {
+		"hp":5, "max hp":5
+	}, "player"],
+}

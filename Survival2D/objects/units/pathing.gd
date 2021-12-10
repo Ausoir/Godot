@@ -1,10 +1,6 @@
-class_name Pathing
-
-
-var world
 var target
-var pathing_length = 16
-var pathing_times = 40
+var pathing_length = 12
+var pathing_times = 8
 var open
 var closed = []
 var closest
@@ -28,11 +24,8 @@ class pathnode:
 	func set_h(destination):
 		h = (pos - destination).length()
 
-
-func _init(pworld):
-	world = pworld
+func _init():
 	result = []
-
 
 func check_loop(loop, pos):
 	for i in loop:
@@ -50,11 +43,11 @@ func iterate(node):
 	open.remove(index)
 	closed.append(node)
 	var achieved = (node.pos - target).length()
-	if achieved <= 1:
+	if achieved == 0:
 		return node
 	if achieved < (closest.pos - target).length():
 		closest = node
-	var options = world.get_routes(node.pos)
+	var options = G.field.get_routes(node.pos)
 	for i in options:
 		var pos = Vector2(i[0], i[1])
 		if check_loop(closed, pos):
@@ -86,21 +79,12 @@ func reset(hostpos):
 func debug_trace():
 	for draw in open:
 		#print("debug trace: ", draw.pos * 64)
-		world.make_particle("smoke", draw.pos * 64 + Vector2(32, 32))
+		G.world.make_particle("smoke", draw.pos * 64 + Vector2(32, 32))
 
 
-func to_tile_coord(vec):
-	return ((vec) / 64).floor()
-
-
-func to_tile_pos(vec):
-	return vec * 64 + Vector2(32, 32)
-
-
-func update(hostposv, targetv):	
-	target = to_tile_coord(targetv)
-	var hostpos = to_tile_coord(hostposv)
-	if not result and (hostpos - target).length() > 1:
+func update(hostpos, p):
+	target = p
+	if not result and hostpos != target:
 		var done = null
 		if next_reset == 0:
 			reset(hostpos)
@@ -120,11 +104,11 @@ func update(hostposv, targetv):
 			done = closest
 		if done:
 			next_reset = 0
-			result = [to_tile_pos(done.pos)]
+			result = [done.pos]
 			while done.parent:
-				#world.make_particle("smoke", to_tile_pos(done.pos))
+				#G.world.make_particle("smoke", to_tile_pos(done.pos))
 				done = done.parent
 				if done.pos == hostpos:
 					break
-				result.insert(0, to_tile_pos(done.pos))
+				result.insert(0, done.pos)
 		return result

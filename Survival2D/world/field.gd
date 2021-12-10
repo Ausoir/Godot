@@ -5,16 +5,16 @@ var terrain
 var sound
 var light
 var tiles
-var spawn_points
+var spawn_points = []
 
 func create_map(sx, sy):
 	var Tile = preload("res://world/tile.gd")
 	size = Vector2(sx, sy)
 	var r = []
-	for _y in range(sy+1):
+	for y in range(sy+1):
 		var row = []
-		for _x in range(sx+1):
-			row.append(Tile.new())
+		for x in range(sx+1):
+			row.append(Tile.new(x, y))
 		r.append(row)
 	tiles = r
 
@@ -27,16 +27,18 @@ func add_item(x, y, val):
 	tiles[y][x].items.append(val)
 
 func get_spawn_point():
-	for y in range(size.y):
-		for x in range(size.x):
-			if tiles[y][x].get_item('@') != null:
-				return Vector2(x, y)
+	return G.rng.rand_arr(spawn_points)
+
+func is_inbound(x, y):
+	return x > 0 and x < G.field.size.x and y > 0 and y < G.field.size.y
 
 func get_routes(pos):
 	var r = []
-	for i in [[pos.x-1, pos.y], [pos.x+1, pos.y], [pos.x, pos.y-1], [pos.x, pos.y+1]]:
-		if tiles[i[1]][i[0]].passable():
-			r.append([i[0], i[1], 0])
+	for i in G.CARDINALS:
+		var ty = pos.y + i[1]
+		var tx = pos.x + i[0]
+		if G.field.is_inbound(tx, ty) and tiles[ty][tx].is_passable():
+			r.append([tx, ty, 0])
 	return r
 
 func set_sound(pos, radius):

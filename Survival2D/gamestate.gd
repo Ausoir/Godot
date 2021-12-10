@@ -14,7 +14,7 @@ var peer = null
 var player_name = "The Warrior"
 
 # Names for remote players in id:name format.
-var players = {}
+var other_players = {}
 
 # Signals to let lobby GUI know what's going on.
 signal player_list_changed()
@@ -36,7 +36,7 @@ func _player_connected(id):
 func _player_disconnected(id):
 	if has_node("/root/World"): # Game is in progress.
 		if get_tree().is_network_server():
-			emit_signal("game_error", "Player " + players[id]["name"] + " disconnected")
+			emit_signal("game_error", "Player " + other_players[id]["name"] + " disconnected")
 			end_game()
 	else: # Game is not in progress.
 		# Unregister this player.
@@ -66,12 +66,12 @@ func _connected_fail():
 remote func register_player(new_player_name):
 	var id = get_tree().get_rpc_sender_id()
 	print("Player ", id, " registered")
-	players[id] = {"name": new_player_name, "ready": false, "controller": null}
+	other_players[id] = {"name": new_player_name, "ready": false, "controller": null}
 	emit_signal("player_list_changed")
 
 
 func unregister_player(id):
-	players.erase(id)
+	other_players.erase(id)
 	emit_signal("player_list_changed")
 
 
@@ -82,36 +82,33 @@ remote func pre_start_game():
 
 	get_tree().get_root().get_node("Lobby").hide()
 
-	var player_scene = load("res://objects/units/player.tscn")
-	
 	var spawn_points = {}
 	spawn_points[1] = 0 # Server in spawn point 0.
 	var spawn_point_idx = 1
-	for p in players:
+	for p in other_players:
 		spawn_points[p] = spawn_point_idx
 		spawn_point_idx += 1
 
 	for p_id in spawn_points:
-		var player = player_scene.instance()
-		var player_unit = player.get_node("unit")
+		var player_pos = G.field.get_spawn_point()
+		var player_unit = G.cmd([["spawn", "player", player_pos]])
+		var player = player_unit.controller
 		player.set_name(str(p_id)) # Use unique ID as node name.
-		player_unit.set_network_master(p_id) #set unique id as master.
-		player_unit.position = G.field.get_spawn_point()
-		G.world.objects.add_child(player)
+		player.set_network_master(p_id) #set unique id as master.
 
 		if p_id == get_tree().get_network_unique_id():
 			# If node for this peer id, set name.
-			player_unit.set_player_name(player_name)
+			player_unit.item_name = player_name
 			G.you = player
 		else:
 			# Otherwise set name from peer.
-			player_unit.set_player_name(players[p_id]["name"])
-			players[p_id]["controller"] = player
+			player_unit.item_name = other_players[p_id]["name"]
+			other_players[p_id]["controller"] = player
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.
 		rpc_id(1, "ready_to_start", get_tree().get_network_unique_id())
-	elif players.size() == 0:
+	elif other_players.size() == 0:
 		post_start_game()
 
 
@@ -122,13 +119,13 @@ remote func post_start_game():
 remote func ready_to_start(id):
 	assert(get_tree().is_network_server())
 
-	players[id]["ready"] = true
+	other_players[id]["ready"] = true
 
-	for p in players.values():
+	for p in other_players.values():
 		if p["ready"] == false:
 			return
 
-	for p in players.values():
+	for p in other_players.values():
 		rpc_id(p["name"], "post_start_game")
 	post_start_game()
 
@@ -149,7 +146,7 @@ func join_game(ip, new_player_name):
 
 func get_player_names():
 	var r = []
-	for p in players.values():
+	for p in other_players.values():
 		r.append(p["name"])
 	return r
 
@@ -157,7 +154,7 @@ func get_player_names():
 func begin_game():
 	assert(get_tree().is_network_server())
 
-	for p in players:
+	for p in other_players:
 		rpc_id(p, "pre_start_game")
 
 	pre_start_game()
@@ -169,7 +166,7 @@ func end_game():
 		get_node("/root/World").queue_free()
 
 	emit_signal("game_ended")
-	players.clear()
+	other_players.clear()
 
 
 func _ready():
