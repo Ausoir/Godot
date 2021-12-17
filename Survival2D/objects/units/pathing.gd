@@ -1,13 +1,13 @@
+var col = G.COL_UNIT
 var target
-var pathing_length = 12
-var pathing_times = 8
+var iterations = 12
 var open
 var closed = []
 var closest
 var result
 var next_reset = 0
 var heuristic_threshold = 0
-var out_of_reach = false
+var reach = 0
 
 
 class pathnode:
@@ -42,26 +42,27 @@ func iterate(node):
 			node = v
 	open.remove(index)
 	closed.append(node)
-	var achieved = (node.pos - target).length()
-	if achieved == 0:
+	var achieved = max(abs(node.pos.x-target.x),abs(node.pos.y-target.y))
+	if achieved <= reach:
 		return node
-	if achieved < (closest.pos - target).length():
+	if achieved < (closest.pos - target).length_squared():
 		closest = node
-	var options = G.field.get_routes(node.pos)
-	for i in options:
-		var pos = Vector2(i[0], i[1])
+	var routes = G.field.get_routes(node.pos, col)
+	for i in routes:
+		var dir_pos = G.CARDINALS[i]
+		var pos = Vector2(node.pos.x + dir_pos[0], node.pos.y + dir_pos[1])
 		if check_loop(closed, pos):
 			continue
 		var conflict = check_loop(open, pos)
 		if conflict:
 			if node.g + 1 <= conflict.g:
 				conflict.parent = node
-				conflict.g = node.g + 1 + i[2]
+				conflict.g = node.g + 1# + i[2]
 				conflict.set_h(target)
 				conflict.f = conflict.h + conflict.g
 			continue
 		var new = pathnode.new(node, pos)
-		new.g = node.g + 1 + i[2]
+		new.g = node.g + 1# + i[2]
 		new.set_h(target)
 		new.f = new.h + new.g
 		#if new.h < heuristic_threshold:
@@ -78,8 +79,8 @@ func reset(hostpos):
 
 func debug_trace():
 	for draw in open:
-		#print("debug trace: ", draw.pos * 64)
-		G.world.make_particle("smoke", draw.pos * 64 + Vector2(32, 32))
+		#print("debug trace: ", draw.pos * G.W)
+		G.world.make_particle("smoke", Vector2(draw.pos.x * G.W + G.HW, draw.pos.y * G.H + G.HH))
 
 
 func update(hostpos, p):
@@ -91,7 +92,7 @@ func update(hostpos, p):
 			next_reset = 1
 		else:
 			next_reset += 1
-		for _i in range(pathing_length):
+		for _i in range(iterations):
 			if open:
 				done = iterate(open[0])
 				if done != null:
@@ -99,8 +100,7 @@ func update(hostpos, p):
 			else:
 				break
 		#debug_trace()
-		if not done and next_reset > pathing_times:
-			out_of_reach = true
+		if not done:
 			done = closest
 		if done:
 			next_reset = 0

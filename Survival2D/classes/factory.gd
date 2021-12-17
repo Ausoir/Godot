@@ -2,7 +2,6 @@ const WORK_DELAY = 5
 const Item = preload("res://objects/Item.tscn")
 const Unit = preload("res://objects/units/Unit.tscn")
 const Ai = preload("res://objects/units/ai.gd")
-const Player = preload("res://objects/units/Player.tscn")
 
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
 const ACT_CONSTRUCT = ["icon_construct", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
@@ -37,20 +36,18 @@ func make_unit(arg, pos):
 	if arg in data.unit_data:
 		var item = data.unit_data[arg]
 		var r = Unit.instance()
-		var sprite = data.images.get(item[1])
+		var sprite = data.images.get(item[0])
 		if !sprite:
 			return
 		r.get_node("Sprite").texture = sprite
 		G.world.units.add_child(r)
 		G.turn.add(r)
-		if item[3] == "player":
-			Player.instance().assign(r)
-			G.world.players.add_child(r.controller)
 		r.item_name = arg
-		r.item_type = item[0]
-		r.dat = G.Properties.new(item[2])
+		r.item_type = "unit"
+		r.dat = G.Properties.new(item[1])
 		r.relocate(pos)
 		r.position = pos.to_pixel()
+		r.get_node("Sprite").get_node("Weapon").texture = data.images.get('axe')
 		return r
 
 func make_item(arg, pos):
@@ -60,18 +57,18 @@ func make_item(arg, pos):
 		var sprite = data.image_map.get(item[1])
 		if !sprite:
 			return
-		r.region_rect.position.x = sprite.x
-		r.region_rect.position.y = sprite.y
-		if item[0] == "item":
-			r.dat.a("onuse", CMD_GRAB)
-			G.world.items.add_child(r)
-		elif item[0] == "object":
-			G.world.objects.add_child(r)
+		r.region_rect.position.x = sprite.x * G.W
+		r.region_rect.position.y = sprite.y * G.H
 		r.item_name = arg
 		r.item_type = item[0]
 		r.dat = G.Properties.new(item[2])
 		r.relocate(pos)
 		r.position = pos.to_pixel()
+		if item[0] == "item":
+			r.dat.a("onuse", CMD_GRAB)
+			G.world.items.add_child(r)
+		elif item[0] == "object":
+			G.world.objects.add_child(r)
 		return r
 
 func get_duplicate(this, arr):

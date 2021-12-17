@@ -30,6 +30,8 @@ func relocate(to):
 		move_delay = 1
 		move_delay_speed = 3
 		set_process(true)
+	else:
+		pos = to
 	to.items.append(self)
 	prev_pos = pos
 	pos = to

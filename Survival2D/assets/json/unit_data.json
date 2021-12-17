@@ -1,5 +1,34 @@
 {
-	"player": ["unit", "man", {
-		"hp":5, "max hp":5
-	}, "player"],
+	"player": ["man", {
+		"hp":50, "max hp":50,
+		"equip": {
+			"head": 3,
+			"body": 3,
+			"belt": 2,
+			"feet": 3,
+			"back": 3,
+			"trinket": 3,
+			"hands": 3,
+			"offhand": 2,
+			"wield": 3,
+		},
+		"courage": [4, 8],
+		"perception": [4, 8],
+	}],
+	"kenku": ["kenku", {
+		"hp":10, "max hp":10,
+		"equip": {
+			"head": 3,
+			"body": 3,
+			"belt": 3,
+			"feet": 3,
+			"back": 3,
+			"trinket": 3,
+			"hands": 3,
+			"offhand": 3,
+			"wield": 3,
+		},
+		"courage": [4, 8],
+		"perception": [4, 8],
+	}],
 }

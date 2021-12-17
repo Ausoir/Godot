@@ -1,3 +1,5 @@
 {
-	"brick": "Brick"
+	"field": {"img": "field", "rnd":4, "mat": "dirt", "col": "0000"},
+	"rock": {"img": "rock", "mat": "stone", "col": "1100"},
+	"water": {"img": "water", "mat": "metal", "col": "0100"},
 }

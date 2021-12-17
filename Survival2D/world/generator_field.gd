@@ -3,20 +3,21 @@ extends "res://world/generator.gd"
 
 func generate():
 	var field = G.field
-	field.create_map(G.rng.randi_range(40, 80), G.rng.randi_range(40, 80))
+	field.create_map(G.rng.randi_range(60, 80), G.rng.randi_range(60, 80))
 	base = make_perlin(field.size.x, field.size.y)
 	for x in range(field.size.x):
 		for y in range(field.size.y):
 			var value = base[y][x]
-			if value > 0.8:
-				field.set_terrain(x, y, 'metal')
-			elif value > 0.6:
+			if value > 0.6:
 				field.set_terrain(x, y, 'rock')
 			elif value > 0.3:
 				field.set_terrain(x, y, 'field')
+			elif value > 0.29:
+				field.set_terrain(x, y, 'field')
+				G.factory.make_item('rock', field.tiles[y][x])
 			else:
 				field.set_terrain(x, y, 'water')
-	field.spawn_points.append(G.field.tiles[2][2])
+	field.spawn_points.append(G.field.tiles[12][12])
 	field.terrain = terrain
 	print(G.field.terrain)
 

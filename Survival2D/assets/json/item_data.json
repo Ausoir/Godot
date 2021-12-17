@@ -1,6 +1,16 @@
 {
-	"step": ["item", "step1", {}],
-	"branch": ["item", "site", {
+	"rock": ["item", "rock", {
+		"actives": ["ACT_CONSTRUCT"],
+		"passives": ["BUFF_BLOCK"],
+		"onattack": [["die"]],
+		"mat": "wood",
+		"weight": 10,
+		"damage": [1, 4],
+		"haste": 1,
+		"light": ["red", 4, true],
+		"tags": ["blunt"],
+	}],
+	"branch": ["item", "branch", {
 		"actives": ["ACT_CONSTRUCT"],
 		"passives": ["BUFF_BLOCK"],
 		"onattack": [["die"]],
@@ -10,7 +20,7 @@
 		"haste": 1,
 		"tags": ["blunt"],
 	}],
-	"hoodie": ["item", "site", {
+	"hoodie": ["item", "branch", {
 		"actives": ["ACT_EQUIP"],
 		"defense": [1, 2],
 		"size": 2,

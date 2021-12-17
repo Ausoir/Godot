@@ -1,71 +1,83 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://objects/units/unit.gd" type="Script" id=1]
-[ext_resource path="res://assets/images/man.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/items/axe.png" type="Texture" id=2]
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=1]
 resource_name = "attack"
-length = 0.3
+length = 0.6
 tracks/0/type = "value"
-tracks/0/path = NodePath("Skeleton2D/Leg:position")
+tracks/0/path = NodePath("Skeleton2D/Body/Head:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.1, 0.3 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 2.11893, -10.3298 ), Vector2( -5.82704, -19.0703 ), Vector2( 2.11893, -10.3298 ) ]
+"values": [ Vector2( 0, -16 ), Vector2( 6.0965, -11.27 ), Vector2( -7.67318, -11.7955 ), Vector2( 0, -16 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Skeleton2D/Leg:rotation_degrees")
+tracks/1/path = NodePath("Skeleton2D/Body/Head:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.1, 0.3 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ -0.793526, -16.9862, -0.793526 ]
+"values": [ -90.0, -90.0, -120.0, -90.0 ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=2]
 resource_name = "grab"
 length = 0.5
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=3]
 tracks/0/type = "value"
-tracks/0/path = NodePath("Skeleton2D/Leg:rotation_degrees")
+tracks/0/path = NodePath("Skeleton2D/Body:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 1 ),
+"times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ -0.793526 ]
+"values": [ Vector2( 0, 0 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Skeleton2D/Leg/Body:position")
+tracks/1/path = NodePath("Skeleton2D/Body:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 1 ),
+"times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 0,
-"values": [ Vector2( -0.632738, -38.2234 ) ]
+"values": [ 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Body/Head:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, -16 ) ]
 }
 
-[sub_resource type="Animation" id=5]
-length = 0.6
+[sub_resource type="Animation" id=4]
+length = 0.8
 loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("Skeleton2D/Leg:rotation_degrees")
+tracks/0/path = NodePath("Skeleton2D/Body:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
@@ -74,30 +86,37 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
 "transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ 0.0, -10.5268, 15.0, 0.0 ]
+"values": [ Vector2( 3.57166, -1.78583 ), Vector2( 0.198425, -5.35748 ), Vector2( -1.98425, -2.97638 ), Vector2( 0.198425, -5.35748 ) ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Skeleton2D/Leg/Body:position")
+tracks/1/path = NodePath("Skeleton2D/Body:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.2, 0.3, 0.4, 0.6 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( -0.0249267, -38.9155 ), Vector2( -8.08803, -29.734 ), Vector2( 2.5996, -42.5943 ), Vector2( -1.16675, -28.3698 ), Vector2( -0.0249271, -38.9155 ) ]
+"values": [ 20.133, -7.29066, -16.7828, -7.29066 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Body/Head:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 4.83743, -10.9136 ), Vector2( 0, -16 ), Vector2( -4.55033, -10.533 ), Vector2( 0, -16 ) ]
 }
 
-[sub_resource type="Animation" id=6]
-resource_name = "work"
-length = 1.5
-loop = true
-
-[sub_resource type="AnimationNodeAnimation" id=7]
+[sub_resource type="AnimationNodeAnimation" id=5]
 animation = "standing"
 
-[sub_resource type="AnimationNodeTransition" id=8]
+[sub_resource type="AnimationNodeTransition" id=6]
 input_count = 2
 xfade_time = 0.1
 input_0/name = "idle"
@@ -105,70 +124,65 @@ input_0/auto_advance = false
 input_1/name = "walk"
 input_1/auto_advance = false
 
-[sub_resource type="AnimationNodeAnimation" id=9]
+[sub_resource type="AnimationNodeAnimation" id=7]
 animation = "walk"
 
-[sub_resource type="AnimationNodeTimeScale" id=11]
+[sub_resource type="AnimationNodeTimeScale" id=8]
 
-[sub_resource type="AnimationNodeBlendTree" id=10]
-graph_offset = Vector2( -350, 73 )
-nodes/idle/node = SubResource( 7 )
+[sub_resource type="AnimationNodeBlendTree" id=9]
+graph_offset = Vector2( -200, 53 )
+nodes/idle/node = SubResource( 5 )
 nodes/idle/position = Vector2( 40, 80 )
 nodes/output/position = Vector2( 620, 140 )
-nodes/state/node = SubResource( 8 )
+nodes/state/node = SubResource( 6 )
 nodes/state/position = Vector2( 360, 120 )
-nodes/walk/node = SubResource( 9 )
+nodes/walk/node = SubResource( 7 )
 nodes/walk/position = Vector2( -140, 200 )
-nodes/walkspeed/node = SubResource( 11 )
+nodes/walkspeed/node = SubResource( 8 )
 nodes/walkspeed/position = Vector2( 40, 200 )
-node_connections = [ "walkspeed", 0, "walk", "state", 0, "idle", "state", 1, "walkspeed", "output", 0, "state" ]
+node_connections = [ "state", 0, "idle", "state", 1, "walkspeed", "output", 0, "state", "walkspeed", 0, "walk" ]
 
 [node name="unit" type="Node2D"]
-scale = Vector2( 0.75, 0.75 )
 z_index = 1
 script = ExtResource( 1 )
 
 [node name="Skeleton2D" type="Skeleton2D" parent="."]
-position = Vector2( 0, 14.592 )
 
-[node name="Leg" type="Bone2D" parent="Skeleton2D"]
-position = Vector2( 2.11893, -10.3298 )
-rotation = -0.0138496
+[node name="Body" type="Bone2D" parent="Skeleton2D"]
 rest = Transform2D( 1, 0, 0, 1, 0, 0 )
 
-[node name="Body" type="Bone2D" parent="Skeleton2D/Leg"]
-position = Vector2( -0.632738, -38.2234 )
-rest = Transform2D( 1, 0, 0, 1, 0, -39 )
-
-[node name="Head" type="Bone2D" parent="Skeleton2D/Leg/Body"]
-position = Vector2( 0, -24.75 )
-rest = Transform2D( 1, 0, 0, 1, 0, -24.75 )
+[node name="Head" type="Bone2D" parent="Skeleton2D/Body"]
+position = Vector2( 0, -16 )
+rotation = -1.5708
+rest = Transform2D( -3.61999e-06, -1, 1, -3.61999e-06, 0, -16 )
 default_length = 1.0
-
-[node name="Hand" type="Bone2D" parent="Skeleton2D/Leg/Body"]
-position = Vector2( -28.25, 18 )
-rest = Transform2D( 1, 0, 0, 1, -28.25, 18 )
-default_length = 1.0
-
-[node name="Sprite" type="Polygon2D" parent="."]
-position = Vector2( 0.25, 15.092 )
-offset = Vector2( -35.75, -76.5 )
-texture = ExtResource( 2 )
-skeleton = NodePath("../Skeleton2D")
-polygon = PoolVector2Array( 10.6583, -6.58308, 53.9185, -6.89655, 63.3229, 46.0815, 59.8746, 100.627, 6.89655, 100.94, -2.82131, 57.6802 )
-uv = PoolVector2Array( 10.6583, -6.58308, 53.9185, -6.89655, 63.3229, 46.0815, 59.8746, 100.627, 6.89655, 100.94, -2.82131, 57.6802 )
-bones = [ NodePath("Leg"), PoolRealArray( 0, 0, 0, 1, 1, 0 ), NodePath("Leg/Body"), PoolRealArray( 0.5, 0.5, 0.5, 0, 0, 0.5 ), NodePath("Leg/Body/Head"), PoolRealArray( 1, 1, 0, 0, 0, 0 ), NodePath("Leg/Body/Hand"), PoolRealArray( 0, 0, 0, 0, 0, 1 ) ]
 
 [node name="Animation" type="AnimationPlayer" parent="."]
-anims/attack = SubResource( 2 )
-anims/grab = SubResource( 3 )
-anims/standing = SubResource( 4 )
-anims/walk = SubResource( 5 )
-anims/work = SubResource( 6 )
+anims/attack = SubResource( 1 )
+anims/grab = SubResource( 2 )
+anims/standing = SubResource( 3 )
+anims/walk = SubResource( 4 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 10 )
+tree_root = SubResource( 9 )
 anim_player = NodePath("../Animation")
 active = true
 parameters/state/current = 0
 parameters/walkspeed/scale = 1.0
+
+[node name="Sprite" type="Polygon2D" parent="."]
+offset = Vector2( -16, -24 )
+antialiased = true
+skeleton = NodePath("../Skeleton2D")
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+bones = [ NodePath("Body"), PoolRealArray( 0, 0, 1, 1 ), NodePath("Body/Head"), PoolRealArray( 1, 1, 0, 0 ) ]
+
+[node name="Weapon" type="Polygon2D" parent="Sprite"]
+offset = Vector2( -19, -24 )
+antialiased = true
+texture = ExtResource( 2 )
+skeleton = NodePath("../../Skeleton2D")
+polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+bones = [ NodePath("Body"), PoolRealArray( 0, 0, 1, 1 ), NodePath("Body/Head"), PoolRealArray( 1, 1, 0, 0 ) ]

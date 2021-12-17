@@ -1,51 +1,113 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops, ImageEnhance
+coord_mapping = (
+    ("single", "left", "h", "right", "top", "topleft", "midtop", "topright"),
+    ("topleft", "topright", "midleft", "midtop", "v", "midleft", "all", "midright"),
+    ("bottomleft", "bottomright", "midbottom", "midright", "bottom", "bottomleft", "midbottom", "bottomright"),
+    ("midleft", "midright", "midtop", "midtop", "all", "all", "all", "all"),
+    ("midleft", "midright", "midbottom", "midbottom", "all", "all", "all", "all"),
+    ("all", "all", "all", "all", "all", "all", "all", "all"),
+)
 
 def run():
-    process('rocky.png', '../Survival2D/assets/images/rocky.png')
+    #out = make_topdown_tileset('rock.png')
+    #out = make_gradient_tileset()
+    out = make_blendmap()
+    out.show()
+    out.save('../Survival2D/assets/images/blendmap.png', 'PNG')
 
-def process(dir_in, dir_out):
+def make_blendmap():
+    east = Image.open('shadow_east.png').convert('RGBA')
+    easttop = Image.open('shadow_east_top.png').convert('RGBA')
+    northeast = Image.open('shadow_northeast.png').convert('RGBA')
+    north = Image.open('shadow_north.png').convert('RGBA')
+    northwest = Image.open('shadow_northwest.png').convert('RGBA')
+    west = Image.open('shadow_west.png').convert('RGBA')
+    westtop = Image.open('shadow_west_top.png').convert('RGBA')
+    out = Image.new('RGBA', (160, 96), color=0)
+    out.paste(west, (0, 0))
+    out.paste(northwest, (32, 0))
+    out.paste(north, (64, 0))
+    out.paste(northeast, (96, 0))
+    out.paste(east, (128, 0))
+    out.paste(combine(west, north), (0, 32))
+    out.paste(combine(east, north), (32, 32))
+    out.paste(combine(east, west), (64, 32))
+    out.paste(combine(northeast, west), (96, 32))
+    out.paste(combine(northwest, east), (128, 32))
+    out.paste(combine(combine(east, north),west), (0, 64))
+    out.paste(westtop, (32, 64))
+    out.paste(easttop, (64, 64))
+    return out
+
+def combine(p1, p2):
+    out = p1.copy()
+    sx, sy = out.size
+    for x in range(sx):
+        for y in range(sy):
+            pixel1 = out.getpixel((x, y))
+            pixel2 = p2.getpixel((x, y))
+            color = (min(pixel1[0], pixel2[0]), min(pixel1[1], pixel2[1]), min(pixel1[2], pixel2[2]), max(pixel1[3], pixel2[3]))
+            out.putpixel((x, y), color)
+    return out
+
+def make_gradient_tileset():
+    img = Image.new('RGBA', (64, 64), color=0xFFFFFF)
+    h = img
+    v = img
+    image_mapping = {}
+    image_mapping["midleft"] = apply_gradient(v, 'L', 2)
+    image_mapping["midright"] = apply_gradient(v, 'R', 2)
+    image_mapping["midtop"] = apply_gradient(v, 'U', 2)
+    image_mapping["midbottom"] = apply_gradient(h, 'D', 2)
+    image_mapping["topleft"] = apply_gradient(image_mapping["midtop"], 'L', 2)
+    image_mapping["topright"] = apply_gradient(image_mapping["midtop"], 'R', 2)
+    image_mapping["bottomleft"] = apply_gradient(image_mapping["midbottom"], 'L', 2)
+    image_mapping["bottomright"] = apply_gradient(image_mapping["midbottom"], 'R', 2)
+    image_mapping["h"] = apply_gradient(image_mapping["midbottom"], 'U', 2)
+    image_mapping["v"] = apply_gradient(image_mapping["midleft"], 'R', 2)
+    image_mapping["left"] = apply_gradient(image_mapping["h"], 'L', 2)
+    image_mapping["right"] = apply_gradient(image_mapping["h"], 'R', 2)
+    image_mapping["top"] = apply_gradient(image_mapping["v"], 'U', 2)
+    image_mapping["bottom"] = apply_gradient(image_mapping["bottomleft"], 'R', 2)
+    image_mapping["single"] = apply_gradient(image_mapping["top"], 'D', 2)
+    image_mapping["all"] = v
+    return glassify(invert(finish_make(image_mapping, 64)),120)
+
+def make_topdown_tileset(dir_in):
     img = Image.open(dir_in).convert('RGBA').resize((64, 64))
-    out = Image.new('RGBA', (512, 384), color=0)
     h = make_tile_h(img)
     v = make_tile_v(img)
     image_mapping = {}
-    image_mapping["midleft"] = apply_gradient(v, 'L')
-    image_mapping["midright"] = apply_gradient(v, 'R')
-    image_mapping["midtop"] = apply_gradient(v, 'U')
-    image_mapping["midbottom"] = apply_gradient(h, 'D')
-    image_mapping["topleft"] = apply_gradient(image_mapping["midtop"], 'L')
-    image_mapping["topright"] = apply_gradient(image_mapping["midtop"], 'R')
-    image_mapping["bottomleft"] = apply_gradient(image_mapping["midbottom"], 'L')
-    image_mapping["bottomright"] = apply_gradient(image_mapping["midbottom"], 'R')
-    image_mapping["h"] = apply_gradient(image_mapping["midbottom"], 'U')
-    image_mapping["v"] = apply_gradient(image_mapping["midleft"], 'R')
-    image_mapping["left"] = apply_gradient(image_mapping["h"], 'L')
-    image_mapping["right"] = apply_gradient(image_mapping["h"], 'R')
-    image_mapping["top"] = apply_gradient(image_mapping["v"], 'U')
-    image_mapping["bottom"] = apply_gradient(image_mapping["bottomleft"], 'R')
-    image_mapping["single"] = apply_gradient(image_mapping["top"], 'D')
+    image_mapping["midleft"] = apply_gradient(v, 'L', 1)
+    image_mapping["midright"] = apply_gradient(v, 'R', 1)
+    image_mapping["midtop"] = apply_gradient(v, 'U', 1)
+    image_mapping["midbottom"] = apply_gradient(h, 'D', 1)
+    image_mapping["topleft"] = apply_gradient(image_mapping["midtop"], 'L', 1)
+    image_mapping["topright"] = apply_gradient(image_mapping["midtop"], 'R', 1)
+    image_mapping["bottomleft"] = apply_gradient(image_mapping["midbottom"], 'L', 1)
+    image_mapping["bottomright"] = apply_gradient(image_mapping["midbottom"], 'R', 1)
+    image_mapping["h"] = apply_gradient(image_mapping["midbottom"], 'U', 1)
+    image_mapping["v"] = apply_gradient(image_mapping["midleft"], 'R', 1)
+    image_mapping["left"] = apply_gradient(image_mapping["h"], 'L', 1)
+    image_mapping["right"] = apply_gradient(image_mapping["h"], 'R', 1)
+    image_mapping["top"] = apply_gradient(image_mapping["v"], 'U', 1)
+    image_mapping["bottom"] = apply_gradient(image_mapping["bottomleft"], 'R', 1)
+    image_mapping["single"] = apply_gradient(image_mapping["top"], 'D', 1)
     image_mapping["all"] = v
-    coord_mapping = (
-        ("single", "left", "h", "right", "top", "topleft", "midtop", "topright"),
-        ("topleft", "topright", "midleft", "midtop", "v", "midleft", "all", "midright"),
-        ("bottomleft", "bottomright", "midbottom", "midright", "bottom", "bottomleft", "midbottom", "bottomright"),
-        ("midleft", "midright", "midtop", "midtop", "all", "all", "all", "all"),
-        ("midleft", "midright", "midbottom", "midbottom", "all", "all", "all", "all"),
-        ("all", "all", "all", "all", "all", "all", "all", "all"),
-    )
+    return finish_make(image_mapping, 64)
 
+def finish_make(image_mapping, size):
+    out = Image.new('RGBA', (size*8, size*6), color=0)
     y = 0
     for subimg_row in coord_mapping:
         x = 0
         for subimg in subimg_row:
             out.paste(image_mapping[subimg], (x, y))
-            x += 64
-        y += 64
-
-    out = out.convert('RGB')
+            x += size
+        y += size
+    out = out.convert('RGBA')
     out = out.filter(ImageFilter.SHARPEN)
-    out.show()
-    out.save(dir_out, 'PNG')
+    return out
 
 
 def make_tile_v(img):
@@ -72,7 +134,7 @@ def make_tileable(img):
     img = img.resize((66, 66))
     return img.crop((1, 1, 65, 65))
 
-def apply_gradient(img, side):
+def apply_gradient(img, side, mode):
     if side == 'L':
         vertical = False
         flip = False
@@ -87,31 +149,64 @@ def apply_gradient(img, side):
         flip = True
     if vertical:
         gradient = Image.new('L', (1, 64), color=0)
-        for y in range(8):
-            if y == 0:
-                gradient.putpixel((0, y), 100)
-            elif y == 1:
-                gradient.putpixel((0, y), 70)
-            else:
-                gradient.putpixel((0, y), 64-y*8)
+        gradient_outline(gradient, mode, (0, 1))
         if flip:
             gradient = gradient.transpose(Image.FLIP_TOP_BOTTOM)
     else:
         gradient = Image.new('L', (64, 1), color=0)
-        for x in range(8):
-            if x == 0:
-                gradient.putpixel((x, 0), 100)
-            elif x == 1:
-                gradient.putpixel((x, 0), 70)
-            else:
-                gradient.putpixel((x, 0), 64-x*8)
+        gradient_outline(gradient, mode, (1, 0))
         if flip:
             gradient = gradient.transpose(Image.FLIP_LEFT_RIGHT)
-
     alpha = gradient.resize((64, 64))
     black_im = Image.new('RGBA', (64, 64), color=0) # i.e. black
     black_im.putalpha(alpha)
-    gradient_im = Image.alpha_composite(img, black_im)
+    out = img.resize((64, 64))
+    gradient_im = Image.alpha_composite(out, black_im)
     return gradient_im
+
+def gradient_outline(gradient, mode, orientation):
+    if mode == 1:
+        for i in range(8):
+            pixel = (i*orientation[0], i*orientation[1])
+            if i == 0:
+                gradient.putpixel(pixel, 100)
+            elif i == 1:
+                gradient.putpixel(pixel, 70)
+            else:
+                gradient.putpixel(pixel, 64-i*8)
+    elif mode == 2:
+        ratio = 255 / 4096
+        for i in range(64):
+            pixel = (i*orientation[0], i*orientation[1])
+            gradient.putpixel(pixel, 255-int(i*i * ratio))
+
+def carve(img, dir):
+    pixels = img.load()
+    for x in range(10):
+        for y in range(10):
+            tx = 16 - x
+            ty = 16 - y
+            if tx*tx + ty*ty > 300:
+                pixels[x, y] = (0, 0, 0, 0)
+    return img
+
+def invert(img):
+    sx, sy = img.size
+    out = img.copy()
+    for x in range(sx):
+        for y in range(sy):
+            pixel = out.getpixel((x, y))
+            out.putpixel((x, y), (pixel[0],pixel[1],pixel[2],255-pixel[3]))
+    return out
+
+def glassify(img, mag):
+    sx, sy = img.size
+    out = img.copy()
+    for x in range(sx):
+        for y in range(sy):
+            pixel = out.getpixel((x, y))
+            diff = 255-pixel[0]
+            out.putpixel((x, y), (0,0,0,diff))
+    return out
 
 run()

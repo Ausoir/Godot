@@ -1,14 +1,23 @@
 extends Node
 
-const CARDINALS = [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1]]
-const UP = 1
-const UPRIGHT = 2
-const RIGHT = 3
-const DOWNRIGHT = 4
-const DOWN = 5
-const DOWNLEFT = 6
-const LEFT = 7
-const UPLEFT = 8
+const W = 32
+const H = 32
+const HW = 16
+const HH = 16
+const MAX_SIGHT = 15
+const COL_SIGHT = 0
+const COL_UNIT = 1
+const COL_MAGIC = 2
+const COL_UNUSED = 3
+const CARDINALS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
+const UP = 0
+const UPRIGHT = 1
+const RIGHT = 2
+const DOWNRIGHT = 3
+const DOWN = 4
+const DOWNLEFT = 5
+const LEFT = 6
+const UPLEFT = 7
 
 const Properties = preload("res://classes/properties.gd")
 var command = preload("res://classes/command.gd").new()
@@ -18,12 +27,14 @@ var turn = preload("res://classes/turn.gd").new()
 var field = preload("res://world/field.gd").new()
 var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
+var ui = preload("res://interface/Interface.tscn").instance()
 var you
-var ui
 
 
 func _ready():
+	get_node("/root").call_deferred("add_child", G.ui)
 	G.rng.randomize()
+	print(G.rng.seed)
 
 func _process(delta):
 	time.on_process(delta)
@@ -31,10 +42,17 @@ func _process(delta):
 		turn.on_process()
 
 func pixel_to_pos(pos):
-	return (pos / 64).floor()
+	return Vector2(pos.x / G.W, pos.y / G.H).floor()
 
 func pos_to_pixel(pos):
-	return Vector2(pos.x*64+32, pos.y*64+32)
+	return Vector2(pos.x*G.W+G.HW, pos.y*G.H+G.HH)
+
+func vector_to_dir(x, y):
+	var count = 0
+	for i in CARDINALS:
+		if i[0] == x and i[1] == y:
+			return count
+		count += 1
 
 func get_tile(pos):
 	return field.tiles[pos.y][pos.x]

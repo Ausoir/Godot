@@ -63,4 +63,6 @@ func run(args):
 		tgt = G.factory.make_item(args[1], args[2])
 	elif args[0] == "spawn":
 		tgt = G.factory.make_unit(args[1], args[2])
+	elif args[0] == "menu":
+		G.ui.display(args[1])
 	return tgt

@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/tileset.tres" type="TileSet" id=1]
 [ext_resource path="res://world/world.gd" type="Script" id=2]
+[ext_resource path="res://assets/shade.tres" type="TileSet" id=3]
 [ext_resource path="res://assets/shaders/tile_lighting.tres" type="Material" id=4]
 
 [sub_resource type="GDScript" id=1]
@@ -43,8 +44,10 @@ script = ExtResource( 2 )
 material = ExtResource( 4 )
 z_index = -5
 tile_set = ExtResource( 1 )
+cell_size = Vector2( 32, 32 )
 cell_custom_transform = Transform2D( 48, 0, 0, 48, 0, 0 )
 format = 1
+tile_data = PoolIntArray( 196612, 15, 0, 196613, 15, 0, 262148, 15, 0, 262149, 15, 0, 327685, 15, 0 )
 __meta__ = {
 "_edit_lock_": true
 }
@@ -65,3 +68,13 @@ color = Color( 0, 0, 0, 1 )
 script = SubResource( 1 )
 
 [node name="Players" type="Node" parent="."]
+
+[node name="Fog" type="Node" parent="."]
+
+[node name="Shademap" type="TileMap" parent="."]
+material = ExtResource( 4 )
+z_index = -1
+tile_set = ExtResource( 3 )
+cell_size = Vector2( 32, 32 )
+centered_textures = true
+format = 1

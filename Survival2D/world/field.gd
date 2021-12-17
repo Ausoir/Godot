@@ -11,34 +11,43 @@ func create_map(sx, sy):
 	var Tile = preload("res://world/tile.gd")
 	size = Vector2(sx, sy)
 	var r = []
-	for y in range(sy+1):
+	for y in range(sy):
 		var row = []
-		for x in range(sx+1):
+		for x in range(sx):
 			row.append(Tile.new(x, y))
 		r.append(row)
 	tiles = r
 
+func get_tile(x, y):
+	if is_inbound(x, y):
+		return tiles[y][x]
+
+func apply_shades(start, end):
+	for x in range(start.x, end.x):
+		for y in range(start.y, end.y):
+			tiles[y][x].apply_shade()
+
 func set_terrain(x, y, val):
 	tiles[y][x].set_terrain(val)
-	var tile_image = G.world.tileset.find_tile_by_name(val)
-	G.world.tilemap.set_cell(x, y, tile_image)
 
 func add_item(x, y, val):
 	tiles[y][x].items.append(val)
 
+func is_inbound(x, y):
+	return x >= 0 and x < G.field.size.x and y >= 0 and y < G.field.size.y
+
 func get_spawn_point():
 	return G.rng.rand_arr(spawn_points)
 
-func is_inbound(x, y):
-	return x > 0 and x < G.field.size.x and y > 0 and y < G.field.size.y
-
-func get_routes(pos):
+func get_routes(pos, col):
 	var r = []
+	var count = 0
 	for i in G.CARDINALS:
 		var ty = pos.y + i[1]
 		var tx = pos.x + i[0]
-		if G.field.is_inbound(tx, ty) and tiles[ty][tx].is_passable():
-			r.append([tx, ty, 0])
+		if G.field.is_inbound(tx, ty) and !tiles[ty][tx].is_col(col):
+			r.append(count)
+		count += 1
 	return r
 
 func set_sound(pos, radius):

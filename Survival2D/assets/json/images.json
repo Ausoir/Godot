@@ -1,4 +1,6 @@
 {
-	"man": "res://assets/images/man.png",
-	"items": "res://assets/images/items.png",
+	"tileset": "res://assets/images/dcss.png",
+	"man": "res://assets/images/units/draconian.png",
+	"kenku": "res://assets/images/units/kenku.png",
+	"axe": "res://assets/images/items/axe.png",
 }
