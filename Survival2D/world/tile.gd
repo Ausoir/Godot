@@ -35,6 +35,17 @@ func set_terrain(val):
 	else:
 		push_error("Could not find terrain data " + val)
 
+func add_item(item):
+	items.append(item)
+	G.world.items.add_child(item)
+	item.position = to_pixel()
+	item.pos = self
+
+func remove_item(item):
+	if item in items:
+		items.erase(item)
+		G.world.items.remove_child(item)
+
 func apply_shade():
 	if col == "0000":
 		var shades = "00000"

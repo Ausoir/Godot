@@ -1,7 +1,8 @@
 [gd_resource type="DynamicFont" load_steps=2 format=2]
 
-[ext_resource path="res://images/Almo_Andrea_FontlabARROW.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=1]
 
 [resource]
-outline_color = Color( 0, 0, 0, 1 )
+size = 24
+outline_size = 1
 font_data = ExtResource( 1 )

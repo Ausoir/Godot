@@ -45,8 +45,7 @@ func make_unit(arg, pos):
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = G.Properties.new(item[1])
-		r.relocate(pos)
-		r.position = pos.to_pixel()
+		pos.add_item(r)
 		r.get_node("Sprite").get_node("Weapon").texture = data.images.get('axe')
 		return r
 
@@ -62,13 +61,9 @@ func make_item(arg, pos):
 		r.item_name = arg
 		r.item_type = item[0]
 		r.dat = G.Properties.new(item[2])
-		r.relocate(pos)
-		r.position = pos.to_pixel()
+		pos.add_item(r)
 		if item[0] == "item":
 			r.dat.a("onuse", CMD_GRAB)
-			G.world.items.add_child(r)
-		elif item[0] == "object":
-			G.world.objects.add_child(r)
 		return r
 
 func get_duplicate(this, arr):

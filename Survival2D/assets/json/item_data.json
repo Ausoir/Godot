@@ -9,6 +9,7 @@
 		"haste": 1,
 		"light": ["red", 4, true],
 		"tags": ["blunt"],
+		"desc": "A rock."
 	}],
 	"branch": ["item", "branch", {
 		"actives": ["ACT_CONSTRUCT"],

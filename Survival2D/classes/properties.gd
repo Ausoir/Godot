@@ -3,9 +3,7 @@ extends Node
 var v
 
 func _init(p):
-	v = {}
-	for i in p:
-		v[i] = p[i]
+	v = p
 
 func g(tag, default=null):
 	if tag in v:

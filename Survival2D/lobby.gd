@@ -15,7 +15,6 @@ func _ready():
 		$Connect/Name.text = desktop_path[desktop_path.size() - 2]
 	_on_host_pressed()
 
-
 func _on_host_pressed():
 	if $Connect/Name.text == "":
 		$Connect/ErrorLabel.text = "Invalid name!"

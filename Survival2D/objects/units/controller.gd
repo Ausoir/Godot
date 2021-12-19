@@ -47,14 +47,7 @@ func path_to(pos, dist=0):
 func interact(dir):
 	var tile = unit.pos.get_adjacent(dir)
 	if tile.distance_to(unit.pos) <= 1:
-		var obj = tile.get_object()
-		if obj:
-			interact_object(obj)
-		elif tile.items:
-			interact_items(tile)
+		interact_tile(tile)
 
-func interact_object(p):
-	pass
-
-func interact_items(p):
+func interact_tile(_tile):
 	pass

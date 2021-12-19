@@ -21,17 +21,14 @@ func move(towards):
 		return to
 
 func relocate(to):
-	if pos:
-		if to.x > pos.x:
-			face(1)
-		elif to.x < pos.x:
-			face(-1)
-		pos.items.erase(self)
-		move_delay = 1
-		move_delay_speed = 3
-		set_process(true)
-	else:
-		pos = to
+	if to.x > pos.x:
+		face(1)
+	elif to.x < pos.x:
+		face(-1)
+	pos.items.erase(self)
+	move_delay = 1
+	move_delay_speed = 3
+	set_process(true)
 	to.items.append(self)
 	prev_pos = pos
 	pos = to

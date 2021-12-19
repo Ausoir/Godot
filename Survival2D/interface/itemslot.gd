@@ -5,9 +5,11 @@ const SLOT_LIGHT = 1
 const SLOT_FULL = 2
 
 var stylebox = get_stylebox("panel", "")
+var tile
 var item
 var allow_type = SLOT_DISABLED
-var sprite
+var item_sprite
+var dragged_sprite
 
 func make_disabled():
 	stylebox.region_rect.position.x = 992
@@ -23,9 +25,32 @@ func make_full():
 
 func assign(p):
 	item = p
-	sprite = Sprite.new()
-	sprite.texture = item.texture
-	sprite.region_enabled = true
-	sprite.region_rect = item.region_rect
-	sprite.position = rect_position + rect_size / 2
-	add_child(sprite)
+	item_sprite = Sprite.new()
+	item_sprite.texture = item.texture
+	item_sprite.region_enabled = true
+	item_sprite.region_rect = item.region_rect
+	item_sprite.position = rect_position + rect_size / 2
+	add_child(item_sprite)
+	if tile:
+		tile.add_item(item)
+
+func unassign():
+	if tile:
+		tile.remove_item(item)
+	item_sprite.queue_free()
+	remove_child(item_sprite)
+	item = null
+
+func _on_mouse_entered():
+	G.ui.describe(item)
+
+func _on_mouse_exited():
+	G.ui.description.hide()
+
+func _on_gui_input(event):
+	if event is InputEventMouseButton:
+		if event.pressed:
+			if event.button_index == BUTTON_LEFT:
+				G.ui.on_drag(self)
+			elif event.button_index == BUTTON_RIGHT:
+				G.ui.on_quick_drag(self)

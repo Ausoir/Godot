@@ -48,7 +48,7 @@ func interpolate(arg1, arg2, alpha):
 func make_perlin(sx, sy):
 	var r = make_random(sx, sy)
 	var map = make_base(sx, sy, 0)
-	var levels = 4
+	var levels = 5
 	var max_value = 0
 	for i in range(1, levels):
 		max_value += float(1)/i

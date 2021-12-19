@@ -54,8 +54,6 @@ __meta__ = {
 
 [node name="Items" type="Node2D" parent="."]
 
-[node name="Objects" type="Node2D" parent="."]
-
 [node name="Units" type="Node2D" parent="."]
 
 [node name="Particles" type="Node2D" parent="."]

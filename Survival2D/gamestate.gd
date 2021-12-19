@@ -92,7 +92,7 @@ remote func pre_start_game():
 	var Player = preload("res://view/Player.tscn")
 	for p_id in spawn_points:
 		var player_pos = G.field.get_spawn_point()
-		var player_unit = G.cmd([["spawn", "player", player_pos]])
+		var player_unit = G.cmd([["spawn", "kenku", player_pos]])
 		var player = Player.instance()
 		player.assign(player_unit)
 		player.set_name(str(p_id)) # Use unique ID as node name.
