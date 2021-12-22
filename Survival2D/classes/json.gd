@@ -3,6 +3,7 @@ var image_map
 var terrain_data
 var item_data
 var unit_data
+var skill_data
 
 
 func _init():
@@ -13,6 +14,7 @@ func _init():
 	terrain_data = get_json_data("res://assets/json/terrain_data.json")
 	item_data = get_json_data("res://assets/json/item_data.json")
 	unit_data = get_json_data("res://assets/json/unit_data.json")
+	skill_data = get_json_data("res://assets/json/skill_data.json")
 
 func get_json_data(dir):
 	var data_file = File.new()

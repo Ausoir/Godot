@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const ItemSlot = preload("res://interface/ItemSlot.tscn")
+const SkillSlot = preload("res://interface/SkillSlot.tscn")
 onready var menu = $Control/Menu
 onready var tint = $Control/Menu/Tint
 onready var description = $Control/Description
@@ -9,6 +10,7 @@ onready var inventory = $Control/Menu/Tabs/Equipment/VBoxContainer/Inventory
 onready var status = $Control/Menu/Tabs/Status/VBoxContainer
 onready var container = $Control/Menu/Container
 onready var container_grid = $Control/Menu/Container/Container
+onready var skills = $Control/Skills
 
 var on = false
 var drag_item
@@ -20,12 +22,23 @@ func _ready():
 	$AnimationPlayer/Fade.set_size(viewport_size)
 	$AnimationPlayer.play("FadeIn")
 
-func _background_input(event):
-	if event is InputEventMouseButton and !event.pressed:
-		clear()
-
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
+
+func _background_input(event):
+	if event is InputEventMouseButton:
+		if event.pressed:
+			if drag_item != null:
+				G.you.unit.pos.add_item(drag_item)
+				set_drag_item(null, null)
+		else:
+			clear()
+
+func _input(event):
+	if on:
+		if event is InputEventMouseMotion:
+			if drag_item != null:
+				drag_sprite.position = get_viewport().get_mouse_position()
 
 func display(_arg):
 	if !on:
@@ -39,44 +52,30 @@ func clear():
 	on = false
 	menu.hide()
 	description.hide()
-	on_drag(null)
 	container.hide()
+	set_drag_item(null, null)
 
-func _input(event):
-	if on:
-		if event is InputEventMouseMotion:
-			if drag_item != null:
-				drag_sprite.position = get_viewport().get_mouse_position()
+func set_drag_item(item, item_sprite):
+	if item == null:
+		if drag_item:
+			drag_item = null
+			drag_sprite.queue_free()
+			menu.remove_child(drag_sprite)
+	else:
+		drag_item = item
+		drag_sprite = item_sprite.duplicate()
+		drag_sprite.position = get_viewport().get_mouse_position()
+		menu.add_child(drag_sprite)
 
-func on_drag(slot):
-	if drag_item == null: #Take from
-		if slot != null:
-			drag_item = slot.item
-			drag_sprite = slot.item_sprite.duplicate()
-			drag_sprite.position = get_viewport().get_mouse_position()
-			menu.add_child(drag_sprite)
-			slot.unassign()
-	else: #Place to
-		if slot == null:
-			G.you.unit.pos.add_item(drag_item)
-		else:
-			slot.assign(drag_item)
-		drag_item = null
-		drag_sprite.queue_free()
-		menu.remove_child(drag_sprite)
-
-func on_quick_drag(slot):
-	if slot.tile != null:
-		for child in inventory.get_children():
-			if child.item == null:
-				on_drag(slot)
-				on_drag(child)
-				return
+func get_vacant_inventory():
+	for child in inventory.get_children():
+		if child.item == null:
+			return child
 
 func update_equipables(equipables):
 	for slot in equipables:
 		if slot != "wield":
-			var node = equipment.get_node("Container/" + slot)
+			var node = equipment.get_node("Equipment/" + slot)
 			var allow_type = equipables[slot]
 			if allow_type == 2:
 				node.make_full()
@@ -85,24 +84,52 @@ func update_equipables(equipables):
 			else:
 				node.make_disabled()
 
-func update_inventory(equipments):
-	var belt = "0000"
-	for slot in equipments:
-		if slot == "belt":
-			belt = "0000"
-		elif slot == "back":
-			belt = "0000"
-	var count = 1
-	for i in belt:
-		var node = equipment.get_node("Container/wpn" + str(count))
-		if i == "1":
-			node.make_light()
-		elif i == "2":
-			node.make_full()
-		count += 1
-	var newslot = ItemSlot.instance()
-	newslot.make_light()
-	inventory.add_child(newslot)
+func update_inventory():
+	var unit = G.you.unit
+	if unit.dat.g("parts") != null:
+		var removals = inventory.get_children() + skills.get_children()
+		for child in removals:
+			child.queue_free()
+			inventory.remove_child(child)
+
+		for eq_part in unit.equipments:
+			var slot = equipment.get_node("Equipment/" + eq_part)
+			var eq_item = unit.equipments[eq_part]
+			slot.assign(eq_item)
+
+		var count = 0
+		for belt_item in unit.belt:
+			var slot = equipment.get_node("Equipment/belt" + str(count))
+			if belt_item is int:
+				if belt_item == 0:
+					slot.make_disabled()
+				elif belt_item == 1:
+					slot.make_light()
+				elif belt_item == 2:
+					slot.make_full()
+			else:
+				slot.make_full()
+				slot.assign(belt_item)
+			count += 1
+
+		for inv_item in unit.inventory:
+			var newslot = ItemSlot.instance()
+			if inv_item is int:
+				if inv_item == 0:
+					newslot.make_disabled()
+				elif inv_item == 1:
+					newslot.make_light()
+				elif inv_item == 2:
+					newslot.make_full()
+			else:
+				newslot.make_full()
+				newslot.assign(inv_item)
+			newslot.part = "inv"
+			inventory.add_child(newslot)
+		for i in G.you.unit.actives:
+			var newslot = SkillSlot.instance()
+			newslot.assign(i)
+			skills.add_child(newslot)
 
 func search_inventory(tile):
 	display(null)

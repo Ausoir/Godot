@@ -1,6 +1,8 @@
 const WORK_DELAY = 5
 const Item = preload("res://objects/Item.tscn")
 const Unit = preload("res://objects/units/Unit.tscn")
+const Script_Unit = preload("res://objects/units/unit.gd")
+const Script_Humanoid = preload("res://objects/units/humanoid.gd")
 const Ai = preload("res://objects/units/ai.gd")
 
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
@@ -10,7 +12,6 @@ const DESCRIPTIONS = {
 	"true": "Ignores armor.",
 }
 
-var data = preload("res://classes/json.gd").new()
 var spells = [
 	[
 		["Transmute Gold to Mana", [0,5], [["cost",0,5],["cost",-2,0]]],
@@ -33,31 +34,34 @@ func get_description(name):
 	return ""
 
 func make_unit(arg, pos):
-	if arg in data.unit_data:
-		var item = data.unit_data[arg]
+	if arg in G.data.unit_data:
+		var item = G.data.unit_data[arg]
 		var r = Unit.instance()
-		var sprite = data.images.get(item[0])
+		if item[1].get("parts") != null:
+			r.set_script(Script_Humanoid)
+		else:
+			r.set_script(Script_Unit)
+		var sprite = G.data.images.get(item[0])
 		if !sprite:
 			return
 		r.get_node("Sprite").texture = sprite
-		G.world.units.add_child(r)
 		G.turn.add(r)
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = G.Properties.new(item[1])
 		pos.add_item(r)
-		r.get_node("Sprite").get_node("Weapon").texture = data.images.get('axe')
+		r.get_node("Sprite").get_node("Weapon").texture = G.data.images.get('axe')
 		return r
 
 func make_item(arg, pos):
-	if arg in data.item_data:
-		var item = data.item_data[arg]
+	if arg in G.data.item_data:
+		var item = G.data.item_data[arg]
 		var r = Item.instance()
-		var sprite = data.image_map.get(item[1])
+		var sprite = G.data.image_map.get(item[1])
 		if !sprite:
 			return
-		r.region_rect.position.x = sprite.x * G.W
-		r.region_rect.position.y = sprite.y * G.H
+		r.region_rect.position.x = sprite.x
+		r.region_rect.position.y = sprite.y
 		r.item_name = arg
 		r.item_type = item[0]
 		r.dat = G.Properties.new(item[2])

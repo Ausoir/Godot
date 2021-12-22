@@ -20,6 +20,7 @@ const LEFT = 6
 const UPLEFT = 7
 
 const Properties = preload("res://classes/properties.gd")
+var data = preload("res://classes/json.gd").new()
 var command = preload("res://classes/command.gd").new()
 var rng = preload("res://classes/random.gd").new()
 var time = preload("res://classes/time.gd").new()
@@ -28,18 +29,23 @@ var field = preload("res://world/field.gd").new()
 var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
+var events = []
 var you
 
 
 func _ready():
 	get_node("/root").call_deferred("add_child", G.ui)
-	G.rng.randomize()
+#	G.rng.randomize()
+	G.rng.set_seed(11111)
 	print(G.rng.seed)
 
 func _process(delta):
 	time.on_process(delta)
 	if time.eighth_second:
 		turn.on_process()
+	elif !events.empty():
+		var ev = events.pop_back()
+		ev.call_func()
 
 func pixel_to_pos(pos):
 	return Vector2(pos.x / G.W, pos.y / G.H).floor()

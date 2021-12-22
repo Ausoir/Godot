@@ -5,7 +5,6 @@ var generator_field = preload("res://world/generator_field.gd").new()
 
 onready var tilemap = $Tilemap
 onready var shademap = $Shademap
-onready var units = $Units
 onready var items = $Items
 onready var players = $Players
 onready var fog = $Fog

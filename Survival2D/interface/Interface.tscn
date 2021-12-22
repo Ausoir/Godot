@@ -1,12 +1,11 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://interface/interface.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
+[ext_resource path="res://interface/Description.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/images/model.png" type="Texture" id=4]
 [ext_resource path="res://assets/images/dcss.png" type="Texture" id=5]
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=6]
-[ext_resource path="res://assets/font1.tres" type="DynamicFont" id=7]
-[ext_resource path="res://interface/description.gd" type="Script" id=8]
 [ext_resource path="res://interface/itemslot.gd" type="Script" id=9]
 
 [sub_resource type="Animation" id=1]
@@ -29,65 +28,24 @@ bg_color = Color( 0, 0, 0, 0 )
 
 [sub_resource type="StyleBoxTexture" id=3]
 texture = ExtResource( 4 )
-region_rect = Rect2( 0, 0, 213, 241 )
+region_rect = Rect2( 0, -10, 180, 220 )
 
 [sub_resource type="StyleBoxTexture" id=4]
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=5]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=6]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=7]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.564706 )
 
 [sub_resource type="StyleBoxTexture" id=8]
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=9]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=10]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=11]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=12]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=13]
-resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
 
 [sub_resource type="StyleBoxTexture" id=14]
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 992, 1600, 32, 32 )
-
-[sub_resource type="StyleBoxFlat" id=15]
-bg_color = Color( 0.2, 0.231373, 0.309804, 1 )
 
 [node name="Control" type="CanvasLayer"]
 script = ExtResource( 1 )
@@ -109,7 +67,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Skills" type="GridContainer" parent="Control"]
+margin_left = 20.0
+margin_top = 8.0
+margin_right = 60.0
+margin_bottom = 48.0
+columns = 12
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Menu" type="Control" parent="Control"]
+visible = false
 mouse_filter = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -122,7 +91,7 @@ __meta__ = {
 }
 
 [node name="Tabs" type="TabContainer" parent="Control/Menu"]
-margin_right = 204.0
+margin_right = 240.0
 margin_bottom = 600.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -139,185 +108,315 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/Menu/Tabs/Equipment"]
-margin_right = 194.0
+margin_right = 230.0
 margin_bottom = 556.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Container" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer"]
-margin_right = 194.0
-margin_bottom = 240.0
-rect_min_size = Vector2( 0, 240 )
+[node name="Equipment" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer"]
+margin_right = 230.0
+margin_bottom = 280.0
+rect_min_size = Vector2( 0, 280 )
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 3 )
 
-[node name="head" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 48.0
-margin_top = 26.163
-margin_right = 80.0
-margin_bottom = 58.163
+[node name="Lines" type="Control" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 108.0
+margin_top = 120.0
+margin_right = 148.0
+margin_bottom = 160.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="belt0" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
+position = Vector2( -96, -124 )
+points = PoolVector2Array( 119, 149, 159, 77 )
+width = 1.0
+default_color = Color( 0, 0, 0, 1 )
+
+[node name="belt1" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
+position = Vector2( -96, -147.433 )
+scale = Vector2( 1, 1.43333 )
+points = PoolVector2Array( 120, 120, 159, 103.558 )
+width = 1.0
+default_color = Color( 0, 0, 0, 1 )
+
+[node name="belt2" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
+position = Vector2( -96, -88 )
+points = PoolVector2Array( 119, 113, 159, 121 )
+width = 1.0
+default_color = Color( 0, 0, 0, 1 )
+
+[node name="belt3" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
+position = Vector2( -96, -68 )
+points = PoolVector2Array( 119, 93, 159, 141 )
+width = 1.0
+default_color = Color( 0, 0, 0, 1 )
+
+[node name="head" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 56.0
+margin_top = 24.0
+margin_right = 104.0
+margin_bottom = 72.0
 rect_min_size = Vector2( 32, 32 )
 custom_styles/panel = SubResource( 4 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+part = "head"
 
-[node name="body" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 48.0
-margin_top = 76.0
-margin_right = 80.0
-margin_bottom = 108.0
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 352, 896, 32, 32 )
+
+[node name="body" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 56.0
+margin_top = 80.0
+margin_right = 104.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 8 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+part = "body"
 
-[node name="belt" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 48.0
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 256, 896, 32, 32 )
+
+[node name="belt" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 56.0
+margin_top = 144.0
+margin_right = 104.0
+margin_bottom = 192.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "belt"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1184, 896, 32, 32 )
+
+[node name="feet" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 56.0
+margin_top = 208.0
+margin_right = 104.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "feet"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 384, 896, 32, 32 )
+
+[node name="trinket" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 4.0
+margin_top = 24.0
+margin_right = 52.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "trinket"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1312, 896, 32, 32 )
+
+[node name="back" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 4.0
+margin_top = 80.0
+margin_right = 52.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "back"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 576, 896, 32, 32 )
+
+[node name="offhand" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 4.0
+margin_top = 144.0
+margin_right = 52.0
+margin_bottom = 192.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "offhand"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1120, 896, 32, 32 )
+
+[node name="hands" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 108.0
+margin_top = 64.0
+margin_right = 156.0
+margin_bottom = 112.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "hands"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 864, 896, 32, 32 )
+
+[node name="weapon" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 108.0
 margin_top = 120.0
-margin_right = 80.0
-margin_bottom = 152.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 6 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="feet" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 48.0
-margin_top = 180.0
-margin_right = 80.0
-margin_bottom = 212.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 7 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="hands" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 92.0
-margin_top = 128.0
-margin_right = 124.0
-margin_bottom = 160.0
+margin_right = 156.0
+margin_bottom = 168.0
 rect_min_size = Vector2( 32, 32 )
 custom_styles/panel = SubResource( 8 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+part = "weapon"
 
-[node name="offhand" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 4.0
-margin_top = 128.0
-margin_right = 36.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 896, 896, 32, 32 )
 
-[node name="back" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 4.0
-margin_top = 78.0
-margin_right = 36.0
-margin_bottom = 110.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 9 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="trinket" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-margin_left = 92.0
-margin_top = 52.0
-margin_right = 124.0
-margin_bottom = 84.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 10 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="wpn1" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-points = PoolVector2Array( 120, 120, 176, 48 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="wpn" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn1"]
-margin_left = 160.0
-margin_top = 32.0
-margin_right = 192.0
-margin_bottom = 64.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 11 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="wpn2" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-points = PoolVector2Array( 120, 120, 176, 84 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="wpn" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn2"]
-margin_left = 160.0
-margin_top = 68.0
-margin_right = 192.0
-margin_bottom = 100.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 12 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="wpn3" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-points = PoolVector2Array( 120, 120, 176, 120 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="wpn" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn3"]
-margin_left = 160.0
-margin_top = 104.0
-margin_right = 192.0
-margin_bottom = 136.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 13 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="wpn4" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container"]
-points = PoolVector2Array( 120, 120, 176, 156 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="wpn" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn4"]
-margin_left = 160.0
-margin_top = 140.0
-margin_right = 192.0
-margin_bottom = 172.0
+[node name="belt0" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 172.0
+margin_top = 24.0
+margin_right = 220.0
+margin_bottom = 72.0
 rect_min_size = Vector2( 32, 32 )
 custom_styles/panel = SubResource( 14 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+part = "#0"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1152, 896, 32, 32 )
+
+[node name="belt1" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 172.0
+margin_top = 80.0
+margin_right = 220.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 14 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "#1"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1152, 896, 32, 32 )
+
+[node name="belt2" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 172.0
+margin_top = 136.0
+margin_right = 220.0
+margin_bottom = 184.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 14 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "#2"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1152, 896, 32, 32 )
+
+[node name="belt3" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 172.0
+margin_top = 192.0
+margin_right = 220.0
+margin_bottom = 240.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 14 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "#3"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 1152, 896, 32, 32 )
 
 [node name="Inventory" type="GridContainer" parent="Control/Menu/Tabs/Equipment/VBoxContainer"]
-margin_top = 244.0
-margin_right = 194.0
+margin_top = 284.0
+margin_right = 230.0
 margin_bottom = 556.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -337,6 +436,7 @@ margin_bottom = -5.0
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/Menu/Tabs/Status"]
 
 [node name="Container" type="TabContainer" parent="Control/Menu"]
+visible = false
 margin_left = 460.0
 margin_top = 240.0
 margin_right = 502.0
@@ -360,37 +460,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Description" type="PanelContainer" parent="Control"]
-visible = false
-margin_right = 65.0
-margin_bottom = 65.0
-script = ExtResource( 8 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Control" type="VBoxContainer" parent="Control/Description"]
-margin_left = 6.0
-margin_top = 4.0
-margin_right = 59.0
-margin_bottom = 61.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Title" type="Label" parent="Control/Description/Control"]
-margin_right = 53.0
-margin_bottom = 29.0
-custom_styles/normal = SubResource( 15 )
-custom_fonts/font = ExtResource( 7 )
-text = "Title"
-align = 1
-
-[node name="Content" type="Label" parent="Control/Description/Control"]
-margin_top = 33.0
-margin_right = 53.0
-margin_bottom = 57.0
-text = "Title"
+[node name="Description" parent="Control" instance=ExtResource( 3 )]
 
 [node name="FPS" type="Label" parent="."]
 margin_left = 924.0
@@ -403,27 +473,42 @@ __meta__ = {
 }
 
 [connection signal="gui_input" from="Control/Menu/Tint" to="." method="_background_input"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/head" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/head" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/head" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/head" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/body" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/body" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/body" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/body" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/belt" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/belt" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/belt" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/belt" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/feet" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/feet" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/feet" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/feet" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/hands" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/hands" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/offhand" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/offhand" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/offhand" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/offhand" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/back" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/back" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/trinket" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/trinket" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn1/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn1/wpn" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn1/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn1/wpn" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn2/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn2/wpn" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn2/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn2/wpn" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn3/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn3/wpn" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn3/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn3/wpn" method="_on_mouse_exited"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn4/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn4/wpn" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn4/wpn" to="Control/Menu/Tabs/Equipment/VBoxContainer/Container/wpn4/wpn" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3" method="_on_mouse_exited"]

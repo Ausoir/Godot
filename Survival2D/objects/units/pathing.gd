@@ -22,7 +22,7 @@ class pathnode:
 		pos = pnode
 		
 	func set_h(destination):
-		h = (pos - destination).length()
+		h = (pos - destination).length_squared()
 
 func _init():
 	result = []
@@ -65,13 +65,13 @@ func iterate(node):
 		new.g = node.g + 1# + i[2]
 		new.set_h(target)
 		new.f = new.h + new.g
-		#if new.h < heuristic_threshold:
-		open.append(new)
+		if new.h < heuristic_threshold:
+			open.append(new)
 	return null
 
 
 func reset(hostpos):
-	heuristic_threshold = (hostpos - target).length() * 2 + 4
+	heuristic_threshold = (hostpos - target).length_squared() * 2 + 16
 	open = [pathnode.new(null, hostpos)]
 	closed = []
 	closest = open[0]

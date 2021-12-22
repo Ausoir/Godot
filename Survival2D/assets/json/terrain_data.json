@@ -1,5 +1,9 @@
 {
-	"field": {"img": "field", "rnd":4, "mat": "dirt", "col": "0000"},
-	"rock": {"img": "rock", "mat": "stone", "col": "1110"},
-	"water": {"img": "water", "mat": "metal", "col": "0010"},
+	"field": {"mat": "dirt", "col": "0000", "height": 0},
+	"dirt": {"mat": "dirt", "col": "0000", "height": 0},
+	"rock": {"mat": "stone", "col": "1110", "height": 1, "rnd":4},
+	"water": {"mat": "metal", "col": "0010", "height": -1},
+	"stone tile": {"mat": "metal", "col": "0010", "height": -1},
+	"stairdown": {"mat": "stone", "col": "0000", "height": 0},
+	"stairup": {"mat": "stone", "col": "0000", "height": 0},
 }

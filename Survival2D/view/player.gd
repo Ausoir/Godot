@@ -18,12 +18,14 @@ var enabled = true
 
 func _ready():
 	pathing.iterations = 28
-	last_pos = G.field.tiles[0][0]
+	last_pos = unit.pos
+	vision.update(unit.pos, last_pos)
 
 func assign(p):
 	.assign(p)
-	G.ui.update_equipables(unit.dat.g("equip"))
-	G.ui.update_inventory(unit.equipment)
+	if unit.dat.g("parts") != null:
+		G.ui.update_equipables(unit.dat.g("parts"))
+		on_equipment_update()
 	if get_parent() == null:
 		G.world.players.add_child(self)
 
@@ -75,6 +77,7 @@ func _input(event: InputEvent):
 							if !tile.items.empty():
 								var destination = move_to(mousetarget, 1)
 								tasks.append(["interact", destination.direction_to(mousetarget)])
+								print(G.world.tilemap.get_cell_autotile_coord(mousetarget.x, mousetarget.y))
 							else:
 								cursor.position = G.pos_to_pixel(mousetarget)
 								cursor.show()
@@ -88,17 +91,12 @@ func _input(event: InputEvent):
 
 func restart():
 	unit.die()
-	print("Player:restart: ", get_tree().change_scene("res://lobby.tscn"))
+	print("Player:restart: ", get_tree().change_scene("res://world/World.tscn"))
 
 func _process(_delta):
 	if unit:
 		camera.position = unit.position
 		sight.position = unit.position
-	# cancel action
-#	if enabled and !locked:
-#		var pos = get_cursor_position()
-#		if Input.is_action_pressed("use") and unit.task[0] == "attack":
-#			unit.task[2] = pos
 
 func get_cursor_position(mouse):
 	var zoom = min(screen_size.x / 512, screen_size.y / 300) / camera.zoom.x
@@ -112,7 +110,8 @@ func on_turn():
 	if last_pos != unit.pos:
 		vision.update(last_pos, unit.pos)
 		last_pos = unit.pos
-		G.ui.clear()
+		if G.ui.on:
+			G.ui.clear()
 
 func remove_steps():
 	for child in steps.get_children():
@@ -137,14 +136,23 @@ func aggro(npcs):
 	for i in npcs:
 		i.find_player(unit)
 
+func on_equipment_update():
+	G.ui.update_inventory()
+
 func interact_tile(tile):
 	if G.ui.on:
 		G.ui.clear()
 	else:
 		cursor.hide()
-		G.ui.search_inventory(tile)
+		if !tile.items.empty():
+			for item in tile.items:
+				if item.item_type == "object":
+					return
+			G.ui.search_inventory(tile)
 
 func move_to(mousetarget, dist=0):
+	if unit.pos.distance_to(mousetarget) <= dist:
+		return unit.pos
 	cursor.position = G.pos_to_pixel(mousetarget)
 	cursor.show()
 	path_to(mousetarget, dist)

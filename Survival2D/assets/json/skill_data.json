@@ -1,0 +1,8 @@
+{
+	"throw": {
+		"img": "throw",
+		"target": "single",
+		"range": 4,
+		"flags": ["expend", "wpn dmg", "wpn range"]
+	}
+}

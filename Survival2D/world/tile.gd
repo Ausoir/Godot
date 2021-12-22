@@ -2,10 +2,12 @@ var x
 var y
 var terrain
 var items = []
+var visible = true
 var col: String
-var light: int = 1
+var light: int = 0
 var shade: int = -1
-var dark_shade = 0
+var height: int
+var sight_frame = 0
 
 func _init(px, py):
 	x = px
@@ -18,20 +20,26 @@ func to_vector():
 	return Vector2(x, y)
 
 func set_visible(p):
-	if p:
-		for item in items:
-			item.show()
-	else:
-		for item in items:
-			item.hide()
+	if visible != p:
+		if p:
+			for item in items:
+				item.show()
+		else:
+			for item in items:
+				item.hide()
+		visible = p
 
 func set_terrain(val):
-	var data = G.factory.data.terrain_data.get(val)
+	var data = G.data.terrain_data.get(val)
 	if data:
 		terrain = val
-		var tile_image = G.world.tileset.find_tile_by_name(data.img)
+		var img = val
+		if "rnd" in data:
+			img = val + str(G.rng.randi_range(1, data.rnd))
+		var tile_image = G.world.tileset.find_tile_by_name(img)
 		G.world.tilemap.set_cell(x, y, tile_image)
 		col = data.col
+		height = data.height
 	else:
 		push_error("Could not find terrain data " + val)
 
@@ -47,45 +55,50 @@ func remove_item(item):
 		G.world.items.remove_child(item)
 
 func apply_shade():
-	if col == "0000":
+	if height < 1:
 		var shades = "00000"
 		var checks = [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0]]
 		for i in range(5):
 			var tile = G.field.get_tile(x+checks[i][0], y+checks[i][1])
-			if tile and tile.is_col(G.COL_SIGHT):
-				shades[i] = "1"
-		if shades[0] == "1" and shades[2] == "1" and shades[4] == "1":
-			shade = 11
-		elif shades[0] == "1" and shades[2] == "1":
-			shade = 6
-		elif shades[2] == "1" and shades[4] == "1":
-			shade = 7
-		elif shades[0] == "1" and shades[4] == "1":
-			shade = 8
-		elif shades[0] == "1" and shades[3] == "1":
-			shade = 9
-		elif shades[4] == "1" and shades[1] == "1":
-			shade = 10
-		elif shades[0] == "1":
-			if shades[1] == "0":
-				shade = 12
-			else:
-				shade = 1
-		elif shades[2] == "1":
-			shade = 3
-		elif shades[4] == "1":
-			if shades[1] == "0":
-				shade = 13
-			else:
-				shade = 5
-		elif shades[1] == "1":
-			shade = 2
-		elif shades[3] == "1":
-			shade = 4
+			if tile:
+				if tile.height > height:
+					shades[i] = "1"
+				apply_shade_from_dir(shades)
+
+func apply_shade_from_dir(shades):
+	if shades[0] == "1" and shades[2] == "1" and shades[4] == "1":
+		shade = 11
+	elif shades[0] == "1" and shades[2] == "1":
+		shade = 6
+	elif shades[2] == "1" and shades[4] == "1":
+		shade = 7
+	elif shades[0] == "1" and shades[4] == "1":
+		shade = 8
+	elif shades[0] == "1" and shades[3] == "1":
+		shade = 9
+	elif shades[4] == "1" and shades[1] == "1":
+		shade = 10
+	elif shades[1] == "1" and shades[2] == "0" and shades[3] == "1":
+		shade = 14
+	elif shades[0] == "1":
+		if shades[1] == "0":
+			shade = 12
 		else:
-			shade = -1
-			return
-		shade += dark_shade
+			shade = 1
+	elif shades[2] == "1":
+		shade = 3
+	elif shades[4] == "1":
+		if shades[1] == "0":
+			shade = 13
+		else:
+			shade = 5
+	elif shades[1] == "1":
+		shade = 2
+	elif shades[3] == "1":
+		shade = 4
+	else:
+		shade = -1
+		return
 
 func update_shade():
 	G.world.shademap.set_cell(x, y, -1)
@@ -102,6 +115,8 @@ func get_item_by_name(val):
 func direction_to(target):
 	var tx = target.x - x
 	var ty = target.y - y
+	if tx == 0 and ty == 0:
+		return -1
 	var dir
 	var angle = atan2(ty, tx) + PI
 	var octant = int(angle / .3927)
@@ -132,7 +147,7 @@ func get_adjacent(dir, val=1):
 	return self
 
 func distance_to(tile):
-	return min(abs(x - tile.x), abs(y - tile.y))
+	return max(abs(x - tile.x), abs(y - tile.y))
 
 func get_object():
 	for i in items:

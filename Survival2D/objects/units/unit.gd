@@ -9,8 +9,8 @@ var state = ""
 var delay = 0
 
 var controller
-var equipment = {}
-
+var actives = []
+var passives = []
 
 func set_state(p, force=false):
 	state = p

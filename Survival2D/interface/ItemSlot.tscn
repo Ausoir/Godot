@@ -9,9 +9,9 @@ texture = ExtResource( 1 )
 region_rect = Rect2( 992, 1600, 32, 32 )
 
 [node name="Slot" type="Panel"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 32, 32 )
+margin_right = 48.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 48, 48 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {

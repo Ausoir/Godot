@@ -94,7 +94,6 @@ remote func pre_start_game():
 		var player_pos = G.field.get_spawn_point()
 		var player_unit = G.cmd([["spawn", "kenku", player_pos]])
 		var player = Player.instance()
-		player.assign(player_unit)
 		player.set_name(str(p_id)) # Use unique ID as node name.
 		player.set_network_master(p_id) #set unique id as master.
 
@@ -106,6 +105,7 @@ remote func pre_start_game():
 			# Otherwise set name from peer.
 			player_unit.item_name = other_players[p_id]["name"]
 			other_players[p_id]["controller"] = player
+		player.assign(player_unit)
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.

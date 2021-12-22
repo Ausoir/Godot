@@ -1,14 +1,16 @@
 {
 	"rock": ["item", "rock", {
-		"actives": ["ACT_CONSTRUCT"],
-		"passives": ["BUFF_BLOCK"],
+		"part": "weapon",
+		"actives": ["throw"],
+		"passives": ["block"],
 		"onattack": [["die"]],
-		"mat": "wood",
+		"mat": "stone",
 		"weight": 10,
 		"damage": [1, 4],
 		"haste": 1,
 		"light": ["red", 4, true],
 		"tags": ["blunt"],
+		"size": 1,
 		"desc": "A rock."
 	}],
 	"branch": ["item", "branch", {
