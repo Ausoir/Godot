@@ -5,7 +5,7 @@ const octant_flip = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
 
 var processing_frame = 0
 var view_range = 16
-var sight_range = 20
+var sight_range = 18
 var col_sight = G.COL_SIGHT
 var sight_frame = 0
 var param_last_pos

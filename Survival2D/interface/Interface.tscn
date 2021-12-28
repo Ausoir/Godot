@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=25 format=2]
 
 [ext_resource path="res://interface/interface.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://assets/images/model.png" type="Texture" id=4]
 [ext_resource path="res://assets/images/dcss.png" type="Texture" id=5]
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=6]
+[ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://interface/itemslot.gd" type="Script" id=9]
 
 [sub_resource type="Animation" id=1]
@@ -34,7 +35,25 @@ region_rect = Rect2( 0, -10, 180, 220 )
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 992, 1600, 32, 32 )
-modulate_color = Color( 1, 1, 1, 0.564706 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
+
+[sub_resource type="StyleBoxTexture" id=5]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
+
+[sub_resource type="StyleBoxTexture" id=6]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
+
+[sub_resource type="StyleBoxTexture" id=7]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
 
 [sub_resource type="StyleBoxTexture" id=8]
 resource_local_to_scene = true
@@ -42,7 +61,45 @@ texture = ExtResource( 5 )
 region_rect = Rect2( 992, 1600, 32, 32 )
 modulate_color = Color( 1, 1, 1, 0.784314 )
 
+[sub_resource type="StyleBoxTexture" id=9]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
+
+[sub_resource type="StyleBoxTexture" id=10]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
+
+[sub_resource type="StyleBoxTexture" id=11]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+modulate_color = Color( 1, 1, 1, 0.784314 )
+
+[sub_resource type="StyleBoxTexture" id=12]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+
+[sub_resource type="DynamicFont" id=13]
+outline_size = 3
+outline_color = Color( 0, 0, 0, 0.627451 )
+font_data = ExtResource( 7 )
+
 [sub_resource type="StyleBoxTexture" id=14]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+
+[sub_resource type="StyleBoxTexture" id=15]
+resource_local_to_scene = true
+texture = ExtResource( 5 )
+region_rect = Rect2( 992, 1600, 32, 32 )
+
+[sub_resource type="StyleBoxTexture" id=16]
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 992, 1600, 32, 32 )
@@ -54,6 +111,7 @@ script = ExtResource( 1 )
 anims/FadeIn = SubResource( 1 )
 
 [node name="Fade" type="ColorRect" parent="AnimationPlayer"]
+mouse_filter = 2
 color = Color( 0, 0, 0, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -62,6 +120,7 @@ __meta__ = {
 [node name="Control" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
+mouse_filter = 2
 theme = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -72,6 +131,8 @@ margin_left = 20.0
 margin_top = 8.0
 margin_right = 60.0
 margin_bottom = 48.0
+mouse_filter = 0
+mouse_default_cursor_shape = 2
 columns = 12
 __meta__ = {
 "_edit_use_anchors_": false
@@ -85,6 +146,7 @@ __meta__ = {
 }
 
 [node name="Tint" type="Panel" parent="Control/Menu"]
+mouse_filter = 1
 custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -120,40 +182,6 @@ rect_min_size = Vector2( 0, 280 )
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 3 )
 
-[node name="Lines" type="Control" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
-margin_left = 108.0
-margin_top = 120.0
-margin_right = 148.0
-margin_bottom = 160.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="belt0" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
-position = Vector2( -96, -124 )
-points = PoolVector2Array( 119, 149, 159, 77 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="belt1" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
-position = Vector2( -96, -147.433 )
-scale = Vector2( 1, 1.43333 )
-points = PoolVector2Array( 120, 120, 159, 103.558 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="belt2" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
-position = Vector2( -96, -88 )
-points = PoolVector2Array( 119, 113, 159, 121 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
-[node name="belt3" type="Line2D" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/Lines"]
-position = Vector2( -96, -68 )
-points = PoolVector2Array( 119, 93, 159, 141 )
-width = 1.0
-default_color = Color( 0, 0, 0, 1 )
-
 [node name="head" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
 margin_left = 56.0
 margin_top = 24.0
@@ -180,7 +208,7 @@ margin_top = 80.0
 margin_right = 104.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 5 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -200,7 +228,7 @@ margin_top = 144.0
 margin_right = 104.0
 margin_bottom = 192.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 6 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -220,7 +248,7 @@ margin_top = 208.0
 margin_right = 104.0
 margin_bottom = 256.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -249,6 +277,27 @@ part = "trinket"
 
 [node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket"]
 modulate = Color( 1, 1, 1, 0.470588 )
+position = Vector2( 0, 1 )
+texture = ExtResource( 5 )
+offset = Vector2( 24, 24 )
+region_enabled = true
+region_rect = Rect2( 672, 896, 32, 32 )
+
+[node name="focus" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
+margin_left = 108.0
+margin_top = 24.0
+margin_right = 156.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 32, 32 )
+custom_styles/panel = SubResource( 8 )
+script = ExtResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+part = "trinket"
+
+[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus"]
+modulate = Color( 1, 1, 1, 0.470588 )
 texture = ExtResource( 5 )
 offset = Vector2( 24, 24 )
 region_enabled = true
@@ -260,7 +309,7 @@ margin_top = 80.0
 margin_right = 52.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 9 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -280,7 +329,7 @@ margin_top = 144.0
 margin_right = 52.0
 margin_bottom = 192.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 10 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -296,11 +345,11 @@ region_rect = Rect2( 1120, 896, 32, 32 )
 
 [node name="hands" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
 margin_left = 108.0
-margin_top = 64.0
+margin_top = 80.0
 margin_right = 156.0
-margin_bottom = 112.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 11 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -314,33 +363,13 @@ offset = Vector2( 24, 24 )
 region_enabled = true
 region_rect = Rect2( 864, 896, 32, 32 )
 
-[node name="weapon" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
-margin_left = 108.0
-margin_top = 120.0
-margin_right = 156.0
-margin_bottom = 168.0
-rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 8 )
-script = ExtResource( 9 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-part = "weapon"
-
-[node name="Sprite" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
-region_rect = Rect2( 896, 896, 32, 32 )
-
 [node name="belt0" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
 margin_left = 172.0
 margin_top = 24.0
 margin_right = 220.0
 margin_bottom = 72.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 14 )
+custom_styles/panel = SubResource( 12 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -352,7 +381,16 @@ modulate = Color( 1, 1, 1, 0.470588 )
 texture = ExtResource( 5 )
 offset = Vector2( 24, 24 )
 region_enabled = true
-region_rect = Rect2( 1152, 896, 32, 32 )
+region_rect = Rect2( 896, 896, 32, 32 )
+
+[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0"]
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 48, 48 )
+custom_fonts/font = SubResource( 13 )
+text = "Q"
+align = 2
+valign = 2
 
 [node name="belt1" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
 margin_left = 172.0
@@ -372,7 +410,16 @@ modulate = Color( 1, 1, 1, 0.470588 )
 texture = ExtResource( 5 )
 offset = Vector2( 24, 24 )
 region_enabled = true
-region_rect = Rect2( 1152, 896, 32, 32 )
+region_rect = Rect2( 896, 896, 32, 32 )
+
+[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1"]
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 48, 48 )
+custom_fonts/font = SubResource( 13 )
+text = "W"
+align = 2
+valign = 2
 
 [node name="belt2" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
 margin_left = 172.0
@@ -380,7 +427,7 @@ margin_top = 136.0
 margin_right = 220.0
 margin_bottom = 184.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 14 )
+custom_styles/panel = SubResource( 15 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -392,7 +439,16 @@ modulate = Color( 1, 1, 1, 0.470588 )
 texture = ExtResource( 5 )
 offset = Vector2( 24, 24 )
 region_enabled = true
-region_rect = Rect2( 1152, 896, 32, 32 )
+region_rect = Rect2( 896, 896, 32, 32 )
+
+[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2"]
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 48, 48 )
+custom_fonts/font = SubResource( 13 )
+text = "E"
+align = 2
+valign = 2
 
 [node name="belt3" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment"]
 margin_left = 172.0
@@ -400,7 +456,7 @@ margin_top = 192.0
 margin_right = 220.0
 margin_bottom = 240.0
 rect_min_size = Vector2( 32, 32 )
-custom_styles/panel = SubResource( 14 )
+custom_styles/panel = SubResource( 16 )
 script = ExtResource( 9 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -412,7 +468,16 @@ modulate = Color( 1, 1, 1, 0.470588 )
 texture = ExtResource( 5 )
 offset = Vector2( 24, 24 )
 region_enabled = true
-region_rect = Rect2( 1152, 896, 32, 32 )
+region_rect = Rect2( 896, 896, 32, 32 )
+
+[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3"]
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 48, 48 )
+custom_fonts/font = SubResource( 13 )
+text = "R"
+align = 2
+valign = 2
 
 [node name="Inventory" type="GridContainer" parent="Control/Menu/Tabs/Equipment/VBoxContainer"]
 margin_top = 284.0
@@ -488,6 +553,9 @@ __meta__ = {
 [connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" method="_on_gui_input"]
 [connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket" method="_on_mouse_exited"]
+[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus" method="_on_gui_input"]
+[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus" method="_on_mouse_exited"]
 [connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" method="_on_gui_input"]
 [connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back" method="_on_mouse_exited"]
@@ -497,9 +565,6 @@ __meta__ = {
 [connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" method="_on_gui_input"]
 [connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands" method="_on_mouse_exited"]
-[connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" method="_on_gui_input"]
-[connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/weapon" method="_on_mouse_exited"]
 [connection signal="gui_input" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" method="_on_gui_input"]
 [connection signal="mouse_entered" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" to="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0" method="_on_mouse_exited"]

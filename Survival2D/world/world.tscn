@@ -56,7 +56,7 @@ __meta__ = {
 
 [node name="Items" type="Node2D" parent="."]
 
-[node name="Particles" type="Node2D" parent="."]
+[node name="Others" type="Node2D" parent="."]
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 light_mask = 0

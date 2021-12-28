@@ -1,6 +1,7 @@
 {
-	"man": ["man", {
-		"parts": {
+	"man": {
+		"img": "man",
+		"bodyparts": {
 			"head": 2,
 			"body": 2,
 			"belt": 2,
@@ -9,18 +10,19 @@
 			"trinket": 2,
 			"hands": 2,
 			"offhand": 2,
-			"weapon": 2,
 		},
-		"vitality": 100,
+		"vitality": [30, 70],
 		"stamina": [3, 7],
 		"strength": [3, 7],
 		"agility": [3, 7],
 		"intelligence": [3, 7],
 		"courage": [3, 7],
-		"perception": [3, 7],
-	}],
-	"kenku": ["kenku", {
-		"parts": {
+		"perception": [16, 18],
+		"flags": [],
+	},
+	"kenku": {
+		"img": "kenku",
+		"bodyparts": {
 			"head": 1,
 			"body": 2,
 			"belt": 2,
@@ -29,14 +31,15 @@
 			"trinket": 2,
 			"hands": 2,
 			"offhand": 2,
-			"weapon": 2,
 		},
-		"vitality": 100,
+		"vitality": [10, 40],
 		"stamina": [3, 7],
 		"strength": [3, 7],
 		"agility": [3, 7],
 		"intelligence": [3, 7],
 		"courage": [3, 7],
-		"perception": [3, 7],
-	}],
+		"perception": [20, 22],
+		"actives": ["fly"],
+		"flags": ["combustible"],
+	},
 }

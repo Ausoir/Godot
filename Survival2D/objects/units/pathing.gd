@@ -1,4 +1,4 @@
-var col = G.COL_UNIT
+var col = G.COL_TERRAIN
 var target
 var iterations = 12
 var open
@@ -85,7 +85,7 @@ func debug_trace():
 
 func update(hostpos, p):
 	target = p
-	if not result and hostpos != target:
+	if not result and hostpos.distance_to(target) > reach:
 		var done = null
 		if next_reset == 0:
 			reset(hostpos)

@@ -21,12 +21,13 @@ func replace_vars(args):
 
 func run(args):
 	args = replace_vars(args)
-	if args[0] == "=":
+	var command = args[0]
+	if command == "=":
 		if args[1] == "t":
 			return args[2]
 		elif args[1] == "h":
 			host = args[2]
-	elif args[0] == "v":
+	elif command == "v":
 		if args[1] == "parent":
 			return args[2].get_parent()
 		elif args[1] == "controller":
@@ -35,7 +36,7 @@ func run(args):
 			return args[2] + args[3]
 		elif args[1] == "pos":
 			return args[2].pos
-	elif args[0] == "r":
+	elif command == "r":
 		if args[1] == "int":
 			return G.rng.randi_range(args[2], args[3])
 		elif args[1] == "float":
@@ -43,7 +44,7 @@ func run(args):
 		elif args[1] == "cmd":
 			var chosen = args[2][G.rng.randi_range(0, len(args[2])-1)]
 			return G.cmds([["t",tgt]]+chosen, host)
-	elif args[0] == "?":
+	elif command == "?":
 		if args[1] == "=":
 			stop = tgt == args[2]
 		elif args[1] == "<":
@@ -52,17 +53,19 @@ func run(args):
 			stop = tgt <= args[2]
 		if len(args) > 3 and args[3] == true:
 			stop = !stop
-	elif args[0] == "dat":
+	elif command == "dat":
 		if args[1] == "g":
 			return host.dat.g(args[2], args[3])
 		elif args[1] == "a":
 			host.dat.a(args[2], args[3])
-	elif args[0] == "run":
+	elif command == "run":
 		return G.cmds(args[1], tgt)
-	elif args[0] == "make":
+	elif command == "make":
 		tgt = G.factory.make_item(args[1], args[2])
-	elif args[0] == "spawn":
+	elif command == "spawn":
 		tgt = G.factory.make_unit(args[1], args[2])
-	elif args[0] == "menu":
+	elif command == "menu":
 		G.ui.display(args[1])
+	elif command == "cast":
+		G.Influence.new(host, args[1], args[2])
 	return tgt

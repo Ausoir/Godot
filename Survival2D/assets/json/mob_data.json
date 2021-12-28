@@ -1,3 +1,6 @@
 {
-	"kenku peasant": []
+	"kenku peasants": {
+		"kenku": [1, 5],
+		"man": [2, 4],
+	}
 }

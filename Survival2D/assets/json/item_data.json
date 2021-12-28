@@ -1,34 +1,30 @@
 {
-	"rock": ["item", "rock", {
-		"part": "weapon",
-		"actives": ["throw"],
-		"passives": ["block"],
-		"onattack": [["die"]],
+	"rock": {
+		"img": "rock",
+		"part": "item",
+		"actives": ["throw rock"],
+		"passives": ["bash", "block"],
 		"mat": "stone",
+		"col": "0100",
+		"uses": 4,
 		"weight": 10,
-		"damage": [1, 4],
+		"damage": 4,
 		"haste": 1,
 		"light": ["red", 4, true],
-		"tags": ["blunt"],
 		"size": 1,
 		"desc": "A rock."
-	}],
-	"branch": ["item", "branch", {
-		"actives": ["ACT_CONSTRUCT"],
-		"passives": ["BUFF_BLOCK"],
-		"onattack": [["die"]],
+	},
+	"branch": {
+		"img": "rock",
+		"sprite": "axe",
+		"part": "item",
+		"actives": [],
+		"passives": ["bash"],
 		"mat": "wood",
 		"weight": 10,
-		"damage": [1, 4],
+		"damage": 4,
 		"haste": 1,
 		"tags": ["blunt"],
-	}],
-	"hoodie": ["item", "branch", {
-		"actives": ["ACT_EQUIP"],
-		"defense": [1, 2],
-		"size": 2,
-		"weight": 4,
-		"part": "torso",
-		"skin": "hoodie",
-	}]
+		"desc": "A branch."
+	},
 }

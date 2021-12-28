@@ -37,7 +37,7 @@ func is_inbound(x, y):
 	return x >= 0 and x < G.field.size.x and y >= 0 and y < G.field.size.y
 
 func get_spawn_point():
-	return G.rng.rand_arr(spawn_points)
+	return G.rng.rnd_arr(spawn_points)
 
 func get_routes(pos, col):
 	var r = []

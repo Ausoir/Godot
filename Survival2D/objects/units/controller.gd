@@ -3,6 +3,8 @@ extends Node
 
 const Pathing = preload("res://objects/units/pathing.gd")
 var unit
+var sight_range = 8
+var target
 var tasks = []
 var delay = 0
 var locked = false
@@ -25,6 +27,10 @@ func on_turn():
 			unit.set_state("move")
 		elif task[0] == "interact":
 			interact(task[1])
+		elif task[0] == "ability":
+			unit.ability(task[1], target)
+		elif task[0] == "swap":
+			unit.select_weapon(task[1])
 
 func path_to(pos, dist=0):
 	pathing.result = []

@@ -1,6 +1,4 @@
-[gd_scene load_steps=11 format=2]
-
-[ext_resource path="res://assets/images/items/axe.png" type="Texture" id=2]
+[gd_scene load_steps=10 format=2]
 
 [sub_resource type="Animation" id=1]
 resource_name = "attack"
@@ -177,9 +175,9 @@ uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 bones = [ NodePath("Body"), PoolRealArray( 0, 0, 1, 1 ), NodePath("Body/Head"), PoolRealArray( 1, 1, 0, 0 ) ]
 
 [node name="Weapon" type="Polygon2D" parent="Sprite"]
+visible = false
 offset = Vector2( -19, -24 )
 antialiased = true
-texture = ExtResource( 2 )
 skeleton = NodePath("../../Skeleton2D")
 polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )

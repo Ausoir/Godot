@@ -53,7 +53,7 @@ func make_rooms(departments):
 	var tpartments = departments.duplicate()
 	for s in sectors:
 		if tpartments.empty():
-			sectors[s] = rng.rand_arr(departments)
+			sectors[s] = rng.rnd_arr(departments)
 		else:
 			var idx = rng.randi_range(0, len(tpartments)-1)
 			sectors[s] = tpartments[idx]
@@ -193,14 +193,14 @@ func clear_doorways():
 				base[y][x-1] = ','
 			elif wallX == 2:
 				if base[y][x] == 'D' and rng.randf() < .4:
-					dungeon_objects[y][x] = ["door", rng.rand_arr([0, 10])]
+					dungeon_objects[y][x] = ["door", rng.rnd_arr([0, 10])]
 				base[y+1][x] = ','
 				base[y-1][x] = ','
 				dungeon_objects[y+1][x] = null
 				dungeon_objects[y-1][x] = null
 			elif wallY == 2:
 				if base[y][x] == 'D' and rng.randf() < .4:
-					dungeon_objects[y][x] = ["door", rng.rand_arr([16, 22])]
+					dungeon_objects[y][x] = ["door", rng.rnd_arr([16, 22])]
 				base[y][x+1] = ','
 				base[y][x-1] = ','
 				dungeon_objects[y][x+1] = null
@@ -318,13 +318,13 @@ func allocate_object(objs, x, y, force=false):
 			base[y][x] = ','
 
 func place_object(objs, possibleSides):
-	var obj = rng.rand_arr(objs)
+	var obj = rng.rnd_arr(objs)
 	if obj != null:
 		var orientation
 		if len(possibleSides) == 0:
-			orientation = rng.rand_arr([0,10,16,22])
+			orientation = rng.rnd_arr([0,10,16,22])
 		else:
-			orientation = rng.rand_arr(possibleSides)
+			orientation = rng.rnd_arr(possibleSides)
 		return [obj, orientation]
 
 func make_terrain(room, vault_type="default"):

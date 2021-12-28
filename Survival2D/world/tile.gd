@@ -4,6 +4,7 @@ var terrain
 var items = []
 var visible = true
 var col: String
+var orig_col: String
 var light: int = 0
 var shade: int = -1
 var height: int
@@ -38,6 +39,7 @@ func set_terrain(val):
 			img = val + str(G.rng.randi_range(1, data.rnd))
 		var tile_image = G.world.tileset.find_tile_by_name(img)
 		G.world.tilemap.set_cell(x, y, tile_image)
+		orig_col = data.col
 		col = data.col
 		height = data.height
 	else:
@@ -45,14 +47,21 @@ func set_terrain(val):
 
 func add_item(item):
 	items.append(item)
-	G.world.items.add_child(item)
-	item.position = to_pixel()
 	item.pos = self
+	for i in range(4):
+		if item.col[i] == "1":
+			col[i] = "1"
 
 func remove_item(item):
-	if item in items:
-		items.erase(item)
-		G.world.items.remove_child(item)
+	items.erase(item)
+	update_col()
+
+func update_col():
+	col = orig_col
+	for item in items:
+		for i in range(4):
+			if item.col[i] == "1":
+				col[i] = "1"
 
 func apply_shade():
 	if height < 1:
@@ -106,9 +115,21 @@ func update_shade():
 func is_col(bit):
 	return col[bit] == "1"
 
+func is_cols(cols):
+	for i in range(4):
+		if cols[i] == "1" and col[i] == "1":
+			return true
+	return false
+
 func get_item_by_name(val):
 	for item in items:
 		if item.item_name == val:
+			return item
+	return null
+
+func get_item_by_type(val):
+	for item in items:
+		if item.item_type == val:
 			return item
 	return null
 
@@ -139,6 +160,8 @@ func direction_to(target):
 	return dir
 
 func get_adjacent(dir, val=1):
+	if dir == -1:
+		return self
 	var t = G.CARDINALS[dir]
 	var ry = y + t[1]*val
 	var rx = x + t[0]*val
@@ -153,3 +176,39 @@ func get_object():
 	for i in items:
 		if i.item_type == "object":
 			return i
+
+func get_beam_to(destination, col_mask, distance):
+	var degree = atan2(destination.y - y, destination.x - x)
+	var current = to_vector()
+	var current_tile
+	while distance > 0 and destination.distance_to(current) > 0:
+		distance -= 1
+		current.x += cos(degree)
+		current.y += sin(degree)
+		current_tile = G.field.get_tile(current.x, current.y)
+		if current_tile == null or current_tile.is_col(col_mask):
+			break
+	return current_tile
+
+func get_rnd_adjacent(cols, times):
+	if times <= 0:
+		return
+	var adj = get_adjacent(G.rng.randi_range(0, 7))
+	if !adj.is_cols(cols):
+		return adj
+	return get_rnd_adjacent(col, times - 1)
+
+func get_priority_item(exc):
+	var high
+	var low
+	for item in items:
+		if !(item in exc):
+			if item.item_type == "unit":
+				return item
+			elif item.item_type == "object":
+				high = item
+			elif item.item_type == "item":
+				low = item
+	if high != null:
+		return high
+	return low

@@ -7,6 +7,7 @@ onready var tilemap = $Tilemap
 onready var shademap = $Shademap
 onready var items = $Items
 onready var players = $Players
+onready var others = $Others
 onready var fog = $Fog
 
 var map_size = Vector2(0, 0)

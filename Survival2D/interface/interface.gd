@@ -5,7 +5,7 @@ const SkillSlot = preload("res://interface/SkillSlot.tscn")
 onready var menu = $Control/Menu
 onready var tint = $Control/Menu/Tint
 onready var description = $Control/Description
-onready var equipment = $Control/Menu/Tabs/Equipment/VBoxContainer
+onready var equipment = $Control/Menu/Tabs/Equipment/VBoxContainer/Equipment
 onready var inventory = $Control/Menu/Tabs/Equipment/VBoxContainer/Inventory
 onready var status = $Control/Menu/Tabs/Status/VBoxContainer
 onready var container = $Control/Menu/Container
@@ -25,6 +25,11 @@ func _ready():
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
 
+func _input(event):
+	if event is InputEventMouseMotion:
+		if drag_item != null:
+			drag_sprite.position = get_viewport().get_mouse_position()
+
 func _background_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
@@ -34,11 +39,38 @@ func _background_input(event):
 		else:
 			clear()
 
-func _input(event):
-	if on:
-		if event is InputEventMouseMotion:
-			if drag_item != null:
-				drag_sprite.position = get_viewport().get_mouse_position()
+func _unhandled_input(event):
+	if event is InputEventKey:
+		if Input.is_action_just_pressed("quit"):
+			get_tree().quit()
+		elif Input.is_action_just_pressed("restart"):
+			G.world.generate()
+			print("Player:restart: ", get_tree().change_scene("res://world/World.tscn"))
+		elif Input.is_action_just_pressed("ui_fullscreen"):
+			OS.window_fullscreen = !OS.window_fullscreen
+		elif Input.is_action_just_pressed("item_1"):
+			G.you.tasks.append(["swap", 0])
+		elif Input.is_action_just_pressed("item_2"):
+			G.you.tasks.append(["swap", 1])
+		elif Input.is_action_just_pressed("item_3"):
+			G.you.tasks.append(["swap", 2])
+		elif Input.is_action_just_pressed("item_4"):
+			G.you.tasks.append(["swap", 3])
+		elif Input.is_action_just_pressed("quick_1"):
+			skills.get_children()[0].activate()
+		elif Input.is_action_just_pressed("quick_2"):
+			skills.get_children()[1].activate()
+		elif Input.is_action_just_pressed("quick_3"):
+			skills.get_children()[2].activate()
+		elif Input.is_action_just_pressed("quick_4"):
+			skills.get_children()[3].activate()
+		elif Input.is_action_just_pressed("menu"):
+			if on:
+				clear()
+			else:
+				G.cmd([["menu", ""]], G.you.unit)
+	elif !on:
+		G.you._on_input(event)
 
 func display(_arg):
 	if !on:
@@ -47,6 +79,8 @@ func display(_arg):
 		tint.set_size(screen_size)
 		tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
 		menu.show()
+		G.you.unit.update()
+		update_inventory()
 
 func clear():
 	on = false
@@ -75,61 +109,49 @@ func get_vacant_inventory():
 func update_equipables(equipables):
 	for slot in equipables:
 		if slot != "wield":
-			var node = equipment.get_node("Equipment/" + slot)
+			var node = equipment.get_node(slot)
 			var allow_type = equipables[slot]
-			if allow_type == 2:
-				node.make_full()
-			elif allow_type == 1:
-				node.make_light()
-			else:
-				node.make_disabled()
+			node.make_mode(allow_type)
 
 func update_inventory():
 	var unit = G.you.unit
-	if unit.dat.g("parts") != null:
-		var removals = inventory.get_children() + skills.get_children()
-		for child in removals:
+	if unit.dat.g("bodyparts") != null:
+		for child in inventory.get_children():
 			child.queue_free()
 			inventory.remove_child(child)
+		for child in skills.get_children():
+			child.queue_free()
+			skills.remove_child(child)
+		for child in equipment.get_children():
+			child.unassign()
 
 		for eq_part in unit.equipments:
-			var slot = equipment.get_node("Equipment/" + eq_part)
+			var slot = equipment.get_node(eq_part)
 			var eq_item = unit.equipments[eq_part]
 			slot.assign(eq_item)
 
 		var count = 0
 		for belt_item in unit.belt:
-			var slot = equipment.get_node("Equipment/belt" + str(count))
-			if belt_item is int:
-				if belt_item == 0:
-					slot.make_disabled()
-				elif belt_item == 1:
-					slot.make_light()
-				elif belt_item == 2:
-					slot.make_full()
-			else:
-				slot.make_full()
-				slot.assign(belt_item)
+			var slot = equipment.get_node("belt" + str(count))
+			slot.make_mode(belt_item[0])
+			if belt_item[1] != null:
+				slot.assign(belt_item[1])
 			count += 1
 
 		for inv_item in unit.inventory:
 			var newslot = ItemSlot.instance()
-			if inv_item is int:
-				if inv_item == 0:
-					newslot.make_disabled()
-				elif inv_item == 1:
-					newslot.make_light()
-				elif inv_item == 2:
-					newslot.make_full()
-			else:
-				newslot.make_full()
-				newslot.assign(inv_item)
+			newslot.make_mode(inv_item[0])
+			if inv_item[1] != null:
+				newslot.assign(inv_item[1])
 			newslot.part = "inv"
 			inventory.add_child(newslot)
+		count = 0
 		for i in G.you.unit.actives:
 			var newslot = SkillSlot.instance()
 			newslot.assign(i)
+			newslot.set_index(count)
 			skills.add_child(newslot)
+			count += 1
 
 func search_inventory(tile):
 	display(null)
@@ -141,7 +163,6 @@ func search_inventory(tile):
 	for item in tile.items:
 		if item.item_type == "item":
 			var slot = ItemSlot.instance()
-			slot.make_full()
 			slot.assign(item)
 			slot.tile = tile
 			container_grid.add_child(slot)
@@ -151,3 +172,8 @@ func describe(item):
 		if item:
 			display(null)
 			description.display(item)
+
+func _update_cooldowns(cds):
+	for skill in skills.get_children():
+		if skill.skill in cds:
+			skill._update_cooldown(cds[skill.skill])

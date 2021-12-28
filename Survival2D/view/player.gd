@@ -9,8 +9,8 @@ onready var sight = $Sight
 onready var cursor = $Cursor
 onready var steps = $Steps
 
+var aiming = -1
 var screen_size = Vector2(1, 1)
-var mouse_pos = Vector2()
 var last_pos
 
 var enabled = true
@@ -23,75 +23,64 @@ func _ready():
 
 func assign(p):
 	.assign(p)
-	if unit.dat.g("parts") != null:
-		G.ui.update_equipables(unit.dat.g("parts"))
-		on_equipment_update()
+	p.faction = 1
+	if unit.dat.g("bodyparts") != null:
+		G.ui.update_equipables(unit.dat.g("bodyparts"))
+		G.ui.update_inventory()
 	if get_parent() == null:
 		G.world.players.add_child(self)
+	vision.sight_range = unit.vars.g("perception", 18)
 
 func unassign():
 	.unassign()
 	if get_parent() == G.world.players:
 		G.world.players.remove_child(self)
 
-func _input(event: InputEvent):
-	if G.ui.on:
-		if Input.is_action_just_pressed("menu"):
-			G.ui.clear()
-	else:
-		if event is InputEventMouseMotion:
-			mouse_pos = get_cursor_position(event.global_position)
-		elif event is InputEventKey:
-			if Input.is_action_just_pressed("quit"):
-				get_tree().quit()
-			elif Input.is_action_just_pressed("restart"):
-				restart()
-			elif Input.is_action_just_pressed("ui_fullscreen"):
-				OS.window_fullscreen = !OS.window_fullscreen
-			elif Input.is_action_just_pressed("menu"):
-				G.cmd([["menu", ""]], unit)
-		elif enabled and !locked:
-			if event is InputEventMouseButton:
-				screen_size = get_viewport().size / 2
-				mouse_pos = get_cursor_position(event.global_position)
-				if event.pressed:
-					if event.button_index == BUTTON_WHEEL_UP:
-						if camera.zoom.x > .5:
-							camera.zoom *= .8
-							sight.scale *= .8
-					elif event.button_index == BUTTON_WHEEL_DOWN:
-						if camera.zoom.x < 2:
-							camera.zoom *= 1.2
-							sight.scale *= 1.2
-					elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
-						screen_size = get_viewport().size / 2
-						unit.position = Vector2(mouse_pos.x + unit.position.x - screen_size.x,
-												mouse_pos.y + unit.position.y - screen_size.y)
-					elif Input.is_action_just_pressed("move"):
-						var mousetarget = G.pixel_to_pos(mouse_pos)
-						move_to(mousetarget)
-					elif Input.is_action_just_pressed("use"):
-						var mousetarget = G.pixel_to_pos(mouse_pos)
-						var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
-						if tile:
+func _on_input(event: InputEvent):
+	if enabled and !locked:
+		if event is InputEventMouseButton:
+			screen_size = get_viewport().size / 2
+			var mouse_pos = get_cursor_position(event.global_position)
+			if event.pressed:
+				if event.button_index == BUTTON_WHEEL_UP:
+					if camera.zoom.x > .5:
+						camera.zoom *= .8
+						sight.scale *= .8
+				elif event.button_index == BUTTON_WHEEL_DOWN:
+					if camera.zoom.x < 2:
+						camera.zoom *= 1.2
+						sight.scale *= 1.2
+				elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
+					pass
+				elif Input.is_action_just_pressed("move"):
+					var mousetarget = G.pixel_to_pos(mouse_pos)
+					var destination = move_to(mousetarget)
+					if destination.distance_to(mousetarget) > 0:
+						tasks.append(["interact", destination.direction_to(mousetarget)])
+					else:
+						tasks.append(["interact", -1])
+				elif Input.is_action_just_pressed("use"):
+					var mousetarget = G.pixel_to_pos(mouse_pos)
+					var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
+					if tile:
+						if aiming != -1:
+							target = tile
+							stop_aim()
+							tasks.append(["ability", aiming])
+						else:
 							if !tile.items.empty():
 								var destination = move_to(mousetarget, 1)
 								tasks.append(["interact", destination.direction_to(mousetarget)])
-								print(G.world.tilemap.get_cell_autotile_coord(mousetarget.x, mousetarget.y))
 							else:
 								cursor.position = G.pos_to_pixel(mousetarget)
 								cursor.show()
-				elif Input.is_action_just_released("move"):
-					cursor.hide()
-				elif Input.is_action_just_released("use"):
-					cursor.hide()
-		elif event is InputEventMouseButton:
-			if event.pressed and Input.is_action_just_pressed("use"):
-				$menu.clear()
-
-func restart():
-	unit.die()
-	print("Player:restart: ", get_tree().change_scene("res://world/World.tscn"))
+			elif Input.is_action_just_released("move"):
+				cursor.hide()
+			elif Input.is_action_just_released("use"):
+				cursor.hide()
+	elif event is InputEventMouseButton:
+		if event.pressed and Input.is_action_just_pressed("use"):
+			$menu.clear()
 
 func _process(_delta):
 	if unit:
@@ -112,6 +101,10 @@ func on_turn():
 		last_pos = unit.pos
 		if G.ui.on:
 			G.ui.clear()
+	if !unit.cooldowns.empty():
+		G.ui._update_cooldowns(unit.cooldowns)
+	if unit.dirty:
+		G.ui.update_inventory()
 
 func remove_steps():
 	for child in steps.get_children():
@@ -136,19 +129,21 @@ func aggro(npcs):
 	for i in npcs:
 		i.find_player(unit)
 
-func on_equipment_update():
-	G.ui.update_inventory()
-
 func interact_tile(tile):
 	if G.ui.on:
 		G.ui.clear()
 	else:
 		cursor.hide()
 		if !tile.items.empty():
-			for item in tile.items:
-				if item.item_type == "object":
-					return
-			G.ui.search_inventory(tile)
+			var item = tile.get_priority_item([unit])
+			if item != null:
+				if item.item_type == "unit":
+					if item.faction == unit.faction:
+						unit.swap(item)
+				elif item.item_type == "object":
+					pass
+				elif item.item_type == "item":
+					G.ui.search_inventory(tile)
 
 func move_to(mousetarget, dist=0):
 	if unit.pos.distance_to(mousetarget) <= dist:
@@ -158,3 +153,11 @@ func move_to(mousetarget, dist=0):
 	path_to(mousetarget, dist)
 	remove_steps()
 	return show_steps()
+
+func aim_ability(idx):
+	Input.set_default_cursor_shape(Input.CURSOR_CROSS)
+	aiming = idx
+
+func stop_aim():
+	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+	aiming = -1

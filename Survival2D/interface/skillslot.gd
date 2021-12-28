@@ -1,19 +1,53 @@
 extends Panel
 
-const SLOT_DISABLED = 0
-const SLOT_LIGHT = 1
-const SLOT_FULL = 2
+const MODE_NORMAL = 0
+const MODE_SELECTED = 1
+const MODE_COOLDOWN = 2
 
+var mode = MODE_NORMAL
+var skill_index: int
 var stylebox = get_stylebox("panel", "")
 var skill
+var skill_type
+
+func set_index(p):
+	skill_index = p
+	$Label.text = str(p + 1)
+
+func set_mode(p):
+	if p == 2:
+		stylebox.region_rect.position.x = 1024
+	elif p == 1:
+		stylebox.region_rect.position.x = 1056
+	else:
+		stylebox.region_rect.position.x = 1088
+	mode = p
 
 func assign(p):
-	skill = G.data.skill_data.get(p)
-	var img_pos = G.data.image_map.get(skill.img)
-	get_node("Sprite").region_rect.position = Vector2(img_pos.x, img_pos.y)
+	skill = p
+	var skill_data = G.data.skill_data.get(p)
+	if skill_data == null:
+		return false
+	skill_type = skill_data.type
+	var img_pos = G.data.get_tile_image_pos(skill_data.img)
+	get_node("Sprite").region_rect.position = img_pos
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
 			if event.button_index == BUTTON_LEFT:
-				G.ui.on_drag(self)
+				activate()
+
+func activate():
+	if mode == MODE_NORMAL:
+		if skill_type == "projectile" or skill_type == "smite":
+			set_mode(MODE_SELECTED)
+			G.you.aim_ability(skill_index)
+
+func _update_cooldown(cd):
+	if cd > 0:
+		set_mode(MODE_COOLDOWN)
+		set_modulate(Color.webgray)
+	else:
+		set_mode(MODE_NORMAL)
+		set_modulate(Color.white)

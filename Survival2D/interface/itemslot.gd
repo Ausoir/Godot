@@ -7,22 +7,21 @@ const SLOT_FULL = 2
 var stylebox = get_stylebox("panel", "")
 var tile
 var item
-var allow_type = SLOT_DISABLED
+var allow_type = SLOT_FULL
 var item_sprite
 var dragged_sprite
 export var part: String = "none"
 
-func make_disabled():
-	stylebox.region_rect.position.x = 992
-	allow_type = SLOT_DISABLED
-
-func make_light():
-	stylebox.region_rect.position.x = 960
-	allow_type = SLOT_LIGHT
-
-func make_full():
-	stylebox.region_rect.position.x = 928
-	allow_type = SLOT_FULL
+func make_mode(p):
+	if p == 2:
+		stylebox.region_rect.position.x = 928
+		allow_type = SLOT_FULL
+	elif p == 1:
+		stylebox.region_rect.position.x = 960
+		allow_type = SLOT_LIGHT
+	else:
+		stylebox.region_rect.position.x = 992
+		allow_type = SLOT_DISABLED
 
 func is_item_valid(p):
 	var valid_part = p.dat.g("part", "any") == part
@@ -32,6 +31,9 @@ func is_item_valid(p):
 	return valid_part and valid_size
 
 func assign(p):
+	var r
+	if item != null:
+		r = item
 	item = p
 	item_sprite = Sprite.new()
 	item_sprite.texture = item.texture
@@ -41,6 +43,7 @@ func assign(p):
 	add_child(item_sprite)
 	if tile != null:
 		tile.add_item(item)
+	return r
 
 func unassign():
 	if item:
@@ -67,35 +70,50 @@ func _on_gui_input(event):
 				else:
 					take_from()
 			elif event.button_index == BUTTON_RIGHT:
-				on_quick_drag()
-
-func on_quick_drag():
-	if tile != null and item != null:
-		if G.you.unit.store(item):
-			unassign()
+				on_quick_action()
+			G.you.unit.update()
 			G.ui.update_inventory()
+
+func on_quick_action():
+	if item != null:
+		if tile == null:
+			var t = item
+			take_from()
+			for child in G.ui.equipment.get_children():
+				if child.place_to(t):
+					return
+		else:
+			if G.you.unit.store(item):
+				unassign()
 
 func take_from():
 	if item != null:
 		var taken = part == "none"
 		taken = taken or (part == "inv" and G.you.unit.unstore(item))
 		taken = taken or (part[0] == "#" and G.you.unit.unsheathe(int(part[1])))
-		taken = taken or G.you.unit.unequip(part)
+		taken = taken or G.you.unit.unequip(part) != null
 		if taken:
 			var r = unassign()
 			if r:
 				G.ui.set_drag_item(r[0], r[1])
 
 func place_to(pitem):
+	var swap = false
+	if item != null:
+		G.ui.set_drag_item(null, null)
+		take_from()
+		swap = true
 	if part == "none":
 		assign(pitem)
 	elif part == "inv":
 		if !G.you.unit.store(pitem):
-			return
+			return false
 	elif part[0] == "#":
 		if !G.you.unit.sheathe(int(part[1]), pitem):
-			return
+			return false
 	else:
 		if !G.you.unit.equip(part, pitem):
-			return
-	G.ui.set_drag_item(null, null)
+			return false
+	if !swap:
+		G.ui.set_drag_item(null, null)
+	return true

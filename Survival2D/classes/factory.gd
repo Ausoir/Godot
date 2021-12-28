@@ -33,41 +33,60 @@ func get_description(name):
 		return DESCRIPTIONS[name]
 	return ""
 
+func make_mob(arg, pos):
+	var mob_data = G.data.mob_data.get(arg)
+	if mob_data != null:
+		var unit_pos = pos
+		for mob in mob_data:
+			var num_range = mob_data[mob]
+			var num = G.rng.randi_range(num_range[0], num_range[1])
+			for _i in range(num):
+				var unit = make_npc(mob, unit_pos)
+				unit_pos = unit_pos.get_rnd_adjacent(unit.col, 8)
+				if unit_pos == null:
+					return
+
+func make_npc(arg, pos):
+	var unit = make_unit(arg, pos)
+	if unit != null:
+		var ctlr = Ai.new()
+		ctlr.assign(unit)
+		return unit
+
 func make_unit(arg, pos):
-	if arg in G.data.unit_data:
-		var item = G.data.unit_data[arg]
+	var unit_data = G.data.unit_data.get(arg)
+	if unit_data != null:
 		var r = Unit.instance()
-		if item[1].get("parts") != null:
+		if unit_data.get("bodyparts") != null:
 			r.set_script(Script_Humanoid)
 		else:
 			r.set_script(Script_Unit)
-		var sprite = G.data.images.get(item[0])
+		var sprite = G.data.images.get(unit_data.img)
 		if !sprite:
 			return
 		r.get_node("Sprite").texture = sprite
 		G.turn.add(r)
 		r.item_name = arg
 		r.item_type = "unit"
-		r.dat = G.Properties.new(item[1])
-		pos.add_item(r)
-		r.get_node("Sprite").get_node("Weapon").texture = G.data.images.get('axe')
+		r.dat = G.Properties.new(unit_data)
+		r.vars = G.Properties.new({})
+		for stat in ["vitality", "stamina", "strength", "agility", "intelligence",
+			"courage", "perception"]:
+			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
+		r.col = r.dat.g("col", "0100")
+		r.create(pos)
 		return r
 
 func make_item(arg, pos):
-	if arg in G.data.item_data:
-		var item = G.data.item_data[arg]
+	var item_data = G.data.item_data.get(arg)
+	if item_data != null:
 		var r = Item.instance()
-		var sprite = G.data.image_map.get(item[1])
-		if !sprite:
-			return
-		r.region_rect.position.x = sprite.x
-		r.region_rect.position.y = sprite.y
+		r.region_rect.position = G.data.get_tile_image_pos(item_data.img)
 		r.item_name = arg
-		r.item_type = item[0]
-		r.dat = G.Properties.new(item[2])
-		pos.add_item(r)
-		if item[0] == "item":
-			r.dat.a("onuse", CMD_GRAB)
+		r.item_type = "item"
+		r.dat = G.Properties.new(item_data)
+		r.col = r.dat.g("col", "0000")
+		r.create(pos)
 		return r
 
 func get_duplicate(this, arr):

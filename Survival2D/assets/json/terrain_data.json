@@ -2,8 +2,9 @@
 	"field": {"mat": "dirt", "col": "0000", "height": 0},
 	"dirt": {"mat": "dirt", "col": "0000", "height": 0},
 	"rock": {"mat": "stone", "col": "1110", "height": 1, "rnd":4},
-	"water": {"mat": "metal", "col": "0010", "height": -1},
-	"stone tile": {"mat": "metal", "col": "0010", "height": -1},
+	"water": {"mat": "metal", "col": "0100", "height": -1},
+	"stone tile": {"mat": "metal", "col": "0000", "height": -1},
 	"stairdown": {"mat": "stone", "col": "0000", "height": 0},
 	"stairup": {"mat": "stone", "col": "0000", "height": 0},
+	"glass": {"mat": "metal", "col": "0110", "height": 1},
 }

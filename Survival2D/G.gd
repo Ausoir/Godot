@@ -4,10 +4,9 @@ const W = 32
 const H = 32
 const HW = 16
 const HH = 16
-const MAX_SIGHT = 15
 const COL_SIGHT = 0
 const COL_TERRAIN = 1
-const COL_UNIT = 2
+const COL_OBJECT = 2
 const COL_MAGIC = 3
 const CARDINALS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
 const UP = 0
@@ -20,6 +19,8 @@ const LEFT = 6
 const UPLEFT = 7
 
 const Properties = preload("res://classes/properties.gd")
+const Influence = preload("res://classes/influence.gd")
+const Gfx = preload("res://classes/gfx.gd")
 var data = preload("res://classes/json.gd").new()
 var command = preload("res://classes/command.gd").new()
 var rng = preload("res://classes/random.gd").new()
@@ -34,9 +35,9 @@ var you
 
 
 func _ready():
-	get_node("/root").call_deferred("add_child", G.ui)
-#	G.rng.randomize()
-	G.rng.set_seed(11111)
+	get_tree().get_root().call_deferred("add_child", G.ui)
+	G.rng.randomize()
+#	G.rng.set_seed(11111)
 	print(G.rng.seed)
 
 func _process(delta):
