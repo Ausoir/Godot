@@ -9,11 +9,22 @@ coord_mapping = (
 )
 
 def run():
-    #out = make_topdown_tileset('rock.png')
-    #out = make_gradient_tileset()
-    out = make_blendmap()
+    out = modify_tileset()
     out.show()
-    out.save('../Survival2D/assets/images/blendmap.png', 'PNG')
+    out.save('../Survival2D/assets/images/t.png', 'PNG')
+
+def modify_tileset():
+    tileset = Image.open('../Survival2D/assets/images/t.png').convert('RGBA')
+    fromx = 0
+    fromy = 0
+    for x in range(33):
+        r = tileset.crop((fromx, fromy, fromx+32, fromy+32))
+        r = r.resize((24, 24), Image.NEAREST)
+        ers = Image.new("RGBA", (32, 32), (255, 255, 255, 0))
+        tileset.paste(ers, (fromx, fromy))
+        tileset.paste(r, (fromx + 4, fromy + 4))
+        fromx += 32
+    return tileset
 
 def make_blendmap():
     east = Image.open('shadow_east.png').convert('RGBA')
@@ -201,12 +212,11 @@ def invert(img):
 
 def glassify(img, mag):
     sx, sy = img.size
-    out = img.copy()
+    out = Image.new('RGBA', (sx, sy), color=0)
     for x in range(sx):
         for y in range(sy):
-            pixel = out.getpixel((x, y))
-            diff = 255-pixel[0]
-            out.putpixel((x, y), (0,0,0,diff))
+            pixel = img.getpixel((x, y))
+            out.putpixel((x, y), (pixel[0],pixel[1],pixel[2],125))
     return out
 
 run()

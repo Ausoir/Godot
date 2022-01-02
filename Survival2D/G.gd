@@ -19,8 +19,8 @@ const LEFT = 6
 const UPLEFT = 7
 
 const Properties = preload("res://classes/properties.gd")
-const Influence = preload("res://classes/influence.gd")
 const Gfx = preload("res://classes/gfx.gd")
+var influence = preload("res://objects/units/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var command = preload("res://classes/command.gd").new()
 var rng = preload("res://classes/random.gd").new()
@@ -76,5 +76,8 @@ puppetsync func synced_cmd(args, host):
 			break
 	return command.tgt
 
-func message(msg):
-	ui.message(msg)
+func msg(msg):
+	ui.message.add(msg)
+
+func fx(host, effect):
+	influence.do(host, effect)

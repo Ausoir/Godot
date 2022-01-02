@@ -181,11 +181,12 @@ func get_beam_to(destination, col_mask, distance):
 	var degree = atan2(destination.y - y, destination.x - x)
 	var current = to_vector()
 	var current_tile
-	while distance > 0 and destination.distance_to(current) > 0:
-		distance -= 1
-		current.x += cos(degree)
-		current.y += sin(degree)
-		current_tile = G.field.get_tile(current.x, current.y)
+	while destination.distance_to(current) > 0 and distance_to(current) < distance:
+		var dx = cos(degree)
+		var dy = sin(degree)
+		current.x += dx
+		current.y += dy
+		current_tile = G.field.get_tile(round(current.x), round(current.y))
 		if current_tile == null or current_tile.is_col(col_mask):
 			break
 	return current_tile

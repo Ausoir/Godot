@@ -71,8 +71,6 @@ func sheathe(idx, item, drop=false):
 	elif belt[idx][0] >= item.dat.g("size", 2):
 		dirty = true
 		belt[idx][1] = item
-		if idx == selected_belt:
-			select_weapon(selected_belt)
 		return true
 	if drop:
 		dirty = true
@@ -88,8 +86,6 @@ func unsheathe(idx):
 	if belt[idx][1] != null:
 		var t = belt[idx][1]
 		belt[idx][1] = null
-		if idx == selected_belt:
-			select_weapon(selected_belt)
 		return t
 	return null
 
@@ -129,15 +125,13 @@ func update():
 	for eq in equipments:
 		var item = equipments[eq]
 		var eq_part = item.dat.g("part")
-		var eq_actives = item.dat.g("actives")
-		var eq_passives = item.dat.g("passives")
-		var eq_space_l = item.dat.g("space_l", 0)
-		var eq_space_s = item.dat.g("space_s", 0)
 		if eq_part == eq:
-			actives += eq_actives
-			passives += eq_passives
-			space_inventory_l += eq_space_l
-			space_inventory_s += eq_space_s
+			actives += item.dat.g("actives", [])
+			passives += item.dat.g("passives", [])
+			space_inventory_l += item.dat.g("space_l", 0)
+			space_inventory_s += item.dat.g("space_s", 0)
+			spd_attack += item.dat.g("attack speed", 0)
+			spd_move += item.dat.g("move speed", 0)
 			if eq == "belt":
 				var count = 0
 				for belt_i in item.dat.g("belt", 0):
@@ -148,18 +142,6 @@ func update():
 		r_inventory.append([2,null])
 	for _i in range(space_inventory_s):
 		r_inventory.append([1,null])
-	for i in range(4):
-		var belt_slot = belt[i]
-		var belt_item = belt_slot[1]
-		if belt_item != null:
-			var item_size = belt_item.dat.g("size", 2)
-			if item_size <= r_belt[i][0]:
-				r_belt[i][1] = belt_item
-				if i == selected_belt:
-					actives += belt_item.dat.g("actives")
-					passives += belt_item.dat.g("passives")
-			else:
-				sheathe(-1, belt_item, true)
 	for i in range(inventory.size()):
 		var item = inventory[i][1]
 		if item != null:
@@ -171,8 +153,25 @@ func update():
 					r_inventory[i][1] = item
 				else:
 					store(item, true)
+	for i in range(4):
+		var belt_slot = belt[i]
+		var belt_item = belt_slot[1]
+		if belt_item != null:
+			var item_size = belt_item.dat.g("size", 2)
+			if item_size <= r_belt[i][0]:
+				r_belt[i][1] = belt_item
+				if i == selected_belt:
+					actives += belt_item.dat.g("actives")
+					passives += belt_item.dat.g("passives")
+					spd_attack += belt_item.dat.g("attack speed", 0)
+					spd_move += belt_item.dat.g("move speed", 0)
+			else:
+				sheathe(-1, belt_item, true)
+	select_weapon(selected_belt)
 	belt = r_belt
 	inventory = r_inventory
+	if controller != null:
+		controller.on_update_equipment()
 
 func drop(item):
 	pos.add_item(item)

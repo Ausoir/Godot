@@ -4,13 +4,16 @@ const SLOT_DISABLED = 0
 const SLOT_LIGHT = 1
 const SLOT_FULL = 2
 
+export var part: String = "none"
 var stylebox = get_stylebox("panel", "")
 var tile
 var item
 var allow_type = SLOT_FULL
-var item_sprite
 var dragged_sprite
-export var part: String = "none"
+
+func _ready():
+	stylebox = stylebox.duplicate()
+	add_stylebox_override("panel", stylebox)
 
 func make_mode(p):
 	if p == 2:
@@ -35,25 +38,25 @@ func assign(p):
 	if item != null:
 		r = item
 	item = p
-	item_sprite = Sprite.new()
-	item_sprite.texture = item.texture
-	item_sprite.region_enabled = true
+	var item_sprite = get_node("Sprite")
 	item_sprite.region_rect = item.region_rect
-	item_sprite.position = rect_size / 2
-	add_child(item_sprite)
-	if tile != null:
-		tile.add_item(item)
+	item_sprite.show()
+	if has_node("Overlay"):
+		$Overlay.hide()
 	return r
 
 func unassign():
 	if item:
-		var t = [item, item_sprite]
+		var item_sprite = get_node("Sprite")
+		var r = [item, item_sprite.duplicate()]
 		if tile:
 			tile.remove_item(item)
-		item_sprite.queue_free()
-		remove_child(item_sprite)
+			G.world.items.remove_child(item)
 		item = null
-		return t
+		item_sprite.hide()
+		if has_node("Overlay"):
+			$Overlay.show()
+		return r
 
 func _on_mouse_entered():
 	G.ui.describe(item)
@@ -103,7 +106,10 @@ func place_to(pitem):
 		G.ui.set_drag_item(null, null)
 		take_from()
 		swap = true
-	if part == "none":
+	if tile != null:
+		pitem.place(tile)
+		assign(pitem)
+	elif part == "none":
 		assign(pitem)
 	elif part == "inv":
 		if !G.you.unit.store(pitem):

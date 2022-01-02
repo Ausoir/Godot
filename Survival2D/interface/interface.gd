@@ -1,8 +1,9 @@
 extends CanvasLayer
 
 const ItemSlot = preload("res://interface/ItemSlot.tscn")
-const SkillSlot = preload("res://interface/SkillSlot.tscn")
+const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
 onready var menu = $Control/Menu
+onready var message = $Control/Message
 onready var tint = $Control/Menu/Tint
 onready var description = $Control/Description
 onready var equipment = $Control/Menu/Tabs/Equipment/VBoxContainer/Equipment
@@ -10,7 +11,7 @@ onready var inventory = $Control/Menu/Tabs/Equipment/VBoxContainer/Inventory
 onready var status = $Control/Menu/Tabs/Status/VBoxContainer
 onready var container = $Control/Menu/Container
 onready var container_grid = $Control/Menu/Container/Container
-onready var skills = $Control/Skills
+onready var abilities = $Control/Abilities
 
 var on = false
 var drag_item
@@ -24,17 +25,15 @@ func _ready():
 
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
-
-func _input(event):
-	if event is InputEventMouseMotion:
-		if drag_item != null:
-			drag_sprite.position = get_viewport().get_mouse_position()
+	if drag_item != null:
+		drag_sprite.position = get_viewport().get_mouse_position()
+	message._on_process()
 
 func _background_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
 			if drag_item != null:
-				G.you.unit.pos.add_item(drag_item)
+				drag_item.place(G.you.unit.pos)
 				set_drag_item(null, null)
 		else:
 			clear()
@@ -57,13 +56,17 @@ func _unhandled_input(event):
 		elif Input.is_action_just_pressed("item_4"):
 			G.you.tasks.append(["swap", 3])
 		elif Input.is_action_just_pressed("quick_1"):
-			skills.get_children()[0].activate()
+			if abilities.get_child_count() > 0:
+				abilities.get_children()[0].activate()
 		elif Input.is_action_just_pressed("quick_2"):
-			skills.get_children()[1].activate()
+			if abilities.get_child_count() > 1:
+				abilities.get_children()[1].activate()
 		elif Input.is_action_just_pressed("quick_3"):
-			skills.get_children()[2].activate()
+			if abilities.get_child_count() > 2:
+				abilities.get_children()[2].activate()
 		elif Input.is_action_just_pressed("quick_4"):
-			skills.get_children()[3].activate()
+			if abilities.get_child_count() > 3:
+				abilities.get_children()[3].activate()
 		elif Input.is_action_just_pressed("menu"):
 			if on:
 				clear()
@@ -107,11 +110,13 @@ func get_vacant_inventory():
 			return child
 
 func update_equipables(equipables):
+	for child in equipment.get_children():
+		child.make_mode(0)
+
 	for slot in equipables:
-		if slot != "wield":
-			var node = equipment.get_node(slot)
-			var allow_type = equipables[slot]
-			node.make_mode(allow_type)
+		var node = equipment.get_node(slot)
+		var allow_type = equipables[slot]
+		node.make_mode(allow_type)
 
 func update_inventory():
 	var unit = G.you.unit
@@ -119,9 +124,9 @@ func update_inventory():
 		for child in inventory.get_children():
 			child.queue_free()
 			inventory.remove_child(child)
-		for child in skills.get_children():
+		for child in abilities.get_children():
 			child.queue_free()
-			skills.remove_child(child)
+			abilities.remove_child(child)
 		for child in equipment.get_children():
 			child.unassign()
 
@@ -147,10 +152,17 @@ func update_inventory():
 			inventory.add_child(newslot)
 		count = 0
 		for i in G.you.unit.actives:
-			var newslot = SkillSlot.instance()
+			var newslot = AbilitySlot.instance()
 			newslot.assign(i)
 			newslot.set_index(count)
-			skills.add_child(newslot)
+			abilities.add_child(newslot)
+			if newslot.skill_type == "buff":
+				if G.you.unit.buffs.has(i):
+					newslot.set_mode(3)
+			if G.you.aiming == count:
+				newslot.set_mode(1)
+			else:
+				newslot.set_mode(0)
 			count += 1
 
 func search_inventory(tile):
@@ -174,6 +186,7 @@ func describe(item):
 			description.display(item)
 
 func _update_cooldowns(cds):
-	for skill in skills.get_children():
-		if skill.skill in cds:
-			skill._update_cooldown(cds[skill.skill])
+	for ability in abilities.get_children():
+		if ability.skill in cds:
+			ability._update_cooldown(cds[ability.skill])
+			update_inventory()

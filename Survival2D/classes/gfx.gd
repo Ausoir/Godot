@@ -10,7 +10,7 @@ func _init(type, p):
 		tween = Tween.new()
 		tween.connect("tween_all_completed", self, "_on_tween_done")
 		add_child(tween)
-	G.world.others.add_child(self)
+	G.world.items.add_child(self)
 
 func shoot(img_name, from, to):
 	graphic = G.data.get_tile_image(img_name)
@@ -25,4 +25,5 @@ func _on_tween_done():
 		graphic.queue_free()
 	if tween != null:
 		tween.queue_free()
-	G.world.others.remove_child(self)
+	G.world.items.remove_child(self)
+	queue_free()

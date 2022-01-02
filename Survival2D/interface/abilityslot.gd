@@ -3,6 +3,7 @@ extends Panel
 const MODE_NORMAL = 0
 const MODE_SELECTED = 1
 const MODE_COOLDOWN = 2
+const MODE_ACTIVE = 3
 
 var mode = MODE_NORMAL
 var skill_index: int
@@ -15,9 +16,14 @@ func set_index(p):
 	$Label.text = str(p + 1)
 
 func set_mode(p):
-	if p == 2:
+	if p == 3:
+		$Overlay.show()
+		stylebox.region_rect.position.x = 1088
+	elif p == 2:
+		$Overlay.hide()
 		stylebox.region_rect.position.x = 1024
 	elif p == 1:
+		$Overlay.hide()
 		stylebox.region_rect.position.x = 1056
 	else:
 		stylebox.region_rect.position.x = 1088
@@ -43,6 +49,10 @@ func activate():
 		if skill_type == "projectile" or skill_type == "smite":
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
+		elif skill_type == "buff":
+			G.you.perform_ability(skill_index)
+	elif mode == MODE_ACTIVE:
+		G.you.perform_ability(skill_index)
 
 func _update_cooldown(cd):
 	if cd > 0:

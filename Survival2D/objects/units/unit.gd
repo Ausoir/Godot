@@ -1,5 +1,7 @@
 extends "res://objects/item.gd"
 
+const Buffs = preload("res://objects/units/buffs.gd")
+
 onready var animation = $Animation
 onready var animtree = $AnimationTree
 onready var sprite = $Sprite
@@ -13,7 +15,11 @@ var dirty = false
 var controller
 var actives
 var passives
+var spd_attack = 1
+var spd_move = 1
+var defense = 0
 var cooldowns = {}
+var buffs = Buffs.new(self)
 
 func _ready():
 	update()
@@ -25,11 +31,15 @@ func update():
 		actives.append(i)
 	for i in dat.g("passives", []):
 		passives.append(i)
+	var r_spd_atk = dat.g("attack speed", 1)
+	var r_spd_move = dat.g("move speed", 1)
+	spd_attack = r_spd_atk + vars.g("attack speed", 0)
+	spd_move = r_spd_move + vars.g("move speed", 0)
 
-func ability(idx, target):
+func ability(idx):
 	if idx < actives.size():
 		var active = actives[idx]
-		G.cmd([["cast", active, target]], self)
+		G.fx(self, active)
 
 func set_state(p, force=false):
 	state = p
@@ -38,13 +48,16 @@ func set_state(p, force=false):
 			animtree["parameters/state/current"] = 0
 		elif state == "move":
 			animtree["parameters/state/current"] = 1
-			delay = dat.g("move speed", 2)
-			animtree["parameters/walkspeed/scale"] = 1.5
+			delay = max(1, spd_move)
+			set_move_delay_speed(delay)
+			animtree["parameters/walkspeed/scale"] = 1 / (delay*.25)
+		elif state == "attack":
+			animtree["parameters/state/current"] = 2
+			delay = spd_attack
 
-func _on_turn():
+func on_turn():
 	if delay == 0:
-		if controller:
-			controller.on_turn()
+		controller.on_turn()
 	else:
 		if delay > 0:
 			delay -= 1
@@ -67,7 +80,6 @@ func face(p):
 		skeleton.scale.x *= -1
 
 func die():
-	if controller:
-		controller.queue_free()
+	controller.queue_free()
 	G.turn.remove(self)
 	queue_free()

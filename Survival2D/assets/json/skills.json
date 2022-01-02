@@ -1,0 +1,55 @@
+{
+	"bash": {
+		"img": "throw",
+		"type": "smite",
+		"delay": 2,
+		"range": 1,
+		"animation": "attack",
+		"restriction": ["foe", "smaller size", "same size"],
+		"onstart": [["bash", 1]],
+		"flags": []
+	},
+	
+	"throw rock": {
+		"img": "throw",
+		"type": "projectile",
+		"delay": 2,
+		"range": 4,
+		"damage": 4,
+		"cooldown": 4,
+		"onstart": [["expend", 1],["gfx", "projectile", "rock"]],
+		"onend": [["gfx", "target", "bash"]],
+		"flags": []
+	},
+	"fly": {
+		"img": "fly",
+		"type": "buff",
+		"delay": 2,
+		"duration": -1,
+		"onstart": [["swift", -2]],
+		"onend": [["swift", 2],["cooldown", "fly", 4]],
+		"onstack": [["end"]],
+		"flags": []
+	},
+	"materialize": {
+		"img": "fly",
+		"type": "smite",
+		"delay": 8,
+		"range": 1,
+		"duration": 8,
+		"restriction": ["unit"],
+		"onend": [["materialize"]],
+		"flags": ["once"]
+	},
+	"passwall": {
+		"img": "throw",
+		"type": "smite",
+		"delay": 2,
+		"range": 1,
+		"duration": 4,
+		"restriction": ["solid"],
+		"onstart": [["color", "brown"]],
+		"onend": [["move"]],
+		"flags": []
+	},
+}

@@ -10,12 +10,13 @@
 		"weight": 10,
 		"damage": 4,
 		"haste": 1,
+		"move speed": 1,
 		"light": ["red", 4, true],
 		"size": 1,
 		"desc": "A rock."
 	},
 	"branch": {
-		"img": "rock",
+		"img": "branch",
 		"sprite": "axe",
 		"part": "item",
 		"actives": [],

@@ -73,8 +73,10 @@ func make_unit(arg, pos):
 		for stat in ["vitality", "stamina", "strength", "agility", "intelligence",
 			"courage", "perception"]:
 			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
-		r.col = r.dat.g("col", "0100")
-		r.create(pos)
+		r.vars.a("damage", 0)
+		r.vars.a("defense", 0)
+		r.col = r.dat.g("col", "0110")
+		r.place(pos)
 		return r
 
 func make_item(arg, pos):
@@ -85,8 +87,9 @@ func make_item(arg, pos):
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = G.Properties.new(item_data)
+		r.vars = G.Properties.new({})
 		r.col = r.dat.g("col", "0000")
-		r.create(pos)
+		r.place(pos)
 		return r
 
 func get_duplicate(this, arr):

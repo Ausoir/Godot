@@ -28,9 +28,12 @@ func on_turn():
 		elif task[0] == "interact":
 			interact(task[1])
 		elif task[0] == "ability":
-			unit.ability(task[1], target)
+			unit.ability(task[1])
+		elif task[0] == "attack":
+			unit.ability(task[1])
 		elif task[0] == "swap":
 			unit.select_weapon(task[1])
+			unit.dirty = true
 
 func path_to(pos, dist=0):
 	pathing.result = []

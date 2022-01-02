@@ -1,7 +1,7 @@
 extends Node
 
 
-var takers = [[],[],[],[],[],[],[],[]]
+var takers = [[],[],[],[]]
 var add_idx = 0
 var turn_idx = 0
 
@@ -18,9 +18,12 @@ func add(p):
 
 func remove(p):
 	for i in takers:
-		i.erase(p)
+		var index = i.find(p)
+		if index != -1:
+			i.remove(index)
+			return
 
 func on_process():
 	for i in takers[turn_idx]:
-		i._on_turn()
+		i.on_turn()
 	increment_index(turn_idx)

@@ -67,5 +67,5 @@ func run(args):
 	elif command == "menu":
 		G.ui.display(args[1])
 	elif command == "cast":
-		G.Influence.new(host, args[1], args[2])
+		host.buffs.add(args[1], args[2])
 	return tgt

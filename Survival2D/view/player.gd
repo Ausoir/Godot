@@ -93,6 +93,7 @@ func get_cursor_position(mouse):
 					(mouse.y - screen_size.y)/zoom + camera.position.y)
 
 func on_turn():
+	var cds = !unit.cooldowns.empty()
 	.on_turn()
 	remove_steps()
 	show_steps()
@@ -101,10 +102,11 @@ func on_turn():
 		last_pos = unit.pos
 		if G.ui.on:
 			G.ui.clear()
-	if !unit.cooldowns.empty():
+	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
-	if unit.dirty:
-		G.ui.update_inventory()
+
+func on_update_equipment():
+	G.ui.update_inventory()
 
 func remove_steps():
 	for child in steps.get_children():
@@ -140,6 +142,8 @@ func interact_tile(tile):
 				if item.item_type == "unit":
 					if item.faction == unit.faction:
 						unit.swap(item)
+					else:
+						tasks.append(["attack", unit.pos.direction_to(tile)])
 				elif item.item_type == "object":
 					pass
 				elif item.item_type == "item":
@@ -161,3 +165,7 @@ func aim_ability(idx):
 func stop_aim():
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	aiming = -1
+	unit.dirty = true
+
+func perform_ability(idx):
+	tasks.append(["ability", idx])

@@ -10,15 +10,14 @@ var pos
 var prev_pos
 var faction = 0
 var move_delay = 0
-var move_delay_speed = 1
+var move_delay_speed = 3
 var hp = Vector2()
 
-func create(p):
+func place(p):
 	p.add_item(self)
 	G.world.items.add_child(self)
 	position = p.to_pixel()
 	pos = p
-	p.update_col()
 
 func remove():
 	pos.remove_item(self)
@@ -41,7 +40,6 @@ func relocate(to):
 		face(-1)
 	pos.remove_item(self)
 	move_delay = 1
-	move_delay_speed = 3
 	set_process(true)
 	prev_pos = pos
 	to.add_item(self)
@@ -49,6 +47,10 @@ func relocate(to):
 		show()
 	else:
 		hide()
+
+func set_move_delay_speed(p):
+	var delay2msec = p * .5 #(1.0/8) * G.turn.taker.size()
+	move_delay_speed = 1 + 1.5 / delay2msec
 
 func swap(with):
 	var t = pos

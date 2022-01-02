@@ -1,4 +1,7 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://assets/images/units/kenku.png" type="Texture" id=1]
+[ext_resource path="res://assets/images/unit_shade.png" type="Texture" id=2]
 
 [sub_resource type="Animation" id=1]
 resource_name = "attack"
@@ -71,7 +74,6 @@ tracks/2/keys = {
 }
 
 [sub_resource type="Animation" id=4]
-length = 0.8
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Body:position")
@@ -80,10 +82,10 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 3.57166, -1.78583 ), Vector2( 0.198425, -5.35748 ), Vector2( -1.98425, -2.97638 ), Vector2( 0.198425, -5.35748 ) ]
+"values": [ Vector2( 0, 0 ), Vector2( 3.03645, -5.77793 ), Vector2( 0.198425, -5.35748 ), Vector2( -1.98425, -2.97638 ), Vector2( 0, 0 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Skeleton2D/Body:rotation_degrees")
@@ -92,10 +94,10 @@ tracks/1/loop_wrap = true
 tracks/1/imported = false
 tracks/1/enabled = true
 tracks/1/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ 20.133, -7.29066, -16.7828, -7.29066 ]
+"values": [ 0.0, 8.0, -7.29066, -16.7828, 0.0 ]
 }
 tracks/2/type = "value"
 tracks/2/path = NodePath("Skeleton2D/Body/Head:position")
@@ -104,40 +106,47 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 4.83743, -10.9136 ), Vector2( 0, -16 ), Vector2( -4.55033, -10.533 ), Vector2( 0, -16 ) ]
+"values": [ Vector2( 0, -16 ), Vector2( 3.63805, -14.2823 ), Vector2( 0, -16 ), Vector2( -4.55033, -10.533 ), Vector2( 0, -16 ) ]
 }
 
 [sub_resource type="AnimationNodeAnimation" id=5]
+animation = "attack"
+
+[sub_resource type="AnimationNodeAnimation" id=6]
 animation = "standing"
 
-[sub_resource type="AnimationNodeTransition" id=6]
-input_count = 2
-xfade_time = 0.1
+[sub_resource type="AnimationNodeTransition" id=7]
+input_count = 3
+xfade_time = 0.2
 input_0/name = "idle"
 input_0/auto_advance = false
 input_1/name = "walk"
 input_1/auto_advance = false
+input_2/name = "attack"
+input_2/auto_advance = false
 
-[sub_resource type="AnimationNodeAnimation" id=7]
+[sub_resource type="AnimationNodeAnimation" id=8]
 animation = "walk"
 
-[sub_resource type="AnimationNodeTimeScale" id=8]
+[sub_resource type="AnimationNodeTimeScale" id=9]
 
-[sub_resource type="AnimationNodeBlendTree" id=9]
-graph_offset = Vector2( -200, 53 )
-nodes/idle/node = SubResource( 5 )
+[sub_resource type="AnimationNodeBlendTree" id=10]
+graph_offset = Vector2( -328, 70 )
+nodes/attack/node = SubResource( 5 )
+nodes/attack/position = Vector2( 40, 320 )
+nodes/idle/node = SubResource( 6 )
 nodes/idle/position = Vector2( 40, 80 )
 nodes/output/position = Vector2( 620, 140 )
-nodes/state/node = SubResource( 6 )
+nodes/state/node = SubResource( 7 )
 nodes/state/position = Vector2( 360, 120 )
-nodes/walk/node = SubResource( 7 )
+nodes/walk/node = SubResource( 8 )
 nodes/walk/position = Vector2( -140, 200 )
-nodes/walkspeed/node = SubResource( 8 )
+nodes/walkspeed/node = SubResource( 9 )
 nodes/walkspeed/position = Vector2( 40, 200 )
-node_connections = [ "state", 0, "idle", "state", 1, "walkspeed", "output", 0, "state", "walkspeed", 0, "walk" ]
+node_connections = [ "state", 0, "idle", "state", 1, "walkspeed", "state", 2, "attack", "output", 0, "state", "walkspeed", 0, "walk" ]
 
 [node name="unit" type="Node2D"]
 z_index = 1
@@ -160,15 +169,20 @@ anims/standing = SubResource( 3 )
 anims/walk = SubResource( 4 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 9 )
+tree_root = SubResource( 10 )
 anim_player = NodePath("../Animation")
 active = true
 parameters/state/current = 0
 parameters/walkspeed/scale = 1.0
 
+[node name="Shadow" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+region_rect = Rect2( 0, 0, 32, 32 )
+
 [node name="Sprite" type="Polygon2D" parent="."]
 offset = Vector2( -16, -24 )
 antialiased = true
+texture = ExtResource( 1 )
 skeleton = NodePath("../Skeleton2D")
 polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )

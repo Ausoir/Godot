@@ -12,11 +12,11 @@ func _init():
 	for i in timages:
 		images[i] = load(timages[i])
 	image_map = get_json_data("res://assets/json/image_map.json")
-	terrain_data = get_json_data("res://assets/json/terrain_data.json")
-	item_data = get_json_data("res://assets/json/item_data.json")
-	unit_data = get_json_data("res://assets/json/unit_data.json")
-	mob_data = get_json_data("res://assets/json/mob_data.json")
-	skill_data = get_json_data("res://assets/json/skill_data.json")
+	terrain_data = get_json_data("res://assets/json/terrains.json")
+	item_data = get_json_data("res://assets/json/items.json")
+	unit_data = get_json_data("res://assets/json/units.json")
+	mob_data = get_json_data("res://assets/json/mobs.json")
+	skill_data = get_json_data("res://assets/json/skills.json")
 
 func get_tile_image_pos(img):
 	var r = image_map.get(img)

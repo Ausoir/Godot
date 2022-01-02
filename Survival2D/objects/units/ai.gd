@@ -13,12 +13,12 @@ func on_turn():
 
 func perceive():
 	var r
-	var min_dist = 999
+	var min_dist = unit.vars.g("perception", 8)
 	for player in G.world.players.get_children():
-		var t = unit.pos.get_beam_to(player.unit.pos, G.COL_SIGHT, unit.vars.g("perception", 9))
-		if t != null and t == player.unit.pos:
-			var dist = unit.pos.distance_to(player.unit.pos)
-			if dist < min_dist:
+		var dist = unit.pos.distance_to(player.unit.pos)
+		if dist < min_dist:
+			var t = unit.pos.get_beam_to(player.unit.pos, G.COL_SIGHT, unit.vars.g("perception", 9))
+			if t != null and t == player.unit.pos:
 				min_dist = dist
 				r = player.unit
 	foe = r
