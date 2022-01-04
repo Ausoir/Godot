@@ -1,3 +1,4 @@
+var item_type = "tile"
 var x
 var y
 var terrain
@@ -36,7 +37,13 @@ func set_terrain(val):
 		terrain = val
 		var img = val
 		if "rnd" in data:
-			img = val + str(G.rng.randi_range(1, data.rnd))
+			var roll = G.rng.randi_range(1, 100)
+			var count = 1
+			for i in data.rnd:
+				if roll <= i:
+					img = val + str(count)
+					break
+				count += 1
 		var tile_image = G.world.tileset.find_tile_by_name(img)
 		G.world.tilemap.set_cell(x, y, tile_image)
 		orig_col = data.col
@@ -97,7 +104,7 @@ func apply_shade_from_dir(shades):
 	elif shades[2] == "1":
 		shade = 3
 	elif shades[4] == "1":
-		if shades[1] == "0":
+		if shades[3] == "0":
 			shade = 13
 		else:
 			shade = 5
@@ -172,22 +179,24 @@ func get_adjacent(dir, val=1):
 func distance_to(tile):
 	return max(abs(x - tile.x), abs(y - tile.y))
 
-func get_object():
+func get_items_by_type(p):
+	var r = []
 	for i in items:
-		if i.item_type == "object":
-			return i
+		if i.item_type == p:
+			r.append(i)
+	return r
 
-func get_beam_to(destination, col_mask, distance):
+func get_beam_to(destination, col_masks, distance):
 	var degree = atan2(destination.y - y, destination.x - x)
 	var current = to_vector()
-	var current_tile
-	while destination.distance_to(current) > 0 and distance_to(current) < distance:
+	var current_tile = self
+	while current_tile != destination and distance_to(current) < distance:
 		var dx = cos(degree)
 		var dy = sin(degree)
 		current.x += dx
 		current.y += dy
 		current_tile = G.field.get_tile(round(current.x), round(current.y))
-		if current_tile == null or current_tile.is_col(col_mask):
+		if current_tile == null or current_tile.is_cols(col_masks):
 			break
 	return current_tile
 

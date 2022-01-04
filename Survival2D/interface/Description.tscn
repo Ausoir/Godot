@@ -1,39 +1,48 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://assets/font1.tres" type="DynamicFont" id=1]
 [ext_resource path="res://interface/description.gd" type="Script" id=2]
+[ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=3]
 
-[sub_resource type="StyleBoxFlat" id=15]
+[sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.2, 0.231373, 0.309804, 1 )
 
+[sub_resource type="DynamicFont" id=2]
+font_data = ExtResource( 3 )
+
 [node name="Description" type="PanelContainer"]
-visible = false
-margin_right = 65.0
-margin_bottom = 65.0
+margin_right = 128.0
+margin_bottom = 62.0
+rect_min_size = Vector2( 160, 0 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Control" type="VBoxContainer" parent="."]
-margin_left = 6.0
-margin_top = 4.0
-margin_right = 59.0
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 153.0
 margin_bottom = 61.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Title" type="Label" parent="Control"]
-margin_right = 53.0
+margin_right = 146.0
 margin_bottom = 29.0
-custom_styles/normal = SubResource( 15 )
+custom_styles/normal = SubResource( 1 )
 custom_fonts/font = ExtResource( 1 )
 text = "Title"
 align = 1
 
-[node name="Content" type="Label" parent="Control"]
+[node name="Content" type="RichTextLabel" parent="Control"]
 margin_top = 33.0
-margin_right = 53.0
-margin_bottom = 57.0
-text = "Title"
+margin_right = 146.0
+margin_bottom = 54.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/normal_font = SubResource( 2 )
+tab_size = 2
+fit_content_height = true
+scroll_active = false

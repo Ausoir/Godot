@@ -1,6 +1,6 @@
 {
 	"kenku peasants": {
-		"kenku": [1, 5],
-		"man": [2, 4],
+		"zombie": [1, 4],
+		"human": [0, 1],
 	}
 }

@@ -9,7 +9,10 @@ func on_turn():
 	if foe == null:
 		perceive()
 	if foe != null:
-		think()
+		if !is_instance_valid(foe):
+			foe = null
+		else:
+			think()
 
 func perceive():
 	var r
@@ -17,11 +20,13 @@ func perceive():
 	for player in G.world.players.get_children():
 		var dist = unit.pos.distance_to(player.unit.pos)
 		if dist < min_dist:
-			var t = unit.pos.get_beam_to(player.unit.pos, G.COL_SIGHT, unit.vars.g("perception", 9))
+			var t = unit.pos.get_beam_to(player.unit.pos, "1000", unit.vars.g("perception", 9))
 			if t != null and t == player.unit.pos:
 				min_dist = dist
 				r = player.unit
 	foe = r
 
 func think():
-	path_to(foe.pos.to_vector(), reach)
+	path_to(foe.pos, reach)
+	target = foe.pos
+	tasks.append(["attack", foe.pos])

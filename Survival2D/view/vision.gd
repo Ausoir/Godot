@@ -11,13 +11,12 @@ var sight_frame = 0
 var param_last_pos
 var param_pos
 
-func g_event():
+func _process(_delta):
 	if processing_frame == 1:
 		param_pos.sight_frame = sight_frame
 		for i in range(8):
 			cast_sight(param_pos, 1, 1.0, 0.0, octant_flip[i], 0)
 		processing_frame = 2
-		G.events.append(funcref(self, "g_event"))
 	elif processing_frame == 2:
 		for y in range(-sight_range, sight_range+1):
 			for x in range(-sight_range, sight_range+1):
@@ -27,14 +26,25 @@ func g_event():
 						G.world.set_light(param_last_pos.x+x, param_last_pos.y+y)
 					elif tile.sight_frame == sight_frame - 1:
 						G.world.set_dark(param_last_pos.x+x, param_last_pos.y+y)
+		processing_frame = 3
+	elif processing_frame == 3:
+		for y in range(-sight_range, sight_range+1):
+			for x in range(-sight_range, sight_range+1):
+				var tile = G.field.get_tile(param_pos.x+x, param_pos.y+y)
+				if tile:
+					if tile.sight_frame == sight_frame:
+						G.world.set_light(param_pos.x+x, param_pos.y+y)
+					elif tile.sight_frame == sight_frame - 1:
+						G.world.set_dark(param_pos.x+x, param_pos.y+y)
 		sight_frame += 1
 		processing_frame = 0
+		set_process(false)
 
 func update(last_pos, pos):
 	param_last_pos = last_pos
 	param_pos = pos
+	set_process(true)
 	processing_frame = 1
-	G.events.append(funcref(self, "g_event"))
 
 func cast_sight(camera, row, start, end, flips, depth):
 	if start < end:

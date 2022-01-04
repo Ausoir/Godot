@@ -10,19 +10,16 @@ coord_mapping = (
 
 def run():
     out = modify_tileset()
-    out.show()
-    out.save('../Survival2D/assets/images/t.png', 'PNG')
 
 def modify_tileset():
-    tileset = Image.open('../Survival2D/assets/images/t.png').convert('RGBA')
+    tileset = Image.open('../Survival2D/assets/images/gui/Untitled.png').convert('RGBA')
     fromx = 0
     fromy = 0
     for x in range(33):
         r = tileset.crop((fromx, fromy, fromx+32, fromy+32))
-        r = r.resize((24, 24), Image.NEAREST)
-        ers = Image.new("RGBA", (32, 32), (255, 255, 255, 0))
-        tileset.paste(ers, (fromx, fromy))
-        tileset.paste(r, (fromx + 4, fromy + 4))
+        new = Image.new("RGBA", (32, 32), (255, 255, 255, 0))
+        new.paste(r, (0, 0))
+        new.save('../Survival2D/assets/images/gui/eq_part' + str(x) + '.png', 'PNG')
         fromx += 32
     return tileset
 

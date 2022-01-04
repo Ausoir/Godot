@@ -9,6 +9,7 @@ const COL_TERRAIN = 1
 const COL_OBJECT = 2
 const COL_MAGIC = 3
 const CARDINALS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
+const STATS = ["vitality", "strength", "intelligence", "agility", "perception"]
 const UP = 0
 const UPRIGHT = 1
 const RIGHT = 2
@@ -20,10 +21,12 @@ const UPLEFT = 7
 
 const Properties = preload("res://classes/properties.gd")
 const Gfx = preload("res://classes/gfx.gd")
+var Damage_Label = load("res://objects/particles/Damage_Label.tscn")
 var influence = preload("res://objects/units/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var command = preload("res://classes/command.gd").new()
 var rng = preload("res://classes/random.gd").new()
+var trng = preload("res://classes/random.gd").new()
 var time = preload("res://classes/time.gd").new()
 var turn = preload("res://classes/turn.gd").new()
 var field = preload("res://world/field.gd").new()
@@ -60,6 +63,7 @@ func vector_to_dir(x, y):
 		if i[0] == x and i[1] == y:
 			return count
 		count += 1
+	return -1
 
 func get_tile(pos):
 	return field.tiles[pos.y][pos.x]
@@ -81,3 +85,18 @@ func msg(msg):
 
 func fx(host, effect):
 	influence.do(host, effect)
+
+func make_particle(arg, pos, args=null):
+	var r = G.data.get_particle(arg)
+	r.position = pos
+	world.others.add_child(r)
+	if args != null:
+		r.run_details(args)
+	return r
+
+func display_damage(pos, dmg, green=1):
+	var r = Damage_Label.instance()
+	r.rect_position = pos
+	r.rect_position.y -= HH
+	world.others.add_child(r)
+	r.set_damage(str(dmg), green)

@@ -1,11 +1,92 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=30 format=2]
 
-[ext_resource path="res://assets/images/units/kenku.png" type="Texture" id=1]
+[ext_resource path="res://assets/images/units/human_female.png" type="Texture" id=1]
 [ext_resource path="res://assets/images/unit_shade.png" type="Texture" id=2]
 
 [sub_resource type="Animation" id=1]
 resource_name = "attack"
-length = 0.6
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Body/Head:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -16 ), Vector2( -7.67318, -11.7955 ), Vector2( 0, -16 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Body/Head:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ -90.0, -120.0, -90.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Body:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.1, 0.3, 0.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -1.15623, -4.62493 ), Vector2( -4.83515, 0 ), Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=26]
+resource_name = "down"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprites/Sprite:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -25.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 8.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprites/Sprite:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 8 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.5
+
+[sub_resource type="Animation" id=4]
+resource_name = "headbutt"
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Body/Head:position")
 tracks/0/interp = 1
@@ -31,11 +112,187 @@ tracks/1/keys = {
 "values": [ -90.0, -90.0, -120.0, -90.0 ]
 }
 
-[sub_resource type="Animation" id=2]
-resource_name = "grab"
+[sub_resource type="Animation" id=5]
+resource_name = "hit"
 length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Body/Head:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 2.31246, -9.9035 ), Vector2( 5.48685, -10.7654 ), Vector2( 0, -16 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Body/Head:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 0.75 ), Vector2( 1, 1.2 ), Vector2( 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Body/Head:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ -90.0, -95.0, -90.0 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Skeleton2D/Body:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 4.94026, -3.67892 ), Vector2( 0, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Skeleton2D/Body:rotation_degrees")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 15.0, 0.0 ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Skeleton2D/Body:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 0.8 ), Vector2( 1, 1 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Sprites/Sprite:material:shader_param/red")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=6]
+resource_name = "kick"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Body:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -3.4687, -4.20448 ), Vector2( -8.19875, -7.67318 ), Vector2( 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Body:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 30.0, 59.9999, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Body/Head:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.1, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ -90.0002, -105.0, -90.0002 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Skeleton2D/Body/Head:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -16 ), Vector2( 7.84262, -11.7148 ), Vector2( 0, -16 ) ]
+}
+
+[sub_resource type="Animation" id=7]
+resource_name = "knockout"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Body:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 5.88627, -8.93452 ), Vector2( 9.46008, -2.44385 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprites/Sprite:material:shader_param/redness")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Body:rotation_degrees")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.1, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 30.0, 89.9999 ]
+}
+
+[sub_resource type="Animation" id=8]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Body:position")
 tracks/0/interp = 1
@@ -72,8 +329,160 @@ tracks/2/keys = {
 "update": 0,
 "values": [ Vector2( 0, -16 ) ]
 }
+tracks/3/type = "value"
+tracks/3/path = NodePath("Sprites/Sprite:texture_offset")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Skeleton2D/Body:scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Skeleton2D/Body/Head:rotation_degrees")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -90.0002 ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Skeleton2D/Body/Head:scale")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Sprites/Sprite:rotation_degrees")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath(".:rotation_degrees")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("Sprites/Sprite:position")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ) ]
+}
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=27]
+resource_name = "up"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprites/Sprite:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 35.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ -10.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Sprites/Sprite:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0, -5 ) ]
+}
+
+[sub_resource type="Animation" id=28]
+resource_name = "wait"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Body:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.6, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1, 0.9 ), Vector2( 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Body/Head:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -16 ), Vector2( -2, -14 ), Vector2( 0, -16 ) ]
+}
+
+[sub_resource type="Animation" id=10]
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Body:position")
@@ -112,14 +521,29 @@ tracks/2/keys = {
 "values": [ Vector2( 0, -16 ), Vector2( 3.63805, -14.2823 ), Vector2( 0, -16 ), Vector2( -4.55033, -10.533 ), Vector2( 0, -16 ) ]
 }
 
-[sub_resource type="AnimationNodeAnimation" id=5]
+[sub_resource type="AnimationNodeAnimation" id=11]
 animation = "attack"
 
-[sub_resource type="AnimationNodeAnimation" id=6]
+[sub_resource type="AnimationNodeAnimation" id=12]
+animation = "down"
+
+[sub_resource type="AnimationNodeAnimation" id=13]
+animation = "headbutt"
+
+[sub_resource type="AnimationNodeAnimation" id=14]
+animation = "hit"
+
+[sub_resource type="AnimationNodeAnimation" id=15]
 animation = "standing"
 
-[sub_resource type="AnimationNodeTransition" id=7]
-input_count = 3
+[sub_resource type="AnimationNodeAnimation" id=16]
+animation = "kick"
+
+[sub_resource type="AnimationNodeAnimation" id=17]
+animation = "knockout"
+
+[sub_resource type="AnimationNodeTransition" id=18]
+input_count = 12
 xfade_time = 0.2
 input_0/name = "idle"
 input_0/auto_advance = false
@@ -127,28 +551,94 @@ input_1/name = "walk"
 input_1/auto_advance = false
 input_2/name = "attack"
 input_2/auto_advance = false
+input_3/name = "hit"
+input_3/auto_advance = false
+input_4/name = "headbutt"
+input_4/auto_advance = false
+input_5/name = "knockout"
+input_5/auto_advance = false
+input_6/name = "kick"
+input_6/auto_advance = false
+input_7/name = "wait"
+input_7/auto_advance = false
+input_8/name = "state 8"
+input_8/auto_advance = false
+input_9/name = "state 9"
+input_9/auto_advance = false
+input_10/name = "state 10"
+input_10/auto_advance = false
+input_11/name = "state 11"
+input_11/auto_advance = false
 
-[sub_resource type="AnimationNodeAnimation" id=8]
+[sub_resource type="AnimationNodeTimeScale" id=19]
+
+[sub_resource type="AnimationNodeAnimation" id=20]
+animation = "up"
+
+[sub_resource type="AnimationNodeAdd3" id=21]
+filter_enabled = true
+filters = [ ".:position", ".:rotation_degrees", "Shadow:rotation_degrees", "Skeleton2D:scale", "Sprite:rotation_degrees", "Sprite:scale" ]
+
+[sub_resource type="AnimationNodeAnimation" id=29]
+animation = "wait"
+
+[sub_resource type="AnimationNodeAnimation" id=22]
 animation = "walk"
 
-[sub_resource type="AnimationNodeTimeScale" id=9]
-
-[sub_resource type="AnimationNodeBlendTree" id=10]
-graph_offset = Vector2( -328, 70 )
-nodes/attack/node = SubResource( 5 )
-nodes/attack/position = Vector2( 40, 320 )
-nodes/idle/node = SubResource( 6 )
+[sub_resource type="AnimationNodeBlendTree" id=23]
+graph_offset = Vector2( -229.75, 180.75 )
+nodes/attack/node = SubResource( 11 )
+nodes/attack/position = Vector2( 40, 280 )
+nodes/down/node = SubResource( 12 )
+nodes/down/position = Vector2( 460, 0 )
+nodes/headbutt/node = SubResource( 13 )
+nodes/headbutt/position = Vector2( 40, 480 )
+nodes/hit/node = SubResource( 14 )
+nodes/hit/position = Vector2( 40, 380 )
+nodes/idle/node = SubResource( 15 )
 nodes/idle/position = Vector2( 40, 80 )
-nodes/output/position = Vector2( 620, 140 )
-nodes/state/node = SubResource( 7 )
-nodes/state/position = Vector2( 360, 120 )
-nodes/walk/node = SubResource( 8 )
-nodes/walk/position = Vector2( -140, 200 )
-nodes/walkspeed/node = SubResource( 9 )
-nodes/walkspeed/position = Vector2( 40, 200 )
-node_connections = [ "state", 0, "idle", "state", 1, "walkspeed", "state", 2, "attack", "output", 0, "state", "walkspeed", 0, "walk" ]
+nodes/kick/node = SubResource( 16 )
+nodes/kick/position = Vector2( 220, 180 )
+nodes/knockout/node = SubResource( 17 )
+nodes/knockout/position = Vector2( 220, 80 )
+nodes/output/position = Vector2( 920, 120 )
+nodes/state/node = SubResource( 18 )
+nodes/state/position = Vector2( 420, 120 )
+nodes/timescale/node = SubResource( 19 )
+nodes/timescale/position = Vector2( 600, 120 )
+nodes/up/node = SubResource( 20 )
+nodes/up/position = Vector2( 600, 0 )
+nodes/vertical/node = SubResource( 21 )
+nodes/vertical/position = Vector2( 760, 60 )
+nodes/wait/node = SubResource( 29 )
+nodes/wait/position = Vector2( 220, 280 )
+nodes/walk/node = SubResource( 22 )
+nodes/walk/position = Vector2( 40, 180 )
+node_connections = [ "state", 0, "idle", "state", 1, "walk", "state", 2, "attack", "state", 3, "hit", "state", 4, "headbutt", "state", 5, "knockout", "state", 6, "kick", "state", 7, "wait", "output", 0, "vertical", "vertical", 0, "up", "vertical", 1, "timescale", "vertical", 2, "down", "timescale", 0, "state" ]
+
+[sub_resource type="Shader" id=24]
+code = "shader_type canvas_item;
+
+uniform float red : hint_range(0,1);
+uniform float yellow : hint_range(0,1);
+
+void fragment(){
+    vec4 main_texture = texture(TEXTURE, UV);
+	float r = max(yellow, max(main_texture.r, red));
+	float g = max(yellow, main_texture.g - red);
+	float b = max(0, main_texture.b - red);
+    COLOR = vec4(r, g, b, main_texture.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=25]
+resource_local_to_scene = true
+shader = SubResource( 24 )
+shader_param/red = 0.0
+shader_param/yellow = 0.0
 
 [node name="unit" type="Node2D"]
+position = Vector2( 0, 5 )
 z_index = 1
 
 [node name="Skeleton2D" type="Skeleton2D" parent="."]
@@ -164,34 +654,37 @@ default_length = 1.0
 
 [node name="Animation" type="AnimationPlayer" parent="."]
 anims/attack = SubResource( 1 )
-anims/grab = SubResource( 2 )
-anims/standing = SubResource( 3 )
-anims/walk = SubResource( 4 )
+anims/down = SubResource( 26 )
+anims/grab = SubResource( 3 )
+anims/headbutt = SubResource( 4 )
+anims/hit = SubResource( 5 )
+anims/kick = SubResource( 6 )
+anims/knockout = SubResource( 7 )
+anims/standing = SubResource( 8 )
+anims/up = SubResource( 27 )
+anims/wait = SubResource( 28 )
+anims/walk = SubResource( 10 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 10 )
+tree_root = SubResource( 23 )
 anim_player = NodePath("../Animation")
 active = true
 parameters/state/current = 0
-parameters/walkspeed/scale = 1.0
+parameters/timescale/scale = 1.0
+parameters/vertical/add_amount = 0.0
 
 [node name="Shadow" type="Sprite" parent="."]
 texture = ExtResource( 2 )
 region_rect = Rect2( 0, 0, 32, 32 )
 
-[node name="Sprite" type="Polygon2D" parent="."]
-offset = Vector2( -16, -24 )
-antialiased = true
-texture = ExtResource( 1 )
-skeleton = NodePath("../Skeleton2D")
-polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
-uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
-bones = [ NodePath("Body"), PoolRealArray( 0, 0, 1, 1 ), NodePath("Body/Head"), PoolRealArray( 1, 1, 0, 0 ) ]
+[node name="Tween" type="Tween" parent="."]
 
-[node name="Weapon" type="Polygon2D" parent="Sprite"]
-visible = false
-offset = Vector2( -19, -24 )
-antialiased = true
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="Sprite" type="Polygon2D" parent="Sprites"]
+material = SubResource( 25 )
+offset = Vector2( -16, -24 )
+texture = ExtResource( 1 )
 skeleton = NodePath("../../Skeleton2D")
 polygon = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 uv = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )

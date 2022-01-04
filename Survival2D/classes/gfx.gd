@@ -20,6 +20,14 @@ func shoot(img_name, from, to):
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 
+func rotate(img_name, from, to):
+	graphic = G.data.get_tile_image(img_name)
+	add_child(graphic)
+	tween.interpolate_property(graphic, "rotation",
+		from, to, lifetime,
+		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+	tween.start()
+
 func _on_tween_done():
 	if graphic != null:
 		graphic.queue_free()

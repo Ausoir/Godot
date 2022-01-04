@@ -33,9 +33,3 @@ func check_collision(from, to, exclude):
 	var space_state = $tilemap.get_world_2d().direct_space_state
 	var result = space_state.intersect_ray(from, to, exclude, 1)
 	return result
-
-func make_particle(arg, pos):
-	var r = load("res://objects/particles/" + arg + ".tscn").instance()
-	r.position = pos
-	$Particles.add_child(r)
-	return r

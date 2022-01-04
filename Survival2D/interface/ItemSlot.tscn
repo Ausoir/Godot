@@ -9,9 +9,9 @@ texture = ExtResource( 1 )
 region_rect = Rect2( 928, 1600, 32, 32 )
 
 [node name="Slot" type="Panel"]
-margin_right = 48.0
-margin_bottom = 48.0
-rect_min_size = Vector2( 48, 48 )
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 32, 32 )
 mouse_filter = 1
 mouse_default_cursor_shape = 2
 custom_styles/panel = SubResource( 1 )
@@ -21,9 +21,7 @@ __meta__ = {
 }
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 24, 24 )
-scale = Vector2( 1.5, 1.5 )
-texture = ExtResource( 1 )
+position = Vector2( 16, 16 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 32, 32 )
 

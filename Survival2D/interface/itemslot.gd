@@ -14,6 +14,7 @@ var dragged_sprite
 func _ready():
 	stylebox = stylebox.duplicate()
 	add_stylebox_override("panel", stylebox)
+	$Sprite.texture = G.data.tileset
 
 func make_mode(p):
 	if p == 2:
@@ -59,7 +60,8 @@ func unassign():
 		return r
 
 func _on_mouse_entered():
-	G.ui.describe(item)
+	if item != null:
+		G.ui.describe(item.item_name, item.dat.g("desc"))
 
 func _on_mouse_exited():
 	G.ui.description.hide()

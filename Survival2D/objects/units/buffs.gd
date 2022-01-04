@@ -1,5 +1,6 @@
 var host
 var states = {}
+var cancels = []
 
 class buff:
 	var name
@@ -42,11 +43,14 @@ func on_turn():
 			if states.empty():
 				G.turn.remove(self)
 
-func stack(p):
-	states[p].stack()
+func on_interrupt(p):
+	for buff in cancels:
+		if buff[0] == p:
+			states.erase(buff[1])
 
 func end(p):
 	states[p].duration = 0
 
-func remove(p):
-	states.erase(p)
+func remove():
+	G.turn.remove(self)
+	states.clear()

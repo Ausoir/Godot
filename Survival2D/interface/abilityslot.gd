@@ -5,11 +5,18 @@ const MODE_SELECTED = 1
 const MODE_COOLDOWN = 2
 const MODE_ACTIVE = 3
 
+onready var overlay = $Overlay
 var mode = MODE_NORMAL
 var skill_index: int
 var stylebox = get_stylebox("panel", "")
 var skill
 var skill_type
+var skill_description
+
+func _ready():
+	stylebox.texture = G.data.tileset
+	stylebox.region_rect.position.y = 1600
+	stylebox.region_rect.size = Vector2(32, 32)
 
 func set_index(p):
 	skill_index = p
@@ -17,13 +24,13 @@ func set_index(p):
 
 func set_mode(p):
 	if p == 3:
-		$Overlay.show()
+		overlay.show()
 		stylebox.region_rect.position.x = 1088
 	elif p == 2:
-		$Overlay.hide()
+		overlay.hide()
 		stylebox.region_rect.position.x = 1024
 	elif p == 1:
-		$Overlay.hide()
+		overlay.hide()
 		stylebox.region_rect.position.x = 1056
 	else:
 		stylebox.region_rect.position.x = 1088
@@ -34,9 +41,9 @@ func assign(p):
 	var skill_data = G.data.skill_data.get(p)
 	if skill_data == null:
 		return false
-	skill_type = skill_data.type
-	var img_pos = G.data.get_tile_image_pos(skill_data.img)
-	get_node("Sprite").region_rect.position = img_pos
+	skill_description = skill_data.get("desc")
+	skill_type = skill_data.target
+	$Sprite.texture = G.data.get_image(skill_data.img)
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
@@ -46,11 +53,11 @@ func _on_gui_input(event):
 
 func activate():
 	if mode == MODE_NORMAL:
-		if skill_type == "projectile" or skill_type == "smite":
+		if skill_type == "self":
+			G.you.perform_ability(skill_index)
+		else:
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
-		elif skill_type == "buff":
-			G.you.perform_ability(skill_index)
 	elif mode == MODE_ACTIVE:
 		G.you.perform_ability(skill_index)
 
@@ -61,3 +68,9 @@ func _update_cooldown(cd):
 	else:
 		set_mode(MODE_NORMAL)
 		set_modulate(Color.white)
+
+func _on_mouse_entered():
+	G.ui.describe(skill, skill_description)
+
+func _on_mouse_exited():
+	G.ui.description.hide()

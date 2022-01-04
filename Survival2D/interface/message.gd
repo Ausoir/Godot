@@ -4,12 +4,12 @@ var pos_v = 0
 var timeout = 0
 
 func add(msg):
-	set_position(Vector2(64, get_viewport().size.y / 2))
+	set_position(Vector2(64, G.ui.screen_size.y))
 	var label = Label.new()
-	label.set_text(msg)
+	label.set_text(str(msg))
 	for child in get_children():
 		var pos = child.get_position()
-		child.set_position(Vector2(pos.x, pos.y - 24))
+		child.set_position(Vector2(pos.x, pos.y - 20))
 		var color = child.get("custom_colors/font_color")
 		if color == null:
 			child.set("custom_colors/font_color", Color(1, 1, 1, 1))

@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/font2.tres" type="DynamicFont" id=1]
+[ext_resource path="res://interface/passiveslot.gd" type="Script" id=3]
+
+[node name="Slot" type="Button"]
+margin_right = 32.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 32, 32 )
+mouse_default_cursor_shape = 2
+toggle_mode = true
+pressed = true
+align = 0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.548
+anchor_right = 1.0
+margin_left = -21.372
+margin_right = -17.0
+margin_bottom = 24.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+align = 2
+valign = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="toggled" from="." to="." method="_on_toggle"]

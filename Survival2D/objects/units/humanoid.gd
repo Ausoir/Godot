@@ -1,26 +1,43 @@
 extends "res://objects/units/unit.gd"
 
+var equipment_nodes = {}
 var equipments = {}
-var inventory = [[2, null]]
+var inventory = [null]
 var belt = [[2, null],[0, null],[0, null],[0, null]]
-var selected_belt = 0
+var selected_belt = -1
 var weight = 0
+
+func get_damage():
+	var r = .get_damage()
+	var wpn = get_weapon()
+	if wpn:
+		r += wpn.dat.g("damage", 0)
+	return r
 
 func get_weapon():
 	return belt[selected_belt][1]
 
 func select_weapon(p):
-	selected_belt = p
-	var item = belt[p][1]
-	if item == null:
-		weapon_sprite.hide()
-	else:
-		var item_sprite = item.dat.g("sprite")
-		if item_sprite != null:
-			weapon_sprite.show()
-			weapon_sprite.texture = G.data.get_image(item_sprite)
-		else:
-			weapon_sprite.hide()
+	if p != selected_belt:
+		var wpn = equipment_nodes.get("weapon")
+		if wpn != null:
+			wpn.queue_free()
+			node_sprites.remove_child(wpn)
+			equipment_nodes.erase("weapon")
+		if belt[selected_belt][1] != null:
+			unaccomodate_stats(belt[selected_belt][1])
+		selected_belt = p
+		var item = belt[p][1]
+		if item != null:
+			accomodate_stats(item)
+			if !("weapon" in equipment_nodes):
+				var item_sprite = item.dat.g("sprite")
+				if item_sprite != null:
+					wpn = sprite.duplicate()
+					wpn.set_name("weapon")
+					wpn.set_texture(G.data.get_image(item_sprite))
+					equipment_nodes["weapon"] = wpn
+					node_sprites.add_child(wpn)
 
 func is_equipment_valid(part, item):
 	var item_part = item.dat.g("part", "")
@@ -41,19 +58,53 @@ func auto_equip(item):
 
 func equip(part, item):
 	if !has_part(part) and is_equipment_valid(part, item):
-		dirty = true
 		equipments[part] = item
+		accomodate_stats(item)
 		return true
 	return false
 
 func unequip(part):
 	for eq in equipments:
 		if eq == part:
-			dirty = true
 			var r = equipments[eq]
+			unaccomodate_stats(r)
 			equipments.erase(eq)
 			return r
 	return unsheathe(-1)
+
+func accomodate_stats(item):
+	abilities += item.dat.g("abilities", [])
+	for i in item.dat.g("passives", []):
+		passives.append(i)
+		actives.append(-1)
+	for _i in range(item.dat.g("space", 0)):
+		inventory.append(null)
+	spd_move += item.dat.g("move speed", 0)
+	for i in range(4):
+		var belt_size = item.dat.g("belt" + str(i + 1), 0)
+		if belt_size > 0:
+			belt[i][0] = belt_size
+	weight += item.dat.g("weight", 0)
+
+func unaccomodate_stats(item):
+	for i in item.dat.g("abilities", []):
+		abilities.erase(i)
+	for i in item.dat.g("passives", []):
+		var idx = passives.find(i)
+		passives.remove(idx)
+		actives.remove(idx)
+	var remove_spaces = item.dat.g("space", 0)
+	var old_inventory = inventory
+	inventory = inventory.slice(0, inventory.size()-remove_spaces-1)
+	if remove_spaces > 0:
+		for i in range(old_inventory.size()):
+			if i >= old_inventory.size() - remove_spaces:
+				store(old_inventory[i], true)
+	spd_move -= item.dat.g("move speed", 0)
+	for i in range(4):
+		if item.dat.g("belt" + str(i + 1), 0) > 0:
+			belt[i][0] = 0
+	weight -= item.dat.g("weight", 0)
 
 func has_part(p):
 	for eq in equipments:
@@ -61,20 +112,15 @@ func has_part(p):
 			return true
 	return false
 
-func sheathe(idx, item, drop=false):
+func sheathe(idx, item):
 	if idx == -1:
-		for i in range(4):
-			if belt[i][0] >= item.dat.g("size", 2):
-				dirty = true
-				belt[i][1] = item
+		for _i in range(4):
+			if sheathe(0, item):
 				return true
 	elif belt[idx][0] >= item.dat.g("size", 2):
-		dirty = true
 		belt[idx][1] = item
+		select_weapon(idx)
 		return true
-	if drop:
-		dirty = true
-		drop(item)
 	return false
 
 func unsheathe(idx):
@@ -84,94 +130,28 @@ func unsheathe(idx):
 			if r != null:
 				return r
 	if belt[idx][1] != null:
+		select_weapon(-1)
 		var t = belt[idx][1]
 		belt[idx][1] = null
+		select_weapon(selected_belt)
 		return t
 	return null
 
 func store(item, drop=false):
-	var item_size = item.dat.g("size", 2)
-	var candidates = []
 	for i in range(inventory.size()):
-		var inventory_slot = inventory[i]
-		if inventory_slot[1] == null:
-			if inventory_slot[0] == item_size:
-				dirty = true
-				inventory[i][1] = item
-				return true
-			elif inventory_slot[0] > item_size:
-				candidates.append(i)
-	if !candidates.empty():
-		dirty = true
-		inventory[candidates.pop_front()][1] = item
-		return true
+		if inventory[i] == null:
+			inventory[i] = item
+			return true
 	if drop:
 		drop(item)
 	return false
 
 func unstore(item):
 	for i in range(inventory.size()):
-		if inventory[i][1] == item:
-			inventory[i][1] = null
+		if inventory[i] == item:
+			inventory[i] = null
 			return true
 	return false
-
-func update():
-	.update()
-	var r_inventory = [[2,null]]
-	var r_belt = [[2, null],[0, null],[0, null],[0, null]]
-	var space_inventory_l = 0
-	var space_inventory_s = 0
-	for eq in equipments:
-		var item = equipments[eq]
-		var eq_part = item.dat.g("part")
-		if eq_part == eq:
-			actives += item.dat.g("actives", [])
-			passives += item.dat.g("passives", [])
-			space_inventory_l += item.dat.g("space_l", 0)
-			space_inventory_s += item.dat.g("space_s", 0)
-			spd_attack += item.dat.g("attack speed", 0)
-			spd_move += item.dat.g("move speed", 0)
-			if eq == "belt":
-				var count = 0
-				for belt_i in item.dat.g("belt", 0):
-					r_belt[count][0] = belt_i
-					count += 1
-		weight += item.dat.g("weight", 0)
-	for _i in range(space_inventory_l):
-		r_inventory.append([2,null])
-	for _i in range(space_inventory_s):
-		r_inventory.append([1,null])
-	for i in range(inventory.size()):
-		var item = inventory[i][1]
-		if item != null:
-			if i > r_inventory.size():
-				store(item, true)
-			else:
-				var item_size = item.dat.g("size", 2)
-				if item_size <= r_inventory[i][0]:
-					r_inventory[i][1] = item
-				else:
-					store(item, true)
-	for i in range(4):
-		var belt_slot = belt[i]
-		var belt_item = belt_slot[1]
-		if belt_item != null:
-			var item_size = belt_item.dat.g("size", 2)
-			if item_size <= r_belt[i][0]:
-				r_belt[i][1] = belt_item
-				if i == selected_belt:
-					actives += belt_item.dat.g("actives")
-					passives += belt_item.dat.g("passives")
-					spd_attack += belt_item.dat.g("attack speed", 0)
-					spd_move += belt_item.dat.g("move speed", 0)
-			else:
-				sheathe(-1, belt_item, true)
-	select_weapon(selected_belt)
-	belt = r_belt
-	inventory = r_inventory
-	if controller != null:
-		controller.on_update_equipment()
 
 func drop(item):
 	pos.add_item(item)

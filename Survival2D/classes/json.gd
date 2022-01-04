@@ -1,5 +1,7 @@
-var images = {}
-var image_map
+var tileset = preload("res://assets/images/dcss.png")
+var tileset_map
+var images_cache = {}
+var particles_cache = {}
 var terrain_data
 var item_data
 var unit_data
@@ -8,35 +10,44 @@ var skill_data
 
 
 func _init():
-	var timages = get_json_data("res://assets/json/images.json")
-	for i in timages:
-		images[i] = load(timages[i])
-	image_map = get_json_data("res://assets/json/image_map.json")
+	tileset_map = get_json_data("res://assets/json/tileset_map.json")
 	terrain_data = get_json_data("res://assets/json/terrains.json")
 	item_data = get_json_data("res://assets/json/items.json")
 	unit_data = get_json_data("res://assets/json/units.json")
 	mob_data = get_json_data("res://assets/json/mobs.json")
 	skill_data = get_json_data("res://assets/json/skills.json")
 
-func get_tile_image_pos(img):
-	var r = image_map.get(img)
-	if r == null:
-		return Vector2()
-	else:
-		return Vector2(r.x, r.y)
+func set_tile_image(sprite, to):
+	var dat = tileset_map.get(to)
+	if dat != null:
+		sprite.texture = tileset
+		sprite.region_enabled = true
+		sprite.region_rect.size = Vector2(32, 32)
+		sprite.region_rect.position = Vector2(dat[0] * 32, dat[1] * 32)
+	return sprite
 
 func get_tile_image(p):
-	var r = image_map.get(p)
-	if r != null:
-		var item_sprite = Sprite.new()
-		item_sprite.texture = images.tileset
-		item_sprite.region_enabled = true
-		item_sprite.region_rect.position = Vector2(r.x, r.y)
-		item_sprite.region_rect.size = Vector2(32, 32)
-		return item_sprite
+	var item_sprite = Sprite.new()
+	set_tile_image(item_sprite, p)
+	return item_sprite
 
 func get_image(p):
-	return images[p]
+	var r = images_cache.get(p)
+	if r != null:
+		return r
+	else:
+		r = load("res://assets/images/" + p + ".png")
+		images_cache[p] = r
+		return r
+
+func get_particle(p):
+	var r = particles_cache.get(p)
+	if r != null:
+		return r.instance()
+	else:
+		r = load("res://objects/particles/" + p + ".tscn")
+		particles_cache[p] = r
+		return r.instance()
 
 func get_json_data(dir):
 	var data_file = File.new()

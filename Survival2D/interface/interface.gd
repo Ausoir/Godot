@@ -2,16 +2,22 @@ extends CanvasLayer
 
 const ItemSlot = preload("res://interface/ItemSlot.tscn")
 const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
+const BuffSlot = preload("res://interface/BuffSlot.tscn")
+const PassiveSlot = preload("res://interface/PassiveSlot.tscn")
 onready var menu = $Control/Menu
 onready var message = $Control/Message
 onready var tint = $Control/Menu/Tint
 onready var description = $Control/Description
-onready var equipment = $Control/Menu/Tabs/Equipment/VBoxContainer/Equipment
-onready var inventory = $Control/Menu/Tabs/Equipment/VBoxContainer/Inventory
-onready var status = $Control/Menu/Tabs/Status/VBoxContainer
+onready var tabs = $Control/Menu/Tabs
+onready var tab_equipment = $Control/Menu/Tabs/INV/VSplit/Equipment/Columns
+onready var tab_inventory = $Control/Menu/Tabs/INV/VSplit/Inventory
+onready var tab_status = $Control/Menu/Tabs/CHA/VBoxContainer
+onready var tab_skill = $Control/Menu/Tabs/SKL/VBoxContainer
 onready var container = $Control/Menu/Container
 onready var container_grid = $Control/Menu/Container/Container
 onready var abilities = $Control/Abilities
+onready var buffs = $Control/Status
+var screen_size
 
 var on = false
 var drag_item
@@ -19,8 +25,8 @@ var drag_sprite
 
 
 func _ready():
-	var viewport_size = get_viewport().size
-	$AnimationPlayer/Fade.set_size(viewport_size)
+	screen_size = get_viewport().get_size_override()
+	$AnimationPlayer/Fade.set_size(screen_size)
 	$AnimationPlayer.play("FadeIn")
 
 func _process(_delta):
@@ -47,14 +53,17 @@ func _unhandled_input(event):
 			print("Player:restart: ", get_tree().change_scene("res://world/World.tscn"))
 		elif Input.is_action_just_pressed("ui_fullscreen"):
 			OS.window_fullscreen = !OS.window_fullscreen
+		elif Input.is_action_just_pressed("auto_attack"):
+			G.you.auto_attack = !G.you.auto_attack
+			message.add("Auto attack: " + str(G.you.auto_attack))
 		elif Input.is_action_just_pressed("item_1"):
-			G.you.tasks.append(["swap", 0])
+			G.you.tasks = [["swap", 0]]
 		elif Input.is_action_just_pressed("item_2"):
-			G.you.tasks.append(["swap", 1])
+			G.you.tasks = [["swap", 1]]
 		elif Input.is_action_just_pressed("item_3"):
-			G.you.tasks.append(["swap", 2])
+			G.you.tasks = [["swap", 2]]
 		elif Input.is_action_just_pressed("item_4"):
-			G.you.tasks.append(["swap", 3])
+			G.you.tasks = [["swap", 3]]
 		elif Input.is_action_just_pressed("quick_1"):
 			if abilities.get_child_count() > 0:
 				abilities.get_children()[0].activate()
@@ -78,12 +87,10 @@ func _unhandled_input(event):
 func display(_arg):
 	if !on:
 		on = true
-		var screen_size = get_viewport().size
 		tint.set_size(screen_size)
 		tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
 		menu.show()
-		G.you.unit.update()
-		update_inventory()
+		_on_tab_change(tabs.current_tab)
 
 func clear():
 	on = false
@@ -105,65 +112,80 @@ func set_drag_item(item, item_sprite):
 		menu.add_child(drag_sprite)
 
 func get_vacant_inventory():
-	for child in inventory.get_children():
+	for child in tab_inventory.get_children():
 		if child.item == null:
 			return child
 
 func update_equipables(equipables):
-	for child in equipment.get_children():
-		child.make_mode(0)
+	for columns in tab_equipment.get_children():
+		for child in columns.get_children():
+			child.make_mode(0)
 
 	for slot in equipables:
-		var node = equipment.get_node(slot)
-		var allow_type = equipables[slot]
-		node.make_mode(allow_type)
+		for columns in tab_equipment.get_children():
+			for child in columns.get_children():
+				if child.name == slot:
+					var allow_type = equipables[slot]
+					child.make_mode(allow_type)
 
 func update_inventory():
 	var unit = G.you.unit
 	if unit.dat.g("bodyparts") != null:
-		for child in inventory.get_children():
+		for child in tab_inventory.get_children():
 			child.queue_free()
-			inventory.remove_child(child)
-		for child in abilities.get_children():
-			child.queue_free()
-			abilities.remove_child(child)
-		for child in equipment.get_children():
-			child.unassign()
+			tab_inventory.remove_child(child)
+		for columns in tab_equipment.get_children():
+			for child in columns.get_children():
+				child.unassign()
 
-		for eq_part in unit.equipments:
-			var slot = equipment.get_node(eq_part)
-			var eq_item = unit.equipments[eq_part]
-			slot.assign(eq_item)
+		for columns in tab_equipment.get_children():
+			for child in columns.get_children():
+				if child.name in unit.equipments:
+					child.assign(unit.equipments[child.name])
 
-		var count = 0
+		var count = 1
 		for belt_item in unit.belt:
-			var slot = equipment.get_node("belt" + str(count))
+			var slot = tab_equipment.get_node("belted/" + str(count))
 			slot.make_mode(belt_item[0])
 			if belt_item[1] != null:
 				slot.assign(belt_item[1])
 			count += 1
-
 		for inv_item in unit.inventory:
 			var newslot = ItemSlot.instance()
-			newslot.make_mode(inv_item[0])
-			if inv_item[1] != null:
-				newslot.assign(inv_item[1])
+			if inv_item != null:
+				newslot.assign(inv_item)
 			newslot.part = "inv"
-			inventory.add_child(newslot)
-		count = 0
-		for i in G.you.unit.actives:
-			var newslot = AbilitySlot.instance()
-			newslot.assign(i)
-			newslot.set_index(count)
-			abilities.add_child(newslot)
-			if newslot.skill_type == "buff":
-				if G.you.unit.buffs.has(i):
-					newslot.set_mode(3)
-			if G.you.aiming == count:
-				newslot.set_mode(1)
-			else:
-				newslot.set_mode(0)
-			count += 1
+			tab_inventory.add_child(newslot)
+
+func update_hud():
+	for child in abilities.get_children():
+		child.queue_free()
+		abilities.remove_child(child)
+	for i in buffs.get_children():
+		i.queue_free()
+		buffs.remove_child(i)
+	var count = 0
+	for i in G.you.unit.abilities:
+		var newslot = AbilitySlot.instance()
+		newslot.assign(i)
+		newslot.set_index(count)
+		abilities.add_child(newslot)
+		if newslot.skill_type == "self":
+			if G.you.unit.buffs.has(i):
+				newslot.set_mode(3)
+		if G.you.aiming == count:
+			newslot.set_mode(1)
+		else:
+			newslot.set_mode(0)
+		count += 1
+	buffs.rect_position.x = screen_size.x - 48
+	for i in G.you.unit.buffs.states:
+		var buff = G.you.unit.buffs.states[i]
+		var img = buff.fx.get("img")
+		if img != null:
+			var slot = BuffSlot.instance()
+			slot.assign(i, img, buff.fx.get("desc"))
+			buffs.add_child(slot)
 
 func search_inventory(tile):
 	display(null)
@@ -179,14 +201,49 @@ func search_inventory(tile):
 			slot.tile = tile
 			container_grid.add_child(slot)
 
-func describe(item):
+func describe(title, desc):
 	if !description.visible or !on:
-		if item:
-			display(null)
-			description.display(item)
+		if title != null and desc != null:
+			description.display(title, desc)
 
 func _update_cooldowns(cds):
 	for ability in abilities.get_children():
 		if ability.skill in cds:
 			ability._update_cooldown(cds[ability.skill])
 			update_inventory()
+
+func _on_tab_change(page):
+	if page == 0:
+		update_inventory()
+	elif page == 1:
+		update_status()
+	elif page == 2:
+		update_skills()
+
+func update_skills():
+	for child in tab_skill.get_children():
+		child.queue_free()
+		tab_skill.remove_child(child)
+	var count = 0
+	var slots = G.you.unit.get_active_slots()
+	var slot_label = Label.new()
+	var max_slots = G.you.unit.vars.g("intelligence", 1)
+	slot_label.set_text("Slots: " + str(slots) + "/" + str(max_slots))
+	tab_skill.add_child(slot_label)
+	for i in range(G.you.unit.passives.size()):
+		var label = PassiveSlot.instance()
+		var passive = G.you.unit.passives[i]
+		label.assign(passive, count, slot_label)
+		if G.you.unit.actives[i] == -1:
+			label.set_pressed(false)
+		tab_skill.add_child(label)
+		count += 1
+
+func update_status():
+	for child in tab_status.get_children():
+		child.queue_free()
+		tab_status.remove_child(child)
+	for i in G.STATS:
+		var label = Label.new()
+		label.set_text(i + ": " + str(G.you.unit.vars.g(i, 0)))
+		tab_status.add_child(label)

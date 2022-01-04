@@ -1,5 +1,5 @@
 const WORK_DELAY = 5
-const Item = preload("res://objects/Item.tscn")
+const Item = preload("res://objects/item.gd")
 const Unit = preload("res://objects/units/Unit.tscn")
 const Script_Unit = preload("res://objects/units/unit.gd")
 const Script_Humanoid = preload("res://objects/units/humanoid.gd")
@@ -61,17 +61,16 @@ func make_unit(arg, pos):
 			r.set_script(Script_Humanoid)
 		else:
 			r.set_script(Script_Unit)
-		var sprite = G.data.images.get(unit_data.img)
+		var sprite = G.data.get_image(unit_data.img)
 		if !sprite:
 			return
-		r.get_node("Sprite").texture = sprite
+		r.get_node("Sprites/Sprite").texture = sprite
 		G.turn.add(r)
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = G.Properties.new(unit_data)
 		r.vars = G.Properties.new({})
-		for stat in ["vitality", "stamina", "strength", "agility", "intelligence",
-			"courage", "perception"]:
+		for stat in G.STATS:
 			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
 		r.vars.a("damage", 0)
 		r.vars.a("defense", 0)
@@ -82,8 +81,8 @@ func make_unit(arg, pos):
 func make_item(arg, pos):
 	var item_data = G.data.item_data.get(arg)
 	if item_data != null:
-		var r = Item.instance()
-		r.region_rect.position = G.data.get_tile_image_pos(item_data.img)
+		var r = G.data.get_tile_image(item_data.img)
+		r.set_script(Item)
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = G.Properties.new(item_data)
@@ -91,6 +90,15 @@ func make_item(arg, pos):
 		r.col = r.dat.g("col", "0000")
 		r.place(pos)
 		return r
+
+func make_corpse(host, pos):
+	var r = G.data.get_particle("Corpse")
+	r.item_name = "corpse"
+	r.item_type = "item"
+	r.make(host)
+	r.dat.a("desc", "A corpse")
+	r.place(pos)
+	return r
 
 func get_duplicate(this, arr):
 	var r = []

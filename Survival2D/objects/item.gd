@@ -24,9 +24,6 @@ func remove():
 	G.world.items.remove_child(self)
 	queue_free()
 
-func face(_p):
-	pass
-
 func move(towards):
 	var to = pos.get_adjacent(towards)
 	if to != pos and !to.is_cols(col):
@@ -34,16 +31,12 @@ func move(towards):
 		return to
 
 func relocate(to):
-	if to.x > pos.x:
-		face(1)
-	elif to.x < pos.x:
-		face(-1)
 	pos.remove_item(self)
 	move_delay = 1
 	set_process(true)
 	prev_pos = pos
 	to.add_item(self)
-	if to.sight_frame == G.you.vision.sight_frame -1:
+	if to.sight_frame == G.you.camera.sight_frame -1:
 		show()
 	else:
 		hide()

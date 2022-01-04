@@ -2,7 +2,7 @@
 	"rock": {
 		"img": "rock",
 		"part": "item",
-		"actives": ["throw rock"],
+		"abilities": ["throw rock"],
 		"passives": ["bash", "block"],
 		"mat": "stone",
 		"col": "0100",
@@ -17,10 +17,10 @@
 	},
 	"branch": {
 		"img": "branch",
-		"sprite": "axe",
+		"sprite": "items/axe",
 		"part": "item",
-		"actives": [],
-		"passives": ["bash"],
+		"abilities": [],
+		"passives": ["strike"],
 		"mat": "wood",
 		"weight": 10,
 		"damage": 4,

@@ -7,7 +7,7 @@ var closest
 var result
 var next_reset = 0
 var heuristic_threshold = 0
-var reach = 0
+var reach = 1
 
 
 class pathnode:
@@ -32,6 +32,8 @@ func check_loop(loop, pos):
 		if i.pos == pos:
 			return i
 
+func square_distance_to(pos, dest):
+	return max(abs(pos.x - dest.x), abs(pos.y - dest.y))
 
 func iterate(node):
 	var index = 0
@@ -42,10 +44,10 @@ func iterate(node):
 			node = v
 	open.remove(index)
 	closed.append(node)
-	var achieved = max(abs(node.pos.x-target.x),abs(node.pos.y-target.y))
+	var achieved = square_distance_to(node.pos, target)
 	if achieved <= reach:
 		return node
-	if achieved < (closest.pos - target).length_squared():
+	if achieved < square_distance_to(closest.pos, target):
 		closest = node
 	var routes = G.field.get_routes(node.pos, col)
 	for i in routes:
@@ -85,7 +87,7 @@ func debug_trace():
 
 func update(hostpos, p):
 	target = p
-	if not result and hostpos.distance_to(target) > reach:
+	if not result and square_distance_to(hostpos, target) > reach:
 		var done = null
 		if next_reset == 0:
 			reset(hostpos)

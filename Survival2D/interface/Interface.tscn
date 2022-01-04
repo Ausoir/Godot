@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://interface/interface.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
@@ -8,7 +8,17 @@
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=6]
 [ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://interface/message.gd" type="Script" id=8]
+[ext_resource path="res://assets/images/gui/eq_part4.png" type="Texture" id=9]
 [ext_resource path="res://interface/ItemSlot.tscn" type="PackedScene" id=10]
+[ext_resource path="res://assets/images/gui/eq_part27.png" type="Texture" id=11]
+[ext_resource path="res://assets/images/gui/eq_part5.png" type="Texture" id=12]
+[ext_resource path="res://assets/images/gui/eq_part9.png" type="Texture" id=13]
+[ext_resource path="res://assets/images/gui/eq_part1.png" type="Texture" id=14]
+[ext_resource path="res://assets/images/gui/eq_part16.png" type="Texture" id=15]
+[ext_resource path="res://assets/images/gui/eq_part21.png" type="Texture" id=16]
+[ext_resource path="res://assets/images/gui/eq_part15.png" type="Texture" id=17]
+[ext_resource path="res://assets/images/gui/eq_part23.png" type="Texture" id=18]
+[ext_resource path="res://assets/images/gui/eq_part10.png" type="Texture" id=19]
 
 [sub_resource type="Animation" id=1]
 length = 1.5
@@ -32,17 +42,17 @@ bg_color = Color( 0, 0, 0, 0 )
 texture = ExtResource( 4 )
 region_rect = Rect2( 0, -10, 180, 220 )
 
-[sub_resource type="StyleBoxTexture" id=18]
+[sub_resource type="StyleBoxTexture" id=4]
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 928, 1600, 32, 32 )
 
-[sub_resource type="StyleBoxTexture" id=17]
+[sub_resource type="StyleBoxTexture" id=5]
 resource_local_to_scene = true
 texture = ExtResource( 5 )
 region_rect = Rect2( 928, 1600, 32, 32 )
 
-[sub_resource type="DynamicFont" id=13]
+[sub_resource type="DynamicFont" id=6]
 outline_size = 3
 outline_color = Color( 0, 0, 0, 0.627451 )
 font_data = ExtResource( 7 )
@@ -81,6 +91,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Status" type="VBoxContainer" parent="Control"]
+margin_top = 16.0
+margin_right = 40.0
+margin_bottom = 56.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Menu" type="Control" parent="Control"]
 visible = false
 mouse_filter = 1
@@ -96,13 +114,13 @@ __meta__ = {
 }
 
 [node name="Tabs" type="TabContainer" parent="Control/Menu"]
-margin_right = 240.0
-margin_bottom = 600.0
+margin_right = 166.0
+margin_bottom = 480.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Equipment" type="ScrollContainer" parent="Control/Menu/Tabs"]
+[node name="INV" type="ScrollContainer" parent="Control/Menu/Tabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 5.0
@@ -112,167 +130,181 @@ margin_bottom = -5.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/Menu/Tabs/Equipment"]
-margin_right = 230.0
-margin_bottom = 556.0
+[node name="VSplit" type="VSplitContainer" parent="Control/Menu/Tabs/INV"]
+margin_right = 156.0
+margin_bottom = 436.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Equipment" type="Panel" parent="Control/Menu/Tabs/Equipment/VBoxContainer"]
-margin_right = 230.0
-margin_bottom = 280.0
-rect_min_size = Vector2( 0, 280 )
+[node name="Equipment" type="Panel" parent="Control/Menu/Tabs/INV/VSplit"]
+margin_right = 156.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 3 )
 
-[node name="head" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 56.0
+[node name="Columns" type="HBoxContainer" parent="Control/Menu/Tabs/INV/VSplit/Equipment"]
 margin_top = 24.0
-margin_right = 104.0
-margin_bottom = 72.0
-custom_styles/panel = SubResource( 18 )
-part = "head"
+margin_right = 140.0
+margin_bottom = 164.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/head"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
-region_rect = Rect2( 576, 896, 32, 32 )
+[node name="1" type="VBoxContainer" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns"]
+margin_right = 36.0
+margin_bottom = 156.0
 
-[node name="focus" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 4.0
-margin_top = 24.0
-margin_right = 52.0
-margin_bottom = 72.0
-custom_styles/panel = SubResource( 18 )
+[node name="focus" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
 part = "focus"
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/focus"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1/focus"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 11 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 1312, 896, 32, 32 )
 
-[node name="trinket" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 108.0
-margin_top = 24.0
-margin_right = 156.0
-margin_bottom = 72.0
-custom_styles/panel = SubResource( 18 )
-part = "trinket"
-
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/trinket"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
-region_rect = Rect2( 768, 896, 32, 32 )
-
-[node name="hands" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 108.0
-margin_top = 80.0
-margin_right = 156.0
-margin_bottom = 128.0
-custom_styles/panel = SubResource( 18 )
-part = "hands"
-
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/hands"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
-region_rect = Rect2( 928, 896, 32, 32 )
-
-[node name="back" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 4.0
-margin_top = 80.0
-margin_right = 52.0
-margin_bottom = 128.0
-custom_styles/panel = SubResource( 18 )
+[node name="back" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
+margin_top = 40.0
+margin_right = 36.0
+margin_bottom = 76.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
 part = "back"
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/back"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1/back"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 13 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 736, 896, 32, 32 )
 
-[node name="offhand" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 4.0
-margin_top = 136.0
-margin_right = 52.0
-margin_bottom = 184.0
-custom_styles/panel = SubResource( 18 )
+[node name="offhand" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
+margin_top = 80.0
+margin_right = 36.0
+margin_bottom = 116.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
 part = "offhand"
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/offhand"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1/offhand"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 16 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 1120, 896, 32, 32 )
 
-[node name="body" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 56.0
-margin_top = 80.0
-margin_right = 104.0
-margin_bottom = 128.0
-custom_styles/panel = SubResource( 18 )
+[node name="2" type="VBoxContainer" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns"]
+margin_left = 40.0
+margin_right = 76.0
+margin_bottom = 156.0
+
+[node name="head" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 10 )]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
+part = "head"
+
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2/head"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 9 )
+offset = Vector2( 18, 18 )
+region_rect = Rect2( 576, 896, 32, 32 )
+
+[node name="body" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 10 )]
+margin_top = 40.0
+margin_right = 36.0
+margin_bottom = 76.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
 part = "body"
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/body"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2/body"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 14 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 480, 896, 32, 32 )
 
-[node name="belt" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 56.0
-margin_top = 136.0
-margin_right = 104.0
-margin_bottom = 184.0
-custom_styles/panel = SubResource( 18 )
+[node name="belt" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 10 )]
+margin_top = 80.0
+margin_right = 36.0
+margin_bottom = 116.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
 part = "belt"
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2/belt"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 18 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 1184, 896, 32, 32 )
 
-[node name="feet" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 56.0
-margin_top = 200.0
-margin_right = 104.0
-margin_bottom = 248.0
-custom_styles/panel = SubResource( 18 )
+[node name="feet" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 10 )]
+margin_top = 120.0
+margin_right = 36.0
+margin_bottom = 156.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
 part = "feet"
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/feet"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/2/feet"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 12 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 608, 896, 32, 32 )
 
-[node name="belt0" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 172.0
-margin_top = 24.0
-margin_right = 220.0
-margin_bottom = 72.0
-custom_styles/panel = SubResource( 17 )
+[node name="3" type="VBoxContainer" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns"]
+margin_left = 80.0
+margin_right = 116.0
+margin_bottom = 156.0
+
+[node name="trinket" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/3" instance=ExtResource( 10 )]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
+part = "trinket"
+
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/3/trinket"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 19 )
+offset = Vector2( 18, 18 )
+region_rect = Rect2( 768, 896, 32, 32 )
+
+[node name="hands" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/3" instance=ExtResource( 10 )]
+margin_top = 40.0
+margin_right = 36.0
+margin_bottom = 76.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
+part = "hands"
+
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/3/hands"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 17 )
+offset = Vector2( 18, 18 )
+region_rect = Rect2( 928, 896, 32, 32 )
+
+[node name="belted" type="VBoxContainer" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns"]
+margin_left = 120.0
+margin_right = 156.0
+margin_bottom = 156.0
+
+[node name="1" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted" instance=ExtResource( 10 )]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 5 )
 part = "#0"
 
-[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 48, 48 )
-custom_fonts/font = SubResource( 13 )
+[node name="Label" type="Label" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/1"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_fonts/font = SubResource( 6 )
 text = "Q"
 align = 2
 valign = 2
@@ -280,26 +312,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt0"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/1"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 15 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 960, 896, 32, 32 )
 
-[node name="belt1" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 172.0
-margin_top = 80.0
-margin_right = 220.0
-margin_bottom = 128.0
-custom_styles/panel = SubResource( 17 )
+[node name="2" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted" instance=ExtResource( 10 )]
+margin_top = 40.0
+margin_right = 36.0
+margin_bottom = 76.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 5 )
 part = "#1"
 
-[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 48, 48 )
-custom_fonts/font = SubResource( 13 )
+[node name="Label" type="Label" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/2"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_fonts/font = SubResource( 6 )
 text = "W"
 align = 2
 valign = 2
@@ -307,26 +338,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt1"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/2"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 15 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 960, 896, 32, 32 )
 
-[node name="belt2" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 172.0
-margin_top = 136.0
-margin_right = 220.0
-margin_bottom = 184.0
-custom_styles/panel = SubResource( 17 )
+[node name="3" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted" instance=ExtResource( 10 )]
+margin_top = 80.0
+margin_right = 36.0
+margin_bottom = 116.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 5 )
 part = "#2"
 
-[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 48, 48 )
-custom_fonts/font = SubResource( 13 )
+[node name="Label" type="Label" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/3"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_fonts/font = SubResource( 6 )
 text = "E"
 align = 2
 valign = 2
@@ -334,26 +364,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt2"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/3"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 15 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 960, 896, 32, 32 )
 
-[node name="belt3" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment" instance=ExtResource( 10 )]
-margin_left = 172.0
-margin_top = 192.0
-margin_right = 220.0
-margin_bottom = 240.0
-custom_styles/panel = SubResource( 17 )
+[node name="4" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted" instance=ExtResource( 10 )]
+margin_top = 120.0
+margin_right = 36.0
+margin_bottom = 156.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 5 )
 part = "#3"
 
-[node name="Label" type="Label" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3"]
-margin_right = 32.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 48, 48 )
-custom_fonts/font = SubResource( 13 )
+[node name="Label" type="Label" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/4"]
+margin_right = 36.0
+margin_bottom = 36.0
+rect_min_size = Vector2( 36, 36 )
+custom_fonts/font = SubResource( 6 )
 text = "R"
 align = 2
 valign = 2
@@ -361,24 +390,23 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/Equipment/VBoxContainer/Equipment/belt3"]
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/belted/4"]
 modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 5 )
-offset = Vector2( 24, 24 )
-region_enabled = true
+texture = ExtResource( 15 )
+offset = Vector2( 18, 18 )
 region_rect = Rect2( 960, 896, 32, 32 )
 
-[node name="Inventory" type="GridContainer" parent="Control/Menu/Tabs/Equipment/VBoxContainer"]
-margin_top = 284.0
-margin_right = 230.0
-margin_bottom = 556.0
+[node name="Inventory" type="GridContainer" parent="Control/Menu/Tabs/INV/VSplit"]
+margin_top = 208.0
+margin_right = 156.0
+margin_bottom = 436.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/vseparation = 8
 custom_constants/hseparation = 8
 columns = 5
 
-[node name="Status" type="ScrollContainer" parent="Control/Menu/Tabs"]
+[node name="CHA" type="ScrollContainer" parent="Control/Menu/Tabs"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -387,7 +415,24 @@ margin_top = 39.0
 margin_right = -5.0
 margin_bottom = -5.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/Menu/Tabs/Status"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Menu/Tabs/CHA"]
+
+[node name="SKL" type="ScrollContainer" parent="Control/Menu/Tabs"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 39.0
+margin_right = -5.0
+margin_bottom = -5.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/Menu/Tabs/SKL"]
+margin_right = 156.0
+margin_bottom = 436.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Container" type="TabContainer" parent="Control/Menu"]
 visible = false
@@ -415,6 +460,8 @@ __meta__ = {
 }
 
 [node name="Description" parent="Control" instance=ExtResource( 3 )]
+visible = false
+margin_right = 64.0
 mouse_filter = 2
 
 [node name="Message" type="Control" parent="Control"]
@@ -427,9 +474,9 @@ __meta__ = {
 }
 
 [node name="FPS" type="Label" parent="."]
-margin_left = 924.0
+margin_left = 580.0
 margin_top = 8.0
-margin_right = 972.0
+margin_right = 608.0
 margin_bottom = 24.0
 rect_scale = Vector2( 2, 2 )
 __meta__ = {
@@ -437,3 +484,4 @@ __meta__ = {
 }
 
 [connection signal="gui_input" from="Control/Menu/Tint" to="." method="_background_input"]
+[connection signal="tab_changed" from="Control/Menu/Tabs" to="." method="_on_tab_change"]

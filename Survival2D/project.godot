@@ -27,6 +27,8 @@ gdscript/warnings/return_value_discarded=false
 
 [display]
 
+window/size/width=640
+window/size/height=480
 window/size/fullscreen=true
 window/dpi/allow_hidpi=true
 window/vsync/use_vsync=false
@@ -153,6 +155,11 @@ item_3={
 item_4={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":82,"unicode":0,"echo":false,"script":null)
+ ]
+}
+auto_attack={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
  ]
 }
 
