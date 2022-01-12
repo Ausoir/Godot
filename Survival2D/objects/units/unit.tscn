@@ -42,7 +42,7 @@ tracks/2/keys = {
 "values": [ Vector2( 0, 0 ), Vector2( -1.15623, -4.62493 ), Vector2( -4.83515, 0 ), Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=26]
+[sub_resource type="Animation" id=2]
 resource_name = "down"
 length = 0.1
 tracks/0/type = "value"
@@ -414,9 +414,8 @@ tracks/9/keys = {
 "values": [ Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=27]
+[sub_resource type="Animation" id=9]
 resource_name = "up"
-length = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprites/Sprite:rotation_degrees")
 tracks/0/interp = 1
@@ -448,13 +447,13 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
+"times": PoolRealArray( 0, 0.3, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 0, -5 ) ]
+"values": [ Vector2( 0, -15 ), Vector2( 0, -15 ), Vector2( 0, 0 ) ]
 }
 
-[sub_resource type="Animation" id=28]
+[sub_resource type="Animation" id=10]
 resource_name = "wait"
 loop = true
 tracks/0/type = "value"
@@ -482,7 +481,7 @@ tracks/1/keys = {
 "values": [ Vector2( 0, -16 ), Vector2( -2, -14 ), Vector2( 0, -16 ) ]
 }
 
-[sub_resource type="Animation" id=10]
+[sub_resource type="Animation" id=11]
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Body:position")
@@ -521,28 +520,28 @@ tracks/2/keys = {
 "values": [ Vector2( 0, -16 ), Vector2( 3.63805, -14.2823 ), Vector2( 0, -16 ), Vector2( -4.55033, -10.533 ), Vector2( 0, -16 ) ]
 }
 
-[sub_resource type="AnimationNodeAnimation" id=11]
+[sub_resource type="AnimationNodeAnimation" id=12]
 animation = "attack"
 
-[sub_resource type="AnimationNodeAnimation" id=12]
+[sub_resource type="AnimationNodeAnimation" id=13]
 animation = "down"
 
-[sub_resource type="AnimationNodeAnimation" id=13]
+[sub_resource type="AnimationNodeAnimation" id=14]
 animation = "headbutt"
 
-[sub_resource type="AnimationNodeAnimation" id=14]
+[sub_resource type="AnimationNodeAnimation" id=15]
 animation = "hit"
 
-[sub_resource type="AnimationNodeAnimation" id=15]
+[sub_resource type="AnimationNodeAnimation" id=16]
 animation = "standing"
 
-[sub_resource type="AnimationNodeAnimation" id=16]
+[sub_resource type="AnimationNodeAnimation" id=17]
 animation = "kick"
 
-[sub_resource type="AnimationNodeAnimation" id=17]
+[sub_resource type="AnimationNodeAnimation" id=18]
 animation = "knockout"
 
-[sub_resource type="AnimationNodeTransition" id=18]
+[sub_resource type="AnimationNodeTransition" id=19]
 input_count = 12
 xfade_time = 0.2
 input_0/name = "idle"
@@ -570,53 +569,53 @@ input_10/auto_advance = false
 input_11/name = "state 11"
 input_11/auto_advance = false
 
-[sub_resource type="AnimationNodeTimeScale" id=19]
+[sub_resource type="AnimationNodeTimeScale" id=20]
 
-[sub_resource type="AnimationNodeAnimation" id=20]
+[sub_resource type="AnimationNodeAnimation" id=21]
 animation = "up"
 
-[sub_resource type="AnimationNodeAdd3" id=21]
+[sub_resource type="AnimationNodeAdd3" id=22]
 filter_enabled = true
 filters = [ ".:position", ".:rotation_degrees", "Shadow:rotation_degrees", "Skeleton2D:scale", "Sprite:rotation_degrees", "Sprite:scale" ]
 
-[sub_resource type="AnimationNodeAnimation" id=29]
+[sub_resource type="AnimationNodeAnimation" id=23]
 animation = "wait"
 
-[sub_resource type="AnimationNodeAnimation" id=22]
+[sub_resource type="AnimationNodeAnimation" id=24]
 animation = "walk"
 
-[sub_resource type="AnimationNodeBlendTree" id=23]
+[sub_resource type="AnimationNodeBlendTree" id=25]
 graph_offset = Vector2( -229.75, 180.75 )
-nodes/attack/node = SubResource( 11 )
+nodes/attack/node = SubResource( 12 )
 nodes/attack/position = Vector2( 40, 280 )
-nodes/down/node = SubResource( 12 )
+nodes/down/node = SubResource( 13 )
 nodes/down/position = Vector2( 460, 0 )
-nodes/headbutt/node = SubResource( 13 )
+nodes/headbutt/node = SubResource( 14 )
 nodes/headbutt/position = Vector2( 40, 480 )
-nodes/hit/node = SubResource( 14 )
+nodes/hit/node = SubResource( 15 )
 nodes/hit/position = Vector2( 40, 380 )
-nodes/idle/node = SubResource( 15 )
+nodes/idle/node = SubResource( 16 )
 nodes/idle/position = Vector2( 40, 80 )
-nodes/kick/node = SubResource( 16 )
+nodes/kick/node = SubResource( 17 )
 nodes/kick/position = Vector2( 220, 180 )
-nodes/knockout/node = SubResource( 17 )
+nodes/knockout/node = SubResource( 18 )
 nodes/knockout/position = Vector2( 220, 80 )
 nodes/output/position = Vector2( 920, 120 )
-nodes/state/node = SubResource( 18 )
+nodes/state/node = SubResource( 19 )
 nodes/state/position = Vector2( 420, 120 )
-nodes/timescale/node = SubResource( 19 )
+nodes/timescale/node = SubResource( 20 )
 nodes/timescale/position = Vector2( 600, 120 )
-nodes/up/node = SubResource( 20 )
+nodes/up/node = SubResource( 21 )
 nodes/up/position = Vector2( 600, 0 )
-nodes/vertical/node = SubResource( 21 )
+nodes/vertical/node = SubResource( 22 )
 nodes/vertical/position = Vector2( 760, 60 )
-nodes/wait/node = SubResource( 29 )
+nodes/wait/node = SubResource( 23 )
 nodes/wait/position = Vector2( 220, 280 )
-nodes/walk/node = SubResource( 22 )
+nodes/walk/node = SubResource( 24 )
 nodes/walk/position = Vector2( 40, 180 )
 node_connections = [ "state", 0, "idle", "state", 1, "walk", "state", 2, "attack", "state", 3, "hit", "state", 4, "headbutt", "state", 5, "knockout", "state", 6, "kick", "state", 7, "wait", "output", 0, "vertical", "vertical", 0, "up", "vertical", 1, "timescale", "vertical", 2, "down", "timescale", 0, "state" ]
 
-[sub_resource type="Shader" id=24]
+[sub_resource type="Shader" id=26]
 code = "shader_type canvas_item;
 
 uniform float red : hint_range(0,1);
@@ -631,9 +630,9 @@ void fragment(){
 }
 "
 
-[sub_resource type="ShaderMaterial" id=25]
+[sub_resource type="ShaderMaterial" id=27]
 resource_local_to_scene = true
-shader = SubResource( 24 )
+shader = SubResource( 26 )
 shader_param/red = 0.0
 shader_param/yellow = 0.0
 
@@ -654,19 +653,19 @@ default_length = 1.0
 
 [node name="Animation" type="AnimationPlayer" parent="."]
 anims/attack = SubResource( 1 )
-anims/down = SubResource( 26 )
+anims/down = SubResource( 2 )
 anims/grab = SubResource( 3 )
 anims/headbutt = SubResource( 4 )
 anims/hit = SubResource( 5 )
 anims/kick = SubResource( 6 )
 anims/knockout = SubResource( 7 )
 anims/standing = SubResource( 8 )
-anims/up = SubResource( 27 )
-anims/wait = SubResource( 28 )
-anims/walk = SubResource( 10 )
+anims/up = SubResource( 9 )
+anims/wait = SubResource( 10 )
+anims/walk = SubResource( 11 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource( 23 )
+tree_root = SubResource( 25 )
 anim_player = NodePath("../Animation")
 active = true
 parameters/state/current = 0
@@ -682,7 +681,7 @@ region_rect = Rect2( 0, 0, 32, 32 )
 [node name="Sprites" type="Node2D" parent="."]
 
 [node name="Sprite" type="Polygon2D" parent="Sprites"]
-material = SubResource( 25 )
+material = SubResource( 27 )
 offset = Vector2( -16, -24 )
 texture = ExtResource( 1 )
 skeleton = NodePath("../../Skeleton2D")

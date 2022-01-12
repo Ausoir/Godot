@@ -79,7 +79,6 @@ func accomodate_stats(item):
 		actives.append(-1)
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
-	spd_move += item.dat.g("move speed", 0)
 	for i in range(4):
 		var belt_size = item.dat.g("belt" + str(i + 1), 0)
 		if belt_size > 0:
@@ -100,7 +99,6 @@ func unaccomodate_stats(item):
 		for i in range(old_inventory.size()):
 			if i >= old_inventory.size() - remove_spaces:
 				store(old_inventory[i], true)
-	spd_move -= item.dat.g("move speed", 0)
 	for i in range(4):
 		if item.dat.g("belt" + str(i + 1), 0) > 0:
 			belt[i][0] = 0

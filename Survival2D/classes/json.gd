@@ -2,7 +2,10 @@ var tileset = preload("res://assets/images/dcss.png")
 var tileset_map
 var images_cache = {}
 var particles_cache = {}
+var vault_cache = {}
+var json_cache = {}
 var terrain_data
+var palette_data
 var item_data
 var unit_data
 var mob_data
@@ -10,12 +13,13 @@ var skill_data
 
 
 func _init():
-	tileset_map = get_json_data("res://assets/json/tileset_map.json")
-	terrain_data = get_json_data("res://assets/json/terrains.json")
-	item_data = get_json_data("res://assets/json/items.json")
-	unit_data = get_json_data("res://assets/json/units.json")
-	mob_data = get_json_data("res://assets/json/mobs.json")
-	skill_data = get_json_data("res://assets/json/skills.json")
+	tileset_map = get_json_from_dir("res://assets/json/tileset_map.json")
+	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
+	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
+	item_data = get_json_from_dir("res://assets/json/items.json")
+	unit_data = get_json_from_dir("res://assets/json/units.json")
+	mob_data = get_json_from_dir("res://assets/json/mobs.json")
+	skill_data = get_json_from_dir("res://assets/json/skills.json")
 
 func set_tile_image(sprite, to):
 	var dat = tileset_map.get(to)
@@ -49,7 +53,16 @@ func get_particle(p):
 		particles_cache[p] = r
 		return r.instance()
 
-func get_json_data(dir):
+func get_json_data(p):
+	var r = json_cache.get(p)
+	if r != null:
+		return r
+	else:
+		r = get_json_from_dir("res://assets/json/" + p + ".json")
+		particles_cache[p] = r
+		return r
+
+func get_json_from_dir(dir):
 	var data_file = File.new()
 	if data_file.open(dir, File.READ) == OK:
 		var data_text = data_file.get_as_text()

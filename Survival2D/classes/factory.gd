@@ -72,8 +72,7 @@ func make_unit(arg, pos):
 		r.vars = G.Properties.new({})
 		for stat in G.STATS:
 			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
-		r.vars.a("damage", 0)
-		r.vars.a("defense", 0)
+		r.vars.a("move speed", r.dat.g("move speed", 2))
 		r.col = r.dat.g("col", "0110")
 		r.place(pos)
 		return r

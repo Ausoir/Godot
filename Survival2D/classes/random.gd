@@ -18,3 +18,12 @@ func rnd_range(p):
 
 func rndb():
 	return randi_range(0, 1) == 1
+
+func rnd_percent(p):
+	return randi_range(0, 99) < p
+
+func rnd_dice(times, dice):
+	var r = 0
+	for _i in range(times):
+		r += randi_range(1, dice)
+	return r

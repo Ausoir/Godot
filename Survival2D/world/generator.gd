@@ -1,21 +1,52 @@
+var vaults = preload("res://world/vaults.gd").new()
+var FLOOR_TILE = '.'
+var WALL_TILE = '#'
+var width
+var height
 var base
 var terrain
+var rng
 
+func create(x, y):
+	width = x
+	height = y
+	rng = G.rng
+
+func paint_palette():
+	for x in range(width):
+		for y in range(height):
+			var value = base[y][x]
+			var palet = G.data.palette_data.get(value)
+			if palet != null:
+				G.field.set_terrain(x, y, palet[0])
+				for i in range(1, palet.size()):
+					place_object(palet[i], x, y)
+			else:
+#				G.field.set_terrain(x, y, 'glass')
+				print("Palette value not found for: "+str(value))
+			if G.rng.rnd_percent(1):
+				G.field.spawn_points.append(G.field.tiles[y][x])
+
+func place_object(dat, x, y):
+	if G.rng.rnd_percent(dat[1]):
+		G.factory.make_item(dat[0], G.field.tiles[y][x])
+		if dat.size() > 2:
+			place_object(dat[2], x, y)
 
 func make_base(sx, sy, val):
 	var r = []
-	for _y in range(sy+1):
+	for _y in range(sy):
 		var row = []
-		for _x in range(sx+1):
+		for _x in range(sx):
 			row.append(val)
 		r.append(row)
 	return r
 
 func make_random(sx, sy):
 	var r = []
-	for _y in range(sy+1):
+	for _y in range(sy):
 		var row = []
-		for _x in range(sx+1):
+		for _x in range(sx):
 			row.append(G.rng.randf())
 		r.append(row)
 	return r
@@ -63,77 +94,71 @@ func make_perlin(sx, sy):
 	return map
 
 func smooth_edges(val):
-	var width = len(base[0])
-	var height = len(base)
-	for y in range(height):
+	var w = len(base[0])
+	var h = len(base)
+	for y in range(h):
 		for i in range(val):
 			base[y][i] *= float(i)/val
-			base[y][width-i-1] *= float(i)/val
-	for x in range(width):
+			base[y][w-i-1] *= float(i)/val
+	for x in range(w):
 		for i in range(val):
 			base[i][x] *= float(i)/val
-			base[height-i-1][x] *= float(i)/val
+			base[h-i-1][x] *= float(i)/val
 	return base
+
+func smooth_base(_map, iterations, threshold):
+	for _i in range(iterations):
+		var tiles = make_base(width, height, FLOOR_TILE)
+		for y in range(height):
+			for x in range(width):
+				var r2 = 0
+				for dy in range(-2, 3):
+					for dx in range(-2, 3):
+						if (abs(dx) + abs(dy) >= 3):
+							continue
+						if (is_inbound(x + dx, y + dy) and _map[y+dy][x+dx] == FLOOR_TILE):
+							r2 += 1
+				if (r2 >= threshold):
+					tiles[y][x] = FLOOR_TILE
+				else:
+					tiles[y][x] = WALL_TILE
+		_map = tiles
 
 
 func radialize():
-	var width = len(base[0])
-	var height = len(base)
-	var center_x = int(width * .5)
-	var center_y = int(height * .5)
-	for i in range(height):
-		for j in range(width):
+	var w = len(base[0])
+	var h = len(base)
+	var center_x = int(w * .5)
+	var center_y = int(h * .5)
+	for i in range(h):
+		for j in range(w):
 			var val_y = pow(float(i - center_y) / center_y, 2)
 			var val_x = pow(float(j - center_x) / center_x, 2)
 			var val = min(1, (1-sqrt(val_x+val_y)) * 12)
 			base[i][j] = val * base[i][j]
 	return base
 
-
-func divide(map, type):
-	var width = len(map[0])
-	var height = len(map)
-	var center_x = int(width / 2)
-	var center_y = int(height / 2)
-	for i in range(height):
-		for j in range(width):
-			var val = 1
-			if type == 1:
-				val = float(i - center_y) / center_y
-			elif type == 2:
-				val = float(j - center_x) / center_x
-			elif type == 3:
-				val = float(i - center_y) / center_y
-				val = val + float(j - center_x) / center_x
-				val = val / 2
-			val = (abs(val) + 1.2) / 2
-			map[i][j] *= val
-	return map
-
-
 func invert():
-	var width = len(base[0])
-	var height = len(base)
-	for i in range(height):
-		for j in range(width):
+	var w = len(base[0])
+	var h = len(base)
+	for i in range(h):
+		for j in range(w):
 			base[i][j] = 1 - base[i][j]
 	return base
-
 
 func fill(from, to, val):
 	for y in range(from.y, to.y+1):
 		for x in range(from.x, to.x+1):
 			base[y][x] = val
 
-
 func make_border(val, exc=[]):
 	var list = []
-	for i in range(len(base)):
+	for i in range(height):
 		list.append([i, 0])
-		list.append([i, len(base[0])-1])
-	for i in range(len(base[0])):
+		list.append([i, width-1])
+	for i in range(width):
 		list.append([0, i])
-		list.append([len(base)-1, i])
+		list.append([height-1, i])
 	for i in list:
 		if not base[i[0]][i[1]] in exc:
 			base[i[0]][i[1]] = val
@@ -152,3 +177,22 @@ func boundary_dist(x, y):
 	var xdist = min(x, len(base[0])-1-x)
 	var ydist = min(y, len(base)-1-y)
 	return min(xdist, ydist)
+
+func oddify(p):
+	return int(p / 2) * 2 + 1
+
+func is_inbound(x, y):
+	return x >= 0 and x < width and y >= 0 and y < height
+
+func magnify(mag):
+	var r = []
+	for y in range(height):
+		var row = []
+		for x in range(width):
+			for _i in range(mag):
+				row.append(base[y][x])
+		for _i in range(mag):
+			r.append(row)
+	width = len(r[0])
+	height = len(r)
+	return r

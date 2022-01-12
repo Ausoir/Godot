@@ -51,7 +51,7 @@ func iterate(node):
 		closest = node
 	var routes = G.field.get_routes(node.pos, col)
 	for i in routes:
-		var dir_pos = G.CARDINALS[i]
+		var dir_pos = G.DIRS[i]
 		var pos = Vector2(node.pos.x + dir_pos[0], node.pos.y + dir_pos[1])
 		if check_loop(closed, pos):
 			continue

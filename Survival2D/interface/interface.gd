@@ -245,5 +245,5 @@ func update_status():
 		tab_status.remove_child(child)
 	for i in G.STATS:
 		var label = Label.new()
-		label.set_text(i + ": " + str(G.you.unit.vars.g(i, 0)))
+		label.set_text(i.capitalize() + ": " + str(G.you.unit.vars.g(i, 0)))
 		tab_status.add_child(label)

@@ -36,6 +36,8 @@ func _ready():
 	update_stats()
 	for i in range(passives.size()):
 		activate_passive(i)
+	for i in dat.g("buffs", []):
+		G.fx(self, i)
 
 func update_stats():
 	abilities = []
@@ -55,6 +57,12 @@ func activate_passive(idx):
 		var slots = get_active_slots()
 		if slots + cost <= intel:
 			actives[idx] = cost
+			return true
+	return false
+
+func has_active(p):
+	for i in range(actives.size()):
+		if actives[i] != -1 and passives[i] == p:
 			return true
 	return false
 
@@ -80,7 +88,7 @@ func set_state(p, force=false):
 	if force or delay == 0:
 		state = p
 		if state == "move":
-			delay = max(1, dat.g("move speed", 1))
+			delay = max(1, vars.g("move speed", 1))
 			set_move_delay_speed(delay)
 			set_animation(state)
 		elif state == "attack":
@@ -129,13 +137,13 @@ func is_hit(acc):
 
 func hit(ptype, acc, dmg):
 	if is_hit(acc):
-		var toughness = max(1, vars.g("vitality", 1))
-		dmg = G.rng.randi_range(0, dmg)
+		var toughness = G.rng.randi_range(0, vars.g("vitality", 1))
+		dmg = max(0, G.rng.randi_range(0, dmg) - toughness)
 		fatigue += dmg
 		if fatigue > stamina:
 			var overwhelm = fatigue - stamina
 			buffs.on_interrupt("interrupt")
-			dmg = overwhelm / toughness
+			dmg = overwhelm
 			delay = int(fatigue)
 			if delay > 3:
 				set_animation("knockout")
@@ -143,7 +151,7 @@ func hit(ptype, acc, dmg):
 			else:
 				set_animation("hit")
 				flash("red", .1)
-		damage(ptype, dmg)
+			damage(ptype, dmg)
 
 func damage(ptype, dmg):
 	if dmg > 0:
@@ -153,12 +161,12 @@ func damage(ptype, dmg):
 		if dmg > vit:
 			die()
 		elif ptype == "bash":
-			if dmg < G.rng.randi_range(1, vit):
+			if dmg < G.rng.randi_range(0, vit):
 				G.fx(self, "dazed")
 			else:
 				G.fx(self, "broken bones")
 		elif ptype == "cut":
-			if dmg < G.rng.randi_range(1, vit):
+			if dmg < G.rng.randi_range(0, vit):
 				G.fx(self, "open wound")
 			else:
 				G.fx(self, "internal bleeding")
@@ -206,7 +214,11 @@ func die():
 	remove()
 
 func remove():
+	if controller != null:
+		controller.remove()
 	.remove()
 	buffs.remove()
-	controller.remove()
 	G.turn.remove(self)
+
+func is_visible():
+	return node_sprites.visible

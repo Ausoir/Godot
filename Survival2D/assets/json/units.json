@@ -1,4 +1,19 @@
 {
+	"ghost": {
+		"img": "blank",
+		"size": -1,
+		"move speed": 4,
+		"attack speed": 4,
+		"vitality": [1, 3],
+		"strength": [1, 3],
+		"intelligence": [1, 1],
+		"agility": [1, 4],
+		"perception": [4, 8],
+		"abilities": ["respawn"],
+		"passives": [],
+		"buffs": ["invisible"],
+		"flags": ["mindless", "nobreath"],
+	},
 	"human": {
 		"img": "units/human_female",
 		"bodyparts": {

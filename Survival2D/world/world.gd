@@ -1,7 +1,7 @@
 extends Node
 
 var tileset = preload("res://assets/tileset.tres")
-var generator_field = preload("res://world/generator_field.gd").new()
+var generator = preload("res://world/generator_street.gd").new()
 
 onready var tilemap = $Tilemap
 onready var shademap = $Shademap
@@ -10,10 +10,10 @@ onready var players = $Players
 onready var others = $Others
 onready var fog = $Fog
 
-var map_size = Vector2(0, 0)
-
 func generate():
-	generator_field.generate()
+	generator.generate()
+	G.field.create_map(generator.width, generator.height)
+	generator.paint_palette()
 	G.field.apply_shades(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):

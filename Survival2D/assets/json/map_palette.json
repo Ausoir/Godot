@@ -1,0 +1,8 @@
+{
+	"#": ["waterr"],
+	"W": ["waterr"],
+	"D": ["stone tile", ["door", 100]],
+	"%": ["glass"],
+	".": ["grass"],
+	",": ["grass", ["rock", 100, ["branch", 15]]],
+}

@@ -14,6 +14,7 @@ func assign(p):
 	unassign()
 	unit = p
 	unit.controller = self
+	target = unit.pos
 
 func unassign():
 	if unit:
@@ -27,7 +28,7 @@ func on_turn():
 			var dir = G.vector_to_dir(vec.x, vec.y)
 			unit.move(dir)
 			unit.set_state("move")
-			var x = G.CARDINALS[dir][0]
+			var x = G.DIRS[dir][0]
 			if x > 0:
 				unit.face(1)
 			elif x < 0:

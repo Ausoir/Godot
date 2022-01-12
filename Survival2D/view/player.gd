@@ -181,5 +181,5 @@ func perform_ability(idx):
 	tasks = [["ability", idx]]
 
 func remove():
-	var player_unit = G.cmd([["spawn", "human", G.field.get_spawn_point()]])
+	var player_unit = G.cmd([["spawn", "ghost", unit.pos]])
 	assign(player_unit)

@@ -169,7 +169,7 @@ func direction_to(target):
 func get_adjacent(dir, val=1):
 	if dir == -1:
 		return self
-	var t = G.CARDINALS[dir]
+	var t = G.DIRS[dir]
 	var ry = y + t[1]*val
 	var rx = x + t[0]*val
 	if G.field.is_inbound(rx, ry):
@@ -187,14 +187,13 @@ func get_items_by_type(p):
 	return r
 
 func get_beam_to(destination, col_masks, distance):
-	var degree = atan2(destination.y - y, destination.x - x)
+#	var degree = atan2(destination.y - y, destination.x - x)
 	var current = to_vector()
 	var current_tile = self
+	var diff = (destination - current).normalized()
 	while current_tile != destination and distance_to(current) < distance:
-		var dx = cos(degree)
-		var dy = sin(degree)
-		current.x += dx
-		current.y += dy
+		current.x += diff.x
+		current.y += diff.y
 		current_tile = G.field.get_tile(round(current.x), round(current.y))
 		if current_tile == null or current_tile.is_cols(col_masks):
 			break

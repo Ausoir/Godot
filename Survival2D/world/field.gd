@@ -37,12 +37,14 @@ func is_inbound(x, y):
 	return x >= 0 and x < G.field.size.x and y >= 0 and y < G.field.size.y
 
 func get_spawn_point():
+	if spawn_points.empty():
+		return tiles[0][0]
 	return G.rng.rnd_arr(spawn_points)
 
 func get_routes(pos, col):
 	var r = []
 	var count = 0
-	for i in G.CARDINALS:
+	for i in G.DIRS:
 		var ty = pos.y + i[1]
 		var tx = pos.x + i[0]
 		if G.field.is_inbound(tx, ty) and !tiles[ty][tx].is_col(col):

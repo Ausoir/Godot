@@ -13,7 +13,10 @@ func do(phost, pname, pdata=null, mode=0):
 			return false
 	else:
 		data = pdata
-	target = host.controller.target
+	if host.controller != null:
+		target = host.controller.target
+	else:
+		target = host.pos
 	if !find_victim():
 		return false
 	else:
@@ -80,14 +83,21 @@ func run_cmds(cmds):
 			G.fx(host, cmd[1])
 		elif type == "move":
 			host.relocate(victim)
+		elif type == "morph":
+			var husk = host
+			var player_unit = G.cmd([["spawn", cmd[1], host.pos]])
+			host.controller.assign(player_unit)
+			husk.remove()
+		elif type == "visibility":
+			if cmd[1] == 0:
+				host.node_sprites.hide()
+			else:
+				host.node_sprites.show()
 		elif type == "end":
 			host.buffs.end(name)
 
 func find_victim():
-	if data.target == "self":
-		if is_valid(host):
-			return true
-	elif data.target == "unit":
+	if data.target == "unit":
 		if target != null:
 			if "col" in data:
 				target = host.pos.get_beam_to(target, data.col, data.range)
@@ -102,8 +112,11 @@ func find_victim():
 				return true
 	elif data.target == "onattack":
 		for i in target.get_items_by_type("unit"):
-				if is_valid(i):
-					return true
+			if is_valid(i):
+				return true
+	else:
+		if is_valid(host):
+			return true
 	return false
 
 func is_valid(tgt):
