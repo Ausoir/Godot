@@ -2,7 +2,7 @@ extends "res://world/generator.gd"
 
 
 func generate():
-	.create(60, 60, 80, 80)
+	.create(60, 60)
 	base = make_perlin(width, height)
 	for x in range(width):
 		for y in range(height):

@@ -1,5 +1,6 @@
 extends Node
 
+const Tile = preload("res://world/tile.gd")
 var size
 var terrain
 var sound
@@ -8,7 +9,6 @@ var tiles
 var spawn_points = []
 
 func create_map(sx, sy):
-	var Tile = preload("res://world/tile.gd")
 	size = Vector2(sx, sy)
 	var r = []
 	for y in range(sy):
@@ -41,13 +41,13 @@ func get_spawn_point():
 		return tiles[0][0]
 	return G.rng.rnd_arr(spawn_points)
 
-func get_routes(pos, col):
+func get_routes(pos, cols):
 	var r = []
 	var count = 0
 	for i in G.DIRS:
 		var ty = pos.y + i[1]
 		var tx = pos.x + i[0]
-		if G.field.is_inbound(tx, ty) and !tiles[ty][tx].is_col(col):
+		if G.field.is_inbound(tx, ty) and !tiles[ty][tx].is_cols(cols):
 			r.append(count)
 		count += 1
 	return r

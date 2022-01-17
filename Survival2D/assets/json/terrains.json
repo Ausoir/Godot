@@ -10,4 +10,9 @@
 	"concrete": {"mat": "metal", "col": "1110", "height": 1},
 	"grass": {"mat": "dirt", "col": "0000", "height": 0},
 	"waterr": {"mat": "metal", "col": "0100", "height": -1},
+	"brick": {"mat": "dirt", "col": "1110", "height": 1},
+	"wood floor": {"mat": "dirt", "col": "0000", "height": 0},
+	"asphalt": {"mat": "dirt", "col": "0000", "height": 0},
+	"asphalt white": {"mat": "dirt", "col": "0000", "height": 0},
+	"wall": {"mat": "dirt", "col": "1110", "height": 1},
 }

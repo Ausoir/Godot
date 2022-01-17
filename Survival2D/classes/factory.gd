@@ -3,7 +3,6 @@ const Item = preload("res://objects/item.gd")
 const Unit = preload("res://objects/units/Unit.tscn")
 const Script_Unit = preload("res://objects/units/unit.gd")
 const Script_Humanoid = preload("res://objects/units/humanoid.gd")
-const Ai = preload("res://objects/units/ai.gd")
 
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
 const ACT_CONSTRUCT = ["icon_construct", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
@@ -41,17 +40,11 @@ func make_mob(arg, pos):
 			var num_range = mob_data[mob]
 			var num = G.rng.randi_range(num_range[0], num_range[1])
 			for _i in range(num):
-				var unit = make_npc(mob, unit_pos)
+				var unit = make_unit(mob, unit_pos)
+				unit.possess()
 				unit_pos = unit_pos.get_rnd_adjacent(unit.col, 8)
 				if unit_pos == null:
 					return
-
-func make_npc(arg, pos):
-	var unit = make_unit(arg, pos)
-	if unit != null:
-		var ctlr = Ai.new()
-		ctlr.assign(unit)
-		return unit
 
 func make_unit(arg, pos):
 	var unit_data = G.data.unit_data.get(arg)

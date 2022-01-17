@@ -60,7 +60,7 @@ func pos_to_pixel(pos):
 
 func vector_to_dir(x, y):
 	var count = 0
-	for i in CARDINALS:
+	for i in DIRS:
 		if i[0] == x and i[1] == y:
 			return count
 		count += 1

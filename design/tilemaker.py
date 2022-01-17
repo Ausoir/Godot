@@ -9,19 +9,29 @@ coord_mapping = (
 )
 
 def run():
-    out = modify_tileset()
+    make_autotile_8('../Survival2D/assets/images/tiles/concrete2/', 't_concrete_wall_')
 
-def modify_tileset():
-    tileset = Image.open('../Survival2D/assets/images/gui/Untitled.png').convert('RGBA')
+def make_autotile_8(filedir, prefix):
+    tiles = ['unconnected', 'end_piece_w', 'edge_ew', 'end_piece_e',
+            'end_piece_n', 'corner_nw', 't_connection_n', 'corner_ne',
+            'edge_ns', 't_connection_w', 'center', 't_connection_e',
+            'end_piece_s', 'corner_sw', 't_connection_s', 'corner_se']
+    out = combine_tiles(filedir, prefix, tiles, 32, (4, 4))
+    out.save(filedir + 'autotile.png', 'PNG')
+    out.show()
+
+def combine_tiles(filedir, prefix, tilenames, tilesize, sizes):
+    out = Image.new("RGBA", (tilesize*sizes[0], tilesize*sizes[1]), (255, 255, 255, 0))
     fromx = 0
     fromy = 0
-    for x in range(33):
-        r = tileset.crop((fromx, fromy, fromx+32, fromy+32))
-        new = Image.new("RGBA", (32, 32), (255, 255, 255, 0))
-        new.paste(r, (0, 0))
-        new.save('../Survival2D/assets/images/gui/eq_part' + str(x) + '.png', 'PNG')
-        fromx += 32
-    return tileset
+    for i in tilenames:
+        tile = Image.open(filedir+prefix+i+'.png').convert('RGBA')
+        out.paste(tile, (fromx*tilesize, fromy*tilesize))
+        fromx += 1
+        if fromx >= sizes[0]:
+            fromx = 0
+            fromy += 1
+    return out
 
 def make_blendmap():
     east = Image.open('shadow_east.png').convert('RGBA')

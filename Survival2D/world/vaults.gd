@@ -3,7 +3,7 @@ var data
 func load_vault(p):
 	data = G.data.get_json_data("vaults/" + p)
 
-func make_vault(base, room, dir):
+func make_vault(_map, room, dir):
 	var flip = 0
 	var rot = false
 	if dir == 0:
@@ -52,12 +52,13 @@ func make_vault(base, room, dir):
 		var vault_data = candidate[0]
 		var chance = vault_data[0]
 		var map = vault_data[1]
+		var palette = vault_data[2]
 		if G.rng.randi_range(0, 99) < chance:
-			place_vault(base, map, candidate[1], candidate[2], candidate[3], candidate[4])
+			place_vault(_map, map, palette, candidate[1], candidate[2], candidate[3], candidate[4])
 			return true
 	return false
 
-func place_vault(base, vault, startX, startY, flip, rot):
+func place_vault(_map, vault, palette, startX, startY, flip, rot):
 	for y in range(len(vault)):
 		for x in range(len(vault[0])):
 			var sX = x
@@ -74,7 +75,12 @@ func place_vault(base, vault, startX, startY, flip, rot):
 			else:
 				fX = startX + sX
 				fY = startY + sY
-			base[fY][fX] = vault[y][x]
+			var val = vault[y][x]
+			var palet = palette.get(val)
+			if val != null:
+				_map[fY][fX] = palet
+			else:
+				push_error("Invalid vault palette value: "+str(palet))
 
 func boundary_dist(vault, x, y):
 	var xdist = min(x, len(vault[0])-1-x)

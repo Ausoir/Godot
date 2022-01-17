@@ -1,4 +1,4 @@
-var col = G.COL_TERRAIN
+var cols = "0110"
 var target
 var iterations = 12
 var open
@@ -49,7 +49,7 @@ func iterate(node):
 		return node
 	if achieved < square_distance_to(closest.pos, target):
 		closest = node
-	var routes = G.field.get_routes(node.pos, col)
+	var routes = G.field.get_routes(node.pos, cols)
 	for i in routes:
 		var dir_pos = G.DIRS[i]
 		var pos = Vector2(node.pos.x + dir_pos[0], node.pos.y + dir_pos[1])

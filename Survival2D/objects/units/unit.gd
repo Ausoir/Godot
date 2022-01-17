@@ -1,5 +1,6 @@
 extends "res://objects/item.gd"
 
+const Ai = preload("res://objects/units/ai.gd")
 const Buffs = preload("res://objects/units/buffs.gd")
 const animation_map = {
 	"idle": 0,
@@ -38,6 +39,19 @@ func _ready():
 		activate_passive(i)
 	for i in dat.g("buffs", []):
 		G.fx(self, i)
+
+func possess(ctlr = null):
+	if ctlr == null:
+		ctlr = Ai.new()
+	else:
+		ctlr.unassign()
+	if controller != null:
+		controller.remove()
+		controller = null
+	controller = ctlr
+	ctlr.unit = self
+	ctlr.target = pos
+	ctlr.on_assign()
 
 func update_stats():
 	abilities = []

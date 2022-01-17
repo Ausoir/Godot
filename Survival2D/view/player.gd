@@ -19,9 +19,8 @@ func _ready():
 	pathing.iterations = 28
 	last_pos = unit.pos
 
-func assign(p):
-	.assign(p)
-	p.faction = 1
+func on_assign():
+	unit.faction = 1
 	if unit.dat.g("bodyparts") != null:
 		G.ui.update_equipables(unit.dat.g("bodyparts"))
 		G.ui.update_inventory()
@@ -29,11 +28,6 @@ func assign(p):
 		G.world.players.add_child(self)
 	camera.sight_range = unit.vars.g("perception", 18)
 	camera.update(unit.pos, last_pos)
-
-func unassign():
-	.unassign()
-	if get_parent() == G.world.players:
-		G.world.players.remove_child(self)
 
 func _on_input(event: InputEvent):
 	if enabled and !locked:
@@ -182,4 +176,4 @@ func perform_ability(idx):
 
 func remove():
 	var player_unit = G.cmd([["spawn", "ghost", unit.pos]])
-	assign(player_unit)
+	player_unit.possess(self)

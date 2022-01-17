@@ -83,10 +83,12 @@ func run_cmds(cmds):
 			G.fx(host, cmd[1])
 		elif type == "move":
 			host.relocate(victim)
+		elif type == "spawn":
+			G.cmd([["spawn", cmd[1], victim], ["possess", "$t"]])
 		elif type == "morph":
 			var husk = host
 			var player_unit = G.cmd([["spawn", cmd[1], host.pos]])
-			host.controller.assign(player_unit)
+			player_unit.possess(husk.controller)
 			husk.remove()
 		elif type == "visibility":
 			if cmd[1] == 0:

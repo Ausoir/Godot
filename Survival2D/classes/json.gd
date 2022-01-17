@@ -2,7 +2,6 @@ var tileset = preload("res://assets/images/dcss.png")
 var tileset_map
 var images_cache = {}
 var particles_cache = {}
-var vault_cache = {}
 var json_cache = {}
 var terrain_data
 var palette_data
@@ -59,7 +58,7 @@ func get_json_data(p):
 		return r
 	else:
 		r = get_json_from_dir("res://assets/json/" + p + ".json")
-		particles_cache[p] = r
+		json_cache[p] = r
 		return r
 
 func get_json_from_dir(dir):

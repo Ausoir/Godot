@@ -190,7 +190,8 @@ func get_beam_to(destination, col_masks, distance):
 #	var degree = atan2(destination.y - y, destination.x - x)
 	var current = to_vector()
 	var current_tile = self
-	var diff = (destination - current).normalized()
+	var dist = Vector2(destination.x - current.x, destination.y - current.y)
+	var diff = dist.normalized()
 	while current_tile != destination and distance_to(current) < distance:
 		current.x += diff.x
 		current.y += diff.y

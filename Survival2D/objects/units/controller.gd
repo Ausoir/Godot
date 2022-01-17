@@ -10,15 +10,13 @@ var delay = 0
 var locked = false
 var pathing = Pathing.new()
 
-func assign(p):
-	unassign()
-	unit = p
-	unit.controller = self
-	target = unit.pos
+func on_assign():
+	pass
 
-func unassign():
-	if unit:
+func unassign(_dead=false):
+	if unit != null:
 		unit.controller = null
+		unit = null
 
 func on_turn():
 	if !tasks.empty():
@@ -49,6 +47,7 @@ func on_turn():
 func path_to(pos, dist=0):
 	pathing.result = []
 	pathing.reach = dist
+	pathing.cols = unit.col
 	var unitpos_vec = unit.pos.to_vector()
 	var pos_vec = pos.to_vector()
 	if unitpos_vec == pos_vec:

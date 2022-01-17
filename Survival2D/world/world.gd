@@ -12,9 +12,8 @@ onready var fog = $Fog
 
 func generate():
 	generator.generate()
-	G.field.create_map(generator.width, generator.height)
-	generator.paint_palette()
 	G.field.apply_shades(Vector2(), G.field.size)
+	tilemap.update_bitmask_region(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):
 			set_dark(x, y)

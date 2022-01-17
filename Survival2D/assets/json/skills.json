@@ -138,6 +138,13 @@
 		"onstart": [["color", "brown"]],
 		"onend": [["move"]],
 	},
+	"summon": {
+		"img": "gui/st_death",
+		"target": "tile",
+		"delay": 2,
+		"onstart": [["spawn", "zombie"]],
+		"desc": "Debug use",
+	},
 	"respawn": {
 		"img": "gui/st_death",
 		"target": "self",

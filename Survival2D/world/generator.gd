@@ -4,7 +4,7 @@ var WALL_TILE = '#'
 var width
 var height
 var base
-var terrain
+var output
 var rng
 
 func create(x, y):
@@ -12,26 +12,60 @@ func create(x, y):
 	height = y
 	rng = G.rng
 
-func paint_palette():
-	for x in range(width):
-		for y in range(height):
+func palette_assign(fromx, fromy, tox, toy):
+	for y in range(fromy, toy+1):
+		for x in range(fromx, tox+1):
 			var value = base[y][x]
 			var palet = G.data.palette_data.get(value)
 			if palet != null:
-				G.field.set_terrain(x, y, palet[0])
-				for i in range(1, palet.size()):
-					place_object(palet[i], x, y)
+				output[y][x] = palet
 			else:
-#				G.field.set_terrain(x, y, 'glass')
 				print("Palette value not found for: "+str(value))
-			if G.rng.rnd_percent(1):
-				G.field.spawn_points.append(G.field.tiles[y][x])
+
+func make_vault(_bounds, vault_type, rots):
+	vaults.load_vault(vault_type)
+	return vaults.make_vault(output, _bounds, rots)
+
+func palette_fill(_bounds, _val):
+	for y in range(_bounds[1], _bounds[3]+1):
+		for x in range(_bounds[0], _bounds[2]+1):
+			var palet = G.data.palette_data.get(_val)
+			if palet != null:
+				output[y][x] = palet
+			else:
+				push_error("Invalid palette value: "+str(_val))
+
+func paint_map():
+	G.field.create_map(width, height)
+	for x in range(width):
+		for y in range(height):
+			var value = output[y][x]
+			if value != null:
+				G.field.set_terrain(x, y, value[0])
+				for i in range(1, value.size()):
+					place_object(value[i], x, y)
+			else:
+				push_error("Invalid tile: "+str(value))
+
+func paint_spawn(dir):
+	if dir == 0:
+		for x in range(int(width/3), int(width/3)*2):
+			G.field.spawn_points.append(G.field.tiles[0][x])
+	elif dir == 1:
+		for y in range(int(height/3), int(height/3)*2):
+			G.field.spawn_points.append(G.field.tiles[y][width-1])
+	elif dir == 2:
+		for x in range(int(width/3), int(width/3)*2):
+			G.field.spawn_points.append(G.field.tiles[height-1][x])
+	elif dir == 3:
+		for y in range(int(height/3), int(height/3)*2):
+			G.field.spawn_points.append(G.field.tiles[y][0])
 
 func place_object(dat, x, y):
 	if G.rng.rnd_percent(dat[1]):
 		G.factory.make_item(dat[0], G.field.tiles[y][x])
 		if dat.size() > 2:
-			place_object(dat[2], x, y)
+			place_object(dat[3], x, y)
 
 func make_base(sx, sy, val):
 	var r = []
@@ -196,3 +230,10 @@ func magnify(mag):
 	width = len(r[0])
 	height = len(r)
 	return r
+
+func get_tile(_map, x, y, default=null):
+	if x < 0 or x >= width:
+		return default
+	if y < 0 or y >= height:
+		return default
+	return _map[y][x]

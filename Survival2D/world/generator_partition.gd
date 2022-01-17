@@ -4,7 +4,7 @@ var _stack = []
 var size
 
 func generate():
-	.create(60, 60, 60, 60)
+	.create(60, 60)
 	base = make_base(width, height, FLOOR_TILE)
 
 	_stack = [

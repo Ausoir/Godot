@@ -1,14 +1,15 @@
 var host
 var tgt
 var stop
+var args
 
 func assign(phost):
 	host = phost
 	tgt = host
 
-func replace_vars(args):
+func replace_vars(_args):
 	var r = []
-	for arg in args:
+	for arg in _args:
 		if arg is String:
 			if arg == "$t":
 				r.append(tgt)
@@ -19,8 +20,8 @@ func replace_vars(args):
 		r.append(arg)
 	return r
 
-func run(args):
-	args = replace_vars(args)
+func run(_args):
+	args = replace_vars(_args)
 	var command = args[0]
 	if command == "=":
 		if args[1] == "t":
@@ -62,6 +63,8 @@ func run(args):
 		return G.cmds(args[1], tgt)
 	elif command == "make":
 		tgt = G.factory.make_item(args[1], args[2])
+	elif command == "possess":
+		args[1].possess(get_arg(2))
 	elif command == "spawn":
 		tgt = G.factory.make_unit(args[1], args[2])
 	elif command == "menu":
@@ -69,3 +72,8 @@ func run(args):
 	elif command == "cast":
 		host.buffs.add(args[1], args[2])
 	return tgt
+
+func get_arg(idx, default=null):
+	if args.size() > idx:
+		return args[idx]
+	return default

@@ -14,39 +14,35 @@ func generate():
 	_process()
 	base = fatten(1, 1, 1)
 	make_border(0)
-	magnify(7)
-	return base
+	magnify(15)
+	paint_map()
+	paint_spawn(0)
 
 func magnify(mag):
-	var r = make_base(width*mag, height*mag, '.')
+	var minimap = base
+	var default = G.data.palette_data.get('D')
+	output = make_base(width*mag, height*mag, default)
 	for y in range(height):
 		for x in range(width):
-			var val = base[y][x]
+			var val = minimap[y][x]
 			var mx = x*mag
 			var my = y*mag
 			var estate = [mx, my, mx+mag-1, my+mag-1]
-			if val == 1:
+			if val == 1 or (val == 2 and G.rng.rnd_percent(25)):
 				var rots = []
 				for i in range(4):
 					var dir = G.CARDINALS[i]
-					if base[y+dir[1]][x+dir[0]] == 0:
+					if minimap[y+dir[1]][x+dir[0]] != 1:
 						rots.append(i)
 				var rot = G.rng.rnd_arr(rots)
-				make_terrain(r, estate, "map_houses", rot)
+				make_vault(estate, "map_houses", rot)
 			else:
-				make_road(r, estate)
+				if get_tile(minimap, x+1, y, 1) == 1 and get_tile(minimap, x-1, y, 1) == 1:
+					make_vault(estate, "map_road", 0)
+				elif get_tile(minimap, x, y+1, 1) == 1 and get_tile(minimap, x, y-1, 1) == 1:
+					make_vault(estate, "map_road", 1)
 	width *= mag
 	height *= mag
-	base = r
-
-func make_road(map, room):
-	for y in range(room[1], room[3]+1):
-		for x in range(room[0], room[2]+1):
-			map[y][x] = 'D'
-
-func make_terrain(map, room, vault_type, rots):
-	vaults.load_vault(vault_type)
-	return vaults.make_vault(map, room, rots)
 
 func fatten(block, roadh, roadv):
 	var r = []

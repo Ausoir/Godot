@@ -105,7 +105,7 @@ remote func pre_start_game():
 			# Otherwise set name from peer.
 			player_unit.item_name = other_players[p_id]["name"]
 			other_players[p_id]["controller"] = player
-		player.assign(player_unit)
+		player_unit.possess(player)
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.
