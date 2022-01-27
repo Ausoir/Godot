@@ -1,0 +1,9 @@
+Progression: Levels (Cards), Items, Map (item)
+Map: Base camp, streets, single use instanced dungeons - lab, valley
+Story/Goal: Corruption (zombie) spreads. Player in survivor camp. Attacked by a demonspawn & cult.
+			A cult that believes making breeds with demons will bring back alliance with demons.
+			Goal - Reach final level of lab
+===
+use bag icon (with a top right plus sign) for floor items
+map item to use dungeons
+party system

@@ -13,7 +13,7 @@ func _init(type, p):
 	G.world.items.add_child(self)
 
 func shoot(img_name, from, to):
-	graphic = G.data.get_tile_image(img_name)
+	graphic = G.data.get_image(img_name)
 	add_child(graphic)
 	tween.interpolate_property(graphic, "position",
 		from, to, lifetime,
@@ -21,7 +21,7 @@ func shoot(img_name, from, to):
 	tween.start()
 
 func rotate(img_name, from, to):
-	graphic = G.data.get_tile_image(img_name)
+	graphic = G.data.get_image(img_name)
 	add_child(graphic)
 	tween.interpolate_property(graphic, "rotation",
 		from, to, lifetime,

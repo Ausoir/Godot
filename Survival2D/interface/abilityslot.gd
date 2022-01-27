@@ -13,11 +13,6 @@ var skill
 var skill_type
 var skill_description
 
-func _ready():
-	stylebox.texture = G.data.tileset
-	stylebox.region_rect.position.y = 1600
-	stylebox.region_rect.size = Vector2(32, 32)
-
 func set_index(p):
 	skill_index = p
 	$Label.text = str(p + 1)
@@ -25,15 +20,15 @@ func set_index(p):
 func set_mode(p):
 	if p == 3:
 		overlay.show()
-		stylebox.region_rect.position.x = 1088
+		stylebox.texture = G.data.get_image("gui/skillslot")
 	elif p == 2:
 		overlay.hide()
-		stylebox.region_rect.position.x = 1024
+		stylebox.texture = G.data.get_image("gui/skillslot_disabled")
 	elif p == 1:
 		overlay.hide()
-		stylebox.region_rect.position.x = 1056
+		stylebox.texture = G.data.get_image("gui/skillslot_use")
 	else:
-		stylebox.region_rect.position.x = 1088
+		stylebox.texture = G.data.get_image("gui/skillslot")
 	mode = p
 
 func assign(p):
@@ -70,7 +65,7 @@ func _update_cooldown(cd):
 		set_modulate(Color.white)
 
 func _on_mouse_entered():
-	G.ui.describe(skill, skill_description)
+	G.ui.describe("text", skill, skill_description)
 
 func _on_mouse_exited():
 	G.ui.description.hide()

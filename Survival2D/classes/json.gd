@@ -1,5 +1,3 @@
-var tileset = preload("res://assets/images/dcss.png")
-var tileset_map
 var images_cache = {}
 var particles_cache = {}
 var json_cache = {}
@@ -12,7 +10,6 @@ var skill_data
 
 
 func _init():
-	tileset_map = get_json_from_dir("res://assets/json/tileset_map.json")
 	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
 	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
 	item_data = get_json_from_dir("res://assets/json/items.json")
@@ -20,14 +17,14 @@ func _init():
 	mob_data = get_json_from_dir("res://assets/json/mobs.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
 
-func set_tile_image(sprite, to):
-	var dat = tileset_map.get(to)
-	if dat != null:
-		sprite.texture = tileset
-		sprite.region_enabled = true
-		sprite.region_rect.size = Vector2(32, 32)
-		sprite.region_rect.position = Vector2(dat[0] * 32, dat[1] * 32)
-	return sprite
+func set_tile_image(_sprite, _to):
+#	var dat = tileset_map.get(to)
+#	if dat != null:
+#		sprite.texture = tileset
+#		sprite.region_enabled = true
+#		sprite.region_rect.size = Vector2(32, 32)
+#		sprite.region_rect.position = Vector2(dat[0] * 32, dat[1] * 32)
+	return _sprite
 
 func get_tile_image(p):
 	var item_sprite = Sprite.new()

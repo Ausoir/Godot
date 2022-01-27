@@ -12,6 +12,7 @@ const animation_map = {
 	"kick": 6,
 	"wait": 7,
 }
+const SKILL_SIZE = 12
 
 onready var node_sprites = $Sprites
 onready var animation = $Animation
@@ -26,17 +27,20 @@ var delay = 0
 
 var controller
 var abilities
-var actives = []
-var passives
-var fatigue = 0
-var stamina
+var skills
+var deck = []
+var damage_taken = 0
+var energy = 0
 var cooldowns = {}
 var buffs = Buffs.new(self)
+var last_skill
 
 func _ready():
 	update_stats()
-	for i in range(passives.size()):
-		activate_passive(i)
+	var count = 0
+	for i in range(SKILL_SIZE):
+		if move_skill(i, SKILL_SIZE + count):
+			count += 1
 	for i in dat.g("buffs", []):
 		G.fx(self, i)
 
@@ -55,36 +59,50 @@ func possess(ctlr = null):
 
 func update_stats():
 	abilities = []
-	passives = []
+	skills = []
 	for i in dat.g("abilities", []):
 		abilities.append(i)
-	for i in dat.g("passives", []):
-		passives.append(i)
-		actives.append(-1)
-	stamina = max(1, vars.g("agility", 1))
+	for i in dat.g("skills", []):
+		skills.append(i)
+	for _i in range(skills.size(), SKILL_SIZE * 2):
+		skills.append(null)
 
-func activate_passive(idx):
-	if idx < passives.size():
-		var passive_data = G.data.skill_data.get(passives[idx])
-		var cost = passive_data.get("cost", 0)
-		var intel = vars.g("intelligence", 1)
-		var slots = get_active_slots()
-		if slots + cost <= intel:
-			actives[idx] = cost
+func add_skill(p):
+	for i in range(SKILL_SIZE):
+		if skills[i] == null:
+			skills[i] = p
 			return true
 	return false
 
+func move_skill(idx1, idx2):
+	if skills[idx1] == null:
+		return false
+	else:
+		if idx1 < SKILL_SIZE and idx2 >= SKILL_SIZE:
+				var passive_data = G.data.skill_data.get(skills[idx1])
+				var cost = passive_data.get("cost", 0)
+				var intel = vars.g("intelligence", 1)
+				var slots = get_active_slots()
+				if slots + cost > intel:
+					return false
+		var swap = skills[idx2]
+		skills[idx2] = skills[idx1]
+		skills[idx1] = swap
+		return true
+
 func has_active(p):
-	for i in range(actives.size()):
-		if actives[i] != -1 and passives[i] == p:
-			return true
+	for i in range(skills.size()):
+		if skills[i] == p:
+			return i >= SKILL_SIZE
 	return false
 
 func get_active_slots():
 	var slots = 0
-	for i in actives:
-		if i != -1:
-			slots += i
+	for i in range(SKILL_SIZE-1, skills.size()):
+		if skills[i] != null:
+			var data = G.data.skill_data.get(skills[i])
+			if data != null:
+				slots += data.get("cost", 0)
 	return slots
 
 func ability(idx):
@@ -92,8 +110,8 @@ func ability(idx):
 		var ability = abilities[idx]
 		G.fx(self, ability)
 
-func get_damage():
-	return vars.g("strength", 1)
+func get_damage(p):
+	return round(vars.g("strength", 1) * p * .01)
 
 func set_delay(p):
 	delay = max(delay, p)
@@ -125,65 +143,53 @@ func set_animation_direction(y):
 
 func roll_skill(type):
 	var roll = G.rng.randi_range(0, 99)
-	var deck = []
-	for i in range(passives.size()):
-		if actives[i] != -1:
-			deck.append(passives[i])
-	while !deck.empty():
-		var skill = G.rng.rnd_pop(deck)
-		var data = G.data.skill_data.get(skill)
+	var skill
+	var data
+	if deck.empty():
+		skill = "wait"
+		data = G.data.skill_data.get("wait")
+		G.influence.do(self, skill, data, 0)
+		return skill
+	else:
+		skill = deck.pop_back()
+		data = G.data.skill_data.get(skill)
 		if data != null and data.target == type:
 			if data.chance > roll:
+				last_skill = skill
 				G.influence.do(self, skill, data, 0)
 				return skill
-	delay = 4
-	set_animation("wait")
+		return roll_skill(type)
 
-func is_hit(acc):
-	if acc > 0:
-		acc = G.rng.randi_range(0, acc)
-		var dodge = stamina - fatigue
-		if acc > dodge:
-			return true
-		else:
-			fatigue += acc
-	return false
+func hit(_ptype, dmg):
+	dmg = G.rng.randf() * dmg
+	damage(dmg)
 
-func hit(ptype, acc, dmg):
-	if is_hit(acc):
-		var toughness = G.rng.randi_range(0, vars.g("vitality", 1))
-		dmg = max(0, G.rng.randi_range(0, dmg) - toughness)
-		fatigue += dmg
-		if fatigue > stamina:
-			var overwhelm = fatigue - stamina
-			buffs.on_interrupt("interrupt")
-			dmg = overwhelm
-			delay = int(fatigue)
-			if delay > 3:
-				set_animation("knockout")
-				flash("red", .5)
-			else:
-				set_animation("hit")
-				flash("red", .1)
-			damage(ptype, dmg)
-
-func damage(ptype, dmg):
+func damage(dmg):
 	if dmg > 0:
+		set_animation("hit")
+		delay = 2
+		buffs.on_interrupt("interrupt")
+		damage_taken += dmg
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(G.trng.randf_range(-1, 1), G.trng.randf_range(-1, 1), 0), "spread": 60})
-		G.display_damage(pos.to_pixel(), int(dmg)+1, 1 - dmg/4.0)
-		var vit = vars.g("vitality", 1)
-		if dmg > vit:
+		var vit = vars.g("vitality", 1) * 2
+		var damage_percent = damage_taken / vit
+		G.display_damage(pos.to_pixel(), int(dmg)+1, 1 - damage_percent)
+		if damage_percent > 1:
 			die()
-		elif ptype == "bash":
-			if dmg < G.rng.randi_range(0, vit):
-				G.fx(self, "dazed")
-			else:
-				G.fx(self, "broken bones")
-		elif ptype == "cut":
-			if dmg < G.rng.randi_range(0, vit):
-				G.fx(self, "open wound")
-			else:
-				G.fx(self, "internal bleeding")
+		else:
+			flash("red", damage_percent + .1)
+			if damage_percent > .8:
+				if !buffs.has("major injury"):
+					G.fx(self, "major injury")
+			elif damage_percent > .5:
+				if !buffs.has("moderate injury"):
+					G.fx(self, "moderate injury")
+			elif damage_percent > .2:
+				if !buffs.has("minor injury"):
+					G.fx(self, "minor injury")
+	elif dmg < 0:
+		flash("green", dmg * .2)
+		damage_taken -= dmg
 
 func on_turn():
 	if delay == 0:
@@ -191,14 +197,11 @@ func on_turn():
 	else:
 		if delay > 0:
 			delay -= 1
+		else:
+			energy = max(energy - 1, 0)
 		if delay == 0:
 			set_animation_direction(0)
 			set_state("idle")
-	if fatigue > 0:
-		fatigue *= .9
-		mat.set_shader_param("yellow", min(.3, fatigue / stamina * .3))
-	else:
-		mat.set_shader_param("yellow", 0)
 	for i in cooldowns:
 		if cooldowns[i] <= 0:
 			cooldowns.erase(i)
@@ -212,7 +215,7 @@ func flash(color, dur):
 	tween.start()
 
 func face(p):
-	if (p > 0) == (node_sprites.scale.x > 0):
+	if (p > 0) != (node_sprites.scale.x > 0):
 		node_sprites.scale.x *= -1
 		skeleton.scale.x *= -1
 

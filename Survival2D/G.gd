@@ -47,8 +47,9 @@ func _ready():
 func _process(delta):
 	time.on_process(delta)
 	if time.eighth_second:
-		turn.on_process()
-	elif !events.empty():
+		turn.on = true
+	turn.on_process()
+	if !events.empty():
 		var ev = events.pop_back()
 		ev.call_func()
 
@@ -65,9 +66,6 @@ func vector_to_dir(x, y):
 			return count
 		count += 1
 	return -1
-
-func get_tile(pos):
-	return field.tiles[pos.y][pos.x]
 
 func cmd(args, host=null):
 	rpc("synced_cmd", args, host)

@@ -12,29 +12,6 @@ func create(x, y):
 	height = y
 	rng = G.rng
 
-func palette_assign(fromx, fromy, tox, toy):
-	for y in range(fromy, toy+1):
-		for x in range(fromx, tox+1):
-			var value = base[y][x]
-			var palet = G.data.palette_data.get(value)
-			if palet != null:
-				output[y][x] = palet
-			else:
-				print("Palette value not found for: "+str(value))
-
-func make_vault(_bounds, vault_type, rots):
-	vaults.load_vault(vault_type)
-	return vaults.make_vault(output, _bounds, rots)
-
-func palette_fill(_bounds, _val):
-	for y in range(_bounds[1], _bounds[3]+1):
-		for x in range(_bounds[0], _bounds[2]+1):
-			var palet = G.data.palette_data.get(_val)
-			if palet != null:
-				output[y][x] = palet
-			else:
-				push_error("Invalid palette value: "+str(_val))
-
 func paint_map():
 	G.field.create_map(width, height)
 	for x in range(width):
@@ -46,6 +23,29 @@ func paint_map():
 					place_object(value[i], x, y)
 			else:
 				push_error("Invalid tile: "+str(value))
+
+func palette_assign(fromx, fromy, tox, toy):
+	for y in range(fromy, toy+1):
+		for x in range(fromx, tox+1):
+			var value = base[y][x]
+			var palet = G.data.palette_data.get(value)
+			if palet != null:
+				output[y][x] = palet
+			else:
+				print("Palette value not found for: "+str(value))
+
+func make_vault(_bounds, vault_type, dir):
+	vaults.load_vault(vault_type)
+	return vaults.make_vault(output, _bounds, dir)
+
+func palette_fill(_bounds, _val):
+	for y in range(_bounds[1], _bounds[3]+1):
+		for x in range(_bounds[0], _bounds[2]+1):
+			var palet = G.data.palette_data.get(_val)
+			if palet != null:
+				output[y][x] = palet
+			else:
+				push_error("Invalid palette value: "+str(_val))
 
 func paint_spawn(dir):
 	if dir == 0:

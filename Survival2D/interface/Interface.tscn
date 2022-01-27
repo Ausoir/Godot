@@ -1,16 +1,16 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=30 format=2]
 
 [ext_resource path="res://interface/interface.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
 [ext_resource path="res://interface/Description.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/images/model.png" type="Texture" id=4]
-[ext_resource path="res://assets/images/dcss.png" type="Texture" id=5]
+[ext_resource path="res://assets/font2.tres" type="DynamicFont" id=5]
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=6]
 [ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=7]
 [ext_resource path="res://interface/message.gd" type="Script" id=8]
 [ext_resource path="res://assets/images/gui/eq_part4.png" type="Texture" id=9]
 [ext_resource path="res://interface/ItemSlot.tscn" type="PackedScene" id=10]
-[ext_resource path="res://assets/images/gui/eq_part27.png" type="Texture" id=11]
+[ext_resource path="res://assets/images/gui/eq_part2.png" type="Texture" id=11]
 [ext_resource path="res://assets/images/gui/eq_part5.png" type="Texture" id=12]
 [ext_resource path="res://assets/images/gui/eq_part9.png" type="Texture" id=13]
 [ext_resource path="res://assets/images/gui/eq_part1.png" type="Texture" id=14]
@@ -19,6 +19,8 @@
 [ext_resource path="res://assets/images/gui/eq_part15.png" type="Texture" id=17]
 [ext_resource path="res://assets/images/gui/eq_part23.png" type="Texture" id=18]
 [ext_resource path="res://assets/images/gui/eq_part10.png" type="Texture" id=19]
+[ext_resource path="res://assets/images/gui/slot_full.png" type="Texture" id=20]
+[ext_resource path="res://interface/SkillSlot.tscn" type="PackedScene" id=21]
 
 [sub_resource type="Animation" id=1]
 length = 1.5
@@ -44,18 +46,29 @@ region_rect = Rect2( 0, -10, 180, 220 )
 
 [sub_resource type="StyleBoxTexture" id=4]
 resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 928, 1600, 32, 32 )
+texture = ExtResource( 20 )
+region_rect = Rect2( 0, 0, 32, 32 )
 
 [sub_resource type="StyleBoxTexture" id=5]
 resource_local_to_scene = true
-texture = ExtResource( 5 )
-region_rect = Rect2( 928, 1600, 32, 32 )
+texture = ExtResource( 20 )
+region_rect = Rect2( 0, 0, 32, 32 )
 
 [sub_resource type="DynamicFont" id=6]
 outline_size = 3
 outline_color = Color( 0, 0, 0, 0.627451 )
 font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=7]
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+use_mipmaps = true
+font_data = ExtResource( 7 )
+
+[sub_resource type="StyleBoxTexture" id=8]
+resource_local_to_scene = true
+texture = ExtResource( 20 )
+region_rect = Rect2( 0, 0, 32, 32 )
 
 [node name="Control" type="CanvasLayer"]
 script = ExtResource( 1 )
@@ -155,23 +168,9 @@ __meta__ = {
 margin_right = 36.0
 margin_bottom = 156.0
 
-[node name="focus" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
+[node name="back" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
 margin_right = 36.0
 margin_bottom = 36.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "focus"
-
-[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1/focus"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 11 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 1312, 896, 32, 32 )
-
-[node name="back" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
-margin_top = 40.0
-margin_right = 36.0
-margin_bottom = 76.0
 rect_min_size = Vector2( 36, 36 )
 custom_styles/panel = SubResource( 4 )
 part = "back"
@@ -181,6 +180,20 @@ modulate = Color( 1, 1, 1, 0.470588 )
 texture = ExtResource( 13 )
 offset = Vector2( 18, 18 )
 region_rect = Rect2( 736, 896, 32, 32 )
+
+[node name="outer" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
+margin_top = 40.0
+margin_right = 36.0
+margin_bottom = 76.0
+rect_min_size = Vector2( 36, 36 )
+custom_styles/panel = SubResource( 4 )
+part = "outer"
+
+[node name="Overlay" type="Sprite" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1/outer"]
+modulate = Color( 1, 1, 1, 0.470588 )
+texture = ExtResource( 11 )
+offset = Vector2( 18, 18 )
+region_rect = Rect2( 1312, 896, 32, 32 )
 
 [node name="offhand" parent="Control/Menu/Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 10 )]
 margin_top = 80.0
@@ -434,6 +447,234 @@ margin_bottom = 436.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="Label" type="Label" parent="Control/Menu/Tabs/SKL/VBoxContainer"]
+margin_right = 156.0
+margin_bottom = 24.0
+grow_horizontal = 0
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="Control/Menu/Tabs/SKL/VBoxContainer"]
+margin_right = 156.0
+margin_bottom = 24.0
+grow_horizontal = 0
+custom_fonts/font = SubResource( 7 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Active:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Active" type="GridContainer" parent="Control/Menu/Tabs/SKL/VBoxContainer"]
+margin_top = 28.0
+margin_right = 156.0
+margin_bottom = 230.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 8
+custom_constants/hseparation = 8
+columns = 4
+
+[node name="0" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 120.0
+margin_top = 80.0
+margin_right = 152.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 12
+active = true
+
+[node name="1" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+custom_styles/panel = SubResource( 8 )
+index = 13
+active = true
+
+[node name="2" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 40.0
+margin_right = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 14
+active = true
+
+[node name="3" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 80.0
+margin_right = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 15
+active = true
+
+[node name="4" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 120.0
+margin_right = 152.0
+custom_styles/panel = SubResource( 8 )
+index = 16
+active = true
+
+[node name="5" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_top = 40.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 17
+active = true
+
+[node name="6" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 72.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 18
+active = true
+
+[node name="7" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 80.0
+margin_top = 40.0
+margin_right = 112.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 19
+active = true
+
+[node name="8" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 120.0
+margin_top = 40.0
+margin_right = 152.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 20
+active = true
+
+[node name="9" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_top = 80.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 21
+active = true
+
+[node name="10" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 40.0
+margin_top = 80.0
+margin_right = 72.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 22
+active = true
+
+[node name="11" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
+margin_left = 80.0
+margin_top = 80.0
+margin_right = 112.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 23
+active = true
+
+[node name="Label3" type="Label" parent="Control/Menu/Tabs/SKL/VBoxContainer"]
+margin_right = 156.0
+margin_bottom = 24.0
+grow_horizontal = 0
+custom_fonts/font = SubResource( 7 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Reserve:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Inactive" type="GridContainer" parent="Control/Menu/Tabs/SKL/VBoxContainer"]
+margin_top = 234.0
+margin_right = 156.0
+margin_bottom = 436.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 8
+custom_constants/hseparation = 8
+columns = 4
+
+[node name="0" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 120.0
+margin_top = 80.0
+margin_right = 152.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+
+[node name="1" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+custom_styles/panel = SubResource( 8 )
+index = 1
+
+[node name="2" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 40.0
+margin_right = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 2
+
+[node name="3" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 80.0
+margin_right = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 3
+
+[node name="4" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 120.0
+margin_right = 152.0
+custom_styles/panel = SubResource( 8 )
+index = 4
+
+[node name="5" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_top = 40.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 5
+
+[node name="6" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 72.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 6
+
+[node name="7" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 80.0
+margin_top = 40.0
+margin_right = 112.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 7
+
+[node name="8" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 120.0
+margin_top = 40.0
+margin_right = 152.0
+margin_bottom = 72.0
+custom_styles/panel = SubResource( 8 )
+index = 8
+
+[node name="9" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_top = 80.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 9
+
+[node name="10" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 40.0
+margin_top = 80.0
+margin_right = 72.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 10
+
+[node name="11" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
+margin_left = 80.0
+margin_top = 80.0
+margin_right = 112.0
+margin_bottom = 112.0
+custom_styles/panel = SubResource( 8 )
+index = 11
+
 [node name="Container" type="TabContainer" parent="Control/Menu"]
 visible = false
 margin_left = 460.0
@@ -465,6 +706,7 @@ margin_right = 64.0
 mouse_filter = 2
 
 [node name="Message" type="Control" parent="Control"]
+grow_vertical = 0
 mouse_filter = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

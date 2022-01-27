@@ -63,14 +63,20 @@ func run(_args):
 		return G.cmds(args[1], tgt)
 	elif command == "make":
 		tgt = G.factory.make_item(args[1], args[2])
+		if tgt == null:
+			tgt = G.factory.make_mob(args[1], args[2])
+			if tgt == null:
+				tgt = G.factory.make_unit(args[1], args[2])
 	elif command == "possess":
 		args[1].possess(get_arg(2))
-	elif command == "spawn":
-		tgt = G.factory.make_unit(args[1], args[2])
 	elif command == "menu":
 		G.ui.display(args[1])
 	elif command == "cast":
 		host.buffs.add(args[1], args[2])
+	elif command == "refresh":
+		G.you.camera.update(G.you.unit.pos, G.you.last_pos)
+	elif command == "remove":
+		args[1].remove()
 	return tgt
 
 func get_arg(idx, default=null):

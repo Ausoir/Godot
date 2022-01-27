@@ -4,7 +4,7 @@ var pos_v = 0
 var timeout = 0
 
 func add(msg):
-	set_position(Vector2(64, G.ui.screen_size.y))
+	set_position(Vector2(64, G.ui.screen_size.y - 24))
 	var label = Label.new()
 	label.set_text(str(msg))
 	for child in get_children():

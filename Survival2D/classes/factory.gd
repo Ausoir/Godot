@@ -35,16 +35,27 @@ func get_description(name):
 func make_mob(arg, pos):
 	var mob_data = G.data.mob_data.get(arg)
 	if mob_data != null:
+		var unit
 		var unit_pos = pos
 		for mob in mob_data:
-			var num_range = mob_data[mob]
-			var num = G.rng.randi_range(num_range[0], num_range[1])
+			var params = mob_data[mob]
+			var num = G.rng.randi_range(params[0], params[1])
 			for _i in range(num):
-				var unit = make_unit(mob, unit_pos)
-				unit.possess()
-				unit_pos = unit_pos.get_rnd_adjacent(unit.col, 8)
-				if unit_pos == null:
-					return
+				unit = make_unit(mob, unit_pos)
+				if unit != null:
+					unit.possess()
+					unit_pos = unit_pos.get_rnd_adjacent(unit.col, 8)
+					if unit_pos == null:
+						return
+					if unit.dat.g("bodyparts"):
+						for ii in range(2, params.size()):
+							var item_param = params[ii]
+							if G.rng.rnd_percent(item_param[1]):
+								var item = G.factory.make_item(item_param[0])
+								unit.auto_equip(item)
+				else:
+					push_error("Invalid mob unit "+str(mob))
+		return unit
 
 func make_unit(arg, pos):
 	var unit_data = G.data.unit_data.get(arg)
@@ -70,17 +81,19 @@ func make_unit(arg, pos):
 		r.place(pos)
 		return r
 
-func make_item(arg, pos):
+func make_item(arg, pos=null):
 	var item_data = G.data.item_data.get(arg)
 	if item_data != null:
-		var r = G.data.get_tile_image(item_data.img)
+		var r = Sprite.new()
+		r.texture = G.data.get_image(item_data.img)
 		r.set_script(Item)
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = G.Properties.new(item_data)
 		r.vars = G.Properties.new({})
 		r.col = r.dat.g("col", "0000")
-		r.place(pos)
+		if pos != null:
+			r.place(pos)
 		return r
 
 func make_corpse(host, pos):
@@ -88,8 +101,11 @@ func make_corpse(host, pos):
 	r.item_name = "corpse"
 	r.item_type = "item"
 	r.make(host)
-	r.dat.a("desc", "A corpse")
-	r.place(pos)
+	var item_data = G.data.item_data.get("corpse")
+	if item_data != null:
+		r.dat = G.Properties.new(item_data)
+	if pos != null:
+		r.place(pos)
 	return r
 
 func get_duplicate(this, arr):

@@ -1,31 +1,109 @@
 {
 	"rock": {
-		"img": "rock",
+		"img": "items/rock",
 		"part": "item",
 		"abilities": ["throw rock"],
-		"passives": ["bash", "block"],
+		"skills": ["bash", "block"],
 		"mat": "stone",
 		"col": "0100",
 		"uses": 4,
 		"weight": 10,
 		"damage": 4,
-		"haste": 1,
 		"move speed": 1,
-		"light": ["red", 4, true],
-		"size": 1,
 		"desc": "A rock."
 	},
 	"branch": {
-		"img": "branch",
-		"sprite": "items/axe",
+		"img": "items/branch",
+		"sprite": "overlay/bat",
 		"part": "item",
 		"abilities": [],
-		"passives": ["strike"],
+		"skills": ["quick strike"],
 		"mat": "wood",
 		"weight": 10,
 		"damage": 4,
-		"haste": 1,
 		"tags": ["blunt"],
 		"desc": "A branch."
+	},
+	"cutlass": {
+		"img": "items/sword",
+		"sprite": "overlay/cutlass",
+		"part": "item",
+		"abilities": [],
+		"skills": ["quick strike"],
+		"mat": "wood",
+		"weight": 10,
+		"damage": 4,
+		"tags": ["blunt"],
+		"desc": "A branch."
+	},
+	"gi": {
+		"img": "items/cloth1",
+		"sprite": "overlay/gi",
+		"part": "body",
+		"abilities": ["fly"],
+		"skills": ["headbutt"],
+		"mat": "cotton",
+		"weight": 10,
+		"tags": ["blunt"],
+		"desc": "A gi."
+	},
+	"scalemail": {
+		"img": "items/cloth1",
+		"sprite": "overlay/scale_armor",
+		"part": "body",
+		"abilities": ["fly"],
+		"skills": ["headbutt"],
+		"mat": "cotton",
+		"weight": 10,
+		"tags": ["blunt"],
+		"desc": "A gi."
+	},
+	"hood": {
+		"img": "items/hood",
+		"sprite": "overlay/hood",
+		"part": "head",
+		"mat": "cotton",
+		"weight": 10,
+		"tags": ["blunt"],
+		"desc": "A gi."
+	},
+	"hanger": {
+		"img": "tiles/hanger",
+		"part": "item",
+		"mat": "wood",
+		"col": "0110",
+		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
+	},
+	"rack": {
+		"img": "tiles/rack",
+		"part": "item",
+		"mat": "wood",
+		"col": "0110",
+		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
+	},
+	"door": {
+		"img": "tiles/door",
+		"part": "item",
+		"mat": "wood",
+		"col": "1110",
+		"height": 2,
+		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
+		"desc": "A wooden door."
+	},
+	"open door": {
+		"img": "tiles/door_open",
+		"part": "item",
+		"mat": "wood",
+		"col": "0000",
+		"height": 1,
+		"onuse": [["v", "pos", "$h"], ["make", "door", "$t"], ["remove", "$h"], ["refresh"]],
+		"desc": "An open wooden door."
+	},
+	"corpse": {
+		"weight": 10,
+		"move speed": 1,
+		"skills": ["block"],
+		"mat": "flesh",
+		"desc": "A corpse."
 	},
 }

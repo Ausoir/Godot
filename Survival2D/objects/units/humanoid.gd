@@ -1,5 +1,6 @@
 extends "res://objects/units/unit.gd"
 
+const LAYER_ORDER = ["body", "head", "weapon"]
 var equipment_nodes = {}
 var equipments = {}
 var inventory = [null]
@@ -7,8 +8,8 @@ var belt = [[2, null],[0, null],[0, null],[0, null]]
 var selected_belt = -1
 var weight = 0
 
-func get_damage():
-	var r = .get_damage()
+func get_damage(p):
+	var r = .get_damage(p)
 	var wpn = get_weapon()
 	if wpn:
 		r += wpn.dat.g("damage", 0)
@@ -17,13 +18,27 @@ func get_damage():
 func get_weapon():
 	return belt[selected_belt][1]
 
+func remove_overlay(_part):
+	var wpn = equipment_nodes.get(_part)
+	if wpn != null:
+		wpn.queue_free()
+		node_sprites.remove_child(wpn)
+		equipment_nodes.erase(_part)
+
+func create_overlay(_part, _texturename):
+	if _texturename != null:
+		var newsprite = sprite.duplicate()
+		newsprite.set_name(_part)
+		newsprite.set_texture(G.data.get_image(_texturename))
+		equipment_nodes[_part] = newsprite
+		node_sprites.add_child(newsprite)
+		for child in node_sprites.get_children():
+			var child_order = LAYER_ORDER.find(child.name)
+			child.set_z_index(child_order)
+
 func select_weapon(p):
 	if p != selected_belt:
-		var wpn = equipment_nodes.get("weapon")
-		if wpn != null:
-			wpn.queue_free()
-			node_sprites.remove_child(wpn)
-			equipment_nodes.erase("weapon")
+		remove_overlay("weapon")
 		if belt[selected_belt][1] != null:
 			unaccomodate_stats(belt[selected_belt][1])
 		selected_belt = p
@@ -31,13 +46,7 @@ func select_weapon(p):
 		if item != null:
 			accomodate_stats(item)
 			if !("weapon" in equipment_nodes):
-				var item_sprite = item.dat.g("sprite")
-				if item_sprite != null:
-					wpn = sprite.duplicate()
-					wpn.set_name("weapon")
-					wpn.set_texture(G.data.get_image(item_sprite))
-					equipment_nodes["weapon"] = wpn
-					node_sprites.add_child(wpn)
+				create_overlay("weapon", item.dat.g("sprite"))
 
 func is_equipment_valid(part, item):
 	var item_part = item.dat.g("part", "")
@@ -60,6 +69,7 @@ func equip(part, item):
 	if !has_part(part) and is_equipment_valid(part, item):
 		equipments[part] = item
 		accomodate_stats(item)
+		create_overlay(part, item.dat.g("sprite"))
 		return true
 	return false
 
@@ -69,14 +79,14 @@ func unequip(part):
 			var r = equipments[eq]
 			unaccomodate_stats(r)
 			equipments.erase(eq)
+			remove_overlay(part)
 			return r
 	return unsheathe(-1)
 
 func accomodate_stats(item):
 	abilities += item.dat.g("abilities", [])
-	for i in item.dat.g("passives", []):
-		passives.append(i)
-		actives.append(-1)
+	for i in item.dat.g("skills", []):
+		add_skill(i)
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
 	for i in range(4):
@@ -89,9 +99,8 @@ func unaccomodate_stats(item):
 	for i in item.dat.g("abilities", []):
 		abilities.erase(i)
 	for i in item.dat.g("passives", []):
-		var idx = passives.find(i)
-		passives.remove(idx)
-		actives.remove(idx)
+		var idx = skills.find(i)
+		skills.remove(idx)
 	var remove_spaces = item.dat.g("space", 0)
 	var old_inventory = inventory
 	inventory = inventory.slice(0, inventory.size()-remove_spaces-1)

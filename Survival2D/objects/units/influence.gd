@@ -33,15 +33,15 @@ func do(phost, pname, pdata=null, mode=0):
 						run_cmds(data.onstack)
 					return true
 				else:
-					if "cancel" in data:
-						for i in data.cancel:
-							host.buffs.cancels.append([i, name])
-					host.buffs.add(name, data, data.duration)
+					host.buffs.add(name, data, data.duration, data.get("cancel", null))
 			run_cmds(data.onstart)
 		elif mode == 1:
 			run_cmds(data.onturn)
 		elif mode == 2:
 			run_cmds(data.onend)
+		if victim.item_type == "unit":
+			if "onkill" in data:
+				run_cmds(data.onkill)
 		return true
 
 func run_cmds(cmds):
@@ -53,8 +53,8 @@ func run_cmds(cmds):
 				var gfx = G.Gfx.new("tween", .1)
 				gfx.shoot(cmd[2], host.pos.to_pixel(), dest.to_pixel())
 				gfx.rotate(cmd[2], 0, 1280)
-			elif cmd[1] == "sprite":
-				G.cmds([["gfx", cmd[1], target]])
+			elif cmd[1] == "target":
+				G.make_particle(cmd[2], victim.pos.to_pixel())
 		elif type == "expend":
 			var wpn = host.get_weapon()
 			if wpn:
@@ -69,9 +69,18 @@ func run_cmds(cmds):
 		elif type == "stat":
 			host.vars.add(cmd[1], cmd[2])
 		elif type == "bash":
-			victim.hit(type, cmd[1], cmd[2]+host.get_damage())
-		elif type == "fatigue":
-			host.fatigue += cmd[1]
+			victim.hit(type, host.get_damage(cmd[1]))
+		elif type == "cut":
+			victim.hit(type, cmd[1])
+		elif type == "energy":
+			host.energy += cmd[1]
+		elif type == "heal":
+			host.hit("heal", -cmd[1])
+		elif type == "interrupt":
+			victim.buffs.on_interrupt(cmd[1])
+		elif type == "animate":
+			victim.delay = cmd[2]
+			victim.set_animation(cmd[1])
 		elif type == "animation":
 			if cmd[2] == 1:
 				if target.x == host.pos.x:
@@ -79,15 +88,20 @@ func run_cmds(cmds):
 				host.set_animation(cmd[1])
 			else:
 				host.set_animation(cmd[1])
+		elif type == "repeat":
+			if host.last_skill != null:
+				G.fx(host, host.last_skill)
 		elif type == "cast":
 			G.fx(host, cmd[1])
 		elif type == "move":
 			host.relocate(victim)
+		elif type == "mob":
+			G.factory.make_mob(cmd[1], victim)
 		elif type == "spawn":
-			G.cmd([["spawn", cmd[1], victim], ["possess", "$t"]])
+			G.cmd([["make", cmd[1], victim], ["possess", "$t"]])
 		elif type == "morph":
 			var husk = host
-			var player_unit = G.cmd([["spawn", cmd[1], host.pos]])
+			var player_unit = G.cmd([["make", cmd[1], host.pos]])
 			player_unit.possess(husk.controller)
 			husk.remove()
 		elif type == "visibility":
@@ -95,8 +109,12 @@ func run_cmds(cmds):
 				host.node_sprites.hide()
 			else:
 				host.node_sprites.show()
+		elif type == "refill":
+			for i in range(host.SKILL_SIZE, host.skills.size()):
+				if host.skills[i] != null:
+					host.deck.append(host.skills[i])
 		elif type == "end":
-			host.buffs.end(name)
+			host.buffs.end(cmd[1])
 
 func find_victim():
 	if data.target == "unit":

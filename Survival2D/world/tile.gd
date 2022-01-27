@@ -4,8 +4,8 @@ var y
 var terrain
 var items = []
 var visible = true
+var dat
 var col: String
-var orig_col: String
 var light: int = 0
 var shade: int = -1
 var height: int
@@ -33,7 +33,7 @@ func set_visible(p):
 
 func set_terrain(val):
 	var data = G.data.terrain_data.get(val)
-	if data:
+	if data != null:
 		terrain = val
 		var img = val
 		if "rnd" in data:
@@ -46,29 +46,38 @@ func set_terrain(val):
 				count += 1
 		var tile_image = G.world.tileset.find_tile_by_name(img)
 		G.world.tilemap.set_cell(x, y, tile_image)
-		orig_col = data.col
+		dat = data
 		col = data.col
 		height = data.height
 	else:
 		push_error("Could not find terrain data " + val)
 
 func add_item(item):
+	G.world.items.add_child(item)
 	items.append(item)
 	item.pos = self
-	for i in range(4):
-		if item.col[i] == "1":
-			col[i] = "1"
+	update_tile()
 
 func remove_item(item):
+	G.world.items.remove_child(item)
 	items.erase(item)
-	update_col()
+	update_tile()
 
-func update_col():
-	col = orig_col
+func update_tile():
+	var t = height
+	col = dat.col
+	height = dat.height
 	for item in items:
+		var item_height = item.dat.g("height")
+		if item_height != null:
+			height = max(height, item_height)
 		for i in range(4):
 			if item.col[i] == "1":
 				col[i] = "1"
+	if height != t:
+		apply_shade()
+		for i in range(8):
+			get_adjacent(i).apply_shade()
 
 func apply_shade():
 	if height < 1:

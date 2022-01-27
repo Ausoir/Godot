@@ -9,7 +9,7 @@ coord_mapping = (
 )
 
 def run():
-    make_autotile_8('../Survival2D/assets/images/tiles/concrete2/', 't_concrete_wall_')
+    make_autotile_8('../design/autotiles/t_rock_wall/', 't_rock_wall_')
 
 def make_autotile_8(filedir, prefix):
     tiles = ['unconnected', 'end_piece_w', 'edge_ew', 'end_piece_e',
@@ -18,7 +18,7 @@ def make_autotile_8(filedir, prefix):
             'end_piece_s', 'corner_sw', 't_connection_s', 'corner_se']
     out = combine_tiles(filedir, prefix, tiles, 32, (4, 4))
     out.save(filedir + 'autotile.png', 'PNG')
-    out.show()
+    #out.show()
 
 def combine_tiles(filedir, prefix, tilenames, tilesize, sizes):
     out = Image.new("RGBA", (tilesize*sizes[0], tilesize*sizes[1]), (255, 255, 255, 0))

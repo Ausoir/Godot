@@ -12,19 +12,18 @@ var allow_type = SLOT_FULL
 var dragged_sprite
 
 func _ready():
-	stylebox = stylebox.duplicate()
+	stylebox = stylebox.duplicate() #Make unique
 	add_stylebox_override("panel", stylebox)
-	$Sprite.texture = G.data.tileset
 
 func make_mode(p):
 	if p == 2:
-		stylebox.region_rect.position.x = 928
+		stylebox.texture = G.data.get_image("gui/slot_full")
 		allow_type = SLOT_FULL
 	elif p == 1:
-		stylebox.region_rect.position.x = 960
+		stylebox.texture = G.data.get_image("gui/slot_limited")
 		allow_type = SLOT_LIGHT
 	else:
-		stylebox.region_rect.position.x = 992
+		stylebox.texture = G.data.get_image("gui/slot_disabled")
 		allow_type = SLOT_DISABLED
 
 func is_item_valid(p):
@@ -40,7 +39,7 @@ func assign(p):
 		r = item
 	item = p
 	var item_sprite = get_node("Sprite")
-	item_sprite.region_rect = item.region_rect
+	item_sprite.texture = item.texture
 	item_sprite.show()
 	if has_node("Overlay"):
 		$Overlay.hide()
@@ -49,10 +48,9 @@ func assign(p):
 func unassign():
 	if item:
 		var item_sprite = get_node("Sprite")
-		var r = [item, item_sprite.duplicate()]
+		var r = {"type":"item", "item":item, "sprite":item_sprite.duplicate()}
 		if tile:
 			tile.remove_item(item)
-			G.world.items.remove_child(item)
 		item = null
 		item_sprite.hide()
 		if has_node("Overlay"):
@@ -61,7 +59,7 @@ func unassign():
 
 func _on_mouse_entered():
 	if item != null:
-		G.ui.describe(item.item_name, item.dat.g("desc"))
+		G.ui.describe("item", item.item_name, item)
 
 func _on_mouse_exited():
 	G.ui.description.hide()
@@ -70,7 +68,7 @@ func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
 			if event.button_index == BUTTON_LEFT:
-				if G.ui.drag_item != null:
+				if G.ui.drag_item != null and G.ui.drag_item.type == "item":
 					place_to(G.ui.drag_item)
 				else:
 					take_from()
@@ -100,28 +98,28 @@ func take_from():
 		if taken:
 			var r = unassign()
 			if r:
-				G.ui.set_drag_item(r[0], r[1])
+				G.ui.set_drag_item(r)
 
 func place_to(pitem):
 	var swap = false
 	if item != null:
-		G.ui.set_drag_item(null, null)
+		G.ui.set_drag_item(null)
 		take_from()
 		swap = true
 	if tile != null:
 		pitem.place(tile)
-		assign(pitem)
+		assign(pitem.item)
 	elif part == "none":
-		assign(pitem)
+		assign(pitem.item)
 	elif part == "inv":
-		if !G.you.unit.store(pitem):
+		if !G.you.unit.store(pitem.item):
 			return false
 	elif part[0] == "#":
-		if !G.you.unit.sheathe(int(part[1]), pitem):
+		if !G.you.unit.sheathe(int(part[1]), pitem.item):
 			return false
 	else:
-		if !G.you.unit.equip(part, pitem):
+		if !G.you.unit.equip(part, pitem.item):
 			return false
 	if !swap:
-		G.ui.set_drag_item(null, null)
+		G.ui.set_drag_item(null)
 	return true

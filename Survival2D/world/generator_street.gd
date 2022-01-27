@@ -13,8 +13,7 @@ func generate():
 	]
 	_process()
 	base = fatten(1, 1, 1)
-	make_border(0)
-	magnify(15)
+	magnify(21)
 	paint_map()
 	paint_spawn(0)
 
@@ -32,10 +31,13 @@ func magnify(mag):
 				var rots = []
 				for i in range(4):
 					var dir = G.CARDINALS[i]
-					if minimap[y+dir[1]][x+dir[0]] != 1:
+					if get_tile(minimap, x+dir[0], y+dir[1], 1) != 1:
 						rots.append(i)
-				var rot = G.rng.rnd_arr(rots)
-				make_vault(estate, "map_houses", rot)
+				if rots.empty():
+					make_vault(estate, "map_houses", G.rng.randi_range(0, 3))
+				else:
+					var rot = G.rng.rnd_arr(rots)
+					make_vault(estate, "map_houses", rot)
 			else:
 				if get_tile(minimap, x+1, y, 1) == 1 and get_tile(minimap, x-1, y, 1) == 1:
 					make_vault(estate, "map_road", 0)

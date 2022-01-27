@@ -4,6 +4,7 @@ const ItemSlot = preload("res://interface/ItemSlot.tscn")
 const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
 const BuffSlot = preload("res://interface/BuffSlot.tscn")
 const PassiveSlot = preload("res://interface/PassiveSlot.tscn")
+const SkillSlot = preload("res://interface/SkillSlot.tscn")
 onready var menu = $Control/Menu
 onready var message = $Control/Message
 onready var tint = $Control/Menu/Tint
@@ -12,7 +13,9 @@ onready var tabs = $Control/Menu/Tabs
 onready var tab_equipment = $Control/Menu/Tabs/INV/VSplit/Equipment/Columns
 onready var tab_inventory = $Control/Menu/Tabs/INV/VSplit/Inventory
 onready var tab_status = $Control/Menu/Tabs/CHA/VBoxContainer
-onready var tab_skill = $Control/Menu/Tabs/SKL/VBoxContainer
+onready var tab_skill_label = $Control/Menu/Tabs/SKL/VBoxContainer/Label
+onready var tab_skill_active = $Control/Menu/Tabs/SKL/VBoxContainer/Active
+onready var tab_skill_inactive = $Control/Menu/Tabs/SKL/VBoxContainer/Inactive
 onready var container = $Control/Menu/Container
 onready var container_grid = $Control/Menu/Container/Container
 onready var abilities = $Control/Abilities
@@ -21,7 +24,6 @@ var screen_size
 
 var on = false
 var drag_item
-var drag_sprite
 
 
 func _ready():
@@ -32,15 +34,15 @@ func _ready():
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
 	if drag_item != null:
-		drag_sprite.position = get_viewport().get_mouse_position()
+		drag_item.sprite.position = get_viewport().get_mouse_position()
 	message._on_process()
 
 func _background_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
-			if drag_item != null:
-				drag_item.place(G.you.unit.pos)
-				set_drag_item(null, null)
+			if drag_item != null and drag_item.type == "item":
+				drag_item.item.place(G.you.unit.pos)
+				set_drag_item(null)
 		else:
 			clear()
 
@@ -97,19 +99,18 @@ func clear():
 	menu.hide()
 	description.hide()
 	container.hide()
-	set_drag_item(null, null)
+	set_drag_item(null)
 
-func set_drag_item(item, item_sprite):
+func set_drag_item(item):
 	if item == null:
 		if drag_item:
+			drag_item.sprite.queue_free()
+			menu.remove_child(drag_item.sprite)
 			drag_item = null
-			drag_sprite.queue_free()
-			menu.remove_child(drag_sprite)
 	else:
 		drag_item = item
-		drag_sprite = item_sprite.duplicate()
-		drag_sprite.position = get_viewport().get_mouse_position()
-		menu.add_child(drag_sprite)
+		drag_item.sprite.position = get_viewport().get_mouse_position()
+		menu.add_child(drag_item.sprite)
 
 func get_vacant_inventory():
 	for child in tab_inventory.get_children():
@@ -201,10 +202,15 @@ func search_inventory(tile):
 			slot.tile = tile
 			container_grid.add_child(slot)
 
-func describe(title, desc):
+func describe(type, header, subject):
 	if !description.visible or !on:
-		if title != null and desc != null:
-			description.display(title, desc)
+		if header != null and subject != null:
+			if type == "text":
+				description.display(header, subject)
+			elif type == "item":
+				description.display_item(header, subject)
+			elif type == "skill":
+				description.display_skill(header, subject)
 
 func _update_cooldowns(cds):
 	for ability in abilities.get_children():
@@ -221,23 +227,22 @@ func _on_tab_change(page):
 		update_skills()
 
 func update_skills():
-	for child in tab_skill.get_children():
-		child.queue_free()
-		tab_skill.remove_child(child)
-	var count = 0
+	for child in tab_skill_inactive.get_children():
+		child.assign(null)
+	for child in tab_skill_active.get_children():
+		child.assign(null)
 	var slots = G.you.unit.get_active_slots()
-	var slot_label = Label.new()
 	var max_slots = G.you.unit.vars.g("intelligence", 1)
-	slot_label.set_text("Slots: " + str(slots) + "/" + str(max_slots))
-	tab_skill.add_child(slot_label)
-	for i in range(G.you.unit.passives.size()):
-		var label = PassiveSlot.instance()
-		var passive = G.you.unit.passives[i]
-		label.assign(passive, count, slot_label)
-		if G.you.unit.actives[i] == -1:
-			label.set_pressed(false)
-		tab_skill.add_child(label)
-		count += 1
+	tab_skill_label.set_text("Slots: " + str(slots) + "/" + str(max_slots))
+	for i in range(G.you.unit.skills.size()):
+		var skill = G.you.unit.skills[i]
+		if skill != null:
+			var slot
+			if i >= G.you.unit.SKILL_SIZE:
+				slot = tab_skill_active.get_child(i - G.you.unit.SKILL_SIZE)
+			else:
+				slot = tab_skill_inactive.get_child(i)
+			slot.assign(skill)
 
 func update_status():
 	for child in tab_status.get_children():

@@ -1,9 +1,10 @@
 extends Node
 
 
-var takers = [[],[],[],[]]
+var takers = [[],[],[],[],[],[],[],[]]
 var add_idx = 0
 var turn_idx = 0
+var on = false
 
 
 func increment_index(idx):
@@ -12,9 +13,15 @@ func increment_index(idx):
 		idx = 0
 	return idx
 
+func has(p):
+	for i in takers:
+		if p in i:
+			return true
+	return false
+
 func add(p):
 	takers[add_idx].append(p)
-	increment_index(add_idx)
+	add_idx = increment_index(add_idx)
 
 func remove(p):
 	for i in takers:
@@ -24,6 +31,9 @@ func remove(p):
 			return
 
 func on_process():
-	for i in takers[turn_idx]:
-		i.on_turn()
-	increment_index(turn_idx)
+	if on:
+		for i in takers[turn_idx]:
+			i.on_turn()
+		turn_idx = increment_index(turn_idx)
+		if turn_idx == 0:
+			on = false

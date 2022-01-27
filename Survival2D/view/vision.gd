@@ -40,6 +40,13 @@ func _process(_delta):
 		processing_frame = 0
 		set_process(false)
 
+func darken():
+	for y in range(-sight_range, sight_range+1):
+		for x in range(-sight_range, sight_range+1):
+			var tile = G.field.get_tile(param_pos.x+x, param_pos.y+y)
+			if tile:
+				G.world.set_dark(param_pos.x+x, param_pos.y+y)
+
 func update(last_pos, pos):
 	param_last_pos = last_pos
 	param_pos = pos

@@ -21,11 +21,12 @@ func _ready():
 
 func on_assign():
 	unit.faction = 1
-	if unit.dat.g("bodyparts") != null:
-		G.ui.update_equipables(unit.dat.g("bodyparts"))
-		G.ui.update_inventory()
+	G.ui.update_equipables(unit.dat.g("bodyparts", {}))
+	G.ui.update_inventory()
 	if get_parent() == null:
 		G.world.players.add_child(self)
+	if camera.sight_frame > 0:
+		camera.darken()
 	camera.sight_range = unit.vars.g("perception", 18)
 	camera.update(unit.pos, last_pos)
 
@@ -49,7 +50,6 @@ func _on_input(event: InputEvent):
 					target = G.field.get_tile(mousetarget.x, mousetarget.y)
 					if target != null:
 						move_to(target)
-						tasks.append(["interact", target])
 				elif Input.is_action_just_pressed("use"):
 					var mousetarget = G.pixel_to_pos(mouse_pos)
 					var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
@@ -61,7 +61,7 @@ func _on_input(event: InputEvent):
 							stop_aim()
 						else:
 							if !tile.items.empty():
-								move_to(tile)
+								move_to(tile, 1)
 								tasks.append(["interact", target])
 							else:
 								cursor.position = G.pos_to_pixel(mousetarget)
@@ -145,20 +145,21 @@ func interact_tile(tile):
 						unit.swap(item)
 					else:
 						tasks.append(["attack", tile])
-				elif item.item_type == "object":
-					pass
 				elif item.item_type == "item":
-					G.ui.search_inventory(tile)
+					var onuse = item.dat.g("onuse")
+					if onuse != null:
+						G.cmd(onuse, item)
+					else:
+						G.ui.search_inventory(tile)
 
-func move_to(tile):
-	var dist = 0
+func move_to(tile, dist=0):
 	if tile.is_cols(unit.col):
 		dist = 1
 	if unit.pos.distance_to(tile) <= dist:
 		return unit.pos
 	cursor.position = G.pos_to_pixel(tile)
 	cursor.show()
-	path_to(tile)
+	path_to(tile, dist)
 	remove_steps()
 	return show_steps()
 
@@ -175,5 +176,5 @@ func perform_ability(idx):
 	tasks = [["ability", idx]]
 
 func remove():
-	var player_unit = G.cmd([["spawn", "ghost", unit.pos]])
+	var player_unit = G.cmd([["make", "ghost", unit.pos]])
 	player_unit.possess(self)

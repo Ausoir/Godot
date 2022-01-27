@@ -1,12 +1,14 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://assets/images/dcss.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/gui/circle.png" type="Texture" id=2]
 [ext_resource path="res://interface/abilityslot.gd" type="Script" id=3]
+[ext_resource path="res://assets/images/gui/skillslot.png" type="Texture" id=4]
 
 [sub_resource type="StyleBoxTexture" id=1]
 resource_local_to_scene = true
-region_rect = Rect2( 1088, 1600, 32, 32 )
+texture = ExtResource( 4 )
+region_rect = Rect2( 0, 0, 32, 32 )
 
 [sub_resource type="DynamicFont" id=2]
 outline_size = 3
@@ -26,7 +28,6 @@ __meta__ = {
 
 [node name="Sprite" type="Sprite" parent="."]
 offset = Vector2( 16, 16 )
-region_rect = Rect2( 1152, 1600, 32, 32 )
 
 [node name="Label" type="Label" parent="."]
 margin_right = 32.0
@@ -45,8 +46,6 @@ __meta__ = {
 visible = false
 texture = ExtResource( 2 )
 offset = Vector2( 16, 16 )
-region_enabled = true
-region_rect = Rect2( 0, 1600, 32, 32 )
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

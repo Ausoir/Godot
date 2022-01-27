@@ -10,7 +10,7 @@ func assign(p, img, desc):
 	buff_description = desc
 
 func _on_mouse_entered():
-	G.ui.describe(buff_name, buff_description)
+	G.ui.describe("text", buff_name, buff_description)
 
 func _on_mouse_exited():
 	G.ui.description.hide()

@@ -15,13 +15,11 @@ var hp = Vector2()
 
 func place(p):
 	p.add_item(self)
-	G.world.items.add_child(self)
 	position = p.to_pixel()
 	pos = p
 
 func remove():
 	pos.remove_item(self)
-	G.world.items.remove_child(self)
 	queue_free()
 
 func move(towards):
