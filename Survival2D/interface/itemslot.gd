@@ -40,6 +40,8 @@ func assign(p):
 	item = p
 	var item_sprite = get_node("Sprite")
 	item_sprite.texture = item.texture
+	item_sprite.region_enabled = item.region_enabled
+	item_sprite.region_rect = item.region_rect
 	item_sprite.show()
 	if has_node("Overlay"):
 		$Overlay.hide()
@@ -80,11 +82,12 @@ func _on_gui_input(event):
 func on_quick_action():
 	if item != null:
 		if tile == null:
-			var t = item
-			take_from()
-			for child in G.ui.equipment.get_children():
-				if child.place_to(t):
-					return
+			if part == "inv" and G.you.unit.auto_equip(item):
+				take_from()
+				G.ui.set_drag_item(null)
+			elif part != "none" and G.you.unit.store(item):
+				take_from()
+				G.ui.set_drag_item(null)
 		else:
 			if G.you.unit.store(item):
 				unassign()
@@ -107,7 +110,7 @@ func place_to(pitem):
 		take_from()
 		swap = true
 	if tile != null:
-		pitem.place(tile)
+		pitem.item.place(tile)
 		assign(pitem.item)
 	elif part == "none":
 		assign(pitem.item)

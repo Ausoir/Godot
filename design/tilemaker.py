@@ -9,7 +9,7 @@ coord_mapping = (
 )
 
 def run():
-    make_autotile_8('../design/autotiles/t_rock_wall/', 't_rock_wall_')
+    make_autotile_8('../design/autotiles/t_wall_w/', 't_wall_w_')
 
 def make_autotile_8(filedir, prefix):
     tiles = ['unconnected', 'end_piece_w', 'edge_ew', 'end_piece_e',

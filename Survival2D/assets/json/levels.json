@@ -1,0 +1,11 @@
+{
+	"urban": {
+		"mobs": {
+			"test": 50,
+			"looters": 50,
+		},
+		"loots": {
+			"chest": 24,
+		},
+	}
+}

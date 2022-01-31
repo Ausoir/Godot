@@ -63,13 +63,10 @@ func take_from():
 			G.ui.set_drag_item(r)
 
 func place_to(pitem):
-	var swap = false
 	if skill != null:
 		G.ui.set_drag_item(null)
 		take_from()
-		swap = true
 	G.you.unit.move_skill(pitem.index, index)
-	if !swap:
-		G.ui.set_drag_item(null)
+	G.ui.set_drag_item(null)
 	G.ui.update_skills()
 	return true

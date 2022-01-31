@@ -64,8 +64,10 @@ func paint_spawn(dir):
 func place_object(dat, x, y):
 	if G.rng.rnd_percent(dat[1]):
 		G.factory.make_item(dat[0], G.field.tiles[y][x])
-		if dat.size() > 2:
+		if dat.size() > 2 and dat[2] == "+":
 			place_object(dat[3], x, y)
+	elif dat.size() > 2 and dat[2] == "/":
+		place_object(dat[3], x, y)
 
 func make_base(sx, sy, val):
 	var r = []

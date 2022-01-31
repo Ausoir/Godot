@@ -8,7 +8,7 @@
 		"col": "0100",
 		"uses": 4,
 		"weight": 10,
-		"damage": 4,
+		"bash": 4,
 		"move speed": 1,
 		"desc": "A rock."
 	},
@@ -20,7 +20,7 @@
 		"skills": ["quick strike"],
 		"mat": "wood",
 		"weight": 10,
-		"damage": 4,
+		"bash": 4,
 		"tags": ["blunt"],
 		"desc": "A branch."
 	},
@@ -32,7 +32,8 @@
 		"skills": ["quick strike"],
 		"mat": "wood",
 		"weight": 10,
-		"damage": 4,
+		"cut": 2,
+		"bash": 1,
 		"tags": ["blunt"],
 		"desc": "A branch."
 	},
@@ -81,12 +82,53 @@
 		"col": "0110",
 		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
 	},
+	"window curtain": {
+		"img": "tiles/window_curtain",
+		"part": "item",
+		"mat": "glass",
+		"col": "1110",
+		"height": 1,
+		"ondie": [["v", "pos", "$h"], ["make", "window broken", "$t"]],
+		"desc": "A curtained window.",
+	},
+	"window": {
+		"img": "tiles/window",
+		"part": "item",
+		"mat": "glass",
+		"col": "0110",
+		"durability": 1,
+		"height": 1,
+		"onuse": [["v", "pos", "$h"], ["make", "window open", "$t"], ["remove", "$h"]],
+		"ondie": [["v", "pos", "$h"], ["make", "window broken", "$t"]],
+		"desc": "A shut window."
+	},
+	"window open": {
+		"img": "tiles/window_open",
+		"part": "item",
+		"mat": "glass",
+		"col": "0000",
+		"durability": 1,
+		"height": 1,
+		"onuse": [["v", "pos", "$h"], ["make", "window", "$t"], ["remove", "$h"], ["refresh"]],
+		"ondie": [["v", "pos", "$h"], ["make", "window broken", "$t"]],
+		"desc": "An open window."
+	},
+	"window broken": {
+		"img": "tiles/window_broken",
+		"part": "item",
+		"mat": "glass",
+		"col": "0010",
+		"height": 1,
+		"slow": 2,
+		"durability": 4,
+		"desc": "A broken window."
+	},
 	"door": {
 		"img": "tiles/door",
 		"part": "item",
 		"mat": "wood",
 		"col": "1110",
-		"height": 2,
+		"height": 1,
 		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
 		"desc": "A wooden door."
 	},
@@ -98,6 +140,19 @@
 		"height": 1,
 		"onuse": [["v", "pos", "$h"], ["make", "door", "$t"], ["remove", "$h"], ["refresh"]],
 		"desc": "An open wooden door."
+	},
+	"counter": {
+		"img": "tiles/counter_autotile",
+		"autotile": 1,
+		"mat": "wood",
+		"col": "0100",
+	},
+	"fence": {
+		"img": "tiles/fence_autotile",
+		"autotile": 1,
+		"part": "item",
+		"mat": "wood",
+		"col": "0110",
 	},
 	"corpse": {
 		"weight": 10,

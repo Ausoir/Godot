@@ -47,7 +47,7 @@ func _ready():
 func _process(delta):
 	time.on_process(delta)
 	if time.eighth_second:
-		turn.on = true
+		turn.process_frames += 1
 	turn.on_process()
 	if !events.empty():
 		var ev = events.pop_back()
@@ -66,6 +66,45 @@ func vector_to_dir(x, y):
 			return count
 		count += 1
 	return -1
+
+func get_autotile_coord(dirs):
+	var v
+	if dirs.empty():
+		v = Vector2()
+	else:
+		if dirs == [0]:
+			v = Vector2(0, 3)
+		elif dirs == [1]:
+			v = Vector2(1, 0)
+		elif dirs == [2]:
+			v = Vector2(0, 1)
+		elif dirs == [3]:
+			v = Vector2(3, 0)
+		elif dirs == [0, 1]:
+			v = Vector2(1, 3)
+		elif dirs == [0, 2]:
+			v = Vector2(0, 2)
+		elif dirs == [0, 3]:
+			v = Vector2(3, 3)
+		elif dirs == [1, 2]:
+			v = Vector2(1, 1)
+		elif dirs == [1, 3]:
+			v = Vector2(2, 0)
+		elif dirs == [2, 3]:
+			v = Vector2(3, 1)
+		elif dirs == [0, 1, 2]:
+			v = Vector2(1, 2)
+		elif dirs == [0, 1, 3]:
+			v = Vector2(2, 3)
+		elif dirs == [0, 2, 3]:
+			v = Vector2(3, 2)
+		elif dirs == [1, 2, 3]:
+			v = Vector2(2, 1)
+		elif dirs == [0, 1, 2, 3]:
+			v = Vector2(2, 2)
+		else:
+			v = Vector2()
+	return v
 
 func cmd(args, host=null):
 	rpc("synced_cmd", args, host)

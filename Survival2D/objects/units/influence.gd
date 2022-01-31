@@ -68,10 +68,9 @@ func run_cmds(cmds):
 			host.cooldowns[cmd[1]] = cmd[2]
 		elif type == "stat":
 			host.vars.add(cmd[1], cmd[2])
-		elif type == "bash":
-			victim.hit(type, host.get_damage(cmd[1]))
-		elif type == "cut":
-			victim.hit(type, cmd[1])
+		elif type == "dmg":
+			var dmg_type = cmd[1]
+			victim.hit(dmg_type, host.get_damage(dmg_type, cmd[2]))
 		elif type == "energy":
 			host.energy += cmd[1]
 		elif type == "heal":
@@ -89,8 +88,7 @@ func run_cmds(cmds):
 			else:
 				host.set_animation(cmd[1])
 		elif type == "repeat":
-			if host.last_skill != null:
-				G.fx(host, host.last_skill)
+			G.fx(host, host.last_skill)
 		elif type == "cast":
 			G.fx(host, cmd[1])
 		elif type == "move":
@@ -109,7 +107,10 @@ func run_cmds(cmds):
 				host.node_sprites.hide()
 			else:
 				host.node_sprites.show()
+		elif type == "refresh":
+			host.energy = host.vars.g("agility", 0)
 		elif type == "refill":
+			host.deck = []
 			for i in range(host.SKILL_SIZE, host.skills.size()):
 				if host.skills[i] != null:
 					host.deck.append(host.skills[i])
@@ -130,7 +131,7 @@ func find_victim():
 				target = host.pos.get_beam_to(target, data.col, data.range)
 			if is_valid(target):
 				return true
-	elif data.target == "onattack":
+	elif data.target == "onattack" or data.target == "oncharge":
 		for i in target.get_items_by_type("unit"):
 			if is_valid(i):
 				return true

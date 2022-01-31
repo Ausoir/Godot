@@ -5,14 +5,14 @@ var foe
 var reach = 1
 
 func on_turn():
-	.on_turn()
 	if foe == null:
 		perceive()
-	if foe != null:
-		if !is_instance_valid(foe):
-			foe = null
-		else:
-			think()
+	if !is_instance_valid(foe):
+		foe = null
+		tasks.clear()
+	elif foe != null:
+		think()
+	.on_turn()
 
 func perceive():
 	var r
@@ -29,5 +29,4 @@ func perceive():
 
 func think():
 	path_to(foe.pos, reach)
-	target = foe.pos
-	tasks.append(["attack", foe.pos])
+	tasks.append(["attack", foe])

@@ -12,11 +12,18 @@ onready var fog = $Fog
 
 func generate():
 	generator.generate()
+	make_mobs("urban")
 	G.field.apply_shades(Vector2(), G.field.size)
-	tilemap.update_bitmask_region(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):
+			G.field.apply_autotile(x, y)
 			set_dark(x, y)
+
+func make_mobs(type):
+	for _i in range(40):
+		var x = G.rng.randi_range(0, G.field.size.x-1)
+		var y = G.rng.randi_range(0, G.field.size.y-1)
+		G.factory.make_group(type, G.field.tiles[y][x])
 
 func set_dark(x, y):
 	if shademap.get_cell(x, y) != 0:
@@ -27,8 +34,3 @@ func set_light(x, y):
 	if shademap.get_cell(x, y) == 0:
 		shademap.set_cell(x, y, G.field.tiles[y][x].shade)
 		G.field.tiles[y][x].set_visible(true)
-
-func check_collision(from, to, exclude):
-	var space_state = $tilemap.get_world_2d().direct_space_state
-	var result = space_state.intersect_ray(from, to, exclude, 1)
-	return result

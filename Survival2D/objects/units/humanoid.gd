@@ -8,11 +8,16 @@ var belt = [[2, null],[0, null],[0, null],[0, null]]
 var selected_belt = -1
 var weight = 0
 
-func get_damage(p):
-	var r = .get_damage(p)
-	var wpn = get_weapon()
-	if wpn:
-		r += wpn.dat.g("damage", 0)
+func get_damage(ptype, p):
+	var r = .get_damage(ptype, p)
+	if ptype == "cut":
+		var wpn = get_weapon()
+		if wpn:
+			r += wpn.dat.g("cut", 0)
+	elif ptype == "bash":
+		var wpn = get_weapon()
+		if wpn:
+			r += wpn.dat.g("bash", 0)
 	return r
 
 func get_weapon():
@@ -124,7 +129,7 @@ func sheathe(idx, item):
 		for _i in range(4):
 			if sheathe(0, item):
 				return true
-	elif belt[idx][0] >= item.dat.g("size", 2):
+	elif belt[idx][1] == null and belt[idx][0] >= item.dat.g("size", 2):
 		belt[idx][1] = item
 		select_weapon(idx)
 		return true

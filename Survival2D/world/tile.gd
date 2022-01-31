@@ -6,6 +6,7 @@ var items = []
 var visible = true
 var dat
 var col: String
+var autotile = 0
 var light: int = 0
 var shade: int = -1
 var height: int
@@ -35,6 +36,8 @@ func set_terrain(val):
 	var data = G.data.terrain_data.get(val)
 	if data != null:
 		terrain = val
+		if "autotile" in data:
+			autotile = data.autotile
 		var img = val
 		if "rnd" in data:
 			var roll = G.rng.randi_range(1, 100)
@@ -53,15 +56,31 @@ func set_terrain(val):
 		push_error("Could not find terrain data " + val)
 
 func add_item(item):
-	G.world.items.add_child(item)
+	if item.get_parent() == null:
+		G.world.items.add_child(item)
 	items.append(item)
 	item.pos = self
 	update_tile()
 
 func remove_item(item):
-	G.world.items.remove_child(item)
+	if item.get_parent() == G.world.items:
+		G.world.items.remove_child(item)
 	items.erase(item)
 	update_tile()
+
+func smash(_dmg):
+	G.make_particle("Hit", to_pixel())
+	for item in items:
+		var durability = item.dat.g("durability", 999)
+		if durability < _dmg:
+			G.display_damage(to_pixel(), round(_dmg), 0)
+			item.die()
+
+func get_slow():
+	var slow = dat.get("slow", 0)
+	for item in items:
+		slow += item.dat.g("slow", 0)
+	return slow
 
 func update_tile():
 	var t = height
@@ -70,7 +89,7 @@ func update_tile():
 	for item in items:
 		var item_height = item.dat.g("height")
 		if item_height != null:
-			height = max(height, item_height)
+			height = int(max(height, item_height))
 		for i in range(4):
 			if item.col[i] == "1":
 				col[i] = "1"
@@ -89,6 +108,8 @@ func apply_shade():
 				if tile.height > height:
 					shades[i] = "1"
 				apply_shade_from_dir(shades)
+	else:
+		shade = -1
 
 func apply_shade_from_dir(shades):
 	if shades[0] == "1" and shades[2] == "1" and shades[4] == "1":
@@ -149,9 +170,9 @@ func get_item_by_type(val):
 			return item
 	return null
 
-func direction_to(target):
-	var tx = target.x - x
-	var ty = target.y - y
+func direction_to(target, mult = 1):
+	var tx = target.x - x * mult
+	var ty = target.y - y * mult
 	if tx == 0 and ty == 0:
 		return -1
 	var dir
@@ -209,25 +230,20 @@ func get_beam_to(destination, col_masks, distance):
 			break
 	return current_tile
 
-func get_rnd_adjacent(cols, times):
-	if times <= 0:
-		return
-	var adj = get_adjacent(G.rng.randi_range(0, 7))
-	if !adj.is_cols(cols):
-		return adj
-	return get_rnd_adjacent(col, times - 1)
+func get_available_adjacents(cols):
+	var r = []
+	for i in range(8):
+		var adj = get_adjacent(i)
+		if !adj.is_cols(cols):
+			r.append(adj)
+	return r
 
 func get_priority_item(exc):
-	var high
 	var low
 	for item in items:
 		if !(item in exc):
 			if item.item_type == "unit":
 				return item
-			elif item.item_type == "object":
-				high = item
 			elif item.item_type == "item":
 				low = item
-	if high != null:
-		return high
 	return low

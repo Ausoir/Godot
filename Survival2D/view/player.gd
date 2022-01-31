@@ -56,16 +56,19 @@ func _on_input(event: InputEvent):
 					if tile:
 						auto_attack_priority = unit.pos.direction_to(tile)
 						target = tile
-						if aiming != -1:
-							perform_ability(aiming)
-							stop_aim()
+						if Input.is_action_pressed("shift"):
+							tasks.append(["smash", target])
 						else:
-							if !tile.items.empty():
-								move_to(tile, 1)
-								tasks.append(["interact", target])
+							if aiming != -1:
+								perform_ability(aiming)
+								stop_aim()
 							else:
-								cursor.position = G.pos_to_pixel(mousetarget)
-								cursor.show()
+								if !tile.items.empty():
+									move_to(tile, 1)
+									tasks.append(["interact", target])
+								else:
+									cursor.position = G.pos_to_pixel(mousetarget)
+									cursor.show()
 			elif Input.is_action_just_released("move"):
 				cursor.hide()
 			elif Input.is_action_just_released("use"):
@@ -73,6 +76,18 @@ func _on_input(event: InputEvent):
 	elif event is InputEventMouseButton:
 		if event.pressed and Input.is_action_just_pressed("use"):
 			$menu.clear()
+	elif event is InputEventKey:
+		var t
+		if Input.is_action_just_pressed("move_left"):
+			t = unit.pos.get_adjacent(0)
+		elif Input.is_action_just_pressed("move_up"):
+			t = unit.pos.get_adjacent(1)
+		elif Input.is_action_just_pressed("move_right"):
+			t = unit.pos.get_adjacent(2)
+		elif Input.is_action_just_pressed("move_down"):
+			t = unit.pos.get_adjacent(3)
+		if t != null:
+			move_to(t)
 
 func _process(_delta):
 	if unit:
@@ -106,7 +121,7 @@ func perform_auto_attack():
 			var tile = unit.pos.get_adjacent(dir)
 			for item in tile.items:
 				if item.item_type == "unit" and item.faction != unit.faction:
-					tasks.append(["attack", tile])
+					tasks.append(["attack", item])
 					return true
 	return false
 
@@ -144,6 +159,7 @@ func interact_tile(tile):
 					if item.faction == unit.faction:
 						unit.swap(item)
 					else:
+						auto_attack_priority = unit.pos.direction_to(tile)
 						tasks.append(["attack", tile])
 				elif item.item_type == "item":
 					var onuse = item.dat.g("onuse")

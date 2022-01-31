@@ -22,15 +22,9 @@ func on_turn():
 	if !tasks.empty():
 		var task = tasks.pop_front()
 		if task[0] == "move":
-			var vec = task[1] - unit.pos.to_vector()
-			var dir = G.vector_to_dir(vec.x, vec.y)
-			unit.move(dir)
+			target = task[1]
+			unit.face_toward(target)
 			unit.set_state("move")
-			var x = G.DIRS[dir][0]
-			if x > 0:
-				unit.face(1)
-			elif x < 0:
-				unit.face(-1)
 		elif task[0] == "interact":
 			interact(task[1])
 		elif task[0] == "ability":
@@ -38,11 +32,19 @@ func on_turn():
 			unit.ability(task[1])
 		elif task[0] == "attack":
 			target = task[1]
+			if target.item_type == "unit":
+				target = target.pos
 			unit.face_toward(target)
-			if unit.pos.distance_to(target) <= 1:
-				unit.set_state("attack")
+			unit.set_state("attack")
 		elif task[0] == "swap":
 			unit.select_weapon(task[1])
+		elif task[0] == "smash":
+			unit.face_toward(target)
+			if unit.pos.distance_to(target) <= 1:
+				unit.set_animation("attack")
+				var dmg = unit.get_damage(G.BASH, 100)
+				unit.delay = 5
+				target.smash(dmg)
 
 func path_to(pos, dist=0):
 	pathing.result = []

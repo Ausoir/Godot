@@ -5,7 +5,8 @@ var terrain_data
 var palette_data
 var item_data
 var unit_data
-var mob_data
+var group_data
+var level_data
 var skill_data
 
 
@@ -14,7 +15,8 @@ func _init():
 	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
 	item_data = get_json_from_dir("res://assets/json/items.json")
 	unit_data = get_json_from_dir("res://assets/json/units.json")
-	mob_data = get_json_from_dir("res://assets/json/mobs.json")
+	group_data = get_json_from_dir("res://assets/json/groups.json")
+	level_data = get_json_from_dir("res://assets/json/levels.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
 
 func set_tile_image(_sprite, _to):
@@ -39,6 +41,12 @@ func get_image(p):
 		r = load("res://assets/images/" + p + ".png")
 		images_cache[p] = r
 		return r
+
+func set_sprite_texture(sprite, p, autotile):
+	sprite.texture = get_image(p)
+	if autotile != 0:
+		sprite.set_region(true)
+		sprite.set_region_rect(Rect2(0, 0, 32, 32))
 
 func get_particle(p):
 	var r = particles_cache.get(p)

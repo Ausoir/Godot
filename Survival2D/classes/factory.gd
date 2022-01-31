@@ -32,8 +32,19 @@ func get_description(name):
 		return DESCRIPTIONS[name]
 	return ""
 
+func make_group(arg, pos):
+	var data = G.data.level_data.get(arg)
+	if data != null:
+		for mob in data.mobs:
+			var chances = data.mobs[mob]
+			if G.rng.rnd_percent(chances):
+				var adjs = pos.get_available_adjacents("0110")
+				var adj = G.rng.rnd_arr(adjs)
+				if adj != null:
+					G.factory.make_mob(mob, adj)
+
 func make_mob(arg, pos):
-	var mob_data = G.data.mob_data.get(arg)
+	var mob_data = G.data.group_data.get(arg)
 	if mob_data != null:
 		var unit
 		var unit_pos = pos
@@ -44,7 +55,8 @@ func make_mob(arg, pos):
 				unit = make_unit(mob, unit_pos)
 				if unit != null:
 					unit.possess()
-					unit_pos = unit_pos.get_rnd_adjacent(unit.col, 8)
+					var adjs = unit_pos.get_available_adjacents(unit.col)
+					unit_pos = G.rng.rnd_arr(adjs)
 					if unit_pos == null:
 						return
 					if unit.dat.g("bodyparts"):
@@ -85,7 +97,7 @@ func make_item(arg, pos=null):
 	var item_data = G.data.item_data.get(arg)
 	if item_data != null:
 		var r = Sprite.new()
-		r.texture = G.data.get_image(item_data.img)
+		G.data.set_sprite_texture(r, item_data.img, item_data.get("autotile", 0))
 		r.set_script(Item)
 		r.item_name = arg
 		r.item_type = "item"

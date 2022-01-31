@@ -77,10 +77,14 @@ func place_vault(_map, vault, palette, startX, startY, flip, rot):
 				fY = startY + sY
 			var val = vault[y][x]
 			var palet = palette.get(val)
-			if val != null:
+			if palet != null:
 				_map[fY][fX] = palet
 			else:
-				push_error("Invalid vault palette value: "+str(palet))
+				palet = G.data.palette_data.get(val)
+				if palet != null:
+					_map[fY][fX] = palet
+				else:
+					push_error("Invalid vault palette value: "+str(palet))
 
 func boundary_dist(vault, x, y):
 	var xdist = min(x, len(vault[0])-1-x)

@@ -5,7 +5,7 @@ var size
 var estates = []
 
 func generate():
-	.create(7, 7)
+	.create(5, 5)
 	base = make_base(width, height, 1)
 
 	_stack = [
@@ -19,7 +19,7 @@ func generate():
 
 func magnify(mag):
 	var minimap = base
-	var default = G.data.palette_data.get('D')
+	var default = G.data.palette_data.get(' ')
 	output = make_base(width*mag, height*mag, default)
 	for y in range(height):
 		for x in range(width):

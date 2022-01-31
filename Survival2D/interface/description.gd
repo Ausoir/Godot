@@ -13,7 +13,7 @@ func display(header, desc):
 	rect_global_position.y = min(rect_global_position.y, G.ui.screen_size.y - rect_size.y)
 
 func display_item(header, item):
-	display(header, item.dat.g("desc"))
+	display(header, item.dat.g("desc", ""))
 
 func display_skill(header, skill):
 	var desc = "[color=#FB3]"+ str(skill.get("chance", 100)) +"% Chance[/color]\n"

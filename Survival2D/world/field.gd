@@ -23,9 +23,25 @@ func get_tile(x, y):
 		return tiles[y][x]
 
 func apply_shades(start, end):
-	for x in range(start.x, end.x):
-		for y in range(start.y, end.y):
+	for y in range(start.y, end.y):
+		for x in range(start.x, end.x):
 			tiles[y][x].apply_shade()
+
+func apply_autotile(x, y):
+	var pos = tiles[y][x]
+	if pos.autotile == 1:
+		var dirs = []
+		for i in range(4):
+			var adj = pos.get_adjacent(i * 2)
+			if adj.height == pos.height:
+				dirs.append(i)
+		var v = G.get_autotile_coord(dirs)
+		var tileid = G.world.tilemap.get_cell(x, y)
+		G.world.tilemap.set_cell(x, y, tileid, false, false, false, v)
+	elif pos.autotile == 2:
+		G.world.tilemap.update_bitmask_area(Vector2(x, y))
+	for item in pos.items:
+		item.autotilize()
 
 func set_terrain(x, y, val):
 	tiles[y][x].set_terrain(val)

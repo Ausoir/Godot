@@ -1,6 +1,6 @@
 extends Particles2D
 
-export var duration: float = 0.0
+export var duration: float = 1.0
 
 func _ready():
 	set_emitting(true)

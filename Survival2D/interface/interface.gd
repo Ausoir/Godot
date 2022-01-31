@@ -83,6 +83,8 @@ func _unhandled_input(event):
 				clear()
 			else:
 				G.cmd([["menu", ""]], G.you.unit)
+		else:
+			G.you._on_input(event)
 	elif !on:
 		G.you._on_input(event)
 
@@ -131,7 +133,7 @@ func update_equipables(equipables):
 
 func update_inventory():
 	var unit = G.you.unit
-	if unit.dat.g("bodyparts") != null:
+	if "man" in unit.dat.g("flags"):
 		for child in tab_inventory.get_children():
 			child.queue_free()
 			tab_inventory.remove_child(child)
