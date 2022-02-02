@@ -8,6 +8,13 @@ var belt = [[2, null],[0, null],[0, null],[0, null]]
 var selected_belt = -1
 var weight = 0
 
+func remove():
+	for i in equipment_nodes:
+		equipment_nodes[i].queue_free()
+	for i in equipments:
+		equipments[i].queue_free()
+	.remove()
+
 func get_damage(ptype, p):
 	var r = .get_damage(ptype, p)
 	if ptype == "cut":

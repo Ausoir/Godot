@@ -17,7 +17,7 @@ drag_margin_bottom = 1.0
 script = ExtResource( 4 )
 
 [node name="Sight" type="Light2D" parent="."]
-scale = Vector2( 18, 10 )
+scale = Vector2( 14, 10 )
 texture = ExtResource( 3 )
 mode = 2
 shadow_color = Color( 1, 1, 1, 0 )

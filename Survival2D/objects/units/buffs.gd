@@ -64,6 +64,16 @@ func end(p):
 	if p in states:
 		states[p].duration = 0
 
+func extend(p, dur):
+	if p in states:
+		states[p].duration = dur
+
+func expend(p):
+	if p in states:
+		states[p].duration = 0
+		return true
+	return false
+
 func remove():
 	G.turn.remove(self)
 	states.clear()

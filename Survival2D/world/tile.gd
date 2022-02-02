@@ -7,9 +7,10 @@ var visible = true
 var dat
 var col: String
 var autotile = 0
-var light: int = 0
-var shade: int = -1
 var height: int
+var light: int
+var slow = 0
+var shade = -1
 var sight_frame = 0
 
 func _init(px, py):
@@ -38,16 +39,9 @@ func set_terrain(val):
 		terrain = val
 		if "autotile" in data:
 			autotile = data.autotile
-		var img = val
-		if "rnd" in data:
-			var roll = G.rng.randi_range(1, 100)
-			var count = 1
-			for i in data.rnd:
-				if roll <= i:
-					img = val + str(count)
-					break
-				count += 1
-		var tile_image = G.world.tileset.find_tile_by_name(img)
+		light = data.get("ceiling", 0)
+		slow = data.get("slow", 0)
+		var tile_image = G.world.tileset.find_tile_by_name(val)
 		G.world.tilemap.set_cell(x, y, tile_image)
 		dat = data
 		col = data.col
@@ -70,29 +64,25 @@ func remove_item(item):
 
 func smash(_dmg):
 	G.make_particle("Hit", to_pixel())
+	G.display_damage(to_pixel(), round(_dmg))
 	for item in items:
 		var durability = item.dat.g("durability", 999)
 		if durability < _dmg:
-			G.display_damage(to_pixel(), round(_dmg), 0)
 			item.die()
-
-func get_slow():
-	var slow = dat.get("slow", 0)
-	for item in items:
-		slow += item.dat.g("slow", 0)
-	return slow
 
 func update_tile():
 	var t = height
 	col = dat.col
 	height = dat.height
+	slow = dat.get("slow", 0)
 	for item in items:
-		var item_height = item.dat.g("height")
-		if item_height != null:
-			height = int(max(height, item_height))
+		slow += item.dat.g("slow", 0)
 		for i in range(4):
 			if item.col[i] == "1":
 				col[i] = "1"
+		var item_height = item.dat.g("height")
+		if item_height != null:
+			height = int(max(height, item_height))
 	if height != t:
 		apply_shade()
 		for i in range(8):
@@ -113,35 +103,35 @@ func apply_shade():
 
 func apply_shade_from_dir(shades):
 	if shades[0] == "1" and shades[2] == "1" and shades[4] == "1":
-		shade = 11
+		shade = 21
 	elif shades[0] == "1" and shades[2] == "1":
-		shade = 6
+		shade = 16
 	elif shades[2] == "1" and shades[4] == "1":
-		shade = 7
+		shade = 17
 	elif shades[0] == "1" and shades[4] == "1":
-		shade = 8
+		shade = 18
 	elif shades[0] == "1" and shades[3] == "1":
-		shade = 9
+		shade = 19
 	elif shades[4] == "1" and shades[1] == "1":
-		shade = 10
+		shade = 20
 	elif shades[1] == "1" and shades[2] == "0" and shades[3] == "1":
-		shade = 14
+		shade = 24
 	elif shades[0] == "1":
 		if shades[1] == "0":
-			shade = 12
+			shade = 22
 		else:
-			shade = 1
+			shade = 11
 	elif shades[2] == "1":
-		shade = 3
+		shade = 13
 	elif shades[4] == "1":
 		if shades[3] == "0":
-			shade = 13
+			shade = 23
 		else:
-			shade = 5
+			shade = 15
 	elif shades[1] == "1":
-		shade = 2
+		shade = 12
 	elif shades[3] == "1":
-		shade = 4
+		shade = 14
 	else:
 		shade = -1
 		return
@@ -247,3 +237,6 @@ func get_priority_item(exc):
 			elif item.item_type == "item":
 				low = item
 	return low
+
+func is_edge():
+	return x == 0 or x == G.field.size.x or y == 0 or y == G.field.size.y

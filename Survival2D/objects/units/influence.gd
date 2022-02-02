@@ -29,19 +29,18 @@ func do(phost, pname, pdata=null, mode=0):
 		if mode == 0:
 			if "duration" in data:
 				if host.buffs.has(name):
-					if "onstack" in data:
-						run_cmds(data.onstack)
+					run_cmds(data.get("onstack", []))
 					return true
 				else:
 					host.buffs.add(name, data, data.duration, data.get("cancel", null))
-			run_cmds(data.onstart)
+			run_cmds(data.get("onstart", []))
 		elif mode == 1:
-			run_cmds(data.onturn)
+			run_cmds(data.get("onturn", []))
 		elif mode == 2:
-			run_cmds(data.onend)
+			run_cmds(data.get("onend", []))
 		if victim.item_type == "unit":
-			if "onkill" in data:
-				run_cmds(data.onkill)
+			if !is_instance_valid(victim):
+				run_cmds(data.get("onkill", []))
 		return true
 
 func run_cmds(cmds):
@@ -53,7 +52,7 @@ func run_cmds(cmds):
 				var gfx = G.Gfx.new("tween", .1)
 				gfx.shoot(cmd[2], host.pos.to_pixel(), dest.to_pixel())
 				gfx.rotate(cmd[2], 0, 1280)
-			elif cmd[1] == "target":
+			elif cmd[1] == "particle":
 				G.make_particle(cmd[2], victim.pos.to_pixel())
 		elif type == "expend":
 			var wpn = host.get_weapon()
@@ -72,7 +71,7 @@ func run_cmds(cmds):
 			var dmg_type = cmd[1]
 			victim.hit(dmg_type, host.get_damage(dmg_type, cmd[2]))
 		elif type == "energy":
-			host.energy += cmd[1]
+			host.energy = min(host.vars.g("agility", 0), host.energy + cmd[1])
 		elif type == "heal":
 			host.hit("heal", -cmd[1])
 		elif type == "interrupt":
@@ -107,9 +106,24 @@ func run_cmds(cmds):
 				host.node_sprites.hide()
 			else:
 				host.node_sprites.show()
-		elif type == "refresh":
-			host.energy = host.vars.g("agility", 0)
-		elif type == "refill":
+		elif type == "energy":
+			host.energy = max(host.vars.g("agility", 0), host.energy + cmd[1])
+		elif type == "sight":
+			host.vars.a("sight col", host.sight_col)
+			host.sight_col = cmd[1]
+			if host == G.you.unit:
+				G.cmd([["refresh"]])
+		elif type == "unsight":
+			host.sight_col = host.vars.g("sight col")
+			if host == G.you.unit:
+				G.cmd([["refresh"]])
+		elif type == "flag":
+			host.flags.append(cmd[1])
+			host.update_flags()
+		elif type == "unflag":
+			host.flags.erase(cmd[1])
+			host.update_flags()
+		elif type == "respite":
 			host.deck = []
 			for i in range(host.SKILL_SIZE, host.skills.size()):
 				if host.skills[i] != null:

@@ -17,18 +17,16 @@ var enabled = true
 
 func _ready():
 	pathing.iterations = 28
-	last_pos = unit.pos
 
 func on_assign():
 	unit.faction = 1
+	last_pos = unit.pos
 	G.ui.update_equipables(unit.dat.g("bodyparts", {}))
 	G.ui.update_inventory()
-	if get_parent() == null:
-		G.world.players.add_child(self)
 	if camera.sight_frame > 0:
 		camera.darken()
 	camera.sight_range = unit.vars.g("perception", 18)
-	camera.update(unit.pos, last_pos)
+	camera.update(unit.pos, last_pos, unit.sight_col)
 
 func _on_input(event: InputEvent):
 	if enabled and !locked:
@@ -51,6 +49,7 @@ func _on_input(event: InputEvent):
 					if target != null:
 						move_to(target)
 				elif Input.is_action_just_pressed("use"):
+					tasks.clear()
 					var mousetarget = G.pixel_to_pos(mouse_pos)
 					var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
 					if tile:
@@ -89,16 +88,9 @@ func _on_input(event: InputEvent):
 		if t != null:
 			move_to(t)
 
-func _process(_delta):
-	if unit:
-		camera.position = unit.position
-		sight.position = unit.position
-
 func get_cursor_position(mouse):
-	var screen_size = G.ui.screen_size
-	var ratio = screen_size / get_viewport().size
-	var screen_mouse = mouse * ratio
-	screen_mouse -= screen_size / 2
+	var screen_mouse = mouse * G.ui.screen_ratio
+	screen_mouse -= G.ui.screen_size / 2
 	return Vector2(screen_mouse.x*camera.zoom.x + camera.position.x,
 					screen_mouse.y*camera.zoom.y + camera.position.y)
 
@@ -108,19 +100,25 @@ func on_turn():
 	remove_steps()
 	show_steps()
 	if last_pos != unit.pos:
-		camera.update(last_pos, unit.pos)
+		camera.update(last_pos, unit.pos, unit.sight_col)
 		last_pos = unit.pos
+		if unit.pos.is_edge():
+			tasks.append(["enter", "exit", 3])
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
 	perform_auto_attack()
 	G.ui.update_hud()
+
+func _process(_delta):
+	camera.position = unit.position
+	sight.position = unit.position
 
 func perform_auto_attack():
 	if auto_attack and unit.delay == 0 and tasks.empty():
 		for dir in [auto_attack_priority] + range(8):
 			var tile = unit.pos.get_adjacent(dir)
 			for item in tile.items:
-				if item.item_type == "unit" and item.faction != unit.faction:
+				if item.item_type == "unit" and item.faction != unit.faction and is_instance_valid(item):
 					tasks.append(["attack", item])
 					return true
 	return false
@@ -192,5 +190,6 @@ func perform_ability(idx):
 	tasks = [["ability", idx]]
 
 func remove():
-	var player_unit = G.cmd([["make", "ghost", unit.pos]])
-	player_unit.possess(self)
+	if unit.get_health() <= 0:
+		var player_unit = G.cmd([["make", "ghost", unit.pos]])
+		player_unit.possess(self)

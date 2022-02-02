@@ -132,9 +132,9 @@ func make_particle(arg, pos, args=null):
 		r.run_details(args)
 	return r
 
-func display_damage(pos, dmg, green=1):
+func display_damage(pos, dmg, color=[0,0,0]):
 	var r = Damage_Label.instance()
 	r.rect_position = pos
 	r.rect_position.y -= HH
 	world.others.add_child(r)
-	r.set_damage(str(dmg), green)
+	r.set_damage(str(dmg), color)

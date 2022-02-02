@@ -74,7 +74,7 @@ func run(_args):
 	elif command == "cast":
 		host.buffs.add(args[1], args[2])
 	elif command == "refresh":
-		G.you.camera.update(G.you.unit.pos, G.you.last_pos)
+		G.you.camera.update(G.you.unit.pos, G.you.last_pos, G.you.unit.sight_col)
 	elif command == "remove":
 		args[1].remove()
 	return tgt

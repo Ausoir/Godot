@@ -47,11 +47,12 @@ func darken():
 			if tile:
 				G.world.set_dark(param_pos.x+x, param_pos.y+y)
 
-func update(last_pos, pos):
+func update(last_pos, pos, sight_col):
 	param_last_pos = last_pos
 	param_pos = pos
 	set_process(true)
 	processing_frame = 1
+	col_sight = sight_col
 
 func cast_sight(camera, row, start, end, flips, depth):
 	if start < end:
@@ -79,13 +80,13 @@ func cast_sight(camera, row, start, end, flips, depth):
 #					if abs(tile_x) <= view_range.x and abs(tile_y) <= view_range.y:
 					tile.sight_frame = sight_frame
 					if blocked:
-						if tile.is_col(col_sight):
+						if tile.is_cols(col_sight):
 							new_start = end_slope
 						else:
 							blocked = false
 							start = new_start
 					else:
-						if tile.is_col(col_sight) and cell < sight_range:
+						if tile.is_cols(col_sight) and cell < sight_range:
 							blocked = true
 							cast_sight(camera, cell + 1, start, start_slope, flips, depth + 1)
 							new_start = end_slope

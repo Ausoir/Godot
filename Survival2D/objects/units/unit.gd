@@ -23,6 +23,7 @@ onready var mat = sprite.material
 
 var state = ""
 var delay = 0
+var flags
 
 var controller
 var abilities
@@ -33,6 +34,7 @@ var energy = 0
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var last_skill = "wait"
+var sight_col = "1000"
 
 func _ready():
 	update_stats()
@@ -66,6 +68,16 @@ func update_stats():
 		skills.append(i)
 	for _i in range(skills.size(), SKILL_SIZE * 2):
 		skills.append(null)
+	update_flags()
+
+func update_flags():
+	if controller != null:
+		if "mindless" in flags:
+			controller.pathing.hinderance = 0
+		elif "float" in flags:
+			controller.pathing.hinderance = 0
+		elif "agile" in flags:
+			controller.pathing.hinderance = .5
 
 func add_skill(p):
 	for i in range(SKILL_SIZE):
@@ -79,12 +91,23 @@ func move_skill(idx1, idx2):
 		return false
 	else:
 		if idx1 < SKILL_SIZE and idx2 >= SKILL_SIZE:
-				var passive_data = G.data.skill_data.get(skills[idx1])
-				var cost = passive_data.get("cost", 0)
-				var intel = vars.g("intelligence", 1)
-				var slots = get_active_slots()
-				if slots + cost > intel:
-					return false
+			var cost2 = 0
+			var passive_data2
+			if skills[idx2] != null:
+				passive_data2 = G.data.skill_data.get(skills[idx2])
+				cost2 = passive_data2.get("cost", 0)
+			var passive_data = G.data.skill_data.get(skills[idx1])
+			var cost = passive_data.get("cost", 0)
+			var intel = vars.g("intelligence", 1)
+			var slots = get_active_slots()
+			if slots + cost - cost2 > intel:
+				return false
+			if passive_data.target == "constant":
+				G.influence.do(self, skills[idx1], passive_data, 0)
+		elif idx1 >= SKILL_SIZE and idx2 < SKILL_SIZE:
+			var passive_data = G.data.skill_data.get(skills[idx1])
+			if passive_data != null and passive_data.target == "constant":
+				G.influence.do(self, skills[idx1], passive_data, 2)
 		var swap = skills[idx2]
 		skills[idx2] = skills[idx1]
 		skills[idx1] = swap
@@ -126,10 +149,17 @@ func set_state(p, force=false):
 		state = p
 		if state == "move":
 			var dir = pos.direction_to(controller.target)
-			delay = max(1, vars.g("move speed", 1) + pos.get_slow())
-			set_move_delay_speed(delay)
 			if move(dir) != null:
+				var ms = vars.g("move speed", 1)
+				if "agile" in flags:
+					ms += int(pos.slow / 2)
+				elif !("float" in flags):
+					ms += pos.slow
+				delay = max(1, ms)
+				set_move_delay_speed(delay)
 				set_animation("walk")
+			else:
+				delay = 1
 		elif state == "attack":
 			var used = "wait"
 			var dist = pos.distance_to(controller.target)
@@ -147,7 +177,10 @@ func set_state(p, force=false):
 func set_animation(p):
 	var scale = delay
 	if scale > 0:
-		animation.play(p, -1, 1/(scale*.25))
+		animation.play(p, -1, 1/(scale*.15))
+		if p == "knockout":
+			if "getup" in flags:
+				delay = int(delay / 2)
 	else:
 		animation.play(p)
 
@@ -176,33 +209,41 @@ func roll_skill(type):
 				return skill
 		return roll_skill(type)
 
-func hit(_ptype, dmg):
+func get_health():
+	var vit = vars.g("vitality", 1) * 2
+	return 1 - (damage_taken / vit)
+
+func hit(_type, dmg):
+	damage_taken += dmg
 	if dmg > 0:
+		roll_skill("onhit")
+		if _type != "true":
+			if buffs.expend("dodge"):
+				G.msg("Dodge!")
+				damage_taken -= dmg
+				return
 		set_animation("hit")
 		delay = 2
 		buffs.on_interrupt("interrupt")
-		controller.tasks.clear()
-		damage_taken += dmg
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(G.trng.randf_range(-1, 1), G.trng.randf_range(-1, 1), 0), "spread": 60})
-		var vit = vars.g("vitality", 1) * 2
-		var damage_percent = damage_taken / vit
-		G.display_damage(pos.to_pixel(), round(dmg), 1 - damage_percent)
-		if damage_percent > 1:
+		var damage_percent = get_health()
+		G.display_damage(pos.to_pixel(), round(dmg), [1,1 - damage_percent,0])
+		if damage_percent <= 0:
 			die()
 		else:
 			flash("red", damage_percent + .1)
-			if damage_percent > .8:
+			if damage_percent < .25:
 				if !buffs.has("major injury"):
 					G.fx(self, "major injury")
-			elif damage_percent > .5:
+			elif damage_percent < .5:
 				if !buffs.has("moderate injury"):
 					G.fx(self, "moderate injury")
-			elif damage_percent > .2:
+			elif damage_percent < .8:
 				if !buffs.has("minor injury"):
 					G.fx(self, "minor injury")
 	elif dmg < 0:
 		flash("green", dmg * -.2)
-		damage_taken -= dmg
+		G.display_damage(pos.to_pixel(), round(dmg), [0,1,0])
 
 func on_turn():
 	if delay == 0:

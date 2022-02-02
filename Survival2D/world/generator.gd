@@ -47,19 +47,25 @@ func palette_fill(_bounds, _val):
 			else:
 				push_error("Invalid palette value: "+str(_val))
 
-func paint_spawn(dir):
+func paint_spawn(dir, offset=0):
 	if dir == 0:
-		for x in range(int(width/3), int(width/3)*2):
-			G.field.spawn_points.append(G.field.tiles[0][x])
+		for x in range(1, width-1):
+			if !G.field.tiles[offset][x].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[offset][x])
 	elif dir == 1:
-		for y in range(int(height/3), int(height/3)*2):
-			G.field.spawn_points.append(G.field.tiles[y][width-1])
+		for y in range(1, height-1):
+			if !G.field.tiles[y][width-1-offset].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[y][width-1-offset])
 	elif dir == 2:
-		for x in range(int(width/3), int(width/3)*2):
-			G.field.spawn_points.append(G.field.tiles[height-1][x])
+		for x in range(1, width-1):
+			if !G.field.tiles[height-1-offset][x].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[height-1-offset][x])
 	elif dir == 3:
-		for y in range(int(height/3), int(height/3)*2):
-			G.field.spawn_points.append(G.field.tiles[y][0])
+		for y in range(1, height-1):
+			if !G.field.tiles[y][offset].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[y][offset])
+	if G.field.spawn_points.empty():
+		push_error("No spawn points found")
 
 func place_object(dat, x, y):
 	if G.rng.rnd_percent(dat[1]):

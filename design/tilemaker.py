@@ -9,7 +9,7 @@ coord_mapping = (
 )
 
 def run():
-    make_autotile_8('../design/autotiles/t_wall_w/', 't_wall_w_')
+    make_autotile_8('../design/autotiles/t_wall_log/', 't_wall_log_')
 
 def make_autotile_8(filedir, prefix):
     tiles = ['unconnected', 'end_piece_w', 'edge_ew', 'end_piece_e',
@@ -198,14 +198,14 @@ def gradient_outline(gradient, mode, orientation):
             pixel = (i*orientation[0], i*orientation[1])
             gradient.putpixel(pixel, 255-int(i*i * ratio))
 
-def carve(img, dir):
+def carve(img):
     pixels = img.load()
-    for x in range(10):
-        for y in range(10):
+    for x in range(img.size[0]):
+        for y in range(img.size[1]):
             tx = 16 - x
             ty = 16 - y
-            if tx*tx + ty*ty > 300:
-                pixels[x, y] = (0, 0, 0, 0)
+            pixel = img.getpixel((x, y))
+            pixels[x, y] = (0, 0, 0, 255 - pixel[0])
     return img
 
 def invert(img):

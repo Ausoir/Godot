@@ -4,7 +4,6 @@ const Tile = preload("res://world/tile.gd")
 var size
 var terrain
 var sound
-var light
 var tiles
 var spawn_points = []
 

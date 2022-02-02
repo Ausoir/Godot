@@ -8,10 +8,10 @@ func _ready():
 	vel = Vector2(G.trng.randi_range(-80, 80), G.trng.randi_range(-120, 0))
 	vel_angle = G.trng.randf_range(-2, 2)
 
-func set_damage(dmg, g=1):
+func set_damage(dmg, color):
 	set_text(str(dmg))
 	set_pivot_offset(rect_size / 2)
-	add_color_override("font_color", Color(1, g, 0))
+	add_color_override("font_color", Color(color[0], color[1], color[2]))
 
 func _physics_process(delta):
 	rect_position.x += delta * vel.x

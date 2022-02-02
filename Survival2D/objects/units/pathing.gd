@@ -1,4 +1,4 @@
-var cols = "0110"
+var cols = "0100"
 var target
 var iterations = 12
 var open
@@ -6,8 +6,8 @@ var closed = []
 var closest
 var result
 var next_reset = 0
-var heuristic_threshold = 0
-var reach = 1
+var reach = 0
+var hinderance = 1
 
 
 class pathnode:
@@ -32,7 +32,7 @@ func check_loop(loop, pos):
 		if i.pos == pos:
 			return i
 
-func square_distance_to(pos, dest):
+func distance_to(pos, dest):
 	return max(abs(pos.x - dest.x), abs(pos.y - dest.y))
 
 func iterate(node):
@@ -44,36 +44,37 @@ func iterate(node):
 			node = v
 	open.remove(index)
 	closed.append(node)
-	var achieved = square_distance_to(node.pos, target)
-	if achieved <= reach:
-		return node
-	if achieved < square_distance_to(closest.pos, target):
-		closest = node
 	var routes = G.field.get_routes(node.pos, cols)
-	for i in routes:
-		var dir_pos = G.DIRS[i]
+	for route in routes:
+		var dir_pos = G.DIRS[route]
 		var pos = Vector2(node.pos.x + dir_pos[0], node.pos.y + dir_pos[1])
+		var achieved = distance_to(pos, target)
+		if achieved <= reach:
+			var reached = pathnode.new(node, pos)
+			open.append(reached)
+			return reached
+		if achieved < distance_to(closest.pos, target):
+			closest = node
+		var cost = G.field.tiles[pos.y][pos.x].slow * hinderance
 		if check_loop(closed, pos):
 			continue
 		var conflict = check_loop(open, pos)
 		if conflict:
 			if node.g + 1 <= conflict.g:
 				conflict.parent = node
-				conflict.g = node.g + 1# + i[2]
+				conflict.g = node.g + 1 + cost
 				conflict.set_h(target)
 				conflict.f = conflict.h + conflict.g
 			continue
 		var new = pathnode.new(node, pos)
-		new.g = node.g + 1# + i[2]
+		new.g = node.g + 1 + cost
 		new.set_h(target)
 		new.f = new.h + new.g
-		if new.h < heuristic_threshold:
-			open.append(new)
+		open.append(new)
 	return null
 
 
 func reset(hostpos):
-	heuristic_threshold = (hostpos - target).length_squared() * 2 + 16
 	open = [pathnode.new(null, hostpos)]
 	closed = []
 	closest = open[0]
@@ -87,7 +88,7 @@ func debug_trace():
 
 func update(hostpos, p):
 	target = p
-	if not result and square_distance_to(hostpos, target) > reach:
+	if not result and distance_to(hostpos, target) > reach:
 		var done = null
 		if next_reset == 0:
 			reset(hostpos)

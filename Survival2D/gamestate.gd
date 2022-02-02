@@ -78,7 +78,7 @@ func unregister_player(id):
 remote func pre_start_game():
 	# Change scene.
 	get_tree().get_root().add_child(G.world)
-	G.world.generate()
+	G.world.create("base")
 
 	get_tree().get_root().get_node("Lobby").hide()
 
@@ -96,7 +96,6 @@ remote func pre_start_game():
 		var player = Player.instance()
 		player.set_name(str(p_id)) # Use unique ID as node name.
 		player.set_network_master(p_id) #set unique id as master.
-
 		if p_id == get_tree().get_network_unique_id():
 			# If node for this peer id, set name.
 			player_unit.item_name = player_name
@@ -105,6 +104,7 @@ remote func pre_start_game():
 			# Otherwise set name from peer.
 			player_unit.item_name = other_players[p_id]["name"]
 			other_players[p_id]["controller"] = player
+		G.world.players.add_child(player)
 		player_unit.possess(player)
 
 	if not get_tree().is_network_server():

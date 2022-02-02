@@ -1,5 +1,3 @@
-extends Node
-
 var v
 
 func _init(p):

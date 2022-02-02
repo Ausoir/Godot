@@ -26,9 +26,5 @@ func generate():
 				G.factory.make_item('branch', G.field.tiles[y][x])
 			else:
 				G.field.set_terrain(x, y, 'waterr')
-	for _i in range(5):
-		var x = rng.randi_range(0, width-1)
-		var y = rng.randi_range(0, height-1)
-		G.factory.make_mob('kenku peasants', G.field.tiles[y][x])
 
 	G.world.tilemap.update_bitmask_region()

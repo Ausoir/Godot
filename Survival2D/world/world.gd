@@ -1,26 +1,48 @@
 extends Node
 
 var tileset = preload("res://assets/tileset.tres")
-var generator = preload("res://world/generator_street.gd").new()
 
+var sunlight = 0
 onready var tilemap = $Tilemap
 onready var shademap = $Shademap
 onready var items = $Items
 onready var players = $Players
 onready var others = $Others
-onready var fog = $Fog
 
-func generate():
-	generator.generate()
-	make_mobs("urban")
+func create(_type):
+	var generator
+	if _type == "base":
+		generator = load("res://world/generator_base.gd").new()
+		generator.generate()
+	elif _type == "urban":
+		generator = load("res://world/generator_street.gd").new()
+		generator.generate()
+		make_mobs("urban")
 	G.field.apply_shades(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):
 			G.field.apply_autotile(x, y)
 			set_dark(x, y)
 
+func change(_map):
+	tilemap.clear()
+	shademap.clear()
+	var units = []
+	for player in players.get_children():
+		if player.unit != null:
+			items.remove_child(player.unit)
+			units.append(player.unit)
+	for item in items.get_children():
+		item.remove()
+	for item in others.get_children():
+		item.queue_free()
+		items.remove_child(item)
+	create(_map)
+	for unit in units:
+		items.add_child(unit)
+
 func make_mobs(type):
-	for _i in range(40):
+	for _i in range(10):
 		var x = G.rng.randi_range(0, G.field.size.x-1)
 		var y = G.rng.randi_range(0, G.field.size.y-1)
 		G.factory.make_group(type, G.field.tiles[y][x])
@@ -32,5 +54,9 @@ func set_dark(x, y):
 
 func set_light(x, y):
 	if shademap.get_cell(x, y) == 0:
-		shademap.set_cell(x, y, G.field.tiles[y][x].shade)
+		var light = G.field.tiles[y][x].light
+		if light == 0:
+			shademap.set_cell(x, y, G.field.tiles[y][x].shade)
+		else:
+			shademap.set_cell(x, y, sunlight)
 		G.field.tiles[y][x].set_visible(true)

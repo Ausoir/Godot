@@ -40,8 +40,9 @@ func assign(p):
 	item = p
 	var item_sprite = get_node("Sprite")
 	item_sprite.texture = item.texture
-	item_sprite.region_enabled = item.region_enabled
-	item_sprite.region_rect = item.region_rect
+	if item is Sprite:
+		item_sprite.region_enabled = item.region_enabled
+		item_sprite.region_rect = item.region_rect
 	item_sprite.show()
 	if has_node("Overlay"):
 		$Overlay.hide()

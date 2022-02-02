@@ -5,7 +5,7 @@ var size
 var estates = []
 
 func generate():
-	.create(5, 5)
+	.create(3, 3)
 	base = make_base(width, height, 1)
 
 	_stack = [
@@ -34,10 +34,10 @@ func magnify(mag):
 					if get_tile(minimap, x+dir[0], y+dir[1], 1) != 1:
 						rots.append(i)
 				if rots.empty():
-					make_vault(estate, "map_houses", G.rng.randi_range(0, 3))
+					make_vault(estate, "map_house", G.rng.randi_range(0, 3))
 				else:
 					var rot = G.rng.rnd_arr(rots)
-					make_vault(estate, "map_houses", rot)
+					make_vault(estate, "map_house", rot)
 			else:
 				if get_tile(minimap, x+1, y, 1) == 1 and get_tile(minimap, x-1, y, 1) == 1:
 					make_vault(estate, "map_road", 0)

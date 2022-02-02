@@ -89,7 +89,8 @@ func make_unit(arg, pos):
 		for stat in G.STATS:
 			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
 		r.vars.a("move speed", r.dat.g("move speed", 2))
-		r.col = r.dat.g("col", "0110")
+		r.flags = r.dat.g("flags", [])
+		r.col = r.dat.g("col", "0100")
 		r.place(pos)
 		return r
 

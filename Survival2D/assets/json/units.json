@@ -12,7 +12,7 @@
 		"abilities": ["respawn"],
 		"skills": [],
 		"buffs": ["invisible"],
-		"flags": ["mindless", "nobreath"],
+		"flags": ["mindless", "nobreath", "float"],
 	},
 	"human": {
 		"img": "units/male",
@@ -35,7 +35,7 @@
 		"agility": [3, 7],
 		"perception": [15, 17],
 		"abilities": ["teleport", "might", "summon"],
-		"skills": ["tackle", "repeat", "bash", "redemption"],
+		"skills": ["tackle", "bash", "redemption", "parry", "dodge attack", "parkour"],
 		"flags": [],
 	},
 	"looter": {
@@ -55,11 +55,11 @@
 		"move speed": 2,
 		"vitality": [3, 4],
 		"strength": [3, 4],
-		"intelligence": [3, 4],
-		"agility": [3, 4],
-		"perception": [15, 17],
+		"intelligence": [3, 7],
+		"agility": [3, 7],
+		"perception": [10, 12],
 		"abilities": [],
-		"skills": ["tackle", "bash", "redemption"],
+		"skills": ["tackle", "bash", "respite"],
 		"flags": [],
 	},
 	"zombie": {

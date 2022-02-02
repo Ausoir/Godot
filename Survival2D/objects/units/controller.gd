@@ -42,9 +42,21 @@ func on_turn():
 			unit.face_toward(target)
 			if unit.pos.distance_to(target) <= 1:
 				unit.set_animation("attack")
-				var dmg = unit.get_damage(G.BASH, 100)
+				var dmg = unit.get_damage("bash", 100)
 				unit.delay = 5
 				target.smash(dmg)
+		elif task[0] == "enter":
+			if task[1] == "exit":
+				if task[2] < 1:
+					G.world.change("base")
+				else:
+					G.msg("Exiting map..." + str(task[2]))
+					unit.set_state("wait")
+					unit.delay = 8
+					if unit.pos.is_edge() and unit.buffs.has("focus"):
+						tasks.append(["enter", "exit", task[2]-1])
+					G.influence.do(unit, "focus")
+					unit.buffs.extend("focus", 24)
 
 func path_to(pos, dist=0):
 	pathing.result = []

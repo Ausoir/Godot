@@ -3,7 +3,7 @@
 		"human": [1, 1, ["gi", 100], ["hood", 100], ["cutlass", 100]],
 	},
 	"looters": {
-		"looter": [2, 8, ["scalemail", 100], ["hood", 100], ["cutlass", 100]],
+		"looter": [2, 5, ["scalemail", 100], ["hood", 100], ["cutlass", 100]],
 	},
 	"test": {
 		"zombie": [1, 4],

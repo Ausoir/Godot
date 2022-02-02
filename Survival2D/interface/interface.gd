@@ -21,6 +21,7 @@ onready var container_grid = $Control/Menu/Container/Container
 onready var abilities = $Control/Abilities
 onready var buffs = $Control/Status
 var screen_size
+var screen_ratio
 
 var on = false
 var drag_item
@@ -28,6 +29,7 @@ var drag_item
 
 func _ready():
 	screen_size = get_viewport().get_size_override()
+	screen_ratio = screen_size / get_viewport().size
 	$AnimationPlayer/Fade.set_size(screen_size)
 	$AnimationPlayer.play("FadeIn")
 
