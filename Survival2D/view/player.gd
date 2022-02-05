@@ -21,7 +21,7 @@ func _ready():
 func on_assign():
 	unit.faction = 1
 	last_pos = unit.pos
-	G.ui.update_equipables(unit.dat.g("bodyparts", {}))
+	G.ui.update_equipables(unit.dat.g("bodyparts"))
 	G.ui.update_inventory()
 	if camera.sight_frame > 0:
 		camera.darken()
@@ -55,19 +55,16 @@ func _on_input(event: InputEvent):
 					if tile:
 						auto_attack_priority = unit.pos.direction_to(tile)
 						target = tile
-						if Input.is_action_pressed("shift"):
-							tasks.append(["smash", target])
+						if aiming != -1:
+							perform_ability(aiming)
+							stop_aim()
 						else:
-							if aiming != -1:
-								perform_ability(aiming)
-								stop_aim()
+							if !tile.items.empty():
+								move_to(tile, 1)
+								tasks.append(["interact", target])
 							else:
-								if !tile.items.empty():
-									move_to(tile, 1)
-									tasks.append(["interact", target])
-								else:
-									cursor.position = G.pos_to_pixel(mousetarget)
-									cursor.show()
+								cursor.position = G.pos_to_pixel(mousetarget)
+								cursor.show()
 			elif Input.is_action_just_released("move"):
 				cursor.hide()
 			elif Input.is_action_just_released("use"):
@@ -145,7 +142,7 @@ func aggro(npcs):
 	for i in npcs:
 		i.find_player(unit)
 
-func interact_tile(tile):
+func interact(tile):
 	if G.ui.on:
 		G.ui.clear()
 	else:
@@ -155,25 +152,42 @@ func interact_tile(tile):
 			if item != null:
 				if item.item_type == "unit":
 					if item.faction == unit.faction:
-						unit.swap(item)
+						if Input.is_action_pressed("shift"):
+							auto_attack_priority = unit.pos.direction_to(tile)
+							tasks.append(["attack", tile])
+							unit.faction = -1
+						else:
+							var onuse = item.dat.g("onuse")
+							if onuse != null:
+								G.cmd(onuse, item)
 					else:
 						auto_attack_priority = unit.pos.direction_to(tile)
 						tasks.append(["attack", tile])
 				elif item.item_type == "item":
-					var onuse = item.dat.g("onuse")
-					if onuse != null:
-						G.cmd(onuse, item)
+					if Input.is_action_pressed("shift"):
+						tasks.append(["smash", target])
 					else:
-						G.ui.search_inventory(tile)
+						var onuse = item.dat.g("onuse")
+						if onuse != null:
+							G.cmd(onuse, item)
+						else:
+							G.ui.search_inventory(tile)
 
-func move_to(tile, dist=0):
+func move_to(tile, reach=0):
 	if tile.is_cols(unit.col):
-		dist = 1
-	if unit.pos.distance_to(tile) <= dist:
+		reach = 1
+	var distance = unit.pos.distance_to(tile)
+	if reach == 0 and distance == 1:
+		if !tile.items.empty():
+			var item = tile.get_priority_item([unit])
+			if item != null and item.item_type == "unit" and item.faction == unit.faction:
+				unit.swap(item)
+				return
+	if distance <= reach:
 		return unit.pos
 	cursor.position = G.pos_to_pixel(tile)
 	cursor.show()
-	path_to(tile, dist)
+	path_to(tile, reach)
 	remove_steps()
 	return show_steps()
 

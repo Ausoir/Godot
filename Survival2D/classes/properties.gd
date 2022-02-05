@@ -17,12 +17,12 @@ func d(tag):
 func is_dead():
 	return g("hp", Vector2()).x <= 0
 
+func equals(tag, compare):
+	var t = v.get(tag)
+	return t != null and t == compare
+
 func add(tag, val):
 	if !(tag in v):
 		v[tag] = val
 	else:
 		v[tag] += val
-
-func has_flag(tag):
-	var tags = g("tags", [])
-	return tag in tags

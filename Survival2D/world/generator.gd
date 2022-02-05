@@ -19,10 +19,14 @@ func paint_map():
 			var value = output[y][x]
 			if value != null:
 				G.field.set_terrain(x, y, value[0])
-				for i in range(1, value.size()):
-					place_object(value[i], x, y)
 			else:
 				push_error("Invalid tile: "+str(value))
+	for x in range(width):
+		for y in range(height):
+			var value = output[y][x]
+			if value != null:
+				for i in range(1, value.size()):
+					place_object(value[i], x, y)
 
 func palette_assign(fromx, fromy, tox, toy):
 	for y in range(fromy, toy+1):
@@ -69,7 +73,7 @@ func paint_spawn(dir, offset=0):
 
 func place_object(dat, x, y):
 	if G.rng.rnd_percent(dat[1]):
-		G.factory.make_item(dat[0], G.field.tiles[y][x])
+		G.cmd([["make", dat[0], G.field.tiles[y][x]]])
 		if dat.size() > 2 and dat[2] == "+":
 			place_object(dat[3], x, y)
 	elif dat.size() > 2 and dat[2] == "/":
@@ -118,10 +122,9 @@ func make_smooth(map, level):
 func interpolate(arg1, arg2, alpha):
 	return arg1 * (1 - alpha) + alpha * arg2
 
-func make_perlin(sx, sy):
+func make_perlin(sx, sy, levels=5):
 	var r = make_random(sx, sy)
 	var map = make_base(sx, sy, 0)
-	var levels = 5
 	var max_value = 0
 	for i in range(1, levels):
 		max_value += float(1)/i

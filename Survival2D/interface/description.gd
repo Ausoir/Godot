@@ -13,7 +13,20 @@ func display(header, desc):
 	rect_global_position.y = min(rect_global_position.y, G.ui.screen_size.y - rect_size.y)
 
 func display_item(header, item):
-	display(header, item.dat.g("desc", ""))
+	var desc = ""
+	if item.part != "item":
+		desc += "[color=#335]Armor ("+ str(item.part) +")[/color]\n"
+	desc = "Weight: "+ str(item.get("weight", 0)) +"\n"
+	var cut = item.get("cut", 0)
+	var bash = item.get("bash", 0)
+	if cut != 0 or bash != 0:
+		desc += "[color=#C66]Cut Damage: "+ str(cut) +"[/color]\n"
+		desc += "[color=#CC3]Bash Damage: "+ str(bash) +"[/color]\n"
+	var uses = item.get("uses", 0)
+	if uses > 0:
+		desc += "[color=#1B9]"+ str(uses) +" Uses[/color]\n"
+	desc += item.get("desc", "")
+	display(header, desc)
 
 func display_skill(header, skill):
 	var desc = "[color=#FB3]"+ str(skill.get("chance", 100)) +"% Chance[/color]\n"

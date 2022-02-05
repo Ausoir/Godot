@@ -219,31 +219,31 @@ func hit(_type, dmg):
 		roll_skill("onhit")
 		if _type != "true":
 			if buffs.expend("dodge"):
-				G.msg("Dodge!")
+				G.display_damage(pos.to_pixel(), "DODGE!", Color.beige, .5)
 				damage_taken -= dmg
 				return
 		set_animation("hit")
 		delay = 2
 		buffs.on_interrupt("interrupt")
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(G.trng.randf_range(-1, 1), G.trng.randf_range(-1, 1), 0), "spread": 60})
-		var damage_percent = get_health()
-		G.display_damage(pos.to_pixel(), round(dmg), [1,1 - damage_percent,0])
-		if damage_percent <= 0:
+		var health_percent = get_health()
+		G.display_damage(pos.to_pixel(), round(dmg), Color(1,health_percent,0))
+		if health_percent <= 0:
 			die()
 		else:
-			flash("red", damage_percent + .1)
-			if damage_percent < .25:
+			flash("red", health_percent + .1)
+			if health_percent < .25:
 				if !buffs.has("major injury"):
 					G.fx(self, "major injury")
-			elif damage_percent < .5:
+			elif health_percent < .5:
 				if !buffs.has("moderate injury"):
 					G.fx(self, "moderate injury")
-			elif damage_percent < .8:
+			elif health_percent < .8:
 				if !buffs.has("minor injury"):
 					G.fx(self, "minor injury")
 	elif dmg < 0:
 		flash("green", dmg * -.2)
-		G.display_damage(pos.to_pixel(), round(dmg), [0,1,0])
+		G.display_damage(pos.to_pixel(), round(dmg), Color.green)
 
 func on_turn():
 	if delay == 0:
@@ -285,6 +285,9 @@ func die():
 func remove():
 	if controller != null:
 		controller.remove()
+	$Shadow.queue_free()
+	for child in get_children():
+		child.queue_free()
 	.remove()
 	buffs.remove()
 	G.turn.remove(self)

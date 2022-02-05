@@ -1,9 +1,7 @@
 {
 	" ": ["dirt"],
-	"#": ["fence"],
-	"W": ["wall"],
+	"_": ["wood floor"],
 	"D": ["asphalt"],
-	"%": ["glass"],
-	"=": ["water"],
+	"~": ["water"],
 	",": ["grass", ["rock", 4]],
 }

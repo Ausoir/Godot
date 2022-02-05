@@ -8,9 +8,11 @@ var dat
 var vars
 var pos
 var prev_pos
+var turns = 0
 var faction = 0
 var move_delay = 0
 var move_delay_speed = 3
+var light: int
 var hp = Vector2()
 
 func place(p):
@@ -19,6 +21,7 @@ func place(p):
 	pos = p
 
 func remove():
+	G.turn.remove(self)
 	pos.remove_item(self)
 	queue_free()
 
@@ -72,3 +75,11 @@ func _process(delta):
 	else:
 		move_delay -= delta * move_delay_speed
 		position = prev_pos.to_pixel().linear_interpolate(pos.to_pixel(), 1 - move_delay)
+
+func on_turn():
+	turns += 1
+	if turns > dat.g("turn", 0):
+		var onturn = dat.g("onturn")
+		if onturn != null:
+			G.cmd(onturn, self)
+		turns = 0

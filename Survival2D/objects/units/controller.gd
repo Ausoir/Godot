@@ -26,7 +26,8 @@ func on_turn():
 			unit.face_toward(target)
 			unit.set_state("move")
 		elif task[0] == "interact":
-			interact(task[1])
+			if unit.pos.distance_to(task[1]) <= 1:
+				interact(task[1])
 		elif task[0] == "ability":
 			unit.face_toward(target)
 			unit.ability(task[1])
@@ -53,10 +54,10 @@ func on_turn():
 					G.msg("Exiting map..." + str(task[2]))
 					unit.set_state("wait")
 					unit.delay = 8
+					G.influence.do(unit, "focus")
+					unit.buffs.extend("focus", 12)
 					if unit.pos.is_edge() and unit.buffs.has("focus"):
 						tasks.append(["enter", "exit", task[2]-1])
-					G.influence.do(unit, "focus")
-					unit.buffs.extend("focus", 24)
 
 func path_to(pos, dist=0):
 	pathing.result = []
@@ -73,11 +74,7 @@ func path_to(pos, dist=0):
 			for p in path:
 				tasks.append(["move", p])
 
-func interact(tile):
-	if unit.pos.distance_to(tile) <= 1:
-		interact_tile(tile)
-
-func interact_tile(_tile):
+func interact(_tile):
 	pass
 
 func remove():

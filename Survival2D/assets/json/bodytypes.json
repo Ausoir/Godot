@@ -1,0 +1,35 @@
+{
+	"other": {
+		"head": 0,
+		"body": 0,
+		"belt": 0,
+		"feet": 0,
+		"back": 0,
+		"outer": 0,
+		"trinket": 0,
+		"hands": 0,
+		"offhand": 0,
+	},
+	"zombie": {
+		"head": 2,
+		"body": 2,
+		"belt": 0,
+		"feet": 2,
+		"back": 0,
+		"outer": 0,
+		"trinket": 0,
+		"hands": 2,
+		"offhand": 0,
+	},
+	"man": {
+		"head": 2,
+		"body": 2,
+		"belt": 2,
+		"feet": 2,
+		"back": 2,
+		"outer": 2,
+		"trinket": 2,
+		"hands": 2,
+		"offhand": 2,
+	}
+}

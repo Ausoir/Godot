@@ -17,6 +17,15 @@ func replace_vars(_args):
 			elif arg == "$h":
 				r.append(host)
 				continue
+			elif arg == "$hp":
+				r.append(host.pos)
+				continue
+			elif arg == "$tp":
+				r.append(tgt.pos)
+				continue
+			elif arg == "$pu":
+				r.append(G.you.unit)
+				continue
 		r.append(arg)
 	return r
 
@@ -59,6 +68,11 @@ func run(_args):
 			return host.dat.g(args[2], args[3])
 		elif args[1] == "a":
 			host.dat.a(args[2], args[3])
+	elif command == "var":
+		if args[1] == "g":
+			return args[2].dat.g(args[3], args[4])
+		elif args[1] == "a":
+			args[2].dat.a(args[3], args[4])
 	elif command == "run":
 		return G.cmds(args[1], tgt)
 	elif command == "make":
@@ -70,13 +84,28 @@ func run(_args):
 	elif command == "possess":
 		args[1].possess(get_arg(2))
 	elif command == "menu":
-		G.ui.display(args[1])
+		if args[1] == "msg":
+			G.msg(args[2])
+		elif args[1] == "menu":
+			G.ui.display(args[2])
+		elif args[1] == "dialog":
+			G.ui.display_dialog(args[2], host)
+		else:
+			G.ui.clear()
+	elif command == "particle":
+		G.make_particle(args[1], args[2].to_pixel())
 	elif command == "cast":
 		host.buffs.add(args[1], args[2])
 	elif command == "refresh":
 		G.you.camera.update(G.you.unit.pos, G.you.last_pos, G.you.unit.sight_col)
 	elif command == "remove":
 		args[1].remove()
+	elif command == "give":
+		args[2].store(args[1], true)
+	elif command == "read":
+		return G.data.get_json_data(args[1], false).get(args[2], "")
+	elif command == "travel":
+		G.world.change("base")
 	return tgt
 
 func get_arg(idx, default=null):

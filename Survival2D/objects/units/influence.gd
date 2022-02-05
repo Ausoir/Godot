@@ -169,7 +169,7 @@ func is_valid(tgt):
 			elif is_unit:
 				if law == "unit":
 					continue
-				elif law == "humanoid" and tgt.dat.g("bodyparts") == null:
+				elif law == "humanoid" and tgt.dat.g("type") != "man":
 					continue
 				elif law == "foe" and host.faction != victim.faction:
 					continue

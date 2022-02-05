@@ -7,9 +7,6 @@ const Script_Humanoid = preload("res://objects/units/humanoid.gd")
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
 const ACT_CONSTRUCT = ["icon_construct", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
 const ACT_EQUIP = ["icon_equip", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
-const DESCRIPTIONS = {
-	"true": "Ignores armor.",
-}
 
 var spells = [
 	[
@@ -25,12 +22,6 @@ var spells = [
 		["Summon Soldier", [2,10], [["v","$h","pos"], ["make","soldier"],["v","controller","$h"],["faction",1]]],
 	],
 ]
-
-
-func get_description(name):
-	if name in DESCRIPTIONS:
-		return DESCRIPTIONS[name]
-	return ""
 
 func make_group(arg, pos):
 	var data = G.data.level_data.get(arg)
@@ -50,7 +41,7 @@ func make_mob(arg, pos):
 		var unit_pos = pos
 		for mob in mob_data:
 			var params = mob_data[mob]
-			var num = G.rng.randi_range(params[0], params[1])
+			var num = G.rng.randi_range(params[1], params[2])
 			for _i in range(num):
 				unit = make_unit(mob, unit_pos)
 				if unit != null:
@@ -59,12 +50,13 @@ func make_mob(arg, pos):
 					unit_pos = G.rng.rnd_arr(adjs)
 					if unit_pos == null:
 						return
-					if unit.dat.g("bodyparts"):
-						for ii in range(2, params.size()):
+					if unit.dat.g("type") == "man":
+						for ii in range(3, params.size()):
 							var item_param = params[ii]
 							if G.rng.rnd_percent(item_param[1]):
 								var item = G.factory.make_item(item_param[0])
 								unit.auto_equip(item)
+					unit.faction = params[0]
 				else:
 					push_error("Invalid mob unit "+str(mob))
 		return unit
@@ -73,7 +65,7 @@ func make_unit(arg, pos):
 	var unit_data = G.data.unit_data.get(arg)
 	if unit_data != null:
 		var r = Unit.instance()
-		if unit_data.get("bodyparts") != null:
+		if unit_data.get("type") == "man":
 			r.set_script(Script_Humanoid)
 		else:
 			r.set_script(Script_Unit)
@@ -81,10 +73,17 @@ func make_unit(arg, pos):
 		if !sprite:
 			return
 		r.get_node("Sprites/Sprite").texture = sprite
+		var img_size = sprite.get_size()
+		if img_size.y > 32:
+			r.get_node("Sprites/Sprite").offset.y = -int((img_size.y - 32) / 2)
 		G.turn.add(r)
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = G.Properties.new(unit_data)
+		var bodytype = r.dat.g("type")
+		if bodytype != null:
+			var bodytype_list = G.data.get_json_data("bodytypes")
+			r.dat.a("bodyparts", bodytype_list.get(bodytype))
 		r.vars = G.Properties.new({})
 		for stat in G.STATS:
 			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
@@ -99,12 +98,20 @@ func make_item(arg, pos=null):
 	if item_data != null:
 		var r = Sprite.new()
 		G.data.set_sprite_texture(r, item_data.img, item_data.get("autotile", 0))
+		if r.texture != null:
+			if !r.region_enabled:
+				var img_size = r.texture.get_size()
+				if img_size.y > 32:
+					r.offset.y = -int((img_size.y - 32) / 2)
 		r.set_script(Item)
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = G.Properties.new(item_data)
 		r.vars = G.Properties.new({})
+		r.light = r.dat.g("light", 0)
 		r.col = r.dat.g("col", "0000")
+		if r.dat.g("turn", 0) > 0:
+			G.turn.add(r)
 		if pos != null:
 			r.place(pos)
 		return r

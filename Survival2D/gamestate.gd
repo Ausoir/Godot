@@ -78,7 +78,6 @@ func unregister_player(id):
 remote func pre_start_game():
 	# Change scene.
 	get_tree().get_root().add_child(G.world)
-	G.world.create("base")
 
 	get_tree().get_root().get_node("Lobby").hide()
 
@@ -90,22 +89,25 @@ remote func pre_start_game():
 		spawn_point_idx += 1
 
 	var Player = preload("res://view/Player.tscn")
+	var units = []
 	for p_id in spawn_points:
-		var player_pos = G.field.get_spawn_point()
-		var player_unit = G.cmd([["make", "player", player_pos]])
 		var player = Player.instance()
 		player.set_name(str(p_id)) # Use unique ID as node name.
 		player.set_network_master(p_id) #set unique id as master.
 		if p_id == get_tree().get_network_unique_id():
-			# If node for this peer id, set name.
-			player_unit.item_name = player_name
+			units.append([player, player_name])
 			G.you = player
+			G.world.add_child(player)
 		else:
-			# Otherwise set name from peer.
-			player_unit.item_name = other_players[p_id]["name"]
+			units.append([player, other_players[p_id]["name"]])
 			other_players[p_id]["controller"] = player
-		G.world.players.add_child(player)
-		player_unit.possess(player)
+
+	G.world.create("base")
+	for unit in units:
+		var player_pos = G.field.get_spawn_point()
+		var player_unit = G.cmd([["make", "player", player_pos]])
+		player_unit.item_name = unit[1]
+		player_unit.possess(unit[0])
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.

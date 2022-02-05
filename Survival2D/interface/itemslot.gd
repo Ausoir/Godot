@@ -38,12 +38,16 @@ func assign(p):
 	if item != null:
 		r = item
 	item = p
-	var item_sprite = get_node("Sprite")
-	item_sprite.texture = item.texture
-	if item is Sprite:
-		item_sprite.region_enabled = item.region_enabled
-		item_sprite.region_rect = item.region_rect
-	item_sprite.show()
+	var slot_sprite = get_node("Sprite")
+	var item_sprite = item.dat.g("sprite")
+	if item_sprite != null:
+		slot_sprite.texture = G.data.get_image(item_sprite)
+	else:
+		slot_sprite.texture = p.texture
+		if p is Sprite:
+			slot_sprite.region_enabled = p.region_enabled
+			slot_sprite.region_rect = p.region_rect
+	slot_sprite.show()
 	if has_node("Overlay"):
 		$Overlay.hide()
 	return r
@@ -62,7 +66,7 @@ func unassign():
 
 func _on_mouse_entered():
 	if item != null:
-		G.ui.describe("item", item.item_name, item)
+		G.ui.describe("item", item.item_name, item.dat.v)
 
 func _on_mouse_exited():
 	G.ui.description.hide()

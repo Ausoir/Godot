@@ -39,7 +39,10 @@ func set_terrain(val):
 		terrain = val
 		if "autotile" in data:
 			autotile = data.autotile
-		light = data.get("ceiling", 0)
+		if data.get("ceiling") != null:
+			light = -1
+		else:
+			light = G.world.sunlight
 		slow = data.get("slow", 0)
 		var tile_image = G.world.tileset.find_tile_by_name(val)
 		G.world.tilemap.set_cell(x, y, tile_image)
@@ -53,14 +56,34 @@ func add_item(item):
 	if item.get_parent() == null:
 		G.world.items.add_child(item)
 	items.append(item)
+	item.set_z_index(y * 2 - 4000)
 	item.pos = self
 	update_tile()
+	if item.light != 0:
+		radiate(item.light)
 
 func remove_item(item):
 	if item.get_parent() == G.world.items:
 		G.world.items.remove_child(item)
 	items.erase(item)
 	update_tile()
+	if item.light != 0:
+		radiate(-item.light)
+
+func radiate(_light):
+	if _light > 1:
+		for i in range(4):
+			var adj = get_adjacent(i * 2)
+			if !adj.is_col(0):
+				adj.radiate(_light - 1)
+	elif _light < -1:
+		for i in range(4):
+			var adj = get_adjacent(i * 2)
+			if !adj.is_col(0):
+				adj.radiate(_light + 1)
+	light += _light
+	if visible:
+		G.world.update_light(x, y)
 
 func smash(_dmg):
 	G.make_particle("Hit", to_pixel())
@@ -239,4 +262,4 @@ func get_priority_item(exc):
 	return low
 
 func is_edge():
-	return x == 0 or x == G.field.size.x or y == 0 or y == G.field.size.y
+	return x == 0 or x == G.field.size.x-1 or y == 0 or y == G.field.size.y-1

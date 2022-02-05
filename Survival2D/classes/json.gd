@@ -8,7 +8,7 @@ var unit_data
 var group_data
 var level_data
 var skill_data
-
+var dialog_data
 
 func _init():
 	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
@@ -18,6 +18,7 @@ func _init():
 	group_data = get_json_from_dir("res://assets/json/groups.json")
 	level_data = get_json_from_dir("res://assets/json/levels.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
+	dialog_data = get_json_from_dir("res://assets/json/dialog.json")
 
 func set_tile_image(_sprite, _to):
 #	var dat = tileset_map.get(to)
@@ -57,14 +58,17 @@ func get_particle(p):
 		particles_cache[p] = r
 		return r.instance()
 
-func get_json_data(p):
-	var r = json_cache.get(p)
-	if r != null:
-		return r
+func get_json_data(p, _cache=false):
+	if _cache:
+		var r = json_cache.get(p)
+		if r != null:
+			return r
+		else:
+			r = get_json_from_dir("res://assets/json/" + p + ".json")
+			json_cache[p] = r
+			return r
 	else:
-		r = get_json_from_dir("res://assets/json/" + p + ".json")
-		json_cache[p] = r
-		return r
+		return get_json_from_dir("res://assets/json/" + p + ".json")
 
 func get_json_from_dir(dir):
 	var data_file = File.new()

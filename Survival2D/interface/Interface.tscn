@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://interface/interface.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
@@ -21,6 +21,7 @@
 [ext_resource path="res://assets/images/gui/eq_part10.png" type="Texture" id=19]
 [ext_resource path="res://assets/images/gui/slot_full.png" type="Texture" id=20]
 [ext_resource path="res://interface/SkillSlot.tscn" type="PackedScene" id=21]
+[ext_resource path="res://interface/dialog.gd" type="Script" id=22]
 
 [sub_resource type="Animation" id=1]
 length = 1.5
@@ -112,16 +113,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Menu" type="Control" parent="Control"]
+[node name="Tint" type="Panel" parent="Control"]
 visible = false
 mouse_filter = 1
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Tint" type="Panel" parent="Control/Menu"]
+[node name="Menu" type="Control" parent="Control"]
+visible = false
 mouse_filter = 1
-custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -148,6 +150,7 @@ margin_right = 156.0
 margin_bottom = 436.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+dragger_visibility = 1
 
 [node name="Equipment" type="Panel" parent="Control/Menu/Tabs/INV/VSplit"]
 margin_right = 156.0
@@ -700,6 +703,35 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Dialog" type="TabContainer" parent="Control"]
+visible = false
+margin_right = 400.0
+margin_bottom = 300.0
+script = ExtResource( 22 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Dialog" type="ScrollContainer" parent="Control/Dialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 39.0
+margin_right = -5.0
+margin_bottom = -5.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+scroll_horizontal_enabled = false
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/Dialog/Dialog"]
+margin_right = 390.0
+margin_bottom = 256.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+bbcode_text = "[url=<stuf>]Stuff[/url]"
+text = "Stuff"
+
 [node name="Description" parent="Control" instance=ExtResource( 3 )]
 visible = false
 margin_right = 64.0
@@ -725,5 +757,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="gui_input" from="Control/Menu/Tint" to="." method="_background_input"]
+[connection signal="gui_input" from="Control/Tint" to="." method="_background_input"]
 [connection signal="tab_changed" from="Control/Menu/Tabs" to="." method="_on_tab_change"]
+[connection signal="meta_clicked" from="Control/Dialog/Dialog/RichTextLabel" to="Control/Dialog" method="_on_meta_clicked"]
+[connection signal="meta_hover_ended" from="Control/Dialog/Dialog/RichTextLabel" to="Control/Dialog" method="_on_meta_hover_ended"]
+[connection signal="meta_hover_started" from="Control/Dialog/Dialog/RichTextLabel" to="Control/Dialog" method="_on_meta_hover_started"]

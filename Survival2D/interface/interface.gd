@@ -6,8 +6,9 @@ const BuffSlot = preload("res://interface/BuffSlot.tscn")
 const PassiveSlot = preload("res://interface/PassiveSlot.tscn")
 const SkillSlot = preload("res://interface/SkillSlot.tscn")
 onready var menu = $Control/Menu
+onready var dialog = $Control/Dialog
 onready var message = $Control/Message
-onready var tint = $Control/Menu/Tint
+onready var tint = $Control/Tint
 onready var description = $Control/Description
 onready var tabs = $Control/Menu/Tabs
 onready var tab_equipment = $Control/Menu/Tabs/INV/VSplit/Equipment/Columns
@@ -32,6 +33,7 @@ func _ready():
 	screen_ratio = screen_size / get_viewport().size
 	$AnimationPlayer/Fade.set_size(screen_size)
 	$AnimationPlayer.play("FadeIn")
+	tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
 
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
@@ -84,25 +86,36 @@ func _unhandled_input(event):
 			if on:
 				clear()
 			else:
-				G.cmd([["menu", ""]], G.you.unit)
+				G.cmd([["menu", "menu", -1]], G.you.unit)
 		else:
 			G.you._on_input(event)
 	elif !on:
 		G.you._on_input(event)
 
+func display_dialog(_page, _host):
+	on = true
+	tint.set_size(screen_size)
+	tint.show()
+	dialog.display(_page, _host)
+	dialog.rect_position = screen_size / 2 - dialog.rect_size / 2
+
 func display(_arg):
 	if !on:
 		on = true
 		tint.set_size(screen_size)
-		tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
+		tint.show()
 		menu.show()
+		if _arg != -1:
+			tabs.set_current_tab(_arg)
 		_on_tab_change(tabs.current_tab)
 
 func clear():
 	on = false
 	menu.hide()
+	tint.hide()
 	description.hide()
 	container.hide()
+	dialog.hide()
 	set_drag_item(null)
 
 func set_drag_item(item):
@@ -135,7 +148,7 @@ func update_equipables(equipables):
 
 func update_inventory():
 	var unit = G.you.unit
-	if "man" in unit.dat.g("flags"):
+	if unit.dat.g("type") != "other":
 		for child in tab_inventory.get_children():
 			child.queue_free()
 			tab_inventory.remove_child(child)

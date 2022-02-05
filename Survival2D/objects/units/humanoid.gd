@@ -1,6 +1,5 @@
 extends "res://objects/units/unit.gd"
 
-const LAYER_ORDER = ["body", "head", "weapon"]
 var equipment_nodes = {}
 var equipments = {}
 var inventory = [null]
@@ -43,10 +42,12 @@ func create_overlay(_part, _texturename):
 		newsprite.set_name(_part)
 		newsprite.set_texture(G.data.get_image(_texturename))
 		equipment_nodes[_part] = newsprite
-		node_sprites.add_child(newsprite)
-		for child in node_sprites.get_children():
-			var child_order = LAYER_ORDER.find(child.name)
-			child.set_z_index(child_order)
+		if _part == "weapon":
+			var c = node_sprites.get_child_count()
+			var last = node_sprites.get_child(c-1)
+			node_sprites.add_child_below_node(last, newsprite)
+		else:
+			node_sprites.add_child(newsprite)
 
 func select_weapon(p):
 	if p != selected_belt:

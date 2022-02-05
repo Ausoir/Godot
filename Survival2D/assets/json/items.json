@@ -1,4 +1,12 @@
 {
+	"canned food": {
+		"img": "items/rock",
+		"part": "item",
+		"mat": "metal",
+		"uses": 4,
+		"weight": 1,
+		"desc": "A canned food. Used as currency."
+	},
 	"rock": {
 		"img": "items/rock",
 		"part": "item",
@@ -9,23 +17,10 @@
 		"uses": 4,
 		"weight": 10,
 		"bash": 4,
-		"move speed": 1,
 		"desc": "A rock."
 	},
-	"branch": {
-		"img": "items/branch",
-		"sprite": "overlay/bat",
-		"part": "item",
-		"abilities": [],
-		"skills": ["quick strike"],
-		"mat": "wood",
-		"weight": 10,
-		"bash": 4,
-		"tags": ["blunt"],
-		"desc": "A branch."
-	},
 	"cutlass": {
-		"img": "items/sword",
+		"img": "loot",
 		"sprite": "overlay/cutlass",
 		"part": "item",
 		"abilities": [],
@@ -37,8 +32,32 @@
 		"tags": ["blunt"],
 		"desc": "A branch."
 	},
+	"pipe": {
+		"img": "loot",
+		"sprite": "overlay/pipe",
+		"part": "item",
+		"abilities": [],
+		"skills": ["bash"],
+		"mat": "metal",
+		"weight": 2,
+		"bash": 2,
+		"tags": ["blunt"],
+		"desc": "A metal pipe. It's hollow and light, and a bit unwieldy."
+	},
+	"knife": {
+		"img": "loot",
+		"sprite": "overlay/knife",
+		"part": "item",
+		"abilities": [],
+		"skills": ["quick strike"],
+		"mat": "metal",
+		"weight": 1,
+		"cut": 2,
+		"tags": ["blunt"],
+		"desc": "A rusty metal knife. Still pretty sharp."
+	},
 	"gi": {
-		"img": "items/cloth1",
+		"img": "loot",
 		"sprite": "overlay/gi",
 		"part": "body",
 		"abilities": ["fly"],
@@ -49,7 +68,7 @@
 		"desc": "A gi."
 	},
 	"scalemail": {
-		"img": "items/cloth1",
+		"img": "loot",
 		"sprite": "overlay/scale_armor",
 		"part": "body",
 		"abilities": ["fly"],
@@ -60,8 +79,8 @@
 		"desc": "A gi."
 	},
 	"hood": {
-		"img": "items/hood",
-		"sprite": "overlay/hood",
+		"img": "loot",
+		"sprite": "overlay/head_hood",
 		"part": "head",
 		"mat": "cotton",
 		"weight": 10,
@@ -73,14 +92,28 @@
 		"part": "item",
 		"mat": "wood",
 		"col": "0110",
-		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
 	},
 	"rack": {
 		"img": "tiles/rack",
 		"part": "item",
 		"mat": "wood",
 		"col": "0110",
-		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
+	},
+	"campfire": {
+		"img": "furniture/campfire_lit",
+		"part": "item",
+		"mat": "wood",
+		"col": "0110",
+		"durability": 3,
+		"light": 5,
+		"ondie": [["make", "dead campfire", "$hp"]],
+	},
+	"dead campfire": {
+		"img": "furniture/campfire",
+		"part": "item",
+		"mat": "wood",
+		"slow": 2,
+		"col": "0000",
 	},
 	"window curtain": {
 		"img": "tiles/window_curtain",
@@ -88,8 +121,8 @@
 		"mat": "glass",
 		"col": "1110",
 		"height": 1,
-		"onuse": [["v", "pos", "$h"], ["make", "window open", "$t"], ["remove", "$h"]],
-		"ondie": [["v", "pos", "$h"], ["make", "window broken", "$t"]],
+		"onuse": [["make", "window open", "$hp"], ["remove", "$h"]],
+		"ondie": [["make", "window broken", "$hp"]],
 		"desc": "A curtained window.",
 	},
 	"window": {
@@ -99,8 +132,8 @@
 		"col": "0110",
 		"durability": 1,
 		"height": 1,
-		"onuse": [["v", "pos", "$h"], ["make", "window open", "$t"], ["remove", "$h"]],
-		"ondie": [["v", "pos", "$h"], ["make", "window broken", "$t"]],
+		"onuse": [["make", "window open", "$hp"], ["remove", "$h"]],
+		"ondie": [["make", "window broken", "$hp"]],
 		"desc": "A shut window."
 	},
 	"window open": {
@@ -110,8 +143,8 @@
 		"col": "0000",
 		"durability": 1,
 		"height": 1,
-		"onuse": [["v", "pos", "$h"], ["make", "window", "$t"], ["remove", "$h"], ["refresh"]],
-		"ondie": [["v", "pos", "$h"], ["make", "window broken", "$t"]],
+		"onuse": [["make", "window", "$hp"], ["remove", "$h"], ["refresh"]],
+		"ondie": [["make", "window broken", "$hp"]],
 		"desc": "An open window."
 	},
 	"window broken": {
@@ -130,7 +163,9 @@
 		"mat": "wood",
 		"col": "1110",
 		"height": 1,
-		"onuse": [["v", "pos", "$h"], ["make", "open door", "$t"], ["remove", "$h"], ["refresh"]],
+		"durability": 8,
+		"onuse": [["make", "open door", "$hp"], ["remove", "$h"], ["refresh"]],
+		"ondie": [["make", "broken door", "$hp"]],
 		"desc": "A wooden door."
 	},
 	"open door": {
@@ -139,47 +174,66 @@
 		"mat": "wood",
 		"col": "0000",
 		"height": 1,
-		"onuse": [["v", "pos", "$h"], ["make", "door", "$t"], ["remove", "$h"], ["refresh"]],
+		"durability": 5,
+		"onuse": [["make", "door", "$hp"], ["remove", "$h"], ["refresh"]],
+		"ondie": [["make", "broken door", "$hp"]],
 		"desc": "An open wooden door."
 	},
+	"broken door": {
+		"img": "tiles/door_broken",
+		"part": "item",
+		"mat": "wood",
+		"col": "0000",
+		"height": 1,
+		"durability": 3,
+		"onuse": [["make", "door", "$hp"], ["remove", "$h"], ["refresh"]],
+		"desc": "A broken wooden door."
+	},
 	"trashcan": {
-		"img": "tiles/trashcan",
+		"img": "furniture/trashcan",
 		"mat": "plastic",
 		"slow": 4,
 		"durability": 12,
 		"col": "0010",
 	},
 	"shower": {
-		"img": "tiles/shower",
+		"img": "furniture/shower",
 		"mat": "ceramic",
 		"slow": 8,
 		"col": "1010",
 	},
 	"sink": {
-		"img": "tiles/sink",
+		"img": "furniture/sink",
 		"mat": "ceramic",
 		"durability": 12,
 		"col": "0110",
 	},
 	"bathtub": {
-		"img": "tiles/bathtub",
+		"img": "furniture/bathtub",
 		"mat": "ceramic",
 		"slow": 8,
 		"durability": 12,
 		"col": "0010",
 	},
 	"toilet": {
-		"img": "tiles/toilet",
+		"img": "furniture/toilet",
 		"mat": "ceramic",
 		"slow": 4,
 		"durability": 12,
 		"col": "0010",
 	},
 	"chair": {
-		"img": "tiles/chair",
+		"img": "furniture/chair",
 		"mat": "wood",
 		"slow": 4,
 		"durability": 4,
+		"col": "0010",
+	},
+	"logstool": {
+		"img": "furniture/logstool",
+		"mat": "wood",
+		"slow": 4,
+		"durability": 12,
 		"col": "0010",
 	},
 	"table": {
@@ -212,16 +266,49 @@
 		"col": "1010",
 	},
 	"fence": {
-		"img": "tiles/fence_autotile",
+		"img": "uc/fence_autotile",
 		"autotile": 1,
 		"part": "item",
 		"mat": "wood",
 		"slow": 12,
 		"col": "0010",
 	},
+	"wire": {
+		"img": "uc/wire_autotile",
+		"autotile": 1,
+		"part": "item",
+		"mat": "wood",
+		"slow": 12,
+		"col": "0010",
+	},
+	"tree": {
+		"img": "uc/tree1",
+		"mat": "wood",
+		"durability": 16,
+		"col": "1110",
+	},
+	"stump": {
+		"img": "furniture/stump",
+		"mat": "wood",
+		"slow": 2,
+		"durability": 16,
+		"col": "0010",
+	},
+	"boulder": {
+		"img": "uc/boulder",
+		"mat": "stone",
+		"durability": 16,
+		"col": "0110",
+	},
+	"small boulder": {
+		"img": "uc/boulder_s",
+		"mat": "stone",
+		"slow": 3,
+		"durability": 12,
+		"col": "0010",
+	},
 	"corpse": {
 		"weight": 10,
-		"move speed": 1,
 		"skills": ["block"],
 		"mat": "flesh",
 		"desc": "A corpse."

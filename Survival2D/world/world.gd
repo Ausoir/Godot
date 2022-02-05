@@ -17,7 +17,7 @@ func create(_type):
 	elif _type == "urban":
 		generator = load("res://world/generator_street.gd").new()
 		generator.generate()
-		make_mobs("urban")
+		make_mobs("urban", 24)
 	G.field.apply_shades(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):
@@ -25,6 +25,7 @@ func create(_type):
 			set_dark(x, y)
 
 func change(_map):
+	G.data.json_cache.clear()
 	tilemap.clear()
 	shademap.clear()
 	var units = []
@@ -41,8 +42,8 @@ func change(_map):
 	for unit in units:
 		items.add_child(unit)
 
-func make_mobs(type):
-	for _i in range(10):
+func make_mobs(type, num):
+	for _i in range(num):
 		var x = G.rng.randi_range(0, G.field.size.x-1)
 		var y = G.rng.randi_range(0, G.field.size.y-1)
 		G.factory.make_group(type, G.field.tiles[y][x])
@@ -55,8 +56,15 @@ func set_dark(x, y):
 func set_light(x, y):
 	if shademap.get_cell(x, y) == 0:
 		var light = G.field.tiles[y][x].light
-		if light == 0:
+		if light >= 0:
 			shademap.set_cell(x, y, G.field.tiles[y][x].shade)
 		else:
-			shademap.set_cell(x, y, sunlight)
+			shademap.set_cell(x, y, 1)
 		G.field.tiles[y][x].set_visible(true)
+
+func update_light(x, y):
+	var light = G.field.tiles[y][x].light
+	if light >= 0:
+		shademap.set_cell(x, y, G.field.tiles[y][x].shade)
+	else:
+		shademap.set_cell(x, y, 1)

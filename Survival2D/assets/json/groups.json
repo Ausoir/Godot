@@ -1,23 +1,35 @@
 {
 	"player": {
-		"human": [1, 1, ["gi", 100], ["hood", 100], ["cutlass", 100]],
+		"human": [1, 1, 1, ["gi", 100], ["hood", 100], ["cutlass", 100]],
+	},
+	"bob": {
+		"bob": [1, 1, 1, ["gi", 100], ["cutlass", 100]],
+	},
+	"jimbo": {
+		"jimbo": [1, 1, 1, ["gi", 100]],
+	},
+	"chieftain": {
+		"chieftain": [1, 1, 1, ["scalemail", 100], ["cutlass", 100]],
+	},
+	"trader": {
+		"human": [1, 1, 1, ["scalemail", 100], ["cutlass", 100]],
 	},
 	"looters": {
-		"looter": [2, 5, ["scalemail", 100], ["hood", 100], ["cutlass", 100]],
+		"looter": [2, 2, 5, ["scalemail", 100], ["hood", 100], ["cutlass", 100]],
 	},
 	"test": {
-		"zombie": [1, 4],
-		"scorpion": [1, 4],
+		"zombie": [2, 1, 4],
+		"scorpion": [2, 1, 4],
 	},
 
 
 	"chest": {
-		"rock": [1, 1]
+		"rock": [0, 1, 1]
 	},
 	"cupboard": {
-		"rock": [-3, 1]
+		"rock": [0, -3, 1]
 	},
 	"closet": {
-		"rock": [1, 1]
+		"rock": [0, 1, 1]
 	}
 }

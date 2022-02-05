@@ -152,7 +152,7 @@ tracks/1/keys = {
 "values": [ 0.0, -60.0, 0.0 ]
 }
 
-[sub_resource type="Animation" id=14]
+[sub_resource type="Animation" id=6]
 resource_name = "idle"
 length = 0.3
 tracks/0/type = "value"
@@ -312,7 +312,7 @@ tracks/12/keys = {
 "values": [ 0.0 ]
 }
 
-[sub_resource type="Animation" id=15]
+[sub_resource type="Animation" id=7]
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Lower:position")
 tracks/0/interp = 1
@@ -582,20 +582,20 @@ anims/down = SubResource( 2 )
 anims/grab = SubResource( 3 )
 anims/headbutt = SubResource( 4 )
 anims/hit = SubResource( 5 )
-anims/idle = SubResource( 14 )
-anims/kick = SubResource( 15 )
+anims/idle = SubResource( 6 )
+anims/kick = SubResource( 7 )
 anims/knockout = SubResource( 8 )
 anims/up = SubResource( 9 )
 anims/wait = SubResource( 10 )
 anims/walk = SubResource( 11 )
 
 [node name="Shadow" type="Sprite" parent="."]
+z_index = 1
 texture = ExtResource( 2 )
 region_rect = Rect2( 0, 0, 32, 32 )
 
 [node name="Sprites" type="Node2D" parent="."]
 z_index = 1
-z_as_relative = false
 
 [node name="Sprite" type="Polygon2D" parent="Sprites"]
 material = SubResource( 13 )

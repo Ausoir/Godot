@@ -1,0 +1,73 @@
+{
+	"Bob": {
+		"title": "Conversation",
+		"req": [["pvar", "start", 0]],
+		"true": "\"Hey $u.\"\n\n\"You're 14 now, and you need to start pulling your own weight.\n\"We're just about to make another run to town, and [url=0]you're coming with us.[/url]\"",
+		"opt": [
+			{
+				"cmd": [["menu", "dialog", "Bob2"]],
+			}
+		]
+	},
+	"Bob2":	{
+		"title": "Conversation",
+		"cmd": [["var","a","$pu","start",1],["var", "a", "$h", "onuse", [["menu", "dialog", "Bob3"]]]],
+		"true": "\"That's right. Leave the gardening to the others and go get a weapon from Jimbo.\"\n\"You're a scav now.\"",
+	},
+	"Bob3": {
+		"title": "Conversation",
+		"req": [["pvar", "start", 2]],
+		"false": "Did you talk to Jimbo yet?",
+		"true": "\"I see you got yourself something fancy.\nBefore we go, do you know how to [url=0]use your weapon?[/url]\nIf you have any questions about [url=1]fight[/url] or [url=2]about the runs[/url], ask away.\nOtherwise, [url=3]let's get moving[/url].\"",
+		"opt": [
+			{
+				"cmd": [["menu", "dialog", "Bob_items"]],
+			},
+			{
+				"cmd": [["menu", "dialog", "Bob_combat"]],
+			},
+			{
+				"cmd": [["menu", "dialog", "Bob_runs"]],
+			},
+			{
+				"hover": ["text", "Location", "Streets\nDifficulty: Easy\nAllies: 4"],
+				"cmd": [["var","a","$pu","start",2], ["travel", "urban"]],
+			}
+		]
+	},
+	"Bob_items": {
+		"title": "Tutorial - Items",
+		"true": "\"To equip your weapon, first press TAB to access the menu.\nUnder Inventory menu, click on the weapon slot and move it to the corresponding equipment slot above.\n\nOnce outside the menu, you can swap between the 4 weapon slots using the number keys for fast weapon swapping.\"\n\n[i][url=0]> Ok[/url][/i]",
+		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
+	},
+	"Bob_combat": {
+		"title": "Tutorial - Combat",
+		"true": "\"Press TAB and go to your Skills menu.\nThe icons at the top part of the menu are your currently equipped skills. Moving a skill from the bottom part to the top equips them.\nWhen in combat, you will use the equipped skills in their respective order.\"\n\n[i][url=0]> Alrighty[/url][/i]",
+		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
+	},
+	"Bob_runs": {
+		"title": "Tutorial - Runs",
+		"true": "\"Gardening is ok, but at the end of the day, it's the canned goodiness that feed us.\n\nWhen we get to our destination, just follow us and stay out of harm's way. [url=0]Understand?[/url]\"",
+		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
+	},
+	"Jimbo": {
+		"title": "Talk with Jimbo",
+		"req": [["pvar", "start", 1]],
+		"false": "I'm busy. Go away.",
+		"true": "\"Going scaving? Need a weapon?\"\nHe shows you a [url=0]pipe[/url] and a [url=1]knife[/url]",
+		"opt": [
+			{
+				"hover": ["item", "pipe"],
+				"cmd": [["make", "pipe", null], ["give", "$t", "$pu"], ["var","a","$pu","start",2], ["menu", "hide"], ["menu", "msg", "You receive a pipe"]],
+			},
+			{
+				"hover": ["item", "knife"],
+				"cmd": [["make", "knife", null], ["give", "$t", "$pu"], ["var","a","$pu","start",2], ["menu", "hide"], ["menu", "msg", "You receive a knife"]],
+			}
+		]
+	},
+	"Chief": {
+		"title": "Talk",
+		"text": "Hello $u! [url=0]Yee[/url]",
+	}
+}

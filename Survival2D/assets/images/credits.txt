@@ -1,11 +1,15 @@
-Particle textures:
+Particle textures under assets/images/textures:
   Kenny's Particle Pack (CC0) - https://www.kenney.nl/assets/particle-pack
-UI icons:
+UI icons under assets/images/gui:
   Dungeon Crawl Stone Soup tileset (CC0) - http://code.google.com/p/crawl-tiles/
-Images under assets/images/tiles:
+Images under assets/images/overlay, and assets/images/units:
 	*Cataclysm MShockXotto+ tileset (CC-BY-SA 3.0) - https://github.com/I-am-Erk/CDDA-Tilesets/tree/master/gfx/UltimateCataclysm
-Images under assets/images/overlay and assets/images/units:
+Images under assets/images/uc:
 	*Cataclysm Ultica tileset (CC-BY-SA 3.0) - https://github.com/I-am-Erk/CDDA-Tilesets/tree/master/gfx/MShockXotto%2B
+Images under assets/images/tiles:
+	concrete_autotile.png - Ultica
+	pit_autotile.png - Ultica
+	other files - MShockXotto+
 
 Check out Dungeon Crawl Stone Soup at - https://crawl.develz.org/
 Check out Cataclysm: Dark Days Ahead at - https://cataclysmdda.org/
