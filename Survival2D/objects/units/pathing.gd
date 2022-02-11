@@ -1,13 +1,18 @@
 var cols = "0100"
 var target
-var iterations = 12
+var iterations = 14
+var pathing_times = 0
 var open
 var closed = []
 var closest
 var result
 var next_reset = 0
-var reach = 0
 var hinderance = 1
+var heuristics_threshold = 0
+
+var reach = 0
+var can_open = false
+var smash_to = 0
 
 
 class pathnode:
@@ -23,6 +28,9 @@ class pathnode:
 		
 	func set_h(destination):
 		h = (pos - destination).length_squared()
+	
+	func to_pixel():
+		return Vector2(pos.x * G.W + G.HW, pos.y * G.H + G.HH)
 
 func _init():
 	result = []
@@ -44,7 +52,7 @@ func iterate(node):
 			node = v
 	open.remove(index)
 	closed.append(node)
-	var routes = G.field.get_routes(node.pos, cols)
+	var routes = G.field.get_routes(node.pos, cols, can_open, smash_to)
 	for route in routes:
 		var dir_pos = G.DIRS[route]
 		var pos = Vector2(node.pos.x + dir_pos[0], node.pos.y + dir_pos[1])
@@ -58,19 +66,20 @@ func iterate(node):
 		var cost = G.field.tiles[pos.y][pos.x].slow * hinderance
 		if check_loop(closed, pos):
 			continue
-		var conflict = check_loop(open, pos)
-		if conflict:
-			if node.g + 1 <= conflict.g:
-				conflict.parent = node
-				conflict.g = node.g + 1 + cost
-				conflict.set_h(target)
-				conflict.f = conflict.h + conflict.g
-			continue
 		var new = pathnode.new(node, pos)
 		new.g = node.g + 1 + cost
 		new.set_h(target)
 		new.f = new.h + new.g
-		open.append(new)
+		if new.h < heuristics_threshold:
+			var conflict = check_loop(open, pos)
+			if conflict:
+				if new.g < conflict.g:
+					conflict.parent = new
+					conflict.g = new.g + 1 + cost
+					conflict.set_h(target)
+					conflict.f = conflict.h + conflict.g
+					continue
+			open.append(new)
 	return null
 
 
@@ -78,13 +87,12 @@ func reset(hostpos):
 	open = [pathnode.new(null, hostpos)]
 	closed = []
 	closest = open[0]
+	heuristics_threshold = (target - hostpos).length_squared()
 
 
 func debug_trace():
 	for draw in open:
-		#print("debug trace: ", draw.pos * G.W)
-		G.world.make_particle("smoke", Vector2(draw.pos.x * G.W + G.HW, draw.pos.y * G.H + G.HH))
-
+		G.cmd([["particle", "Fire", draw]])
 
 func update(hostpos, p):
 	target = p
@@ -102,8 +110,8 @@ func update(hostpos, p):
 					break
 			else:
 				break
-		#debug_trace()
-		if not done:
+#		debug_trace()
+		if not done and next_reset > pathing_times:
 			done = closest
 		if done:
 			next_reset = 0

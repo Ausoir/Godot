@@ -7,16 +7,16 @@ func make_vault(_map, room, dir):
 	var flip = 0
 	var rot = false
 	if dir == 0:
-		flip = G.rng.randi_range(0, 1)
+		flip = R.ir(0, 1)
 		rot = false
 	elif dir == 1:
-		flip = G.rng.randi_range(2, 3)
+		flip = R.ir(2, 3)
 		rot = true
 	elif dir == 2:
-		flip = G.rng.randi_range(2, 3)
+		flip = R.ir(2, 3)
 		rot = false
 	elif dir == 3:
-		flip = G.rng.randi_range(0, 1)
+		flip = R.ir(0, 1)
 		rot = true
 	var fromx = room[0]
 	var fromy = room[1]
@@ -33,19 +33,19 @@ func make_vault(_map, room, dir):
 		var startY
 		if diffX >= 0 and diffY >= 0 and diffX2 >= 0 and diffY2 >= 0:
 			if rot:
-				startX = fromx + G.rng.randi_range(0, diffX2)
-				startY = fromy + G.rng.randi_range(0, diffY2)
+				startX = fromx + R.ir(0, diffX2)
+				startY = fromy + R.ir(0, diffY2)
 			else:
-				startX = fromx + G.rng.randi_range(0, diffX)
-				startY = fromy + G.rng.randi_range(0, diffY)
+				startX = fromx + R.ir(0, diffX)
+				startY = fromy + R.ir(0, diffY)
 			candidates.append([vault_data, startX, startY, flip, rot])
 		elif diffX >= 0 and diffY >= 0 and !rot:
-			startX = fromx + G.rng.randi_range(0, diffX)
-			startY = fromy + G.rng.randi_range(0, diffY)
+			startX = fromx + R.ir(0, diffX)
+			startY = fromy + R.ir(0, diffY)
 			candidates.append([vault_data, startX, startY, flip, false])
 		elif diffX2 >= 0 and diffY2 >= 0 and rot:
-			startX = fromx + G.rng.randi_range(0, diffX2)
-			startY = fromy + G.rng.randi_range(0, diffY2)
+			startX = fromx + R.ir(0, diffX2)
+			startY = fromy + R.ir(0, diffY2)
 			candidates.append([vault_data, startX, startY, flip, true])
 	#print(size, " ", len(candidates), " ", from, " ", to)
 	for candidate in candidates:
@@ -53,7 +53,7 @@ func make_vault(_map, room, dir):
 		var chance = vault_data[0]
 		var map = vault_data[1]
 		var palette = vault_data[2]
-		if G.rng.randi_range(0, 99) < chance:
+		if R.ir(0, 99) < chance:
 			place_vault(_map, map, palette, candidate[1], candidate[2], candidate[3], candidate[4])
 			return true
 	return false

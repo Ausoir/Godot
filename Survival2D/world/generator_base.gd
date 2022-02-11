@@ -3,9 +3,10 @@ extends "res://world/generator.gd"
 var _stack = []
 var size
 var estates = []
+var fixed_buildings = []
 
 func generate():
-	.create(60, 60)
+	.create(120, 60)
 	G.field.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
@@ -26,11 +27,11 @@ func generate():
 
 func place_buildings():
 	for _i in range(20):
-		var fromx = G.rng.randi_range(10, width-19)
-		var fromy = G.rng.randi_range(10, height-19)
+		var fromx = R.ir(10, width-39)
+		var fromy = R.ir(10, height-19)
 		var estate = [fromx, fromy, fromx+8, fromy+8]
-		make_vault(estate, "map_shack", G.rng.randi_range(0, 3))
-	var fromx = G.rng.randi_range(20, width-34)
-	var fromy = G.rng.randi_range(20, height-34)
+		make_vault(estate, "map_shack", R.ir(0, 3))
+	var fromx = R.ir(20, width-54)
+	var fromy = R.ir(20, height-34)
 	var estate = [fromx, fromy, fromx+13, fromy+13]
-	make_vault(estate, "map_chiefshack", G.rng.randi_range(0, 3))
+	make_vault(estate, "map_chiefshack", R.ir(0, 3))

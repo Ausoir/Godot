@@ -8,11 +8,11 @@ class buff:
 	var duration
 	var cancels
 
-	func _init(p1,p2,p3,p4):
+	func _init(p1,p2,p3):
 		name = p1
 		fx = p2
 		duration = p3
-		cancels = p4
+		cancels = fx.get("cancel", null)
 
 	func on_turn(host):
 		if duration == 0:
@@ -28,11 +28,11 @@ class buff:
 func _init(phost):
 	host = phost
 
-func add(p, effect, duration, cancels):
+func add(p, effect, duration):
 	if p in states:
 		states[p].duration = duration
 	else:
-		states[p] = buff.new(p, effect, duration, cancels)
+		states[p] = buff.new(p, effect, duration)
 		if !G.turn.has(self):
 			G.turn.add(self)
 
@@ -71,9 +71,28 @@ func extend(p, dur):
 func expend(p):
 	if p in states:
 		states[p].duration = 0
-		return true
-	return false
+		return states[p].fx
+	return null
 
 func remove():
 	G.turn.remove(self)
 	states.clear()
+
+func clear():
+	for i in states:
+		states[i].duration = 0
+		states[i].on_turn(host)
+	states.clear()
+	G.turn.remove(self)
+
+func to_data():
+	var r = []
+	for i in states:
+		r.append([i, states[i].duration])
+	return r
+
+func from_data(_data):
+	for i in _data:
+		var skill_data = G.data.skill_data.get(i[0])
+		if skill_data != null:
+			add(i[0], skill_data, i[1])

@@ -47,7 +47,7 @@ func divide(from, to, times, times_hall, h_chance):
 	var oddgap = gap % 2
 	halfgap = floor(gap/2)
 	if horizontal:
-		var wall = rng.randi_range(from.y+min_room_size.y, to.y-min_room_size.y)
+		var wall = rng.r_i(from.y+min_room_size.y, to.y-min_room_size.y)
 		wall += wall % 2 + oddgap
 		var wall_from = wall-gap
 		var wall_to = wall+gap
@@ -62,7 +62,7 @@ func divide(from, to, times, times_hall, h_chance):
 		else:
 			door_candidates.append([Vector2(from.x+1,wall), Vector2(to.x-1,wall)])
 	else: #vertical
-		var wall = rng.randi_range(from.x+min_room_size.x, to.x-min_room_size.x)
+		var wall = rng.r_i(from.x+min_room_size.x, to.x-min_room_size.x)
 		wall += wall % 2 + oddgap
 		var wall_from = wall-gap
 		var wall_to = wall+gap
@@ -79,8 +79,8 @@ func divide(from, to, times, times_hall, h_chance):
 
 func make_doors():
 	for door in door_candidates:
-		var x = rng.randi_range(door[0].x, door[1].x)
-		var y = rng.randi_range(door[0].y, door[1].y)
+		var x = rng.r_i(door[0].x, door[1].x)
+		var y = rng.r_i(door[0].y, door[1].y)
 		base[y][x] = 'D'
 
 func make_rooms(departments):
@@ -93,9 +93,9 @@ func make_rooms(departments):
 	var tpartments = departments.duplicate()
 	for s in sectors:
 		if tpartments.empty():
-			sectors[s] = rng.rnd_arr(departments)
+			sectors[s] = rng.r_arr(departments)
 		else:
-			var idx = rng.randi_range(0, len(tpartments)-1)
+			var idx = rng.r_i(0, len(tpartments)-1)
 			sectors[s] = tpartments[idx]
 			tpartments.remove(idx)
 	print(sectors)

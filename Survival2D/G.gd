@@ -26,8 +26,6 @@ var Damage_Label = load("res://objects/particles/Damage_Label.tscn")
 var influence = preload("res://objects/units/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var command = preload("res://classes/command.gd").new()
-var rng = preload("res://classes/random.gd").new()
-var trng = preload("res://classes/random.gd").new()
 var time = preload("res://classes/time.gd").new()
 var turn = preload("res://classes/turn.gd").new()
 var field = preload("res://world/field.gd").new()
@@ -35,14 +33,18 @@ var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
 var events = []
+var onloads = []
 var you
 
 
 func _ready():
+	R.set_seed()
 	get_tree().get_root().call_deferred("add_child", G.ui)
-	G.rng.randomize()
-#	G.rng.set_seed(11111)
-	print(G.rng.seed)
+
+func process_onload():
+	for i in onloads:
+		cmd(i[1], i[0])
+	onloads.clear()
 
 func _process(delta):
 	time.on_process(delta)
@@ -113,9 +115,10 @@ func cmd(args, host=null):
 puppetsync func synced_cmd(args, host):
 	command.assign(host)
 	for arg in args:
-		command.tgt = command.run(arg)
-		if command.stop:
-			break
+		if !command.ignore:
+			command.tgt = command.run(arg)
+		else:
+			command.ignore = false
 	return command.tgt
 
 func msg(msg):
@@ -138,3 +141,7 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 	r.rect_position.y -= HH
 	world.others.add_child(r)
 	r.set_damage(str(dmg), color, _scale)
+
+func travel(_map):
+	gamestate.save_game(_map)
+	gamestate.load_game()

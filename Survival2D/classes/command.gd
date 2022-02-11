@@ -1,16 +1,15 @@
 var host
 var tgt
-var stop
+var ignore = false
 var args
 
 func assign(phost):
 	host = phost
-	tgt = host
 
 func replace_vars(_args):
 	var r = []
 	for arg in _args:
-		if arg is String:
+		if arg is String and arg[0] == "$":
 			if arg == "$t":
 				r.append(tgt)
 				continue
@@ -25,6 +24,16 @@ func replace_vars(_args):
 				continue
 			elif arg == "$pu":
 				r.append(G.you.unit)
+				continue
+			elif arg == "$pua":
+				var adjs = G.you.unit.pos.get_available_adjacents("0100")
+				var adj = R.r_arr(adjs)
+				if adj == null:
+					r.append(G.you.unit.pos)
+				else:
+					r.append(adj)
+			elif arg == "$pup":
+				r.append(G.you.unit.pos)
 				continue
 		r.append(arg)
 	return r
@@ -46,41 +55,54 @@ func run(_args):
 			return args[2] + args[3]
 		elif args[1] == "pos":
 			return args[2].pos
+		elif args[1] == "adj":
+			var adjs = args[2].get_available_adjacents("0100")
+			var adj = R.r_arr(adjs)
+			if adj == null:
+				adj = args[2]
+			return adj
 	elif command == "r":
 		if args[1] == "int":
-			return G.rng.randi_range(args[2], args[3])
-		elif args[1] == "float":
-			return G.rng.randf()
+			return R.ir(args[2], args[3])
 		elif args[1] == "cmd":
-			var chosen = args[2][G.rng.randi_range(0, len(args[2])-1)]
+			var chosen = args[2][R.ir(0, len(args[2])-1)]
 			return G.cmds([["t",tgt]]+chosen, host)
 	elif command == "?":
 		if args[1] == "=":
-			stop = tgt == args[2]
+			ignore = tgt != args[2]
+		elif args[1] == "!=":
+			ignore = tgt == args[2]
 		elif args[1] == "<":
-			stop = tgt < args[2]
+			ignore = tgt < args[2]
 		elif args[1] == "<=":
-			stop = tgt <= args[2]
-		if len(args) > 3 and args[3] == true:
-			stop = !stop
+			ignore = tgt <= args[2]
 	elif command == "dat":
-		if args[1] == "g":
-			return host.dat.g(args[2], args[3])
-		elif args[1] == "a":
-			host.dat.a(args[2], args[3])
-	elif command == "var":
 		if args[1] == "g":
 			return args[2].dat.g(args[3], args[4])
 		elif args[1] == "a":
 			args[2].dat.a(args[3], args[4])
 	elif command == "run":
-		return G.cmds(args[1], tgt)
+		return G.cmd(args[1], tgt)
+	elif command == "ally":
+		G.you.allies.append(tgt)
 	elif command == "make":
-		tgt = G.factory.make_item(args[1], args[2])
+		tgt = G.factory.make_script(args[1], args[2])
 		if tgt == null:
-			tgt = G.factory.make_mob(args[1], args[2])
+			tgt = G.factory.make_group(args[1], args[2])
 			if tgt == null:
-				tgt = G.factory.make_unit(args[1], args[2])
+				tgt = G.factory.make_item(args[1], args[2])
+				if tgt == null:
+					tgt = G.factory.make_mob(args[1], args[2])
+					if tgt == null:
+						tgt = G.factory.make_unit(args[1], args[2])
+	elif command == "order":
+		if args[1] == "bottom":
+			if args[2].get_parent() == G.world.items:
+				G.world.items.move_child(args[2], 0)
+		elif args[1] == "top":
+			if args[2].get_parent() == G.world.items:
+				G.world.items.remove_child(args[2])
+				G.world.items.add_child(args[2])
 	elif command == "possess":
 		args[1].possess(get_arg(2))
 	elif command == "menu":
@@ -96,8 +118,6 @@ func run(_args):
 		G.make_particle(args[1], args[2].to_pixel())
 	elif command == "cast":
 		host.buffs.add(args[1], args[2])
-	elif command == "refresh":
-		G.you.camera.update(G.you.unit.pos, G.you.last_pos, G.you.unit.sight_col)
 	elif command == "remove":
 		args[1].remove()
 	elif command == "give":
@@ -105,7 +125,7 @@ func run(_args):
 	elif command == "read":
 		return G.data.get_json_data(args[1], false).get(args[2], "")
 	elif command == "travel":
-		G.world.change("base")
+		G.travel(args[1])
 	return tgt
 
 func get_arg(idx, default=null):

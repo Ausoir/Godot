@@ -1,6 +1,6 @@
 extends "res://objects/units/unit.gd"
 
-var equipment_nodes = {}
+var overlay_sprites = {}
 var equipments = {}
 var inventory = [null]
 var belt = [[2, null],[0, null],[0, null],[0, null]]
@@ -8,46 +8,43 @@ var selected_belt = -1
 var weight = 0
 
 func remove():
-	for i in equipment_nodes:
-		equipment_nodes[i].queue_free()
+	for i in overlay_sprites:
+		overlay_sprites[i].queue_free()
 	for i in equipments:
 		equipments[i].queue_free()
 	.remove()
 
 func get_damage(ptype, p):
 	var r = .get_damage(ptype, p)
-	if ptype == "cut":
-		var wpn = get_weapon()
-		if wpn:
-			r += wpn.dat.g("cut", 0)
-	elif ptype == "bash":
-		var wpn = get_weapon()
-		if wpn:
-			r += wpn.dat.g("bash", 0)
+	var wpn = get_weapon()
+	if wpn:
+		r += wpn.dat.g("cut", 0)
 	return r
 
 func get_weapon():
 	return belt[selected_belt][1]
 
 func remove_overlay(_part):
-	var wpn = equipment_nodes.get(_part)
+	var wpn = overlay_sprites.get(_part)
 	if wpn != null:
 		wpn.queue_free()
 		node_sprites.remove_child(wpn)
-		equipment_nodes.erase(_part)
+		overlay_sprites.erase(_part)
 
 func create_overlay(_part, _texturename):
 	if _texturename != null:
 		var newsprite = sprite.duplicate()
 		newsprite.set_name(_part)
 		newsprite.set_texture(G.data.get_image(_texturename))
-		equipment_nodes[_part] = newsprite
+		overlay_sprites[_part] = newsprite
 		if _part == "weapon":
-			var c = node_sprites.get_child_count()
-			var last = node_sprites.get_child(c-1)
-			node_sprites.add_child_below_node(last, newsprite)
+			node_sprites.add_child(newsprite)
 		else:
 			node_sprites.add_child(newsprite)
+			var wpn = overlay_sprites.get("weapon")
+			if wpn != null:
+				node_sprites.remove_child(wpn)
+				node_sprites.add_child(wpn)
 
 func select_weapon(p):
 	if p != selected_belt:
@@ -58,13 +55,14 @@ func select_weapon(p):
 		var item = belt[p][1]
 		if item != null:
 			accomodate_stats(item)
-			if !("weapon" in equipment_nodes):
+			if !("weapon" in overlay_sprites):
 				create_overlay("weapon", item.dat.g("sprite"))
 
 func is_equipment_valid(part, item):
 	var item_part = item.dat.g("part", "")
 	if item_part == part:
-		var parts = dat.g("bodyparts")
+		var bodytype_list = G.data.get_json_data("bodytypes")
+		var parts = bodytype_list.get(dat.g("type"))
 		if part in parts:
 			var item_size = item.dat.g("size", 2)
 			var valid_size = item_size <= parts[part]
@@ -106,6 +104,10 @@ func accomodate_stats(item):
 		var belt_size = item.dat.g("belt" + str(i + 1), 0)
 		if belt_size > 0:
 			belt[i][0] = belt_size
+	for i in G.STATS:
+		var stat = item.dat.g(i)
+		if stat != null:
+			dat.add(i, stat)
 	weight += item.dat.g("weight", 0)
 
 func unaccomodate_stats(item):
@@ -175,3 +177,34 @@ func unstore(item):
 
 func drop(item):
 	pos.add_item(item)
+
+func update_save_data(_data):
+	var save_eq = []
+	var save_belt = []
+	var save_inv = []
+	for i in equipments:
+		save_eq.append(equipments[i].item_name)
+	for i in belt:
+		if i[1] != null:
+			save_belt.append(i[1].item_name)
+	for i in inventory:
+		if i != null:
+			save_inv.append(i.item_name)
+	_data["equip"] = save_eq
+	_data["belt"] = save_belt
+	_data["inv"] = save_inv
+	return _data
+
+func load_item_data(_data):
+	var load_eq = _data.get("equip")
+	var load_belt = _data.get("belt")
+	var load_inv = _data.get("inv")
+	for i in load_belt:
+		var item = G.factory.make_item(i, null)
+		sheathe(-1, item)
+	for i in load_eq:
+		var item = G.factory.make_item(i, null)
+		auto_equip(item)
+	for i in load_inv:
+		var item = G.factory.make_item(i, null)
+		store(item, true)

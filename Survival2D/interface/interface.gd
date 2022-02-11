@@ -206,7 +206,7 @@ func update_hud():
 			buffs.add_child(slot)
 
 func search_inventory(tile):
-	display(null)
+	display(0)
 	container.show()
 	container.set_tab_title(0, tile.terrain.capitalize())
 	for child in container_grid.get_children():
@@ -249,7 +249,7 @@ func update_skills():
 	for child in tab_skill_active.get_children():
 		child.assign(null)
 	var slots = G.you.unit.get_active_slots()
-	var max_slots = G.you.unit.vars.g("intelligence", 1)
+	var max_slots = G.you.unit.dat.g("agility", 1)
 	tab_skill_label.set_text("Slots: " + str(slots) + "/" + str(max_slots))
 	for i in range(G.you.unit.skills.size()):
 		var skill = G.you.unit.skills[i]
@@ -267,5 +267,5 @@ func update_status():
 		tab_status.remove_child(child)
 	for i in G.STATS:
 		var label = Label.new()
-		label.set_text(i.capitalize() + ": " + str(G.you.unit.vars.g(i, 0)))
+		label.set_text(i.capitalize() + ": " + str(G.you.unit.dat.g(i, 0)))
 		tab_status.add_child(label)

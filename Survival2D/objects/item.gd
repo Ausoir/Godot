@@ -5,7 +5,6 @@ var item_name = 'item'
 var item_type
 var col = '0000'
 var dat
-var vars
 var pos
 var prev_pos
 var turns = 0
@@ -19,11 +18,15 @@ func place(p):
 	p.add_item(self)
 	position = p.to_pixel()
 	pos = p
+	if col[0] == '1' and pos.visible:
+		G.you.view_dirty = true
 
 func remove():
 	G.turn.remove(self)
 	pos.remove_item(self)
 	queue_free()
+	if col[0] == '1' and pos.visible:
+		G.you.view_dirty = true
 
 func die():
 	var ondie = dat.g("ondie")
@@ -49,10 +52,13 @@ func autotilize():
 		var v = G.get_autotile_coord(dirs)
 		self.region_rect.position = v * 32
 
-func relocate(to):
+func relocate(to, instant=false):
 	pos.remove_item(self)
 	move_delay = 1
-	set_process(true)
+	if instant:
+		position = to.to_pixel()
+	else:
+		set_process(true)
 	prev_pos = pos
 	to.add_item(self)
 	if to.sight_frame >= G.you.camera.sight_frame - 1:

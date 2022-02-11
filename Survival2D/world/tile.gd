@@ -171,6 +171,24 @@ func is_cols(cols):
 			return true
 	return false
 
+func is_cols_adv(cols, opens, strength):
+	if !opens and strength == 0:
+		return is_cols(cols)
+	var tcol = dat.col
+	for item in items:
+		if opens and item.dat.g("openable"):
+			continue
+		var item_hp = item.dat.g("durability")
+		if item_hp != null and item_hp <= strength:
+			continue
+		for i in range(4):
+			if item.col[i] == "1":
+				tcol[i] = "1"
+	for i in range(4):
+		if tcol[i] == "1" and cols[i] == "1":
+			return true
+	return false
+
 func get_item_by_name(val):
 	for item in items:
 		if item.item_name == val:
@@ -239,7 +257,7 @@ func get_beam_to(destination, col_masks, distance):
 		current.x += diff.x
 		current.y += diff.y
 		current_tile = G.field.get_tile(round(current.x), round(current.y))
-		if current_tile == null or current_tile.is_cols(col_masks):
+		if current_tile.is_cols(col_masks):
 			break
 	return current_tile
 
@@ -263,3 +281,8 @@ func get_priority_item(exc):
 
 func is_edge():
 	return x == 0 or x == G.field.size.x-1 or y == 0 or y == G.field.size.y-1
+
+func get_rand_offset(_x, _y):
+	var rx = R.ir(-_x, _x)
+	var ry = R.ir(-_y, _y)
+	return G.field.fit_bound(x + rx, y + ry)

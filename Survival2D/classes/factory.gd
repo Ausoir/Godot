@@ -7,6 +7,7 @@ const Script_Humanoid = preload("res://objects/units/humanoid.gd")
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
 const ACT_CONSTRUCT = ["icon_construct", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
 const ACT_EQUIP = ["icon_equip", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
+var scripter
 
 var spells = [
 	[
@@ -23,43 +24,53 @@ var spells = [
 	],
 ]
 
+func make_script(arg, pos=null):
+	var script_data = G.data.script_data.get(arg)
+	if script_data != null:
+		place_scripter(pos)
+		G.cmd(script_data, scripter)
+		return true
+
 func make_group(arg, pos):
-	var data = G.data.level_data.get(arg)
-	if data != null:
-		for mob in data.mobs:
-			var chances = data.mobs[mob]
-			if G.rng.rnd_percent(chances):
-				var adjs = pos.get_available_adjacents("0110")
-				var adj = G.rng.rnd_arr(adjs)
+	var groups = G.data.get_group(arg)
+	if !groups.empty():
+		var adjs
+		var adj = pos
+		for group in groups:
+			for _i in range(group[1]):
 				if adj != null:
-					G.factory.make_mob(mob, adj)
+					var made = G.factory.make_mob(group[0], adj)
+					if made == null:
+						made = G.factory.make_unit(group[0], adj)
+						if made == null:
+							made = G.factory.make_item(group[0], adj)
+					if made.col[1] == "1":
+						adjs = adj.get_available_adjacents("0100")
+						adj = R.r_arr(adjs)
+		return true
 
 func make_mob(arg, pos):
-	var mob_data = G.data.group_data.get(arg)
+	var mob_data = G.data.mob_data.get(arg)
 	if mob_data != null:
 		var unit
 		var unit_pos = pos
-		for mob in mob_data:
-			var params = mob_data[mob]
-			var num = G.rng.randi_range(params[1], params[2])
-			for _i in range(num):
-				unit = make_unit(mob, unit_pos)
-				if unit != null:
-					unit.possess()
-					var adjs = unit_pos.get_available_adjacents(unit.col)
-					unit_pos = G.rng.rnd_arr(adjs)
-					if unit_pos == null:
-						return
-					if unit.dat.g("type") == "man":
-						for ii in range(3, params.size()):
-							var item_param = params[ii]
-							if G.rng.rnd_percent(item_param[1]):
-								var item = G.factory.make_item(item_param[0])
-								unit.auto_equip(item)
-					unit.faction = params[0]
-				else:
-					push_error("Invalid mob unit "+str(mob))
-		return unit
+		unit = make_unit(mob_data.unit, unit_pos)
+		if unit != null:
+			if !mob_data.get("controlled", false):
+				unit.possess()
+			unit.faction = mob_data.faction
+			G.world.team[unit.faction].append(unit)
+			unit.dat.combine(mob_data.get("dat", {}))
+			var equips = mob_data.get("equip")
+			if equips != null:
+				for equip in equips:
+					if R.r_percent(equip[1]):
+						var item = G.factory.make_item(equip[0])
+						unit.auto_equip(item)
+			unit.item_name = arg
+			return unit
+		else:
+			push_error("Invalid unit "+str(mob_data[1]))
 
 func make_unit(arg, pos):
 	var unit_data = G.data.unit_data.get(arg)
@@ -80,16 +91,9 @@ func make_unit(arg, pos):
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = G.Properties.new(unit_data)
-		var bodytype = r.dat.g("type")
-		if bodytype != null:
-			var bodytype_list = G.data.get_json_data("bodytypes")
-			r.dat.a("bodyparts", bodytype_list.get(bodytype))
-		r.vars = G.Properties.new({})
-		for stat in G.STATS:
-			r.vars.a(stat, G.rng.rnd_range(r.dat.g(stat, [1,1])))
-		r.vars.a("move speed", r.dat.g("move speed", 2))
 		r.flags = r.dat.g("flags", [])
 		r.col = r.dat.g("col", "0100")
+		r.light = r.dat.g("light", 0)
 		r.place(pos)
 		return r
 
@@ -107,11 +111,16 @@ func make_item(arg, pos=null):
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = G.Properties.new(item_data)
-		r.vars = G.Properties.new({})
 		r.light = r.dat.g("light", 0)
 		r.col = r.dat.g("col", "0000")
 		if r.dat.g("turn", 0) > 0:
 			G.turn.add(r)
+		var onmake = item_data.get("onmake")
+		if onmake != null:
+			G.cmd(onmake, r)
+		var onload = item_data.get("onload")
+		if onload != null:
+			G.onloads.append([r, onload])
 		if pos != null:
 			r.place(pos)
 		return r
@@ -128,6 +137,17 @@ func make_corpse(host, pos):
 		r.place(pos)
 	return r
 
+func place_scripter(pos):
+	if scripter == null:
+		scripter = Sprite.new()
+		scripter.set_script(Item)
+		scripter.item_name = "scripter"
+		scripter.item_type = "other"
+		scripter.dat = G.Properties.new({})
+		scripter.place(pos)
+	else:
+		scripter.relocate(pos, true)
+
 func get_duplicate(this, arr):
 	var r = []
 	for i in arr:
@@ -142,7 +162,7 @@ func get_known_spells():
 	for spell_type in spells:
 		var new_types = []
 		for spell in spell_type:
-			if G.rng.randi_range(0, 3) == 0:
+			if R.ir(0, 3) == 0:
 				new_types.append(spell)
 		r.append(new_types)
 	return r

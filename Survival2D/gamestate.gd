@@ -10,20 +10,15 @@ const MAX_PEERS = 12
 
 var peer = null
 
-# Name for my player.
-var player_name = "The Warrior"
+var player_name = "Player"
 
-# Names for remote players in id:name format.
 var other_players = {}
 
-# Signals to let lobby GUI know what's going on.
 signal player_list_changed()
 signal connection_failed()
 signal connection_succeeded()
 signal game_ended()
 signal game_error(what)
-
-var rng = RandomNumberGenerator.new()
 
 
 # Callback from SceneTree.
@@ -95,22 +90,19 @@ remote func pre_start_game():
 		player.set_name(str(p_id)) # Use unique ID as node name.
 		player.set_network_master(p_id) #set unique id as master.
 		if p_id == get_tree().get_network_unique_id():
-			units.append([player, player_name])
 			G.you = player
-			G.world.add_child(player)
+			player.p_name = player_name
 		else:
-			units.append([player, other_players[p_id]["name"]])
 			other_players[p_id]["controller"] = player
+			player.p_name = other_players[p_id]["name"]
+		player.p_id = p_id
+		units.append(player)
+		G.world.players.add_child(player)
 
-	G.world.create("base")
-	for unit in units:
-		var player_pos = G.field.get_spawn_point()
-		var player_unit = G.cmd([["make", "player", player_pos]])
-		player_unit.item_name = unit[1]
-		player_unit.possess(unit[0])
+	if !load_game():
+		create_game(units)
 
 	if not get_tree().is_network_server():
-		# Tell server we are ready to start.
 		rpc_id(1, "ready_to_start", get_tree().get_network_unique_id())
 	elif other_players.size() == 0:
 		post_start_game()
@@ -179,3 +171,54 @@ func _ready():
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
+
+
+func create_game(_player_units):
+	G.world.rng.randomize()
+	G.world.world_seed = G.world.rng.seed
+	G.world.create("base")
+	for unit in _player_units:
+		var player_pos = G.field.get_spawn_point()
+		var player_unit = G.cmd([["make", "player", player_pos]])
+		player_unit.possess(unit)
+
+func save_game(_map="base"):
+	var save_game = File.new()
+	save_game.open("user://savegame.save", File.WRITE)
+	if get_tree().is_network_server():
+		var save_list = [G.you]
+		for p_id in other_players:
+			save_list.append(other_players[p_id]["controller"])
+		var map_data = {
+			"type": "map",
+			"map": _map,
+			"seed": R.init_seed
+		}
+		save_game.store_line(to_json(map_data))
+		for to_save in save_list:
+			var node_data = to_save.save_data()
+			save_game.store_line(to_json(node_data))
+		save_game.close()
+
+func load_game():
+	var r = false
+	var save_game = File.new()
+	if save_game.file_exists("user://savegame.save"):
+		save_game.open("user://savegame.save", File.READ)
+		while save_game.get_position() < save_game.get_len():
+			var node_data = parse_json(save_game.get_line())
+			if node_data.type == "map":
+				R.set_seed(node_data.seed)
+				G.world.create(node_data.map)
+			elif node_data.type == "player":
+				if node_data.id == get_tree().get_network_unique_id():
+					G.you.load_data(node_data)
+					r = true
+				else:
+					other_players[node_data.id]["controller"].load_data(node_data)
+	save_game.close()
+	return r
+
+func _notification(what):
+	if what == Node.NOTIFICATION_EXIT_TREE:
+		save_game()

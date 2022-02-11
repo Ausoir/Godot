@@ -5,12 +5,10 @@ var width
 var height
 var base
 var output
-var rng
 
 func create(x, y):
 	width = x
 	height = y
-	rng = G.rng
 
 func paint_map():
 	G.field.create_map(width, height)
@@ -51,28 +49,28 @@ func palette_fill(_bounds, _val):
 			else:
 				push_error("Invalid palette value: "+str(_val))
 
-func paint_spawn(dir, offset=0):
+func paint_spawn(dir):
 	if dir == 0:
 		for x in range(1, width-1):
-			if !G.field.tiles[offset][x].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[offset][x])
+			if !G.field.tiles[0][x].is_col(1) and !G.field.tiles[1][x].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[0][x])
 	elif dir == 1:
 		for y in range(1, height-1):
-			if !G.field.tiles[y][width-1-offset].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[y][width-1-offset])
+			if !G.field.tiles[y][width-1].is_col(1) and !G.field.tiles[y][width-2].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[y][width-1])
 	elif dir == 2:
 		for x in range(1, width-1):
-			if !G.field.tiles[height-1-offset][x].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[height-1-offset][x])
+			if !G.field.tiles[height-1][x].is_col(1) and !G.field.tiles[height-2][x].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[height-1][x])
 	elif dir == 3:
 		for y in range(1, height-1):
-			if !G.field.tiles[y][offset].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[y][offset])
+			if !G.field.tiles[y][0].is_col(1) and !G.field.tiles[y][1].is_col(1):
+				G.field.spawn_points.append(G.field.tiles[y][0])
 	if G.field.spawn_points.empty():
 		push_error("No spawn points found")
 
 func place_object(dat, x, y):
-	if G.rng.rnd_percent(dat[1]):
+	if R.r_percent(dat[1]):
 		G.cmd([["make", dat[0], G.field.tiles[y][x]]])
 		if dat.size() > 2 and dat[2] == "+":
 			place_object(dat[3], x, y)
@@ -93,7 +91,7 @@ func make_random(sx, sy):
 	for _y in range(sy):
 		var row = []
 		for _x in range(sx):
-			row.append(G.rng.randf())
+			row.append(R.f())
 		r.append(row)
 	return r
 

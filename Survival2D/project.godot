@@ -19,6 +19,7 @@ config/icon="res://Icon.png"
 [autoload]
 
 gamestate="*res://gamestate.gd"
+R="*res://classes/R.gd"
 G="*res://G.gd"
 
 [debug]

@@ -32,12 +32,16 @@ func do(phost, pname, pdata=null, mode=0):
 					run_cmds(data.get("onstack", []))
 					return true
 				else:
-					host.buffs.add(name, data, data.duration, data.get("cancel", null))
+					host.buffs.add(name, data, data.duration)
 			run_cmds(data.get("onstart", []))
 		elif mode == 1:
 			run_cmds(data.get("onturn", []))
 		elif mode == 2:
 			run_cmds(data.get("onend", []))
+		elif mode == 3:
+			run_cmds(data.get("retaliate", []))
+			victim = host
+			run_cmds(data.get("compensate", []))
 		if victim.item_type == "unit":
 			if !is_instance_valid(victim):
 				run_cmds(data.get("onkill", []))
@@ -54,26 +58,25 @@ func run_cmds(cmds):
 				gfx.rotate(cmd[2], 0, 1280)
 			elif cmd[1] == "particle":
 				G.make_particle(cmd[2], victim.pos.to_pixel())
+			elif cmd[1] == "label":
+				G.display_damage(host.pos.to_pixel(), cmd[2], cmd[3], .8)
 		elif type == "expend":
 			var wpn = host.get_weapon()
 			if wpn:
-				var max_uses = wpn.dat.g("uses", 1)
-				var uses = wpn.vars.g("uses", 0)
-				if uses >= max_uses:
+				var uses = wpn.dat.g("uses", 1)
+				if uses < 1:
 					host.unequip("weapon")
 				else:
-					wpn.vars.a("uses", uses + 1)
+					wpn.dat.a("uses", uses - 1)
 		elif type == "cooldown":
 			host.cooldowns[cmd[1]] = cmd[2]
 		elif type == "stat":
-			host.vars.add(cmd[1], cmd[2])
+			host.dat.add(cmd[1], cmd[2])
 		elif type == "dmg":
 			var dmg_type = cmd[1]
-			victim.hit(dmg_type, host.get_damage(dmg_type, cmd[2]))
-		elif type == "energy":
-			host.energy = min(host.vars.g("agility", 0), host.energy + cmd[1])
+			victim.hit(dmg_type, host.get_damage(dmg_type, cmd[2]), host)
 		elif type == "heal":
-			host.hit("heal", -cmd[1])
+			host.hit("heal", -cmd[1], host)
 		elif type == "interrupt":
 			victim.buffs.on_interrupt(cmd[1])
 		elif type == "animate":
@@ -81,7 +84,7 @@ func run_cmds(cmds):
 			victim.set_animation(cmd[1])
 		elif type == "animation":
 			if cmd[2] == 1:
-				if target.x == host.pos.x:
+				if target != null and target.x == host.pos.x:
 					host.set_animation_direction(target.y - host.pos.y)
 				host.set_animation(cmd[1])
 			else:
@@ -107,14 +110,14 @@ func run_cmds(cmds):
 			else:
 				host.node_sprites.show()
 		elif type == "energy":
-			host.energy = max(host.vars.g("agility", 0), host.energy + cmd[1])
+			host.energy = max(host.dat.g("agility", 0), host.energy + cmd[1])
 		elif type == "sight":
-			host.vars.a("sight col", host.sight_col)
+			host.dat.a("sight col", host.sight_col)
 			host.sight_col = cmd[1]
 			if host == G.you.unit:
 				G.cmd([["refresh"]])
 		elif type == "unsight":
-			host.sight_col = host.vars.g("sight col")
+			host.sight_col = host.dat.g("sight col")
 			if host == G.you.unit:
 				G.cmd([["refresh"]])
 		elif type == "flag":
@@ -128,6 +131,8 @@ func run_cmds(cmds):
 			for i in range(host.SKILL_SIZE, host.skills.size()):
 				if host.skills[i] != null:
 					host.deck.append(host.skills[i])
+		elif type == "cmd":
+			G.cmd([cmd.slice(1, cmd.size() - 1)], host)
 		elif type == "end":
 			host.buffs.end(cmd[1])
 
@@ -145,7 +150,7 @@ func find_victim():
 				target = host.pos.get_beam_to(target, data.col, data.range)
 			if is_valid(target):
 				return true
-	elif data.target == "onattack" or data.target == "oncharge":
+	elif data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
 		for i in target.get_items_by_type("unit"):
 			if is_valid(i):
 				return true

@@ -30,7 +30,6 @@ var abilities
 var skills
 var deck = []
 var damage_taken = 0
-var energy = 0
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var last_skill = "wait"
@@ -44,7 +43,6 @@ func _ready():
 			count += 1
 	for i in dat.g("buffs", []):
 		G.fx(self, i)
-	energy = vars.g("agility", 0)
 
 func possess(ctlr = null):
 	if ctlr == null:
@@ -59,6 +57,10 @@ func possess(ctlr = null):
 	ctlr.target = pos
 	ctlr.on_assign()
 
+func update_flags():
+	if controller != null:
+		controller.on_assign()
+
 func update_stats():
 	abilities = []
 	skills = []
@@ -68,16 +70,6 @@ func update_stats():
 		skills.append(i)
 	for _i in range(skills.size(), SKILL_SIZE * 2):
 		skills.append(null)
-	update_flags()
-
-func update_flags():
-	if controller != null:
-		if "mindless" in flags:
-			controller.pathing.hinderance = 0
-		elif "float" in flags:
-			controller.pathing.hinderance = 0
-		elif "agile" in flags:
-			controller.pathing.hinderance = .5
 
 func add_skill(p):
 	for i in range(SKILL_SIZE):
@@ -98,9 +90,9 @@ func move_skill(idx1, idx2):
 				cost2 = passive_data2.get("cost", 0)
 			var passive_data = G.data.skill_data.get(skills[idx1])
 			var cost = passive_data.get("cost", 0)
-			var intel = vars.g("intelligence", 1)
+			var agility = dat.g("agility", 1)
 			var slots = get_active_slots()
-			if slots + cost - cost2 > intel:
+			if slots + cost - cost2 > agility:
 				return false
 			if passive_data.target == "constant":
 				G.influence.do(self, skills[idx1], passive_data, 0)
@@ -137,9 +129,9 @@ func get_damage(ptype, p):
 	if ptype == "true":
 		return p
 	elif ptype == "bash":
-		return round(G.rng.randf() * vars.g("strength", 1) * p * .01)
+		return round(R.f() * dat.g("strength", 1) * p * .01)
 	elif ptype == "cut":
-		return round(G.rng.randf() * p)
+		return round(R.f() * p)
 
 func set_delay(p):
 	delay = max(delay, p)
@@ -150,7 +142,7 @@ func set_state(p, force=false):
 		if state == "move":
 			var dir = pos.direction_to(controller.target)
 			if move(dir) != null:
-				var ms = vars.g("move speed", 1)
+				var ms = dat.g("move speed", 1)
 				if "agile" in flags:
 					ms += int(pos.slow / 2)
 				elif !("float" in flags):
@@ -161,16 +153,18 @@ func set_state(p, force=false):
 			else:
 				delay = 1
 		elif state == "attack":
-			var used = "wait"
+			var used
 			var dist = pos.distance_to(controller.target)
 			if dist == 1:
-				used = roll_skill("onattack")
+				used = draw_skill("onattack")
 			elif dist == 2:
 				set_state("move")
 				if pos.distance_to(controller.target) == 1:
 					used = roll_skill("oncharge")
-			if used != "wait" and used != "repeat":
-				last_skill = used
+			if used == null:
+				last_skill = null
+			elif used[1].get("repeatable", true):
+				last_skill = used[0]
 		else:
 			set_animation(state)
 
@@ -189,43 +183,57 @@ func set_animation_direction(y):
 		face(1)
 #	animtree["parameters/vertical/add_amount"] = y
 
-func roll_skill(type):
-	var roll = G.rng.randi_range(0, 99)
+func draw_skill(type, mode=0):
+	var roll = R.ir(0, 99)
 	var skill
 	var data
 	if deck.empty():
 		skill = "wait"
 		data = G.data.skill_data.get("wait")
 		G.influence.do(self, skill, data, 0)
-		return skill
+		return [skill, data]
 	else:
 		skill = deck.pop_front()
 		data = G.data.skill_data.get(skill)
 		if data != null and data.target == type:
-			var energy_cost = data.get("energy", 0)
-			if energy_cost <= energy and data.chance > roll:
-				energy -= energy_cost
-				G.influence.do(self, skill, data, 0)
-				return skill
-		return roll_skill(type)
+			if data.chance > roll:
+				G.influence.do(self, skill, data, mode)
+				return [skill, data]
+		return draw_skill(type)
+
+func roll_skill(type, mode=0):
+	var data
+	for skill in skills:
+		data = G.data.skill_data.get(skill)
+		if data != null and data.target == type:
+			if R.r_percent(data.chance):
+				G.influence.do(self, skill, data, mode)
+				return [skill, data]
+	return null
 
 func get_health():
-	var vit = vars.g("vitality", 1) * 2
+	var vit = dat.g("vitality", 1) * 2
+	if vit <= 0:
+		return 0
 	return 1 - (damage_taken / vit)
 
-func hit(_type, dmg):
-	damage_taken += dmg
+func hit(_type, dmg, _hitter):
 	if dmg > 0:
-		roll_skill("onhit")
-		if _type != "true":
-			if buffs.expend("dodge"):
-				G.display_damage(pos.to_pixel(), "DODGE!", Color.beige, .5)
-				damage_taken -= dmg
+		if pos.light < 0 and R.r_b():
+			G.display_damage(pos.to_pixel(), "MISS", Color.darkgray)
+			return
+		var used = roll_skill("onhit", 3)
+		if used != null:
+			var block = used[1].get("block", 0)
+			if block >= dmg:
 				return
+			else:
+				dmg -= block
+		damage_taken += dmg
 		set_animation("hit")
 		delay = 2
 		buffs.on_interrupt("interrupt")
-		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(G.trng.randf_range(-1, 1), G.trng.randf_range(-1, 1), 0), "spread": 60})
+		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
 		var health_percent = get_health()
 		G.display_damage(pos.to_pixel(), round(dmg), Color(1,health_percent,0))
 		if health_percent <= 0:
@@ -242,6 +250,7 @@ func hit(_type, dmg):
 				if !buffs.has("minor injury"):
 					G.fx(self, "minor injury")
 	elif dmg < 0:
+		damage_taken += dmg
 		flash("green", dmg * -.2)
 		G.display_damage(pos.to_pixel(), round(dmg), Color.green)
 

@@ -33,5 +33,5 @@ func _on_toggle(button_pressed):
 	else:
 		G.you.unit.actives[index] = -1
 	var slots = G.you.unit.get_active_slots()
-	var intel = G.you.unit.vars.g("intelligence", 1)
+	var intel = G.you.unit.vars.g("agility", 1)
 	slot_label.set_text("Slots: " + str(slots) + "/" + str(intel))

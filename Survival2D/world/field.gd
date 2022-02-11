@@ -49,20 +49,23 @@ func add_item(x, y, val):
 	tiles[y][x].items.append(val)
 
 func is_inbound(x, y):
-	return x >= 0 and x < G.field.size.x and y >= 0 and y < G.field.size.y
+	return x >= 0 and x < size.x and y >= 0 and y < size.y
+
+func fit_bound(x, y):
+	return tiles[clamp(y, 0, size.y-1)][clamp(x, 0, size.x-1)]
 
 func get_spawn_point():
 	if spawn_points.empty():
 		return tiles[0][0]
-	return G.rng.rnd_arr(spawn_points)
+	return R.r_arr(spawn_points)
 
-func get_routes(pos, cols):
+func get_routes(pos, cols, opens=false, strength=0):
 	var r = []
 	var count = 0
 	for i in G.DIRS:
 		var ty = pos.y + i[1]
 		var tx = pos.x + i[0]
-		if G.field.is_inbound(tx, ty) and !tiles[ty][tx].is_cols(cols):
+		if is_inbound(tx, ty) and !tiles[ty][tx].is_cols_adv(cols, opens, strength):
 			r.append(count)
 		count += 1
 	return r

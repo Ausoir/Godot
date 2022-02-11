@@ -3,30 +3,38 @@ extends "res://objects/units/controller.gd"
 const Step = preload("res://view/Step.tscn")
 
 onready var camera = $Camera
-onready var sight = $Sight
 onready var cursor = $Cursor
 onready var steps = $Steps
 
+var p_id: int
+var p_name: String
 var auto_attack = true
 var auto_attack_priority = 0
 var aiming = -1
 var last_pos
+var view_dirty = false
 
 var enabled = true
+var allies = []
 
-
-func _ready():
-	pathing.iterations = 28
 
 func on_assign():
+	.on_assign()
 	unit.faction = 1
+	G.world.team[unit.faction].append(unit)
 	last_pos = unit.pos
-	G.ui.update_equipables(unit.dat.g("bodyparts"))
+	var bodytype_list = G.data.get_json_data("bodytypes")
+	var bodyparts = bodytype_list.get(unit.dat.g("type"))
+	G.ui.update_equipables(bodyparts)
 	G.ui.update_inventory()
 	if camera.sight_frame > 0:
 		camera.darken()
-	camera.sight_range = unit.vars.g("perception", 18)
+	camera.sight_range = unit.dat.g("perception", 18)
 	camera.update(unit.pos, last_pos, unit.sight_col)
+	pathing.can_open = false
+	pathing.smash_to = 0
+	pathing.iterations = 32
+	pathing.pathing_times = 0
 
 func _on_input(event: InputEvent):
 	if enabled and !locked:
@@ -36,11 +44,9 @@ func _on_input(event: InputEvent):
 				if event.button_index == BUTTON_WHEEL_UP:
 					if camera.zoom.x > .5:
 						camera.zoom *= .8
-						sight.scale *= .8
 				elif event.button_index == BUTTON_WHEEL_DOWN:
 					if camera.zoom.x < 2:
 						camera.zoom *= 1.2
-						sight.scale *= 1.2
 				elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
 					pass
 				elif Input.is_action_just_pressed("move"):
@@ -52,6 +58,7 @@ func _on_input(event: InputEvent):
 					tasks.clear()
 					var mousetarget = G.pixel_to_pos(mouse_pos)
 					var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
+					G.field.apply_autotile(mousetarget.x, mousetarget.y)
 					if tile:
 						auto_attack_priority = unit.pos.direction_to(tile)
 						target = tile
@@ -96,11 +103,11 @@ func on_turn():
 	.on_turn()
 	remove_steps()
 	show_steps()
-	if last_pos != unit.pos:
+	if last_pos != unit.pos or view_dirty:
+		if last_pos != unit.pos and unit.pos.is_edge():
+			tasks.append(["enter", "exit", 3])
 		camera.update(last_pos, unit.pos, unit.sight_col)
 		last_pos = unit.pos
-		if unit.pos.is_edge():
-			tasks.append(["enter", "exit", 3])
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
 	perform_auto_attack()
@@ -108,14 +115,13 @@ func on_turn():
 
 func _process(_delta):
 	camera.position = unit.position
-	sight.position = unit.position
 
 func perform_auto_attack():
 	if auto_attack and unit.delay == 0 and tasks.empty():
 		for dir in [auto_attack_priority] + range(8):
 			var tile = unit.pos.get_adjacent(dir)
 			for item in tile.items:
-				if item.item_type == "unit" and item.faction != unit.faction and is_instance_valid(item):
+				if item.item_type == "unit" and item.faction != unit.faction:
 					tasks.append(["attack", item])
 					return true
 	return false
@@ -131,11 +137,11 @@ func show_steps():
 		if task[0] == "move":
 			var step = Step.instance()
 			step.position = G.pos_to_pixel(task[1])
-			var p = (task[1] - last_step).angle()
+			var new_step = task[1].to_vector()
+			var p = (new_step - last_step).angle()
 			step.rotate(p)
 			steps.add_child(step)
-			last_step = task[1]
-	return last_step
+			last_step = new_step
 
 func aggro(npcs):
 	var unit = $unit
@@ -155,7 +161,8 @@ func interact(tile):
 						if Input.is_action_pressed("shift"):
 							auto_attack_priority = unit.pos.direction_to(tile)
 							tasks.append(["attack", tile])
-							unit.faction = -1
+							if item.controller != null:
+								item.controller.foe = unit
 						else:
 							var onuse = item.dat.g("onuse")
 							if onuse != null:
@@ -189,7 +196,7 @@ func move_to(tile, reach=0):
 	cursor.show()
 	path_to(tile, reach)
 	remove_steps()
-	return show_steps()
+	show_steps()
 
 func aim_ability(idx):
 	Input.set_default_cursor_shape(Input.CURSOR_CROSS)
@@ -207,3 +214,50 @@ func remove():
 	if unit.get_health() <= 0:
 		var player_unit = G.cmd([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
+
+func on_leave():
+	G.travel("base")
+
+func save_data(remove_buffs=true):
+	if remove_buffs:
+		unit.buffs.clear()
+	var ally_data = []
+	for ally in allies:
+		if ally != null and is_instance_valid(ally):
+			ally_data.append(ally.item_name)
+	var save_dict = {
+		"type": "player",
+		"id": p_id,
+		"unit": unit.item_name,
+		"unit_data": unit.dat.v,
+		"unit_buff": unit.buffs.to_data(),
+		"ally_data": ally_data
+	}
+	if unit.dat.g("type") == "man":
+		save_dict = unit.update_save_data(save_dict)
+	return save_dict
+
+func load_data(_data):
+	var player_pos = G.field.get_spawn_point()
+	var player_unit = G.cmd([["make", _data.unit, player_pos]])
+	player_unit.possess(self)
+	player_unit.dat.load_data(_data.unit_data)
+	if player_unit.dat.g("type") == "man":
+		player_unit.load_item_data(_data)
+	player_unit.buffs.from_data(_data.unit_buff)
+	
+	if G.world.map_name != "base":
+		var adjs
+		var adj = unit.pos
+		for i in _data.ally_data:
+			adjs = adj.get_available_adjacents("0100")
+			adj = R.r_arr(adjs)
+			if adj == null:
+				adj = unit.pos
+			var ally = G.cmd([["make", i, adj]])
+			allies.append(ally)
+
+func on_map_clear():
+	for ally in allies:
+		ally.remove()
+	allies = []

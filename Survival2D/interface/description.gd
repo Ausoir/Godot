@@ -14,24 +14,27 @@ func display(header, desc):
 
 func display_item(header, item):
 	var desc = ""
-	if item.part != "item":
-		desc += "[color=#335]Armor ("+ str(item.part) +")[/color]\n"
-	desc = "Weight: "+ str(item.get("weight", 0)) +"\n"
-	var cut = item.get("cut", 0)
-	var bash = item.get("bash", 0)
-	if cut != 0 or bash != 0:
-		desc += "[color=#C66]Cut Damage: "+ str(cut) +"[/color]\n"
-		desc += "[color=#CC3]Bash Damage: "+ str(bash) +"[/color]\n"
-	var uses = item.get("uses", 0)
-	if uses > 0:
-		desc += "[color=#1B9]"+ str(uses) +" Uses[/color]\n"
+	if "part" in item:
+		if item.part != "item":
+			desc += "[color=#335]Armor ("+ str(item.part) +")[/color]\n"
+		desc = "Weight: "+ str(item.get("weight", 0)) +"\n"
+		var cut = item.get("cut", 0)
+		if cut != 0:
+			desc += "[color=#C66]Cut Damage: "+ str(cut) +"[/color]\n"
+		for i in G.STATS:
+			var stat = item.get(i)
+			if stat != null:
+				desc += "[color=#CA6]"+ i.capitalize() +": " + str(stat) + "[/color]\n"
+		var uses = item.get("uses", 0)
+		if uses > 0:
+			desc += "[color=#1B9]"+ str(uses) +" Uses[/color]\n"
 	desc += item.get("desc", "")
 	display(header, desc)
 
 func display_skill(header, skill):
 	var desc = "[color=#FB3]"+ str(skill.get("chance", 100)) +"% Chance[/color]\n"
-	if "energy" in skill:
-		desc += "[color=#CC3]"+ str(skill.energy) +" Energy[/color]\n"
+	if "block" in skill:
+		desc += "[color=#CC3]"+ str(skill.block) +" Block[/color]\n"
 	desc += "[color=#1B9]"+ str(skill.get("delay", 0)) +" Turns[/color]\n"
 	if "desc_dmg" in skill:
 		desc += "[color=red]"+ skill.desc_dmg +"[/color]\n"

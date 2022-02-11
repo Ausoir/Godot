@@ -1,0 +1,64 @@
+{
+	"player": {
+		"controlled": true,
+		"faction": 1,
+		"unit": "human",
+		"equip": [["gi", 100], ["hood", 100], ["cutlass", 100]],
+		"dat": {
+			"quest": 0,
+			"allies": [["bob the scav","lead"], ["scav","follow"], ["scav","follow"]],
+		}
+	},
+	"bob": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["scalemail", 100], ["cutlass", 100]],
+		"dat": {
+			"onuse": [["menu", "dialog", "Bob"]],
+			"ondie": [["dat","a","$pu","quest",4]],
+		}
+	},
+	"jimbo": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["gi", 100], ["hood", 100], ["pipe", 100]],
+		"dat": {
+			"onuse": [["menu", "dialog", "Jimbo"]]
+		}
+	},
+	"chieftain": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["gi", 100], ["hood", 100], ["knife", 100]],
+		"dat": {
+		}
+	},
+	"bob the scav": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["scalemail", 100], ["cutlass", 100]],
+		"dat": {
+			"social": "lead",
+			"goal": "loot",
+			"onuse": [["menu", "dialog", "scav Bob"]],
+			"ondie": [["dat","a","$pu","quest",4]],
+		}
+	},
+	"scav": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["gi", 100], ["hood", 100], ["knife", 100]],
+		"dat": {
+			"social": "follow"
+		}
+	},
+
+	"zombie": {
+		"faction": 2,
+		"unit": "zombie",
+	},
+	"scorpion": {
+		"faction": 2,
+		"unit": "scorpion",
+	},
+}

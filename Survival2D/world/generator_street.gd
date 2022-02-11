@@ -27,16 +27,16 @@ func magnify(mag):
 			var mx = x*mag
 			var my = y*mag
 			var estate = [mx, my, mx+mag-1, my+mag-1]
-			if val == 1 or (val == 2 and G.rng.rnd_percent(25)):
+			if val == 1 or (val == 2 and R.r_percent(25)):
 				var rots = []
 				for i in range(4):
 					var dir = G.CARDINALS[i]
 					if get_tile(minimap, x+dir[0], y+dir[1], 1) != 1:
 						rots.append(i)
 				if rots.empty():
-					make_vault(estate, "map_house", G.rng.randi_range(0, 3))
+					make_vault(estate, "map_house", R.ir(0, 3))
 				else:
-					var rot = G.rng.rnd_arr(rots)
+					var rot = R.r_arr(rots)
 					make_vault(estate, "map_house", rot)
 			else:
 				if get_tile(minimap, x+1, y, 1) == 1 and get_tile(minimap, x-1, y, 1) == 1:
@@ -85,8 +85,8 @@ func partition(x1, y1, x2, y2, until):
 	if availX.size() < until or availY.size() < until:
 		return
 
-	var rx = G.rng.rnd_arr(availX)
-	var ry = G.rng.rnd_arr(availY)
+	var rx = R.r_arr(availX)
+	var ry = R.r_arr(availY)
 
 	base[rx][ry] = 0
 	estates.append([rx, ry])
@@ -121,13 +121,13 @@ func partition(x1, y1, x2, y2, until):
 		if (j % 2):
 			bottom.append([rx, j])
 
-	var solid = G.rng.rnd_arr(walls)
+	var solid = R.r_arr(walls)
 	for i in range(walls.size()):
 		var w = walls[i]
 		if (w == solid):
 			continue
 		elif !w.empty():
-			var hole = G.rng.rnd_arr(w)
+			var hole = R.r_arr(w)
 			base[hole[0]][hole[1]] = 2
 
 	_stack.append([x1, y1, rx-1, ry-1]) #left top

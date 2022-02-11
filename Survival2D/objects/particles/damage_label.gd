@@ -6,8 +6,8 @@ var vel_angle
 var scale_mod
 
 func _ready():
-	vel = Vector2(G.trng.randi_range(-80, 80), G.trng.randi_range(-120, 0))
-	vel_angle = G.trng.randf_range(-2, 2)
+	vel = Vector2(R.ir(-80, 80), R.ir(-120, 0))
+	vel_angle = R.fr(-2, 2)
 
 func set_damage(dmg, color, _scale):
 	set_text(str(dmg))

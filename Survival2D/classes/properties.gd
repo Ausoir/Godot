@@ -1,7 +1,17 @@
 var v
 
-func _init(p):
-	v = p
+func _init(_dict):
+	v = {}
+	for key in _dict:
+		var value = _dict[key]
+		if value is Dictionary or value is Array:
+			v[key] = value.duplicate()
+		else:
+			v[key] = value
+
+func load_data(_data):
+	for key in _data:
+		v[key] = _data[key]
 
 func g(tag, default=null):
 	if tag in v:
@@ -26,3 +36,7 @@ func add(tag, val):
 		v[tag] = val
 	else:
 		v[tag] += val
+
+func combine(_dict):
+	for key in _dict:
+		a(key, _dict[key])

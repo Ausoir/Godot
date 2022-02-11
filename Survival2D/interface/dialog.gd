@@ -16,8 +16,7 @@ func display_data(_data, _host):
 		G.cmd(cmd, host)
 	var title = page_data.get("title")
 	if title != null:
-		show()
-		set_name(page_data.title)
+		G.ui.dialog.set_tab_title(0, title)
 		var text
 		var req_met = true
 		var req = page_data.get("req")
@@ -29,18 +28,22 @@ func display_data(_data, _host):
 			text = page_data.get("false", "")
 		text = text.replace("$u", gamestate.player_name)
 		get_node("Dialog/RichTextLabel").set_bbcode(text)
+		show()
 
 func is_req_met(reqs):
 	for req in reqs:
-		if req[0] == "hostvar":
-			if !host.vars.equals(req[1], req[2]):
+		if req[0] == "hdat":
+			if !host.dat.equals(req[1], req[2]):
 				return false
-		elif req[1] == "pvar":
-			if !G.you.unit.vars.equals(req[1], req[2]):
+		elif req[0] == "pdat":
+			if !G.you.unit.dat.equals(req[1], req[2]):
 				return false
+		else:
+			return false
 	return true
 
 func _on_meta_clicked(meta):
+	G.ui.clear()
 	var opts = page_data.get("opt", [])
 	if opts.size() > int(meta):
 		var option = page_data.opt[int(meta)]

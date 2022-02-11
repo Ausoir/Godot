@@ -2,51 +2,66 @@ extends Node
 
 var tileset = preload("res://assets/tileset.tres")
 
-var sunlight = 0
 onready var tilemap = $Tilemap
 onready var shademap = $Shademap
 onready var items = $Items
 onready var players = $Players
 onready var others = $Others
+var world_seed: int
+var sunlight = 0
+var map_name: String
+var team = [[], [], []]
 
-func create(_type):
-	var generator
-	if _type == "base":
-		generator = load("res://world/generator_base.gd").new()
-		generator.generate()
-	elif _type == "urban":
-		generator = load("res://world/generator_street.gd").new()
-		generator.generate()
-		make_mobs("urban", 24)
-	G.field.apply_shades(Vector2(), G.field.size)
-	for y in range(G.field.size.y):
-		for x in range(G.field.size.x):
-			G.field.apply_autotile(x, y)
-			set_dark(x, y)
-
-func change(_map):
+func clear():
+	G.turn.clear()
+	team = [[], [], []]
 	G.data.json_cache.clear()
 	tilemap.clear()
 	shademap.clear()
-	var units = []
 	for player in players.get_children():
-		if player.unit != null:
-			items.remove_child(player.unit)
-			units.append(player.unit)
+		player.on_map_clear()
 	for item in items.get_children():
 		item.remove()
 	for item in others.get_children():
 		item.queue_free()
 		items.remove_child(item)
-	create(_map)
-	for unit in units:
-		items.add_child(unit)
 
-func make_mobs(type, num):
+func create(_type):
+	clear()
+	var generator
+	map_name = "maze"#_type
+	if map_name == "base":
+		generator = load("res://world/generator_base.gd").new()
+		generator.generate()
+	elif map_name == "urban":
+		generator = load("res://world/generator_street.gd").new()
+		generator.generate()
+		place_mobs("g_urban", 24)
+	elif map_name == "maze":
+		generator = load("res://world/generator_maze.gd").new()
+		generator.generate()
+		place_mobs("g_urban", 36)
+	elif map_name == "invade":
+		generator = load("res://world/generator_settlement.gd").new()
+		generator.generate()
+		place_mobs("g_urban", 24)
+	G.field.apply_shades(Vector2(), G.field.size)
+	for y in range(G.field.size.y):
+		for x in range(G.field.size.x):
+			G.field.apply_autotile(x, y)
+			set_dark(x, y)
+	G.process_onload()
+
+func place_mobs(type, num):
 	for _i in range(num):
-		var x = G.rng.randi_range(0, G.field.size.x-1)
-		var y = G.rng.randi_range(0, G.field.size.y-1)
-		G.factory.make_group(type, G.field.tiles[y][x])
+		var x = R.ir(0, G.field.size.x-1)
+		var y = R.ir(0, G.field.size.y-1)
+		var adj = G.field.tiles[y][x]
+		if adj.is_col(1):
+			var adjs = G.field.tiles[y][x].get_available_adjacents("0100")
+			adj = R.r_arr(adjs)
+		if adj != null:
+			G.factory.make_group(type, adj)
 
 func set_dark(x, y):
 	if shademap.get_cell(x, y) != 0:

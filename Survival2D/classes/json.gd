@@ -3,22 +3,24 @@ var particles_cache = {}
 var json_cache = {}
 var terrain_data
 var palette_data
+var script_data
 var item_data
 var unit_data
-var group_data
-var level_data
+var mob_data
 var skill_data
 var dialog_data
+var group_data
 
 func _init():
 	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
 	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
+	script_data = get_json_from_dir("res://assets/json/scripts.json")
 	item_data = get_json_from_dir("res://assets/json/items.json")
 	unit_data = get_json_from_dir("res://assets/json/units.json")
-	group_data = get_json_from_dir("res://assets/json/groups.json")
-	level_data = get_json_from_dir("res://assets/json/levels.json")
+	mob_data = get_json_from_dir("res://assets/json/mobs.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
 	dialog_data = get_json_from_dir("res://assets/json/dialog.json")
+	group_data = get_json_from_dir("res://assets/json/groups.json")
 
 func set_tile_image(_sprite, _to):
 #	var dat = tileset_map.get(to)
@@ -28,6 +30,18 @@ func set_tile_image(_sprite, _to):
 #		sprite.region_rect.size = Vector2(32, 32)
 #		sprite.region_rect.position = Vector2(dat[0] * 32, dat[1] * 32)
 	return _sprite
+
+func get_group(p):
+	var r = []
+	var data = G.data.group_data.get(p)
+	if data != null:
+		for mobs in data:
+			var mobs_data = data[mobs]
+			if R.r_percent(mobs_data[0]):
+				r.append([mobs, R.ir(mobs_data[2], mobs_data[3])])
+				if mobs_data[1] == "/":
+					return r
+	return r
 
 func get_tile_image(p):
 	var item_sprite = Sprite.new()
@@ -58,7 +72,7 @@ func get_particle(p):
 		particles_cache[p] = r
 		return r.instance()
 
-func get_json_data(p, _cache=false):
+func get_json_data(p, _cache=true):
 	if _cache:
 		var r = json_cache.get(p)
 		if r != null:

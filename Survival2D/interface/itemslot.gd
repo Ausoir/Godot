@@ -52,6 +52,13 @@ func assign(p):
 		$Overlay.hide()
 	return r
 
+func check_weight(_item):
+	if G.you.unit.dat.g("strength", 0) >= _item.dat.g("weight", 0):
+		return true
+	else:
+		G.msg("Too heavy!")
+		return false
+
 func unassign():
 	if item:
 		var item_sprite = get_node("Sprite")
@@ -94,11 +101,11 @@ func on_quick_action():
 				take_from()
 				G.ui.set_drag_item(null)
 		else:
-			if G.you.unit.store(item):
+			if check_weight(item) and G.you.unit.store(item):
 				unassign()
 
 func take_from():
-	if item != null:
+	if item != null and check_weight(item):
 		var taken = part == "none"
 		taken = taken or (part == "inv" and G.you.unit.unstore(item))
 		taken = taken or (part[0] == "#" and G.you.unit.unsheathe(int(part[1])))
