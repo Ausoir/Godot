@@ -50,6 +50,7 @@ func palette_fill(_bounds, _val):
 				push_error("Invalid palette value: "+str(_val))
 
 func paint_spawn(dir):
+	G.field.spawn_points = []
 	if dir == 0:
 		for x in range(1, width-1):
 			if !G.field.tiles[0][x].is_col(1) and !G.field.tiles[1][x].is_col(1):

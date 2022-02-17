@@ -37,10 +37,12 @@ var sight_col = "1000"
 
 func _ready():
 	update_stats()
-	var count = 0
-	for i in range(SKILL_SIZE):
-		if move_skill(i, SKILL_SIZE + count):
-			count += 1
+	var count
+	for _i in range(2):
+		count = 0
+		for i in range(SKILL_SIZE):
+			if move_skill(i, SKILL_SIZE + count):
+				count += 1
 	for i in dat.g("buffs", []):
 		G.fx(self, i)
 
@@ -219,7 +221,9 @@ func get_health():
 
 func hit(_type, dmg, _hitter):
 	if dmg > 0:
-		if pos.light < 0 and R.r_b():
+		if _hitter != null and controller != null:
+			controller.on_hit(_hitter)
+		if pos.light < 0 and R.b():
 			G.display_damage(pos.to_pixel(), "MISS", Color.darkgray)
 			return
 		var used = roll_skill("onhit", 3)

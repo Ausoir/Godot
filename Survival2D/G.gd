@@ -34,6 +34,7 @@ var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
 var events = []
 var onloads = []
+var vars = {}
 var you
 
 
@@ -142,6 +143,7 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 	world.others.add_child(r)
 	r.set_damage(str(dmg), color, _scale)
 
-func travel(_map):
+func travel(_map, _daytime):
 	gamestate.save_game(_map)
+	G.world.daytime = _daytime
 	gamestate.load_game()

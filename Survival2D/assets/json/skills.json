@@ -228,6 +228,15 @@
 		"desc": "-2 Agility",
 	},
 
+	"reach attack": {
+		"img": "gui/sk_throw",
+		"target": "unit",
+		"col": "1110",
+		"range": 2,
+		"damage": 3,
+		"cooldown": 4,
+		"onstart": [["gfx", "particle", "Hit"]],
+	},
 	"throw rock": {
 		"img": "gui/sk_throw",
 		"target": "unit",
@@ -253,7 +262,7 @@
 		"img": "gui/sk_throw",
 		"target": "self",
 		"delay": 2,
-		"onstart": [["cmd", "v","adj","$hp"],["cmd", "make","bob the scav","$t"],["cmd", "ally"]],
+		"onstart": [["cmd", "v","adj","$hp"],["cmd", "make","leader scav","$t"],["cmd", "ally"]],
 		"desc": "Debug use.",
 	},
 	"might": {

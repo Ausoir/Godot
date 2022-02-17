@@ -7,8 +7,7 @@ onready var shademap = $Shademap
 onready var items = $Items
 onready var players = $Players
 onready var others = $Others
-var world_seed: int
-var sunlight = 0
+var daytime = true
 var map_name: String
 var team = [[], [], []]
 
@@ -29,22 +28,26 @@ func clear():
 func create(_type):
 	clear()
 	var generator
-	map_name = "maze"#_type
+	map_name = _type
 	if map_name == "base":
 		generator = load("res://world/generator_base.gd").new()
 		generator.generate()
 	elif map_name == "urban":
 		generator = load("res://world/generator_street.gd").new()
 		generator.generate()
-		place_mobs("g_urban", 24)
-	elif map_name == "maze":
+		place_mobs("g_urban", 36)
+	elif map_name == "dungeon":
+		generator = load("res://world/generator_dungeon.gd").new()
+		generator.generate()
+		place_mobs("g_urban", 44)
+	elif map_name == "tower":
+		generator = load("res://world/generator_tower.gd").new()
+		generator.generate()
+		place_mobs("g_urban", 36)
+	elif map_name == "lab":
 		generator = load("res://world/generator_maze.gd").new()
 		generator.generate()
 		place_mobs("g_urban", 36)
-	elif map_name == "invade":
-		generator = load("res://world/generator_settlement.gd").new()
-		generator.generate()
-		place_mobs("g_urban", 24)
 	G.field.apply_shades(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):
@@ -54,12 +57,16 @@ func create(_type):
 
 func place_mobs(type, num):
 	for _i in range(num):
-		var x = R.ir(0, G.field.size.x-1)
-		var y = R.ir(0, G.field.size.y-1)
-		var adj = G.field.tiles[y][x]
-		if adj.is_col(1):
-			var adjs = G.field.tiles[y][x].get_available_adjacents("0100")
-			adj = R.r_arr(adjs)
+		var adj
+		var limit = 8
+		while adj == null and limit > 0:
+			limit -= 1
+			var x = R.ir(0, G.field.size.x-1)
+			var y = R.ir(0, G.field.size.y-1)
+			adj = G.field.tiles[y][x]
+			if adj.is_col(1):
+				var adjs = G.field.tiles[y][x].get_available_adjacents("0100")
+				adj = R.r_arr(adjs)
 		if adj != null:
 			G.factory.make_group(type, adj)
 

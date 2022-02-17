@@ -87,7 +87,7 @@ func reset(hostpos):
 	open = [pathnode.new(null, hostpos)]
 	closed = []
 	closest = open[0]
-	heuristics_threshold = (target - hostpos).length_squared()
+	heuristics_threshold = (target - hostpos).length_squared()*2
 
 
 func debug_trace():

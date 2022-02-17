@@ -1,28 +1,42 @@
 {
-	"canned food": {
-		"img": "tiles/rock",
-		"part": "item",
-		"mat": "metal",
-		"uses": 4,
-		"weight": 1,
-		"value": 1,
-		"desc": "A canned food. Used as currency."
+	"urban map": {
+		"img": "loot",
+		"part": "map",
+		"mat": "cloth",
+		"to": "urban",
+		"desc": "A map."
 	},
-	"rock": {
-		"img": "tiles/rock",
-		"part": "item",
-		"abilities": ["throw rock"],
-		"skills": ["bash"],
-		"mat": "stone",
-		"col": "0100",
-		"uses": 4,
-		"weight": 10,
-		"desc": "A rock."
+	"potato chip": {
+		"img": "tiles/i_chips",
+		"mat": "other",
+		"value": 1,
+		"desc": "A bag of potato chip. Can be used as currency."
+	},
+	"energy bar": {
+		"img": "tiles/i_candy",
+		"mat": "other",
+		"value": 2,
+		"desc": "An energy bar. Can be used as currency."
+	},
+	"stock pot": {
+		"img": "tiles/i_stock_pot",
+		"mat": "metal",
+		"weight": 3,
+		"desc": "A cooking tool."
+	},
+	"spear": {
+		"img": "loot",
+		"sprite": "overlay/spear",
+		"abilities": ["reach attack"],
+		"skills": ["strike"],
+		"mat": "wood",
+		"weight": 1,
+		"cut": 2,
+		"desc": "A spear."
 	},
 	"cutlass": {
 		"img": "loot",
 		"sprite": "overlay/cutlass",
-		"part": "item",
 		"abilities": [],
 		"skills": ["quick strike"],
 		"mat": "wood",
@@ -31,10 +45,19 @@
 		"strength": 1,
 		"desc": "A branch."
 	},
+	"bat": {
+		"img": "loot",
+		"sprite": "overlay/bat",
+		"abilities": [],
+		"skills": ["bash", "strike"],
+		"mat": "wood",
+		"weight": 1,
+		"strength": 2,
+		"desc": "A wooden bat. It's very light."
+	},
 	"pipe": {
 		"img": "loot",
 		"sprite": "overlay/pipe",
-		"part": "item",
 		"abilities": [],
 		"skills": ["bash"],
 		"mat": "metal",
@@ -45,7 +68,6 @@
 	"knife": {
 		"img": "loot",
 		"sprite": "overlay/knife",
-		"part": "item",
 		"abilities": [],
 		"skills": ["quick strike"],
 		"mat": "metal",
@@ -53,26 +75,62 @@
 		"cut": 1,
 		"desc": "A rusty metal knife. Still pretty sharp."
 	},
+	"backpack": {
+		"img": "loot",
+		"sprite": "overlay/backpack",
+		"part": "back",
+		"mat": "cotton",
+		"space": 5,
+		"desc": "A backpack."
+	},
+	"suit": {
+		"img": "loot",
+		"sprite": "overlay/body_suit",
+		"part": "body",
+		"mat": "cotton",
+		"space": 3,
+		"desc": "A fancy suit."
+	},
+	"suspenders": {
+		"img": "loot",
+		"sprite": "overlay/body_suspenders",
+		"part": "body",
+		"mat": "cotton",
+		"space": 3,
+		"weight": 1,
+		"desc": "Suspenders for the productive."
+	},
+	"casual": {
+		"img": "loot",
+		"sprite": "overlay/body_casual",
+		"part": "body",
+		"gender": true,
+		"abilities": ["fly"],
+		"skills": ["headbutt"],
+		"mat": "cotton",
+		"space": 1,
+		"desc": "A casual wear."
+	},
 	"gi": {
 		"img": "loot",
-		"sprite": "overlay/gi",
+		"sprite": "overlay/body_gi",
 		"part": "body",
 		"abilities": ["fly"],
 		"skills": ["headbutt"],
 		"mat": "cotton",
 		"space": 1,
-		"desc": "A gi."
+		"desc": "Clothing worn by the martially adept."
 	},
 	"scalemail": {
 		"img": "loot",
-		"sprite": "overlay/scale_armor",
+		"sprite": "overlay/body_scale",
 		"part": "body",
 		"abilities": ["fly"],
 		"skills": ["headbutt"],
 		"mat": "cotton",
 		"space": 2,
-		"weight": 5,
-		"desc": "A gi."
+		"weight": 3,
+		"desc": "A tough armor layered with thin metallic scales."
 	},
 	"hood": {
 		"img": "loot",
@@ -83,19 +141,37 @@
 	},
 	"hanger": {
 		"img": "tiles/hanger",
-		"part": "item",
 		"mat": "wood",
 		"col": "0110",
 	},
 	"rack": {
 		"img": "tiles/rack",
-		"part": "item",
 		"mat": "wood",
+		"col": "0110",
+	},
+	"air conditioner": {
+		"img": "tiles/acmachine",
+		"mat": "metal",
+		"durability": 12,
+		"weight": 12,
+		"col": "0110",
+	},
+	"anvil": {
+		"img": "tiles/anvil",
+		"mat": "metal",
+		"durability": 12,
+		"weight": 16,
+		"col": "0110",
+	},
+	"forge": {
+		"img": "tiles/forge",
+		"mat": "metal",
+		"durability": 12,
+		"weight": 16,
 		"col": "0110",
 	},
 	"campfire": {
 		"img": "tiles/campfire_lit",
-		"part": "item",
 		"mat": "wood",
 		"col": "0110",
 		"durability": 3,
@@ -105,7 +181,6 @@
 	},
 	"dead campfire": {
 		"img": "tiles/campfire",
-		"part": "item",
 		"mat": "wood",
 		"slow": 2,
 		"weight": 10,
@@ -113,7 +188,6 @@
 	},
 	"window curtain": {
 		"img": "tiles/window_curtain",
-		"part": "item",
 		"mat": "glass",
 		"col": "1110",
 		"openable": true,
@@ -126,7 +200,6 @@
 	},
 	"window": {
 		"img": "tiles/window",
-		"part": "item",
 		"mat": "glass",
 		"col": "0110",
 		"openable": true,
@@ -139,7 +212,6 @@
 	},
 	"window open": {
 		"img": "tiles/window_open",
-		"part": "item",
 		"mat": "glass",
 		"durability": 1,
 		"height": 1,
@@ -149,7 +221,6 @@
 	},
 	"window broken": {
 		"img": "tiles/window_broken",
-		"part": "item",
 		"mat": "glass",
 		"col": "0010",
 		"height": 1,
@@ -157,9 +228,27 @@
 		"durability": 4,
 		"desc": "A broken window."
 	},
+	"bead door": {
+		"img": "tiles/bead_door",
+		"mat": "other",
+		"col": "1000",
+		"slow": 2,
+		"openable": true,
+		"height": 1,
+		"durability": 1,
+		"onuse": [["make", "open bead door", "$hp"], ["remove", "$h"]],
+		"desc": "A bead door."
+	},
+	"open bead door": {
+		"img": "tiles/bead_door_open",
+		"mat": "other",
+		"col": "0000",
+		"height": 1,
+		"durability": 1,
+		"desc": "A open bead door."
+	},
 	"door": {
 		"img": "tiles/door",
-		"part": "item",
 		"mat": "wood",
 		"col": "1110",
 		"slow": 24,
@@ -172,7 +261,6 @@
 	},
 	"open door": {
 		"img": "tiles/door_open",
-		"part": "item",
 		"mat": "wood",
 		"col": "0000",
 		"height": 1,
@@ -183,7 +271,6 @@
 	},
 	"broken door": {
 		"img": "tiles/door_broken",
-		"part": "item",
 		"mat": "wood",
 		"col": "0000",
 		"height": 1,
@@ -197,6 +284,36 @@
 		"slow": 4,
 		"durability": 12,
 		"col": "0010",
+	},
+	"bookcase": {
+		"img": "tiles/bookcase",
+		"mat": "wood",
+		"durability": 5,
+		"weight": 12,
+		"col": "1110",
+		"onload": [["order", "top", "$h"]],
+	},
+	"mirror": {
+		"img": "tiles/mirror",
+		"mat": "glass",
+		"durability": 2,
+		"weight": 12,
+		"col": "1110",
+	},
+	"oven": {
+		"img": "tiles/oven",
+		"mat": "metal",
+		"durability": 10,
+		"weight": 16,
+		"col": "1110",
+	},
+	"fridge": {
+		"img": "tiles/fridge",
+		"mat": "metal",
+		"durability": 8,
+		"weight": 12,
+		"col": "1110",
+		"onload": [["order", "top", "$h"]],
 	},
 	"shower": {
 		"img": "tiles/shower",
@@ -247,6 +364,28 @@
 		"col": "0010",
 		"onload": [["order", "top", "$h"]],
 	},
+	"bulletin": {
+		"img": "tiles/bulletin",
+		"mat": "wood",
+		"slow": 4,
+		"durability": 8,
+		"col": "0010",
+		"onuse": [["menu", "dialog", "Bulletin"]],
+	},
+	"straw bed": {
+		"img": "tiles/straw_bed",
+		"mat": "cloth",
+		"slow": 1,
+		"durability": 4,
+		"col": "0000",
+	},
+	"bed": {
+		"img": "tiles/bed",
+		"mat": "cloth",
+		"slow": 8,
+		"durability": 8,
+		"col": "0010",
+	},
 	"logstool": {
 		"img": "tiles/logstool",
 		"mat": "wood",
@@ -266,6 +405,7 @@
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 4,
+		"weight": 10,
 		"col": "0010",
 	},
 	"counter": {
@@ -273,34 +413,61 @@
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 4,
+		"weight": 12,
 		"col": "0010",
+	},
+	"sandbag": {
+		"img": "autotiles/sandbag_autotile",
+		"autotile": 1,
+		"mat": "other",
+		"durability": 16,
+		"weight": 10,
+		"col": "0110",
 	},
 	"privacy_fence": {
 		"img": "autotiles/privacy_fence_autotile",
 		"autotile": 1,
-		"part": "item",
 		"mat": "wood",
 		"slow": 24,
+		"weight": 10,
 		"col": "1010",
 	},
 	"fence": {
 		"img": "autotiles/fence_autotile",
 		"autotile": 1,
-		"part": "item",
 		"mat": "wood",
 		"slow": 12,
+		"weight": 8,
 		"col": "0010",
 	},
 	"wire": {
 		"img": "autotiles/wire_autotile",
 		"autotile": 1,
-		"part": "item",
 		"mat": "wood",
 		"slow": 12,
 		"col": "0010",
 	},
-	"tree": {
+	"crop": {
+		"img": "tiles/crop",
+		"mat": "wood",
+		"durability": 1,
+		"slow": 1,
+		"col": "0000",
+	},
+	"old tree": {
 		"img": "sized/tree1",
+		"mat": "wood",
+		"durability": 16,
+		"col": "1110",
+	},
+	"young tree": {
+		"img": "sized/tree3",
+		"mat": "wood",
+		"durability": 16,
+		"col": "1110",
+	},
+	"tree": {
+		"img": "sized/tree2",
 		"mat": "wood",
 		"durability": 16,
 		"col": "1110",
@@ -324,6 +491,14 @@
 		"slow": 3,
 		"durability": 12,
 		"col": "0010",
+	},
+	"pit": {
+		"img": "autotiles/pit_autotile",
+		"autotile": 1,
+		"mat": "other",
+		"weight": 99,
+		"slow": 40,
+		"col": "0000",
 	},
 	"corpse": {
 		"weight": 10,

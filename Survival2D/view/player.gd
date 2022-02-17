@@ -216,7 +216,7 @@ func remove():
 		player_unit.possess(self)
 
 func on_leave():
-	G.travel("base")
+	G.travel("base", !G.world.daytime)
 
 func save_data(remove_buffs=true):
 	if remove_buffs:
@@ -226,7 +226,6 @@ func save_data(remove_buffs=true):
 		if ally != null and is_instance_valid(ally):
 			ally_data.append(ally.item_name)
 	var save_dict = {
-		"type": "player",
 		"id": p_id,
 		"unit": unit.item_name,
 		"unit_data": unit.dat.v,
@@ -245,7 +244,6 @@ func load_data(_data):
 	if player_unit.dat.g("type") == "man":
 		player_unit.load_item_data(_data)
 	player_unit.buffs.from_data(_data.unit_buff)
-	
 	if G.world.map_name != "base":
 		var adjs
 		var adj = unit.pos

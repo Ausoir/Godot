@@ -33,7 +33,7 @@ func r_arr_pop(arr):
 func r_range(p):
 	return ir(p[0], p[1])
 
-func r_b():
+func b():
 	return ir(0, 1) == 1
 
 func r_percent(p):

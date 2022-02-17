@@ -1,25 +1,7 @@
 {
 	"Bob": {
 		"title": "Talk with Bob",
-		"req": [["pdat", "quest", 0]],
-		"true": "\"Hey $u.\"\n\n\"You're 14 now, and you need to start pulling your own weight.\n\"We're just about to make another run to the old city, and [url=0]you're coming with us.[/url]\"",
-		"false": "Howdy.",
-		"opt": [
-			{
-				"cmd": [["menu", "dialog", "Bob2"]],
-			}
-		]
-	},
-	"Bob2":	{
-		"title": "Talk with Bob",
-		"cmd": [["dat","a","$pu","quest",1],["dat", "a", "$h", "onuse", [["menu", "dialog", "Bob3"]]]],
-		"true": "\"That's right. Leave the gardening to the others and go get a weapon from Jimbo. You're a scav now.\"",
-	},
-	"Bob3": {
-		"title": "Talk with Bob",
-		"req": [["pdat", "quest", 2]],
-		"false": "Did you talk to Jimbo yet?",
-		"true": "\"I see you got yourself something fancy.\nBefore we go, do you know how to [url=0]use your weapon?[/url]\nIf you have any questions about [url=1]fight[/url] or [url=2]about the runs[/url], ask away.\nOtherwise, [url=3]let's get moving[/url].\"",
+		"true": "Do you have any questions about how to [url=0]use your inventory?[/url]\nIf you have any questions about [url=1]fight[/url] or [url=2]about the runs[/url], ask away.\"",
 		"opt": [
 			{
 				"cmd": [["menu", "dialog", "Bob_items"]],
@@ -29,17 +11,8 @@
 			},
 			{
 				"cmd": [["menu", "dialog", "Bob_runs"]],
-			},
-			{
-				"hover": ["text", "Location", "Streets\nDifficulty: Easy\nAllies: 4"],
-				"cmd": [["dat","a","$pu","quest",3], ["dat","a","$pu","social","follow"], ["travel", "urban"],["v","adj","$pup"],["make","bob the scav","$t"],["ally"]],
 			}
 		]
-	},
-	"Bob4":	{
-		"title": "Talk with Bob",
-		"cmd": [["dat","a","$pu","quest",1],["dat", "a", "$h", "onuse", [["menu", "dialog", "Bob3"]]]],
-		"true": "\"That's right. Leave the gardening to the others and go get a weapon from Jimbo. You're a scav now.\"",
 	},
 	"Bob_items": {
 		"title": "Tutorial - Items",
@@ -56,14 +29,44 @@
 		"true": "\"Gardening is ok, but at the end of the day, it's the canned goodiness that feed us.\n\nWhen we get to our destination, just follow us and stay out of harm's way. [url=0]Understand?[/url]\"",
 		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
 	},
-	"scav Bob": {
-		"title": "Talk with Bob",
-		"true": "No time, Keep moving.",
+	"Storagekeep": {
+		"title": "Talk with Storagekeep",
+		"true": "\"Do you have any supplies to drop off?\"\n\n",
+		"script": ["storage"]
 	},
-	"Jimbo": {
-		"title": "Talk with Jimbo",
-		"req": [["pdat", "quest", 1]],
-		"false": "\"I'm busy. Go away.\"",
+	"Dormkeep": {
+		"title": "Talk with Dormkeep",
+		"req": [["food", 1]],
+		"true": "\"Hey $u.\"\n",
+		"false": "\"Hey $u. There's not enough food to go around, so you can't rest here. Sorry.\nIf you do have food, make sure to supply them to the storagekeep.\"",
+		"opt": [
+			{
+				"cmd": [["menu", "dialog", "Bob2"]],
+			}
+		]
+	},
+	"Carpenter": {
+		"title": "Talk with Carpenter",
+		"true": "\"Do you have any supplies to drop off?\"\n\n",
+		"script": ["storage"]
+	},
+	"Tavernkeep": {
+		"title": "Talk with Barkeep",
+		"true": "\"If you have a map, I can organize a run.\"",
+		"script": ["tavern"]
+	},
+	"Bulletin": {
+		"title": "Bulletin Board",
+		"true": "You see a list of contracts.\n\n",
+		"script": ["bulletin"]
+	},
+	"Trader": {
+		"title": "Talk with Trader",
+		"true": "\"Need something? We can always use some food.\"\n\n",
+		"script": ["trade"]
+	},
+	"Tinkerer": {
+		"title": "Talk with Tinkerer",
 		"true": "\"Going scaving? Need a weapon?\"\nHe shows you a [url=0]pipe[/url] and a [url=1]knife[/url]",
 		"opt": [
 			{
@@ -76,8 +79,4 @@
 			}
 		]
 	},
-	"Chief": {
-		"title": "Talk",
-		"text": "Hello $u! [url=0]Yee[/url]",
-	}
 }

@@ -125,7 +125,7 @@ func run(_args):
 	elif command == "read":
 		return G.data.get_json_data(args[1], false).get(args[2], "")
 	elif command == "travel":
-		G.travel(args[1])
+		G.travel(args[1], args[2])
 	return tgt
 
 func get_arg(idx, default=null):

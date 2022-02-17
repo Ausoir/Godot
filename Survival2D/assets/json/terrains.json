@@ -9,11 +9,14 @@
 	"window step": {"mat": "wood", "col": "0000", "height": 1, "slow": 2},
 	"tile": {"mat": "ceramic", "col": "0000", "height": 0, "ceiling": 1},
 	"wood floor": {"mat": "dirt", "col": "0000", "height": 0, "ceiling": 1},
+	"plank floor": {"mat": "dirt", "col": "0000", "height": 0, "ceiling": 1, "autotile": 1},
+	"gray tile": {"mat": "stone", "col": "0000", "height": 0, "ceiling": 1},
 
 	"rock wall": {"mat": "stone", "col": "1110", "height": 1, "autotile": 2},
+	"soil": {"mat": "stone", "col": "1110", "height": 1, "ceiling": 1, "autotile": 2},
 	"brick": {"mat": "dirt", "col": "1110", "height": 1, "ceiling": 1, "autotile": 1},
 	"stone brick wall": {"mat": "metal", "col": "1110", "ceiling": 1, "height": 1},
-	"log wall": {"mat": "wood", "col": "1110", "height": 1, "ceiling": 1, "autotile": 2},
+	"log wall": {"mat": "wood", "col": "1110", "height": 1, "ceiling": 1, "autotile": 1},
 
 	"stairdown": {"mat": "stone", "col": "0000", "height": 0, "ceiling": 1},
 	"stairup": {"mat": "stone", "col": "0000", "height": 0, "ceiling": 1},

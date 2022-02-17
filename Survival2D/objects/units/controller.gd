@@ -22,6 +22,9 @@ func on_assign():
 	elif "agile" in unit.flags:
 		pathing.hinderance = .5
 
+func on_hit(_hitter):
+	pass
+
 func unassign(_dead=false):
 	if unit != null:
 		unit.controller = null
@@ -75,7 +78,7 @@ func perform(task):
 					unit.set_state("wait")
 					unit.delay = 8
 					G.influence.do(unit, "focus")
-					unit.buffs.extend("focus", 12)
+					unit.buffs.extend("focus", 2)
 					if unit.pos.is_edge() and unit.buffs.has("focus"):
 						tasks.append(["enter", "exit", task[2]-1])
 			else:

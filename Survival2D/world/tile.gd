@@ -39,10 +39,10 @@ func set_terrain(val):
 		terrain = val
 		if "autotile" in data:
 			autotile = data.autotile
-		if data.get("ceiling") != null:
+		if data.get("ceiling") != null or !G.world.daytime:
 			light = -1
 		else:
-			light = G.world.sunlight
+			light = 0
 		slow = data.get("slow", 0)
 		var tile_image = G.world.tileset.find_tile_by_name(val)
 		G.world.tilemap.set_cell(x, y, tile_image)

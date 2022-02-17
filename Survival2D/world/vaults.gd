@@ -54,21 +54,27 @@ func make_vault(_map, room, dir):
 		var map = vault_data[1]
 		var palette = vault_data[2]
 		if R.ir(0, 99) < chance:
-			place_vault(_map, map, palette, candidate[1], candidate[2], candidate[3], candidate[4])
-			return true
-	return false
+			return place_vault(_map, map, palette, candidate[1], candidate[2], candidate[3], candidate[4])
+	return null
 
 func place_vault(_map, vault, palette, startX, startY, flip, rot):
-	for y in range(len(vault)):
-		for x in range(len(vault[0])):
+	var sizeY = len(vault)
+	var sizeX = len(vault[0])
+	for y in range(sizeY):
+		for x in range(sizeX):
 			var sX = x
 			var sY = y
 			var fX
 			var fY
-			if flip == 1 or flip == 3:
-				sX = (len(vault[0])-1 - x)
-			if flip == 2 or flip == 3:
-				sY = (len(vault)-1 - y)
+			if flip == 1:
+				sX = (sizeX-1 - x)
+				sY = y
+			elif flip == 2:
+				sX = x
+				sY = (sizeY-1 - y)
+			elif flip == 3:
+				sX = (sizeX-1 - x)
+				sY = (sizeY-1 - y)
 			if rot:
 				fX = startX + sY
 				fY = startY + sX
@@ -85,6 +91,15 @@ func place_vault(_map, vault, palette, startX, startY, flip, rot):
 					_map[fY][fX] = palet
 				else:
 					push_error("Invalid vault palette value: "+str(palet))
+	var postSizeX
+	var postSizeY
+	if rot:
+		postSizeX = sizeY
+		postSizeY = sizeX
+	else:
+		postSizeX = sizeX
+		postSizeY = sizeY
+	return [startX, startY, startX + postSizeX-1, startY + postSizeY-1]
 
 func boundary_dist(vault, x, y):
 	var xdist = min(x, len(vault[0])-1-x)

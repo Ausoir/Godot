@@ -9,7 +9,7 @@ coord_mapping = (
 )
 
 def run():
-    make_autotile_8('../design/autotiles/f_sofa/', 'f_sofa_')
+    make_autotile_8('../design/autotiles/t_pit/', 't_pit_')
 
 def make_autotile_8(filedir, prefix):
     tiles = ['unconnected', 'end_piece_w', 'edge_ew', 'end_piece_e',

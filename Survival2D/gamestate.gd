@@ -174,8 +174,7 @@ func _ready():
 
 
 func create_game(_player_units):
-	G.world.rng.randomize()
-	G.world.world_seed = G.world.rng.seed
+	R.set_seed()
 	G.world.create("base")
 	for unit in _player_units:
 		var player_pos = G.field.get_spawn_point()
@@ -189,12 +188,9 @@ func save_game(_map="base"):
 		var save_list = [G.you]
 		for p_id in other_players:
 			save_list.append(other_players[p_id]["controller"])
-		var map_data = {
-			"type": "map",
-			"map": _map,
-			"seed": R.init_seed
-		}
-		save_game.store_line(to_json(map_data))
+		G.vars["map"] = _map
+		G.vars["seed"] = R.init_seed
+		save_game.store_line(to_json(G.vars))
 		for to_save in save_list:
 			var node_data = to_save.save_data()
 			save_game.store_line(to_json(node_data))
@@ -205,20 +201,22 @@ func load_game():
 	var save_game = File.new()
 	if save_game.file_exists("user://savegame.save"):
 		save_game.open("user://savegame.save", File.READ)
+		var node_data = parse_json(save_game.get_line())
+		G.vars = node_data
+		if "forcemap" in G.vars:
+			G.world.create(G.vars["forcemap"])
+		else:
+			G.world.create(node_data.map)
 		while save_game.get_position() < save_game.get_len():
-			var node_data = parse_json(save_game.get_line())
-			if node_data.type == "map":
-				R.set_seed(node_data.seed)
-				G.world.create(node_data.map)
-			elif node_data.type == "player":
-				if node_data.id == get_tree().get_network_unique_id():
-					G.you.load_data(node_data)
-					r = true
-				else:
-					other_players[node_data.id]["controller"].load_data(node_data)
+			node_data = parse_json(save_game.get_line())
+			if node_data.id == get_tree().get_network_unique_id():
+				G.you.load_data(node_data)
+				r = true
+			else:
+				other_players[node_data.id]["controller"].load_data(node_data)
 	save_game.close()
 	return r
 
 func _notification(what):
-	if what == Node.NOTIFICATION_EXIT_TREE:
+	if what == Node.NOTIFICATION_WM_QUIT_REQUEST:
 		save_game()

@@ -8,6 +8,14 @@ var turn_delay = 0
 var think_delay = 0
 var objectives
 var timeout = 0
+var timeout_pos
+
+func on_assign():
+	.on_assign()
+	timeout_pos = unit.pos
+
+func on_hit(_hitter):
+	foe = _hitter
 
 func on_turn():
 	turn_delay += 1
@@ -31,6 +39,14 @@ func think():
 	think_delay += 1
 	if think_delay > 3:
 		think_delay = 0
+		if timeout_pos != unit.pos:
+			timeout = 0
+		else:
+			timeout += 1
+			if timeout > 4:
+				think_delay = -45
+				set_objectives("end")
+		timeout_pos = unit.pos
 		var social = unit.dat.g("social")
 		if social == "lead":
 			if unit.faction == 1:
@@ -40,11 +56,6 @@ func think():
 				else:
 					if do_objective():
 						objectives.pop_front()
-						timeout = 0
-					else:
-						timeout += 1
-						if timeout > 9:
-							set_objectives("end")
 			elif unit.faction == 2:
 				path_to(unit.pos.get_rand_offset(16, 16), 1, true)
 		elif social == "follow":
@@ -55,9 +66,8 @@ func think():
 					lead = seen_ally[0]
 					timeout = 0
 					return
-			timeout += 1
-			if timeout > 9:
-				set_objectives("end")
+			if objectives != null and do_objective():
+				objectives.pop_front()
 
 func perceive():
 	var min_dist = unit.dat.g("perception", 8)
@@ -88,6 +98,7 @@ func hunt():
 		set_state("hunt")
 		path_to(foe.pos, reach, true)
 		tasks.append(["attack", foe])
+		timeout = 0
 		return true
 	else:
 		foe = null
@@ -104,15 +115,23 @@ func follow():
 
 func set_objectives(_goal):
 	if _goal == "loot" and unit.dat.g("type") == "man":
+		var strength = unit.dat.g("strength", 0)
+		objectives = []
 		for _i in range(unit.inventory.size()):
 			var item_count = G.world.items.get_child_count()-1
 			if item_count < 1:
 				return
 			else:
-				var item = G.world.items.get_child(R.ir(0, item_count))
-				objectives = []
-				objectives.append(["move", item.pos])
-				objectives.append(["interact", item.pos])
+				var item
+				var weight = 999
+				var limit = 8
+				while weight > strength and limit > 0:
+					item = G.world.items.get_child(R.ir(0, item_count))
+					weight = item.dat.g("weight", 0)
+					limit -= 1
+				if item != null:
+					objectives.append(["move", item.pos])
+					objectives.append(["interact", item.pos])
 	elif _goal == "end":
 		var pos
 		var dir = 0
@@ -152,6 +171,6 @@ func do_objective():
 			tasks.append(["interact", goal[1]])
 			return true
 		elif goal[0] == "exit":
-			tasks.append(["enter", "exit", 0])
 			G.msg(unit.item_name + " has left the map.")
+			unit.remove()
 	return false

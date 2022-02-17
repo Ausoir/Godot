@@ -1,137 +1,120 @@
 extends "res://world/generator.gd"
 
-var min_room_size = Vector2(6, 6)
-var sector_borders
-var sectors
-var dungeon_rooms
-var dungeon_objects
-var door_candidates
+var _stack = []
+var size
+var estates = []
 
 func generate():
-	var times = 7
-	var halls = 2
-	.create(30, 30)
-	base = make_base(width, height, '.')
-	sectors = {}
-	sector_borders = []
-	dungeon_rooms = []
-	door_candidates = []
-	dungeon_objects = make_base(width, height, null)
-	divide(Vector2.ZERO, Vector2(width, height), times, halls+1, .5)
-	make_doors()
-	make_rooms(["living", "storage", "lab"])
-	return base
+	.create(7, 7)
+	base = make_base(width, height, 1)
+	_stack = [
+		[1, 1, width-2, height-2]
+	]
+	_process()
+	base = fatten(1, 1, 1)
+	magnify(7)
+	paint_map()
+	paint_spawn(0)
 
-func divide(from, to, times, times_hall, h_chance):
-	var tsize = to - from
-	var gap = 0
-	if times_hall > 2:
-		gap = 2
-	elif times_hall > 0:
-		gap = 1
-	elif (tsize.x <= min_room_size.x*2 and tsize.y <= min_room_size.y*2) or times <= 0:
-		dungeon_rooms.append([from, to])
-		return 0
-	if tsize.x <= min_room_size.x*2:
-		h_chance = 1
-	elif tsize.y <= min_room_size.y*2:
-		h_chance = 0
-	elif times_hall == 0:
-		h_chance = .5#tsize.y / (tsize.x + tsize.y)
-	var horizontal = rng.randf() < h_chance
-	if times_hall == 1 or (tsize.x<min_room_size.x*2+gap and horizontal) or (tsize.y<min_room_size.y*2+gap and !horizontal):
-		sector_borders.append([from, to])
-		gap = 0
-		times_hall = 0
-	var halfgap = 0
-	var oddgap = gap % 2
-	halfgap = floor(gap/2)
-	if horizontal:
-		var wall = rng.r_i(from.y+min_room_size.y, to.y-min_room_size.y)
-		wall += wall % 2 + oddgap
-		var wall_from = wall-gap
-		var wall_to = wall+gap
-		fill(Vector2(from.x, wall_from), Vector2(to.x, wall_to), 'W')
-		divide(Vector2(from.x, from.y), Vector2(to.x, wall_from), times-1, times_hall-1, 0)
-		divide(Vector2(from.x, wall_to), Vector2(to.x, to.y), times-1, times_hall-1, 0)
-		if gap > 0:
-			dungeon_rooms.append([Vector2(from.x, wall_from), Vector2(to.x, wall_to)])
-			fill(Vector2(from.x, wall-halfgap), Vector2(to.x, wall+halfgap), '.')
-			door_candidates.append([Vector2(from.x+1,wall_from), Vector2(to.x-1,wall_from)])
-			door_candidates.append([Vector2(from.x+1,wall_to), Vector2(to.x-1,wall_to)])
-		else:
-			door_candidates.append([Vector2(from.x+1,wall), Vector2(to.x-1,wall)])
-	else: #vertical
-		var wall = rng.r_i(from.x+min_room_size.x, to.x-min_room_size.x)
-		wall += wall % 2 + oddgap
-		var wall_from = wall-gap
-		var wall_to = wall+gap
-		fill(Vector2(wall_from, from.y), Vector2(wall_to, to.y), 'W')
-		divide(Vector2(from.x, from.y), Vector2(wall_from, to.y), times-1, times_hall-1, 1)
-		divide(Vector2(wall_to, from.y), Vector2(to.x, to.y), times-1, times_hall-1, 1)
-		if gap > 0:
-			dungeon_rooms.append([Vector2(wall_from, from.y), Vector2(wall_to, to.y)])
-			fill(Vector2(wall-halfgap, from.y), Vector2(wall+halfgap, to.y), '.')
-			door_candidates.append([Vector2(wall_from,from.y+1), Vector2(wall_from,to.y-1)])
-			door_candidates.append([Vector2(wall_to,from.y+1), Vector2(wall_to,to.y-1)])
-		else:
-			door_candidates.append([Vector2(wall,from.y+1), Vector2(wall,to.y-1)])
+func magnify(mag):
+	var minimap = base
+	var default = G.data.palette_data.get(' ')
+	output = make_base(width*mag, height*mag, default)
+	for y in range(height):
+		for x in range(width):
+			var val = minimap[y][x]
+			var mx = x*mag
+			var my = y*mag
+			var estate = [mx, my, mx+mag-1, my+mag-1]
+			make_vault(estate, "map_cell", R.ir(0, 3))
+	width *= mag
+	height *= mag
 
-func make_doors():
-	for door in door_candidates:
-		var x = rng.r_i(door[0].x, door[1].x)
-		var y = rng.r_i(door[0].y, door[1].y)
-		base[y][x] = 'D'
+func fatten(block, roadh, roadv):
+	var r = []
+	for y in range(height):
+		var row = []
+		for x in range(width):
+			if x % 2 == 1:
+				for _i in range(block):
+					row.append(base[y][x])
+			for _i in range(roadh):
+				row.append(base[y][x])
+		if y % 2 == 1:
+			for _i in range(block):
+				r.append(row)
+		for _i in range(roadv):
+			r.append(row)
+	width = len(r[0])
+	height = len(r)
+	return r
 
-func make_rooms(departments):
-	for room in dungeon_rooms:
-		var sector = get_sector(Vector2(room[1].x + 1, room[1].y + 1))
-		if sector != null:
-			sectors[sector] = ""
-		room.append(sector)
+func _process():
+	while !_stack.empty():
+		var room = _stack.pop_front()
+		partition(room[0], room[1], room[2], room[3], 1)
 
-	var tpartments = departments.duplicate()
-	for s in sectors:
-		if tpartments.empty():
-			sectors[s] = rng.r_arr(departments)
-		else:
-			var idx = rng.r_i(0, len(tpartments)-1)
-			sectors[s] = tpartments[idx]
-			tpartments.remove(idx)
-	print(sectors)
+func partition(x1, y1, x2, y2, until):
+	var availX = []
+	var availY = []
+	for i in range(x1, x2+1):
+		var vbound = y1 > 0 and y2 < height-1
+		if vbound and !(i % 2):
+			availX.append(i)
+	for j in range(y1, y2+1):
+		var hbound = x1 > 0 and x2 < width-1
+		if hbound and !(j % 2):
+			availY.append(j)
 
-	for room in dungeon_rooms: #name, from, to, sector, door
-		#print(room)
-		if room[2] == null: #halls
-			pass
-		elif sectors[room[2]] == "living":
-			make_terrain(room, "map_houses")
-		elif sectors[room[2]] == "storage":
-			pass
-		elif sectors[room[2]] == "lab":
-			pass
+	if availX.size() < until or availY.size() < until:
+		return
 
-func make_terrain(room, vault_type):
-	vaults.load_vault(vault_type)
-	return vaults.make_vault(rng, base, room[0], room[1])
+	var rx = R.r_arr(availX)
+	var ry = R.r_arr(availY)
 
-func get_sector(pos):
-	var count = 1
-	if sector_borders.empty():
-		return count
-	for sector in sector_borders:
-		if pos.x >= sector[0].x and pos.x <= sector[1].x and\
-			pos.y >= sector[0].y and pos.y <= sector[1].y:
-			return count
-		count += 1
+	base[rx][ry] = 0
+	estates.append([rx, ry])
 
+	var walls = []
 
-func check_adjacent_object(x, y, tile):
-	if dungeon_objects[y][x] != null:
-		if dungeon_objects[y][x][0] == tile or\
-			(y+1 < len(dungeon_objects) and dungeon_objects[y+1][x][0] == tile) or\
-			(y-1 >= 0 and dungeon_objects[y-1][x][0] == tile) or\
-			(x+1 < len(dungeon_objects[0]) and dungeon_objects[y][x+1][0] == tile) or\
-			(x-1 >= 0 and dungeon_objects[y][x-1][0] == tile):
-				return true
-	return false
+	var left = []
+	walls.append(left)
+	for i in range(x1, rx):
+		base[i][ry] = 0
+		if (i % 2):
+			left.append([i, ry])
+
+	var right = []
+	walls.append(right) #Right
+	for i in range(rx+1, x2+1):
+		base[i][ry] = 0
+		if (i % 2):
+			right.append([i, ry])
+
+	var top = []
+	walls.append(top) #Top
+	for j in range(y1, ry):
+		base[rx][j] = 0
+		if (j % 2):
+			top.append([rx, j])
+
+	var bottom = []
+	walls.append(bottom)
+	for j in range(ry+1, y2+1):
+		base[rx][j] = 0
+		if (j % 2):
+			bottom.append([rx, j])
+
+	var solid = R.r_arr(walls)
+	for i in range(walls.size()):
+		var w = walls[i]
+		if (w == solid):
+			continue
+		elif !w.empty():
+			var hole = R.r_arr(w)
+			base[hole[0]][hole[1]] = 2
+
+	_stack.append([x1, y1, rx-1, ry-1]) #left top
+	_stack.append([rx+1, y1, x2, ry-1]) #right top
+	_stack.append([x1, ry+1, rx-1, y2]) #left bottom
+	_stack.append([rx+1, ry+1, x2, y2]) #right bottom

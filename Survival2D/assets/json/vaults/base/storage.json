@@ -1,0 +1,30 @@
+[
+	[
+		100,
+		[
+			"#########",
+			"#LLL..cl#",
+			"#lll.CCC#",
+			"#lll...l#",
+			"#llll#.l#",
+			"#llll#=##",
+			"######   ",
+		],
+		{
+			"#": ["log wall"],
+			".": ["wood floor"],
+			"T": ["wood floor", ["table", 100]],
+			"c": ["wood floor", ["logstool", 100, "+", ["storagekeep", 100]]],
+			"/": ["wood floor", ["window", 100]],
+			"C": ["wood floor", ["counter", 100]],
+			"F": ["wood floor", ["campfire", 100]],
+			"0": ["wood floor", ["crate", 80]],
+			"B": ["wood floor", ["straw bed", 100]],
+			"t": ["dirt", ["tank", 100]],
+			"s": ["dirt", ["logstool", 100]],
+			"=": ["wood floor", ["bead door", 50]],
+			"l": ["wood floor", ["crate", 50]],
+			"L": ["wood floor", ["chest", 50]],
+		}
+	],
+]

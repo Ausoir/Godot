@@ -5,6 +5,7 @@ var equipments = {}
 var inventory = [null]
 var belt = [[2, null],[0, null],[0, null],[0, null]]
 var selected_belt = -1
+var gender = "m"
 var weight = 0
 
 func remove():
@@ -80,7 +81,10 @@ func equip(part, item):
 	if !has_part(part) and is_equipment_valid(part, item):
 		equipments[part] = item
 		accomodate_stats(item)
-		create_overlay(part, item.dat.g("sprite"))
+		if part == "body" and item.dat.g("gender") != null:
+			create_overlay(part, item.dat.g("sprite")+"_"+gender)
+		else:
+			create_overlay(part, item.dat.g("sprite"))
 		return true
 	return false
 
@@ -116,6 +120,10 @@ func unaccomodate_stats(item):
 	for i in item.dat.g("passives", []):
 		var idx = skills.find(i)
 		skills.remove(idx)
+	for i in G.STATS:
+		var stat = item.dat.g(i)
+		if stat != null:
+			dat.add(i, -stat)
 	var remove_spaces = item.dat.g("space", 0)
 	var old_inventory = inventory
 	inventory = inventory.slice(0, inventory.size()-remove_spaces-1)
@@ -201,10 +209,12 @@ func load_item_data(_data):
 	var load_inv = _data.get("inv")
 	for i in load_belt:
 		var item = G.factory.make_item(i, null)
-		sheathe(-1, item)
+		if sheathe(-1, item):
+			unaccomodate_stats(item)
 	for i in load_eq:
 		var item = G.factory.make_item(i, null)
-		auto_equip(item)
+		if auto_equip(item):
+			unaccomodate_stats(item)
 	for i in load_inv:
 		var item = G.factory.make_item(i, null)
 		store(item, true)

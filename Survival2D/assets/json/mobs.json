@@ -4,53 +4,56 @@
 		"faction": 1,
 		"unit": "human",
 		"equip": [["gi", 100], ["hood", 100], ["cutlass", 100]],
-		"dat": {
-			"quest": 0,
-			"allies": [["bob the scav","lead"], ["scav","follow"], ["scav","follow"]],
-		}
 	},
 	"bob": {
 		"faction": 1,
 		"unit": "scav",
 		"equip": [["scalemail", 100], ["cutlass", 100]],
-		"dat": {
-			"onuse": [["menu", "dialog", "Bob"]],
-			"ondie": [["dat","a","$pu","quest",4]],
-		}
+		"dat": {"onuse": [["menu", "dialog", "Bob"]]}
 	},
-	"jimbo": {
+	"storagekeep": {
 		"faction": 1,
 		"unit": "scav",
-		"equip": [["gi", 100], ["hood", 100], ["pipe", 100]],
-		"dat": {
-			"onuse": [["menu", "dialog", "Jimbo"]]
-		}
+		"equip": [["casual", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Storagekeep"]]}
+	},
+	"dormkeep": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["suit", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Dormkeep"]]}
+	},
+	"tavernkeep": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["suspenders", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Tavernkeep"]]}
 	},
 	"chieftain": {
 		"faction": 1,
 		"unit": "scav",
-		"equip": [["gi", 100], ["hood", 100], ["knife", 100]],
-		"dat": {
-		}
+		"equip": [["gi", 100], ["knife", 100]],
 	},
-	"bob the scav": {
+	"trader": {
 		"faction": 1,
 		"unit": "scav",
-		"equip": [["scalemail", 100], ["cutlass", 100]],
-		"dat": {
-			"social": "lead",
-			"goal": "loot",
-			"onuse": [["menu", "dialog", "scav Bob"]],
-			"ondie": [["dat","a","$pu","quest",4]],
-		}
+		"equip": [["suit", 100], ["backpack", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Trader"]]}
 	},
 	"scav": {
 		"faction": 1,
 		"unit": "scav",
-		"equip": [["gi", 100], ["hood", 100], ["knife", 100]],
-		"dat": {
-			"social": "follow"
-		}
+		"equip": [["gi", 100], ["backpack", 100], ["knife", 100]],
+	},
+	"light scav": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["gi", 100], ["backpack", 100], ["hood", 100], ["spear", 100]],
+	},
+	"heavy scav": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["scalemail", 100], ["backpack", 100], ["bat", 100]],
 	},
 
 	"zombie": {

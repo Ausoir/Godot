@@ -53,7 +53,7 @@ func _background_input(event):
 func _unhandled_input(event):
 	if event is InputEventKey:
 		if Input.is_action_just_pressed("quit"):
-			get_tree().quit()
+			get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
 		elif Input.is_action_just_pressed("restart"):
 			G.world.generate()
 			print("Player:restart: ", get_tree().change_scene("res://world/World.tscn"))
@@ -213,7 +213,7 @@ func search_inventory(tile):
 		container_grid.remove_child(child)
 		child.queue_free()
 	for item in tile.items:
-		if item.item_type == "item":
+		if item.item_type == "item" and item.dat.g("weight", 0) <= G.you.unit.dat.g("strength", 0):
 			var slot = ItemSlot.instance()
 			slot.assign(item)
 			slot.tile = tile
@@ -262,10 +262,13 @@ func update_skills():
 			slot.assign(skill)
 
 func update_status():
-	for child in tab_status.get_children():
+	var header = tab_status.get_node("Panel/Label")
+	header.text = "Scavenger Lv.1"
+	var container = tab_status.get_node("Control")
+	for child in container.get_children():
 		child.queue_free()
-		tab_status.remove_child(child)
+		container.remove_child(child)
 	for i in G.STATS:
 		var label = Label.new()
 		label.set_text(i.capitalize() + ": " + str(G.you.unit.dat.g(i, 0)))
-		tab_status.add_child(label)
+		container.add_child(label)

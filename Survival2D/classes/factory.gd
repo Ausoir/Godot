@@ -66,7 +66,8 @@ func make_mob(arg, pos):
 				for equip in equips:
 					if R.r_percent(equip[1]):
 						var item = G.factory.make_item(equip[0])
-						unit.auto_equip(item)
+						if item != null:
+							unit.auto_equip(item)
 			unit.item_name = arg
 			return unit
 		else:
@@ -76,11 +77,17 @@ func make_unit(arg, pos):
 	var unit_data = G.data.unit_data.get(arg)
 	if unit_data != null:
 		var r = Unit.instance()
+		var sprite
 		if unit_data.get("type") == "man":
 			r.set_script(Script_Humanoid)
+			if R.b():
+				sprite = R.r_arr(G.data.vars_data.male)
+			else:
+				sprite = R.r_arr(G.data.vars_data.female)
+			sprite = G.data.get_image("units/human/"+sprite)
 		else:
 			r.set_script(Script_Unit)
-		var sprite = G.data.get_image(unit_data.img)
+			sprite = G.data.get_image(unit_data.img)
 		if !sprite:
 			return
 		r.get_node("Sprites/Sprite").texture = sprite
