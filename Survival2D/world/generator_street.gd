@@ -1,11 +1,13 @@
 extends "res://world/generator.gd"
 
+var biome_map
+var biome
 var _stack = []
 var size
 var estates = []
 
 func generate():
-	.create(3, 3)
+	.create(5, 5)
 	base = make_base(width, height, 1)
 
 	_stack = [
@@ -13,36 +15,60 @@ func generate():
 	]
 	_process()
 	base = fatten(1, 1, 1)
+	biome_map = make_perlin(width, height, 2)
 	magnify(21)
 	paint_map()
-	paint_spawn(0)
+	if G.field.spawn_points.empty():
+		paint_spawn(R.ir(0, 3))
+
+func paint_perlin(mx, my, sx, sy):
+	for y in range(sy):
+		for x in range(sx):
+			var tx = mx + x
+			var ty = my + y
+			var value = biome[ty][tx]
+			if value > 0.75:
+				output[ty][tx] = ['rock wall']
+			elif value > 0.5:
+				output[ty][tx] = ['grass', ['old tree', 12, '/', ['tree', 4, '/', ['young tree', 2]]]]
+			elif value > 0.3:
+				output[ty][tx] = ['dirt', ['boulder', 2, '/', ['small boulder', 3]]]
+			else:
+				output[ty][tx] = ['water']
+			if tx == 0 or ty == 0:
+				if output[ty][tx][0] in ['dirt', 'grass'] and output[ty][tx].size() == 1:
+					G.field.spawn_points.append(G.field.tiles[ty][tx])
 
 func magnify(mag):
 	var minimap = base
 	var default = G.data.palette_data.get(' ')
 	output = make_base(width*mag, height*mag, default)
+	biome = make_perlin(width*mag, height*mag, 5)
 	for y in range(height):
 		for x in range(width):
-			var val = minimap[y][x]
 			var mx = x*mag
 			var my = y*mag
-			var estate = [mx, my, mx+mag-1, my+mag-1]
-			if val == 1 or (val == 2 and R.r_percent(25)):
-				var rots = []
-				for i in range(4):
-					var dir = G.CARDINALS[i]
-					if get_tile(minimap, x+dir[0], y+dir[1], 1) != 1:
-						rots.append(i)
-				if rots.empty():
-					make_vault(estate, "map_house", R.ir(0, 3))
-				else:
-					var rot = R.r_arr(rots)
-					make_vault(estate, "map_house", rot)
+			if biome_map[y][x] > .65:
+				paint_perlin(mx, my, mag, mag)
 			else:
-				if get_tile(minimap, x+1, y, 1) == 1 and get_tile(minimap, x-1, y, 1) == 1:
-					make_vault(estate, "map_road", 0)
-				elif get_tile(minimap, x, y+1, 1) == 1 and get_tile(minimap, x, y-1, 1) == 1:
-					make_vault(estate, "map_road", 1)
+				var val = minimap[y][x]
+				var estate = [mx, my, mx+mag-1, my+mag-1]
+				if val == 1 or (val == 2 and R.r_percent(25)):
+					var rots = []
+					for i in range(4):
+						var dir = G.CARDINALS[i]
+						if get_tile(minimap, x+dir[0], y+dir[1], 1) != 1:
+							rots.append(i)
+					if rots.empty():
+						make_vault(estate, "map_house", R.ir(0, 3))
+					else:
+						var rot = R.r_arr(rots)
+						make_vault(estate, "map_house", rot)
+				else:
+					if get_tile(minimap, x+1, y, 1) == 1 and get_tile(minimap, x-1, y, 1) == 1:
+						make_vault(estate, "map_road", 0)
+					elif get_tile(minimap, x, y+1, 1) == 1 and get_tile(minimap, x, y-1, 1) == 1:
+						make_vault(estate, "map_road", 1)
 	width *= mag
 	height *= mag
 

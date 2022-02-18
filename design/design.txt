@@ -3,5 +3,5 @@ Map: Base camp, streets, single use instanced dungeons - lab, valley
 Enemies: 1. Zombies - humanoid, dog. 2. Other Survivors - Melee, ranged. 3. Cult - Melee, spell
 Base: Shop, Tavern(Group), Dorm(Sleep), 
 ===
-use bag icon (with a top right plus sign) for floor items
-map item to use dungeons
+use bag icon top right mini icon for armor/weapon etc (dcss buff icon)
+slash effect towards attack direction

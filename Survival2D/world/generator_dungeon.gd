@@ -17,12 +17,10 @@ func generate():
 	paint_spawn(0)
 
 func magnify(mag):
-	var minimap = base
 	var default = G.data.palette_data.get(' ')
 	output = make_base(width*mag, height*mag, default)
 	for y in range(height):
 		for x in range(width):
-			var val = minimap[y][x]
 			var mx = x*mag
 			var my = y*mag
 			var estate = [mx, my, mx+mag-1, my+mag-1]

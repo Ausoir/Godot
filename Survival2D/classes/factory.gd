@@ -80,14 +80,9 @@ func make_unit(arg, pos):
 		var sprite
 		if unit_data.get("type") == "man":
 			r.set_script(Script_Humanoid)
-			if R.b():
-				sprite = R.r_arr(G.data.vars_data.male)
-			else:
-				sprite = R.r_arr(G.data.vars_data.female)
-			sprite = G.data.get_image("units/human/"+sprite)
 		else:
 			r.set_script(Script_Unit)
-			sprite = G.data.get_image(unit_data.img)
+		sprite = G.data.get_image(unit_data.img)
 		if !sprite:
 			return
 		r.get_node("Sprites/Sprite").texture = sprite
@@ -102,6 +97,7 @@ func make_unit(arg, pos):
 		r.col = r.dat.g("col", "0100")
 		r.light = r.dat.g("light", 0)
 		r.place(pos)
+		r.set_seed()
 		return r
 
 func make_item(arg, pos=null):

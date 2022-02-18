@@ -79,10 +79,10 @@ func run_cmds(cmds):
 			host.hit("heal", -cmd[1], host)
 		elif type == "interrupt":
 			victim.buffs.on_interrupt(cmd[1])
-		elif type == "animate":
+		elif type == "reaction":
 			victim.delay = cmd[2]
 			victim.set_animation(cmd[1])
-		elif type == "animation":
+		elif type == "action":
 			if cmd[2] == 1:
 				if target != null and target.x == host.pos.x:
 					host.set_animation_direction(target.y - host.pos.y)
@@ -106,11 +106,13 @@ func run_cmds(cmds):
 			husk.remove()
 		elif type == "visibility":
 			if cmd[1] == 0:
-				host.node_sprites.hide()
+				host.n_sprites.hide()
 			else:
-				host.node_sprites.show()
+				host.n_sprites.show()
 		elif type == "energy":
 			host.energy = max(host.dat.g("agility", 0), host.energy + cmd[1])
+		elif type == "draw":
+			host.select_weapon(cmd[1])
 		elif type == "sight":
 			host.dat.a("sight col", host.sight_col)
 			host.sight_col = cmd[1]
@@ -169,7 +171,7 @@ func is_valid(tgt):
 					continue
 				elif law == "open" and !tgt.is_cols("0110"):
 					continue
-				elif law == "seen" and tgt.sight_frame == G.you.camera.sight_frame - 1:
+				elif law == "seen" and tgt.sight_frame == G.you.n_camera.sight_frame - 1:
 					continue
 			elif is_unit:
 				if law == "unit":

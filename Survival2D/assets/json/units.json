@@ -16,7 +16,7 @@
 		"flags": ["mindless", "nobreath", "float"],
 	},
 	"human": {
-		"img": "units/human/male",
+		"img": "units/zombie",
 		"type": "man",
 		"size": 0,
 		"move speed": 2,
@@ -31,7 +31,7 @@
 		"flags": ["user"],
 	},
 	"scav": {
-		"img": "units/male",
+		"img": "units/zombie",
 		"type": "man",
 		"size": 0,
 		"move speed": 2,
@@ -46,7 +46,7 @@
 		"flags": ["user"],
 	},
 	"looter": {
-		"img": "units/male",
+		"img": "units/zombie",
 		"type": "man",
 		"size": 0,
 		"move speed": 2,

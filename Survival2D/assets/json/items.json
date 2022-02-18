@@ -32,6 +32,7 @@
 		"mat": "wood",
 		"weight": 1,
 		"cut": 2,
+		"size": 2,
 		"desc": "A spear."
 	},
 	"cutlass": {
@@ -43,6 +44,7 @@
 		"weight": 1,
 		"cut": 2,
 		"strength": 1,
+		"size": 2,
 		"desc": "A branch."
 	},
 	"bat": {
@@ -53,6 +55,7 @@
 		"mat": "wood",
 		"weight": 1,
 		"strength": 2,
+		"size": 2,
 		"desc": "A wooden bat. It's very light."
 	},
 	"pipe": {
@@ -63,6 +66,7 @@
 		"mat": "metal",
 		"weight": 2,
 		"strength": 2,
+		"size": 2,
 		"desc": "A metal pipe. It's hollow and light, and a bit unwieldy."
 	},
 	"knife": {
@@ -421,16 +425,17 @@
 		"autotile": 1,
 		"mat": "other",
 		"durability": 16,
-		"weight": 10,
-		"col": "0110",
+		"slow": 24,
+		"weight": 12,
+		"col": "0000",
 	},
 	"privacy_fence": {
 		"img": "autotiles/privacy_fence_autotile",
 		"autotile": 1,
 		"mat": "wood",
-		"slow": 24,
+		"durability": 4,
 		"weight": 10,
-		"col": "1010",
+		"col": "1110",
 	},
 	"fence": {
 		"img": "autotiles/fence_autotile",
@@ -501,7 +506,7 @@
 		"col": "0000",
 	},
 	"corpse": {
-		"weight": 10,
+		"weight": 5,
 		"skills": ["block"],
 		"mat": "flesh",
 		"desc": "A corpse."

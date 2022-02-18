@@ -62,14 +62,6 @@ func _unhandled_input(event):
 		elif Input.is_action_just_pressed("auto_attack"):
 			G.you.auto_attack = !G.you.auto_attack
 			message.add("Auto attack: " + str(G.you.auto_attack))
-		elif Input.is_action_just_pressed("item_1"):
-			G.you.tasks = [["swap", 0]]
-		elif Input.is_action_just_pressed("item_2"):
-			G.you.tasks = [["swap", 1]]
-		elif Input.is_action_just_pressed("item_3"):
-			G.you.tasks = [["swap", 2]]
-		elif Input.is_action_just_pressed("item_4"):
-			G.you.tasks = [["swap", 3]]
 		elif Input.is_action_just_pressed("quick_1"):
 			if abilities.get_child_count() > 0:
 				abilities.get_children()[0].activate()
@@ -82,6 +74,18 @@ func _unhandled_input(event):
 		elif Input.is_action_just_pressed("quick_4"):
 			if abilities.get_child_count() > 3:
 				abilities.get_children()[3].activate()
+		elif Input.is_action_just_pressed("quick_5"):
+			if abilities.get_child_count() > 4:
+				abilities.get_children()[4].activate()
+		elif Input.is_action_just_pressed("quick_6"):
+			if abilities.get_child_count() > 5:
+				abilities.get_children()[5].activate()
+		elif Input.is_action_just_pressed("quick_7"):
+			if abilities.get_child_count() > 6:
+				abilities.get_children()[6].activate()
+		elif Input.is_action_just_pressed("quick_8"):
+			if abilities.get_child_count() > 7:
+				abilities.get_children()[7].activate()
 		elif Input.is_action_just_pressed("menu"):
 			if on:
 				clear()
@@ -161,13 +165,6 @@ func update_inventory():
 				if child.name in unit.equipments:
 					child.assign(unit.equipments[child.name])
 
-		var count = 1
-		for belt_item in unit.belt:
-			var slot = tab_equipment.get_node("belted/" + str(count))
-			slot.make_mode(belt_item[0])
-			if belt_item[1] != null:
-				slot.assign(belt_item[1])
-			count += 1
 		for inv_item in unit.inventory:
 			var newslot = ItemSlot.instance()
 			if inv_item != null:
@@ -264,11 +261,11 @@ func update_skills():
 func update_status():
 	var header = tab_status.get_node("Panel/Label")
 	header.text = "Scavenger Lv.1"
-	var container = tab_status.get_node("Control")
-	for child in container.get_children():
+	var stat_list = tab_status.get_node("Control")
+	for child in stat_list.get_children():
 		child.queue_free()
-		container.remove_child(child)
+		stat_list.remove_child(child)
 	for i in G.STATS:
 		var label = Label.new()
 		label.set_text(i.capitalize() + ": " + str(G.you.unit.dat.g(i, 0)))
-		container.add_child(label)
+		stat_list.add_child(label)

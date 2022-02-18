@@ -6,10 +6,15 @@ var estates = []
 var fixed_buildings = []
 
 func generate():
-	.create(90, 60)
+	.create(100, 40)
 	G.field.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
+	make_border(.1)
+	make_border(.1, [], 1)
+	for y in range(height):
+		base[y][width-1] = .5
+		base[y][width-2] = .5
 	for x in range(width):
 		for y in range(height):
 			var value = base[y][x]
@@ -26,14 +31,11 @@ func generate():
 	paint_map()
 	paint_spawn(0)
 
-func get_boundary(marginx, marginy, sx, sy):
-	var fromx = R.ir(marginx + sx, width-1-marginx - sx)
-	var fromy = R.ir(marginy + sy, height-1-marginy - sy)
-	return [fromx-sx, fromy-sy, fromx+sx, fromy+sy]
-
 func place_complex():
-	for _i in range(28):
-		var estate = get_boundary(24, 12, 4, 4)
+	for _i in range(16):
+		var fromx = R.ir(12 + 4, int(width/2) - 5)
+		var fromy = R.ir(8 + 4, height-1-8 - 4)
+		var estate = [fromx-4, fromy-4, fromx+4, fromy+4]
 		make_vault(estate, "base/shack", R.ir(0, 3))
 
 func is_estate_vacant(px, py):
@@ -43,14 +45,19 @@ func is_estate_vacant(px, py):
 	return true
 
 func place_building(_building):
-	var cellsx = (width-25)/8
-	var cellsy = (height-25)/8
+	var cellsx = (width-16)/8
+	var cellsy = (height-16)/8
 	for cx in range(cellsx):
 		for cy in range(cellsy):
 			if is_estate_vacant(cx, cy):
+				var midgap
+				if cy < cellsy/2:
+					midgap = -4
+				else:
+					midgap = 4
 				estates.append([cx, cy])
-				var x1 = cx*10 + 12
-				var y1 = cy*10 + 12
+				var x1 = cx*8 + 8
+				var y1 = cy*8 + 8+midgap
 				var estate = [x1-4, y1-4, x1+4, y1+4]
 				make_vault(estate, "base/" + _building, R.ir(0, 3))
 				return true

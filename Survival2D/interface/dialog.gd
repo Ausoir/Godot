@@ -140,7 +140,7 @@ func add_tavern():
 		page_data.opt.append(option)
 
 func add_bulletin():
-	var lseed = G.vars.base.get("tavern", 0)
+	var lseed = G.vars.baseseed
 	R.set_seed(lseed)
 	var items = ""
 	var count = 0

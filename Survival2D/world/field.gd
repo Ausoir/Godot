@@ -32,7 +32,7 @@ func apply_autotile(x, y):
 		var dirs = []
 		for i in range(4):
 			var adj = pos.get_adjacent(i * 2)
-			if adj.height == pos.height:
+			if adj.height == pos.height or adj == pos:
 				dirs.append(i)
 		var v = G.get_autotile_coord(dirs)
 		var tileid = G.world.tilemap.get_cell(x, y)

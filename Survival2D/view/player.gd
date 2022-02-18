@@ -2,9 +2,9 @@ extends "res://objects/units/controller.gd"
 
 const Step = preload("res://view/Step.tscn")
 
-onready var camera = $Camera
-onready var cursor = $Cursor
-onready var steps = $Steps
+onready var n_camera = $Camera
+onready var n_cursor = $Cursor
+onready var n_steps = $Steps
 
 var p_id: int
 var p_name: String
@@ -27,10 +27,10 @@ func on_assign():
 	var bodyparts = bodytype_list.get(unit.dat.g("type"))
 	G.ui.update_equipables(bodyparts)
 	G.ui.update_inventory()
-	if camera.sight_frame > 0:
-		camera.darken()
-	camera.sight_range = unit.dat.g("perception", 18)
-	camera.update(unit.pos, last_pos, unit.sight_col)
+	if n_camera.sight_frame > 0:
+		n_camera.darken()
+	n_camera.sight_range = unit.dat.g("perception", 18)
+	n_camera.update(unit.pos, last_pos, unit.sight_col)
 	pathing.can_open = false
 	pathing.smash_to = 0
 	pathing.iterations = 32
@@ -42,11 +42,11 @@ func _on_input(event: InputEvent):
 			var mouse_pos = get_cursor_position(event.global_position)
 			if event.pressed:
 				if event.button_index == BUTTON_WHEEL_UP:
-					if camera.zoom.x > .5:
-						camera.zoom *= .8
+					if n_camera.zoom.x > .5:
+						n_camera.zoom *= .8
 				elif event.button_index == BUTTON_WHEEL_DOWN:
-					if camera.zoom.x < 2:
-						camera.zoom *= 1.2
+					if n_camera.zoom.x < 2:
+						n_camera.zoom *= 1.2
 				elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
 					pass
 				elif Input.is_action_just_pressed("move"):
@@ -58,7 +58,6 @@ func _on_input(event: InputEvent):
 					tasks.clear()
 					var mousetarget = G.pixel_to_pos(mouse_pos)
 					var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
-					G.field.apply_autotile(mousetarget.x, mousetarget.y)
 					if tile:
 						auto_attack_priority = unit.pos.direction_to(tile)
 						target = tile
@@ -70,33 +69,51 @@ func _on_input(event: InputEvent):
 								move_to(tile, 1)
 								tasks.append(["interact", target])
 							else:
-								cursor.position = G.pos_to_pixel(mousetarget)
-								cursor.show()
+								n_cursor.position = G.pos_to_pixel(mousetarget)
+								n_cursor.show()
 			elif Input.is_action_just_released("move"):
-				cursor.hide()
+				n_cursor.hide()
 			elif Input.is_action_just_released("use"):
-				cursor.hide()
+				n_cursor.hide()
+		elif event is InputEventKey:
+			var t
+			if unit.delay == 0:
+				if Input.is_action_pressed("attack"):
+					var tile = unit.pos.get_adjacent(auto_attack_priority)
+					tasks.append(["smash", tile])
+					return
+				elif Input.is_action_pressed("move_up"):
+					if Input.is_action_pressed("move_left"):
+						auto_attack_priority = 7
+					elif Input.is_action_pressed("move_right"):
+						auto_attack_priority = 1
+					else:
+						auto_attack_priority = 0
+				elif Input.is_action_pressed("move_down"):
+					if Input.is_action_pressed("move_left"):
+						auto_attack_priority = 5
+					elif Input.is_action_pressed("move_right"):
+						auto_attack_priority = 3
+					else:
+						auto_attack_priority = 4
+				elif Input.is_action_pressed("move_right"):
+					auto_attack_priority = 2
+				elif Input.is_action_pressed("move_left"):
+					auto_attack_priority = 6
+				else:
+					return
+				t = unit.pos.get_adjacent(auto_attack_priority)
+				if t != null:
+					move_to(t, 0, false)
 	elif event is InputEventMouseButton:
 		if event.pressed and Input.is_action_just_pressed("use"):
 			$menu.clear()
-	elif event is InputEventKey:
-		var t
-		if Input.is_action_just_pressed("move_left"):
-			t = unit.pos.get_adjacent(0)
-		elif Input.is_action_just_pressed("move_up"):
-			t = unit.pos.get_adjacent(1)
-		elif Input.is_action_just_pressed("move_right"):
-			t = unit.pos.get_adjacent(2)
-		elif Input.is_action_just_pressed("move_down"):
-			t = unit.pos.get_adjacent(3)
-		if t != null:
-			move_to(t)
 
 func get_cursor_position(mouse):
 	var screen_mouse = mouse * G.ui.screen_ratio
 	screen_mouse -= G.ui.screen_size / 2
-	return Vector2(screen_mouse.x*camera.zoom.x + camera.position.x,
-					screen_mouse.y*camera.zoom.y + camera.position.y)
+	return Vector2(screen_mouse.x*n_camera.zoom.x + n_camera.position.x,
+					screen_mouse.y*n_camera.zoom.y + n_camera.position.y)
 
 func on_turn():
 	var cds = !unit.cooldowns.empty()
@@ -106,7 +123,7 @@ func on_turn():
 	if last_pos != unit.pos or view_dirty:
 		if last_pos != unit.pos and unit.pos.is_edge():
 			tasks.append(["enter", "exit", 3])
-		camera.update(last_pos, unit.pos, unit.sight_col)
+		n_camera.update(last_pos, unit.pos, unit.sight_col)
 		last_pos = unit.pos
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
@@ -114,7 +131,7 @@ func on_turn():
 	G.ui.update_hud()
 
 func _process(_delta):
-	camera.position = unit.position
+	n_camera.position = unit.position
 
 func perform_auto_attack():
 	if auto_attack and unit.delay == 0 and tasks.empty():
@@ -127,8 +144,8 @@ func perform_auto_attack():
 	return false
 
 func remove_steps():
-	for child in steps.get_children():
-		steps.remove_child(child)
+	for child in n_steps.get_children():
+		n_steps.remove_child(child)
 		child.queue_free()
 
 func show_steps():
@@ -140,7 +157,7 @@ func show_steps():
 			var new_step = task[1].to_vector()
 			var p = (new_step - last_step).angle()
 			step.rotate(p)
-			steps.add_child(step)
+			n_steps.add_child(step)
 			last_step = new_step
 
 func aggro(npcs):
@@ -152,7 +169,7 @@ func interact(tile):
 	if G.ui.on:
 		G.ui.clear()
 	else:
-		cursor.hide()
+		n_cursor.hide()
 		if !tile.items.empty():
 			var item = tile.get_priority_item([unit])
 			if item != null:
@@ -171,32 +188,38 @@ func interact(tile):
 						auto_attack_priority = unit.pos.direction_to(tile)
 						tasks.append(["attack", tile])
 				elif item.item_type == "item":
-					if Input.is_action_pressed("shift"):
-						tasks.append(["smash", target])
+					var onuse = item.dat.g("onuse")
+					if onuse != null:
+						G.cmd(onuse, item)
 					else:
-						var onuse = item.dat.g("onuse")
-						if onuse != null:
-							G.cmd(onuse, item)
-						else:
-							G.ui.search_inventory(tile)
+						G.ui.search_inventory(tile)
 
-func move_to(tile, reach=0):
+func move_to(tile, reach=0, _path=true):
 	if tile.is_cols(unit.col):
 		reach = 1
 	var distance = unit.pos.distance_to(tile)
 	if reach == 0 and distance == 1:
 		if !tile.items.empty():
 			var item = tile.get_priority_item([unit])
-			if item != null and item.item_type == "unit" and item.faction == unit.faction:
-				unit.swap(item)
-				return
-	if distance <= reach:
-		return unit.pos
-	cursor.position = G.pos_to_pixel(tile)
-	cursor.show()
-	path_to(tile, reach)
-	remove_steps()
-	show_steps()
+			if item != null:
+				if item.item_type == "unit" and item.faction == unit.faction:
+					unit.swap(item)
+					return
+				elif item.dat.g("onuse"):
+					var onuse = item.dat.g("onuse")
+					if onuse != null:
+						G.cmd(onuse, item)
+						return
+	if _path:
+		if distance <= reach:
+			return unit.pos
+		n_cursor.position = G.pos_to_pixel(tile)
+		n_cursor.show()
+		path_to(tile, reach)
+		remove_steps()
+		show_steps()
+	else:
+		path_to(tile, reach)
 
 func aim_ability(idx):
 	Input.set_default_cursor_shape(Input.CURSOR_CROSS)
@@ -243,6 +266,7 @@ func load_data(_data):
 	player_unit.dat.load_data(_data.unit_data)
 	if player_unit.dat.g("type") == "man":
 		player_unit.load_item_data(_data)
+		player_unit.set_seed()
 	player_unit.buffs.from_data(_data.unit_buff)
 	if G.world.map_name != "base":
 		var adjs

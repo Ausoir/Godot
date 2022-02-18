@@ -18,6 +18,9 @@ func fr(_from, _to):
 func f():
 	return randf()
 
+func i():
+	return randi()
+
 func r_arr(arr):
 	if arr and !arr.empty():
 		return arr[ir(0, len(arr)-1)]

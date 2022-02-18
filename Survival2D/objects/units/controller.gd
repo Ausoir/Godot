@@ -50,8 +50,6 @@ func perform(task):
 				target = target.pos
 			unit.face_toward(target)
 			unit.set_state("attack")
-	elif task[0] == "swap":
-		unit.select_weapon(task[1])
 	elif task[0] == "pave":
 		if unit.pos.distance_to(task[1]) <= 1:
 			if !interact(task[1]):
@@ -60,14 +58,19 @@ func perform(task):
 		if unit.pos.distance_to(task[1]) <= 1:
 			interact(task[1])
 	elif task[0] == "smash":
-		target = task[1]
-		if validate_target():
-			unit.face_toward(target)
-			if unit.pos.distance_to(target) <= 1:
-				unit.set_animation("attack")
-				var dmg = unit.get_damage("bash", 100)
-				unit.delay = 5
-				target.smash(dmg)
+		if unit.pos.distance_to(task[1]) <= 1:
+			for i in task[1].items:
+				if i != unit:
+					if i.item_type == "unit":
+						target = i
+						if validate_target():
+							perform(["attack", i])
+							return
+			unit.face_toward(task[1])
+			unit.set_animation("attack")
+			var dmg = unit.get_damage("bash", 100)
+			unit.delay = 5
+			task[1].smash(dmg)
 	elif task[0] == "enter":
 		if task[1] == "exit":
 			if self == G.you:

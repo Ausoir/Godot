@@ -2,6 +2,7 @@ extends "res://objects/item.gd"
 
 const Ai = preload("res://objects/units/ai.gd")
 const Buffs = preload("res://objects/units/buffs.gd")
+const Healthbar = preload("res://interface/Health.tscn")
 const animation_map = {
 	"idle": 0,
 	"walk": 1,
@@ -14,14 +15,14 @@ const animation_map = {
 }
 const SKILL_SIZE = 12
 
-onready var node_sprites = $Sprites
-onready var animation = $Animation
-onready var sprite = $Sprites/Sprite
-onready var skeleton = $Skeleton2D
-onready var tween = $Tween
-onready var mat = sprite.material
+onready var n_sprites = $Sprites
+onready var n_animation = $Animation
+onready var n_sprite = $Sprites/Sprite
+onready var n_skeleton = $Skeleton2D
+onready var n_tween = $Tween
+onready var n_mat = n_sprite.material
+var n_healthbar
 
-var state = ""
 var delay = 0
 var flags
 
@@ -32,6 +33,7 @@ var deck = []
 var damage_taken = 0
 var cooldowns = {}
 var buffs = Buffs.new(self)
+var current_action = ""
 var last_skill = "wait"
 var sight_col = "1000"
 
@@ -45,6 +47,9 @@ func _ready():
 				count += 1
 	for i in dat.g("buffs", []):
 		G.fx(self, i)
+
+func set_seed():
+	pass
 
 func possess(ctlr = null):
 	if ctlr == null:
@@ -138,9 +143,8 @@ func get_damage(ptype, p):
 func set_delay(p):
 	delay = max(delay, p)
 
-func set_state(p, force=false):
+func set_state(state, force=false):
 	if force or delay == 0:
-		state = p
 		if state == "move":
 			var dir = pos.direction_to(controller.target)
 			if move(dir) != null:
@@ -171,19 +175,19 @@ func set_state(p, force=false):
 			set_animation(state)
 
 func set_animation(p):
+	current_action = p
 	var scale = delay
 	if scale > 0:
-		animation.play(p, -1, 1/(scale*.15))
 		if p == "knockout":
 			if "getup" in flags:
-				delay = int(delay / 2)
+				return
+		n_animation.play(p, -1, 1/(scale*.15))
 	else:
-		animation.play(p)
+		n_animation.play(p)
 
 func set_animation_direction(y):
 	if y != 0:
 		face(1)
-#	animtree["parameters/vertical/add_amount"] = y
 
 func draw_skill(type, mode=0):
 	var roll = R.ir(0, 99)
@@ -233,10 +237,13 @@ func hit(_type, dmg, _hitter):
 				return
 			else:
 				dmg -= block
+		if current_action == "knockout":
+			dmg *= 2
 		damage_taken += dmg
 		set_animation("hit")
 		delay = 2
 		buffs.on_interrupt("interrupt")
+		show_healthbar()
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
 		var health_percent = get_health()
 		G.display_damage(pos.to_pixel(), round(dmg), Color(1,health_percent,0))
@@ -244,15 +251,9 @@ func hit(_type, dmg, _hitter):
 			die()
 		else:
 			flash("red", health_percent + .1)
-			if health_percent < .25:
-				if !buffs.has("major injury"):
-					G.fx(self, "major injury")
-			elif health_percent < .5:
-				if !buffs.has("moderate injury"):
-					G.fx(self, "moderate injury")
-			elif health_percent < .8:
-				if !buffs.has("minor injury"):
-					G.fx(self, "minor injury")
+			if health_percent < .5:
+				if !buffs.has("injury"):
+					G.fx(self, "injury")
 	elif dmg < 0:
 		damage_taken += dmg
 		flash("green", dmg * -.2)
@@ -274,15 +275,15 @@ func on_turn():
 			cooldowns[i] -= 1
 
 func flash(color, dur):
-	tween.interpolate_property(mat, "shader_param/" + color,
+	n_tween.interpolate_property(n_mat, "shader_param/" + color,
 		1, 0, dur,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
+	n_tween.start()
 
 func face(p):
-	if (p > 0) != (node_sprites.scale.x > 0):
-		node_sprites.scale.x *= -1
-		skeleton.scale.x *= -1
+	if (p > 0) != (n_sprites.scale.x > 0):
+		n_sprites.scale.x *= -1
+		n_skeleton.scale.x *= -1
 
 func face_toward(p):
 	if p != null:
@@ -296,6 +297,9 @@ func die():
 	remove()
 
 func remove():
+	if n_healthbar != null:
+		n_healthbar.queue_free()
+		remove_child(n_healthbar)
 	if controller != null:
 		controller.remove()
 	$Shadow.queue_free()
@@ -306,4 +310,12 @@ func remove():
 	G.turn.remove(self)
 
 func is_visible():
-	return node_sprites.visible
+	return n_sprites.visible
+
+func show_healthbar():
+	if n_healthbar == null:
+		n_healthbar = Healthbar.instance()
+		add_child(n_healthbar)
+	var vit = dat.g("vitality", 1) * 2
+	n_healthbar.set_mhp(vit)
+	n_healthbar.set_hp(vit - damage_taken)

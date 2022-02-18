@@ -195,14 +195,14 @@ func fill(from, to, val):
 		for x in range(from.x, to.x+1):
 			base[y][x] = val
 
-func make_border(val, exc=[]):
+func make_border(val, exc=[], reach=0):
 	var list = []
 	for i in range(height):
-		list.append([i, 0])
-		list.append([i, width-1])
+		list.append([i, reach])
+		list.append([i, width-1-reach])
 	for i in range(width):
-		list.append([0, i])
-		list.append([height-1, i])
+		list.append([reach, i])
+		list.append([height-1-reach, i])
 	for i in list:
 		if not base[i[0]][i[1]] in exc:
 			base[i[0]][i[1]] = val

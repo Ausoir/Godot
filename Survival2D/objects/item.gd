@@ -1,8 +1,9 @@
 extends Node2D
 
 var id = 0
-var item_name = 'item'
 var item_type
+var item_name = 'item'
+var display_name
 var col = '0000'
 var dat
 var pos
@@ -13,6 +14,11 @@ var move_delay = 0
 var move_delay_speed = 3
 var light: int
 var hp = Vector2()
+
+func get_display_name():
+	if display_name == null:
+		return item_name
+	return display_name
 
 func place(p):
 	p.add_item(self)
@@ -61,7 +67,7 @@ func relocate(to, instant=false):
 		set_process(true)
 	prev_pos = pos
 	to.add_item(self)
-	if to.sight_frame >= G.you.camera.sight_frame - 1:
+	if to.sight_frame >= G.you.n_camera.sight_frame - 1:
 		show()
 	else:
 		hide()

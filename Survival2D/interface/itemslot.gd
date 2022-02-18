@@ -30,7 +30,7 @@ func is_item_valid(p):
 	var valid_part = p.dat.g("part", "any") == part
 	if part == "any":
 		valid_part = true
-	var valid_size = p.dat.g("size", 2) <= allow_type
+	var valid_size = p.dat.g("size", 1) <= allow_type
 	return valid_part and valid_size
 
 func assign(p):
@@ -73,7 +73,7 @@ func unassign():
 
 func _on_mouse_entered():
 	if item != null:
-		G.ui.describe("item", item.item_name, item.dat.v)
+		G.ui.describe("item", item.get_display_name(), item.dat.v)
 
 func _on_mouse_exited():
 	G.ui.description.hide()
@@ -108,7 +108,6 @@ func take_from():
 	if item != null and check_weight(item):
 		var taken = part == "none"
 		taken = taken or (part == "inv" and G.you.unit.unstore(item))
-		taken = taken or (part[0] == "#" and G.you.unit.unsheathe(int(part[1])))
 		taken = taken or G.you.unit.unequip(part) != null
 		if taken:
 			var r = unassign()
@@ -128,9 +127,6 @@ func place_to(pitem):
 		assign(pitem.item)
 	elif part == "inv":
 		if !G.you.unit.store(pitem.item):
-			return false
-	elif part[0] == "#":
-		if !G.you.unit.sheathe(int(part[1]), pitem.item):
 			return false
 	else:
 		if !G.you.unit.equip(part, pitem.item):

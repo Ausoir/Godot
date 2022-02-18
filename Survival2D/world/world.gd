@@ -40,10 +40,6 @@ func create(_type):
 		generator = load("res://world/generator_dungeon.gd").new()
 		generator.generate()
 		place_mobs("g_urban", 44)
-	elif map_name == "tower":
-		generator = load("res://world/generator_tower.gd").new()
-		generator.generate()
-		place_mobs("g_urban", 36)
 	elif map_name == "lab":
 		generator = load("res://world/generator_maze.gd").new()
 		generator.generate()
