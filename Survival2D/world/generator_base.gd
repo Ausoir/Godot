@@ -6,7 +6,7 @@ var estates = []
 var fixed_buildings = []
 
 func generate():
-	.create(100, 40)
+	.create(80, 40)
 	G.field.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
@@ -21,19 +21,20 @@ func generate():
 			if value > 0.75:
 				output[y][x] = ['rock wall']
 			elif value > 0.5:
-				output[y][x] = ['grass', ['old tree', 12, '/', ['tree', 4, '/', ['young tree', 2]]]]
+				output[y][x] = ['grass', ['old tree', 8, '/', ['tree', 2, '/', ['young tree', 1, '/', ['shrub', 4]]]]]
 			elif value > 0.3:
-				output[y][x] = ['dirt', ['boulder', 2, '/', ['small boulder', 3]]]
+				output[y][x] = ['dirt', ['boulder', 1, '/', ['small boulder', 2]]]
 			else:
 				output[y][x] = ['water']
+	make_vault([0, 0, 54, 39], "map_base", -1)
 	place_complex()
 	place_buildings()
 	paint_map()
 	paint_spawn(0)
 
 func place_complex():
-	for _i in range(16):
-		var fromx = R.ir(12 + 4, int(width/2) - 5)
+	for _i in range(G.vars.base.size() + 1):
+		var fromx = R.ir(12 + 4, int(width*2/5) - 5)
 		var fromy = R.ir(8 + 4, height-1-8 - 4)
 		var estate = [fromx-4, fromy-4, fromx+4, fromy+4]
 		make_vault(estate, "base/shack", R.ir(0, 3))

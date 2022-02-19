@@ -174,7 +174,6 @@ func _ready():
 
 
 func create_game(_player_units):
-	R.set_seed()
 	G.world.create("base")
 	for unit in _player_units:
 		var player_pos = G.field.get_spawn_point()
@@ -202,7 +201,13 @@ func load_game():
 	if save_game.file_exists("user://savegame.save"):
 		save_game.open("user://savegame.save", File.READ)
 		var node_data = parse_json(save_game.get_line())
+		if node_data == null:
+			save_game.close()
+			save_game = File.new()
+			save_game.open("res://assets/template.save", File.READ)
+			node_data = parse_json(save_game.get_line())
 		G.vars = node_data
+		R.set_seed(G.vars.seed)
 		if "forcemap" in G.vars:
 			G.world.create(G.vars["forcemap"])
 		else:

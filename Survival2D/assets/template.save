@@ -1,0 +1,2 @@
+{"time":0,"base":["chiefshack","craftshop","dormitory","farm","storage","tavern"],"baseseed":123,"forcemap":"base","map":"base","seed":3519284107,"supplies":["counter","chest"]}
+{"ally_data":[],"equip":{},"id":1,"inv":[],"unit":"human","unit_buff":[],"unit_data":{"abilities":["teleport","might","summon enemy","summon ally"],"agility":4,"flags":["user"],"img":"units/zombie","intelligence":4,"move speed":2,"perception":15,"quest":0,"seed":1541923821,"size":0,"skills":["tackle","bash","redemption","parry","dodge","parkour"],"strength":4,"type":"man","vitality":4}}

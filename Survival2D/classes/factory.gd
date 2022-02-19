@@ -69,6 +69,7 @@ func make_mob(arg, pos):
 						if item != null:
 							unit.auto_equip(item)
 			unit.item_name = arg
+			unit.fill_skills()
 			return unit
 		else:
 			push_error("Invalid unit "+str(mob_data[1]))
@@ -78,7 +79,7 @@ func make_unit(arg, pos):
 	if unit_data != null:
 		var r = Unit.instance()
 		var sprite
-		if unit_data.get("type") == "man":
+		if unit_data.get("type") != "other":
 			r.set_script(Script_Humanoid)
 		else:
 			r.set_script(Script_Unit)

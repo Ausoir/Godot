@@ -7,6 +7,7 @@ onready var shademap = $Shademap
 onready var items = $Items
 onready var players = $Players
 onready var others = $Others
+onready var canvas = $Canvas
 var daytime = true
 var map_name: String
 var team = [[], [], []]
@@ -68,21 +69,25 @@ func place_mobs(type, num):
 
 func set_dark(x, y):
 	if shademap.get_cell(x, y) != 0:
-		shademap.set_cell(x, y, 0)
-		G.field.tiles[y][x].set_visible(false)
-
-func set_light(x, y):
-	if shademap.get_cell(x, y) == 0:
-		var light = G.field.tiles[y][x].light
-		if light >= 0:
-			shademap.set_cell(x, y, G.field.tiles[y][x].shade)
+		var tile = G.field.tiles[y][x]
+		if tile.light >= 0:
+			shademap.set_cell(x, y, 0)
 		else:
 			shademap.set_cell(x, y, 1)
-		G.field.tiles[y][x].set_visible(true)
+		tile.set_visible(false)
+
+func set_light(x, y):
+	if shademap.get_cell(x, y) < 2:
+		var tile = G.field.tiles[y][x]
+		if tile.light >= 0:
+			shademap.set_cell(x, y, tile.shade)
+		else:
+			shademap.set_cell(x, y, 2)
+		tile.set_visible(true)
 
 func update_light(x, y):
-	var light = G.field.tiles[y][x].light
-	if light >= 0:
-		shademap.set_cell(x, y, G.field.tiles[y][x].shade)
+	var tile = G.field.tiles[y][x]
+	if tile.light >= 0:
+		shademap.set_cell(x, y, tile.shade)
 	else:
-		shademap.set_cell(x, y, 1)
+		shademap.set_cell(x, y, 2)

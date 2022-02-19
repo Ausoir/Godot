@@ -130,9 +130,9 @@ func run_cmds(cmds):
 			host.update_flags()
 		elif type == "respite":
 			host.deck = []
-			for i in range(host.SKILL_SIZE, host.skills.size()):
-				if host.skills[i] != null:
-					host.deck.append(host.skills[i])
+			var actives = host.dat.g("actives", [])
+			for i in actives:
+				host.deck.append(i)
 		elif type == "cmd":
 			G.cmd([cmd.slice(1, cmd.size() - 1)], host)
 		elif type == "end":

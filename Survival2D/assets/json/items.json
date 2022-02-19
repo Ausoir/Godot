@@ -174,6 +174,16 @@
 		"weight": 16,
 		"col": "0110",
 	},
+	"torch": {
+		"img": "tiles/torch",
+		"mat": "wood",
+		"col": "0000",
+		"durability": 2,
+		"light": 4,
+		"weight": 1,
+		"onturn": [["particle", "Fire", "$hp"]],
+		"turn": 4,
+	},
 	"campfire": {
 		"img": "tiles/campfire_lit",
 		"mat": "wood",
@@ -295,7 +305,7 @@
 		"durability": 5,
 		"weight": 12,
 		"col": "1110",
-		"onload": [["order", "top", "$h"]],
+		"onuse": [["loot", "books"]],
 	},
 	"mirror": {
 		"img": "tiles/mirror",
@@ -317,7 +327,7 @@
 		"durability": 8,
 		"weight": 12,
 		"col": "1110",
-		"onload": [["order", "top", "$h"]],
+		"onuse": [["loot", "fridge"]],
 	},
 	"shower": {
 		"img": "tiles/shower",
@@ -366,7 +376,23 @@
 		"weight": 5,
 		"durability": 4,
 		"col": "0010",
-		"onload": [["order", "top", "$h"]],
+		"onuse": [["loot", "chest"]],
+	},
+	"dresser": {
+		"img": "tiles/dresser",
+		"mat": "metal",
+		"weight": 5,
+		"durability": 6,
+		"col": "0110",
+		"onuse": [["loot", "dresser"]],
+	},
+	"wardrobe": {
+		"img": "tiles/wardrobe",
+		"mat": "metal",
+		"weight": 5,
+		"durability": 6,
+		"col": "1110",
+		"onuse": [["loot", "clothing"]],
 	},
 	"bulletin": {
 		"img": "tiles/bulletin",
@@ -445,6 +471,13 @@
 		"weight": 8,
 		"col": "0010",
 	},
+	"chainfence": {
+		"img": "autotiles/chainfence_autotile",
+		"autotile": 1,
+		"mat": "metal",
+		"weight": 16,
+		"col": "0100",
+	},
 	"wire": {
 		"img": "autotiles/wire_autotile",
 		"autotile": 1,
@@ -458,6 +491,13 @@
 		"durability": 1,
 		"slow": 1,
 		"col": "0000",
+	},
+	"shrub": {
+		"img": "tiles/shrub",
+		"mat": "wood",
+		"durability": 6,
+		"slow": 4,
+		"col": "1000",
 	},
 	"old tree": {
 		"img": "sized/tree1",

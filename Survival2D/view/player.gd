@@ -14,7 +14,6 @@ var aiming = -1
 var last_pos
 var view_dirty = false
 
-var enabled = true
 var allies = []
 
 
@@ -37,77 +36,43 @@ func on_assign():
 	pathing.pathing_times = 0
 
 func _on_input(event: InputEvent):
-	if enabled and !locked:
-		if event is InputEventMouseButton:
-			var mouse_pos = get_cursor_position(event.global_position)
-			if event.pressed:
-				if event.button_index == BUTTON_WHEEL_UP:
-					if n_camera.zoom.x > .5:
-						n_camera.zoom *= .8
-				elif event.button_index == BUTTON_WHEEL_DOWN:
-					if n_camera.zoom.x < 2:
-						n_camera.zoom *= 1.2
-				elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
-					pass
-				elif Input.is_action_just_pressed("move"):
-					var mousetarget = G.pixel_to_pos(mouse_pos)
-					target = G.field.get_tile(mousetarget.x, mousetarget.y)
-					if target != null:
-						move_to(target)
-				elif Input.is_action_just_pressed("use"):
-					tasks.clear()
-					var mousetarget = G.pixel_to_pos(mouse_pos)
-					var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
-					if tile:
-						auto_attack_priority = unit.pos.direction_to(tile)
-						target = tile
-						if aiming != -1:
-							perform_ability(aiming)
-							stop_aim()
+	if event is InputEventMouseButton:
+		var mouse_pos = get_cursor_position(event.global_position)
+		if event.pressed:
+			if event.button_index == BUTTON_WHEEL_UP:
+				if n_camera.zoom.x > .5:
+					n_camera.zoom *= .8
+			elif event.button_index == BUTTON_WHEEL_DOWN:
+				if n_camera.zoom.x < 2:
+					n_camera.zoom *= 1.2
+			elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
+				pass
+			elif Input.is_action_just_pressed("move"):
+				var mousetarget = G.pixel_to_pos(mouse_pos)
+				target = G.field.get_tile(mousetarget.x, mousetarget.y)
+				if target != null:
+					move_to(target)
+			elif Input.is_action_just_pressed("use"):
+				tasks.clear()
+				var mousetarget = G.pixel_to_pos(mouse_pos)
+				var tile = G.field.get_tile(mousetarget.x, mousetarget.y)
+				if tile:
+					auto_attack_priority = unit.pos.direction_to(tile)
+					target = tile
+					if aiming != -1:
+						perform_ability(aiming)
+						stop_aim()
+					else:
+						if !tile.items.empty():
+							move_to(tile, 1)
+							tasks.append(["interact", target])
 						else:
-							if !tile.items.empty():
-								move_to(tile, 1)
-								tasks.append(["interact", target])
-							else:
-								n_cursor.position = G.pos_to_pixel(mousetarget)
-								n_cursor.show()
-			elif Input.is_action_just_released("move"):
-				n_cursor.hide()
-			elif Input.is_action_just_released("use"):
-				n_cursor.hide()
-		elif event is InputEventKey:
-			var t
-			if unit.delay == 0:
-				if Input.is_action_pressed("attack"):
-					var tile = unit.pos.get_adjacent(auto_attack_priority)
-					tasks.append(["smash", tile])
-					return
-				elif Input.is_action_pressed("move_up"):
-					if Input.is_action_pressed("move_left"):
-						auto_attack_priority = 7
-					elif Input.is_action_pressed("move_right"):
-						auto_attack_priority = 1
-					else:
-						auto_attack_priority = 0
-				elif Input.is_action_pressed("move_down"):
-					if Input.is_action_pressed("move_left"):
-						auto_attack_priority = 5
-					elif Input.is_action_pressed("move_right"):
-						auto_attack_priority = 3
-					else:
-						auto_attack_priority = 4
-				elif Input.is_action_pressed("move_right"):
-					auto_attack_priority = 2
-				elif Input.is_action_pressed("move_left"):
-					auto_attack_priority = 6
-				else:
-					return
-				t = unit.pos.get_adjacent(auto_attack_priority)
-				if t != null:
-					move_to(t, 0, false)
-	elif event is InputEventMouseButton:
-		if event.pressed and Input.is_action_just_pressed("use"):
-			$menu.clear()
+							n_cursor.position = G.pos_to_pixel(mousetarget)
+							n_cursor.show()
+		elif Input.is_action_just_released("move"):
+			n_cursor.hide()
+		elif Input.is_action_just_released("use"):
+			n_cursor.hide()
 
 func get_cursor_position(mouse):
 	var screen_mouse = mouse * G.ui.screen_ratio
@@ -125,6 +90,7 @@ func on_turn():
 			tasks.append(["enter", "exit", 3])
 		n_camera.update(last_pos, unit.pos, unit.sight_col)
 		last_pos = unit.pos
+		view_dirty = false
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
 	perform_auto_attack()
@@ -132,6 +98,37 @@ func on_turn():
 
 func _process(_delta):
 	n_camera.position = unit.position
+	if unit.delay == 0:
+		if Input.is_action_pressed("attack"):
+			var tile = unit.pos.get_adjacent(auto_attack_priority)
+			tasks.append(["smash", tile])
+		elif Input.is_action_pressed("move_up"):
+			if Input.is_action_pressed("move_left"):
+				key_move(7)
+			elif Input.is_action_pressed("move_right"):
+				key_move(1)
+			else:
+				key_move(0)
+		elif Input.is_action_pressed("move_down"):
+			if Input.is_action_pressed("move_left"):
+				key_move(5)
+			elif Input.is_action_pressed("move_right"):
+				key_move(3)
+			else:
+				key_move(4)
+		elif Input.is_action_pressed("move_right"):
+			key_move(2)
+		elif Input.is_action_pressed("move_left"):
+			key_move(6)
+
+func key_move(dir):
+	if !G.ui.on:
+		auto_attack_priority = dir
+		var t = unit.pos.get_adjacent(auto_attack_priority)
+		if Input.is_action_pressed("shift"):
+			interact(t)
+		else:
+			move_to(t, 0, false)
 
 func perform_auto_attack():
 	if auto_attack and unit.delay == 0 and tasks.empty():
@@ -195,8 +192,6 @@ func interact(tile):
 						G.ui.search_inventory(tile)
 
 func move_to(tile, reach=0, _path=true):
-	if tile.is_cols(unit.col):
-		reach = 1
 	var distance = unit.pos.distance_to(tile)
 	if reach == 0 and distance == 1:
 		if !tile.items.empty():
@@ -205,11 +200,13 @@ func move_to(tile, reach=0, _path=true):
 				if item.item_type == "unit" and item.faction == unit.faction:
 					unit.swap(item)
 					return
-				elif item.dat.g("onuse"):
+				elif item.dat.g("onuse") and tile.is_cols(unit.col):
 					var onuse = item.dat.g("onuse")
 					if onuse != null:
 						G.cmd(onuse, item)
 						return
+	if distance == 1 and tile.is_cols(unit.col):
+		return
 	if _path:
 		if distance <= reach:
 			return unit.pos
@@ -239,7 +236,7 @@ func remove():
 		player_unit.possess(self)
 
 func on_leave():
-	G.travel("base", !G.world.daytime)
+	G.travel("base")
 
 func save_data(remove_buffs=true):
 	if remove_buffs:
@@ -255,7 +252,7 @@ func save_data(remove_buffs=true):
 		"unit_buff": unit.buffs.to_data(),
 		"ally_data": ally_data
 	}
-	if unit.dat.g("type") == "man":
+	if unit.dat.g("type") != "other":
 		save_dict = unit.update_save_data(save_dict)
 	return save_dict
 
@@ -264,20 +261,19 @@ func load_data(_data):
 	var player_unit = G.cmd([["make", _data.unit, player_pos]])
 	player_unit.possess(self)
 	player_unit.dat.load_data(_data.unit_data)
-	if player_unit.dat.g("type") == "man":
+	if player_unit.dat.g("type") != "other":
 		player_unit.load_item_data(_data)
 		player_unit.set_seed()
 	player_unit.buffs.from_data(_data.unit_buff)
-	if G.world.map_name != "base":
-		var adjs
-		var adj = unit.pos
-		for i in _data.ally_data:
-			adjs = adj.get_available_adjacents("0100")
-			adj = R.r_arr(adjs)
-			if adj == null:
-				adj = unit.pos
-			var ally = G.cmd([["make", i, adj]])
-			allies.append(ally)
+	var adjs
+	var adj = unit.pos
+	for i in _data.ally_data:
+		adjs = adj.get_available_adjacents("0100")
+		adj = R.r_arr(adjs)
+		if adj == null:
+			adj = unit.pos
+		var ally = G.cmd([["make", i, adj]])
+		allies.append(ally)
 
 func on_map_clear():
 	for ally in allies:

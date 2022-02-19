@@ -121,13 +121,13 @@ func make_smooth(map, level):
 func interpolate(arg1, arg2, alpha):
 	return arg1 * (1 - alpha) + alpha * arg2
 
-func make_perlin(sx, sy, levels=5):
+func make_perlin(sx, sy, levels=5, start=1):
 	var r = make_random(sx, sy)
 	var map = make_base(sx, sy, 0)
 	var max_value = 0
-	for i in range(1, levels):
+	for i in range(start, levels):
 		max_value += float(1)/i
-	for level in range(1, levels):
+	for level in range(start, levels):
 		var graph = make_smooth(r, level)
 		for y in range(sy):
 			for x in range(sx):

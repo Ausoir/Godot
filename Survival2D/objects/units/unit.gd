@@ -13,7 +13,6 @@ const animation_map = {
 	"kick": 6,
 	"wait": 7,
 }
-const SKILL_SIZE = 12
 
 onready var n_sprites = $Sprites
 onready var n_animation = $Animation
@@ -27,10 +26,7 @@ var delay = 0
 var flags
 
 var controller
-var abilities
-var skills
 var deck = []
-var damage_taken = 0
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
@@ -38,13 +34,6 @@ var last_skill = "wait"
 var sight_col = "1000"
 
 func _ready():
-	update_stats()
-	var count
-	for _i in range(2):
-		count = 0
-		for i in range(SKILL_SIZE):
-			if move_skill(i, SKILL_SIZE + count):
-				count += 1
 	for i in dat.g("buffs", []):
 		G.fx(self, i)
 
@@ -68,66 +57,57 @@ func update_flags():
 	if controller != null:
 		controller.on_assign()
 
-func update_stats():
-	abilities = []
-	skills = []
-	for i in dat.g("abilities", []):
-		abilities.append(i)
-	for i in dat.g("skills", []):
-		skills.append(i)
-	for _i in range(skills.size(), SKILL_SIZE * 2):
-		skills.append(null)
+func fill_skills():
+	var skillsize = dat.g("skills", []).size()
+	for _i in range(skillsize):
+		if !activate_skill(0):
+			return
 
-func add_skill(p):
-	for i in range(SKILL_SIZE):
-		if skills[i] == null:
-			skills[i] = p
-			return true
-	return false
-
-func move_skill(idx1, idx2):
-	if skills[idx1] == null:
-		return false
+func swap_skills(type, idx1, idx2):
+	var skills = dat.g(type, [])
+	if idx2 >= skills.size():
+		var prim = skills[idx1]
+		skills.remove(idx1)
+		skills.append(prim)
 	else:
-		if idx1 < SKILL_SIZE and idx2 >= SKILL_SIZE:
-			var cost2 = 0
-			var passive_data2
-			if skills[idx2] != null:
-				passive_data2 = G.data.skill_data.get(skills[idx2])
-				cost2 = passive_data2.get("cost", 0)
-			var passive_data = G.data.skill_data.get(skills[idx1])
-			var cost = passive_data.get("cost", 0)
-			var agility = dat.g("agility", 1)
-			var slots = get_active_slots()
-			if slots + cost - cost2 > agility:
-				return false
-			if passive_data.target == "constant":
-				G.influence.do(self, skills[idx1], passive_data, 0)
-		elif idx1 >= SKILL_SIZE and idx2 < SKILL_SIZE:
-			var passive_data = G.data.skill_data.get(skills[idx1])
-			if passive_data != null and passive_data.target == "constant":
-				G.influence.do(self, skills[idx1], passive_data, 2)
-		var swap = skills[idx2]
-		skills[idx2] = skills[idx1]
-		skills[idx1] = swap
+		var prim = skills[idx1]
+		skills[idx1] = skills[idx2]
+		skills[idx2] = prim
+	dat.a(type, skills)
+
+func activate_skill(idx):
+	var agility = dat.g("agility", 1)
+	var skills = dat.g("skills", [])
+	var skill = skills[idx]
+	var skill_data = G.data.skill_data.get(skill)
+	if get_active_slots()+skill_data.get("cost", 0) <= agility:
+		skills.remove(idx)
+		var actives = dat.g("actives", [])
+		actives.append(skill)
+		dat.a("actives", actives)
+		dat.a("skills", skills)
 		return true
 
-func has_active(p):
-	for i in range(skills.size()):
-		if skills[i] == p:
-			return i >= SKILL_SIZE
-	return false
+func deactivate_skill(idx):
+	var actives = dat.g("actives", [])
+	var skills = dat.g("skills", [])
+	var active = actives[idx]
+	actives.remove(idx)
+	skills.append(active)
+	dat.a("actives", actives)
+	dat.a("skills", skills)
 
 func get_active_slots():
 	var slots = 0
-	for i in range(SKILL_SIZE-1, skills.size()):
-		if skills[i] != null:
-			var data = G.data.skill_data.get(skills[i])
-			if data != null:
-				slots += data.get("cost", 0)
+	var actives = dat.g("actives", [])
+	for i in range(actives.size()):
+		var data = G.data.skill_data.get(actives[i])
+		if data != null:
+			slots += data.get("cost", 0)
 	return slots
 
 func ability(idx):
+	var abilities = dat.g("abilities", [])
 	if idx < abilities.size():
 		var ability = abilities[idx]
 		G.fx(self, ability)
@@ -156,6 +136,8 @@ func set_state(state, force=false):
 				delay = max(1, ms)
 				set_move_delay_speed(delay)
 				set_animation("walk")
+				if !pos.visible and pos.sight_frame <= G.you.n_camera.sight_frame - 1:
+					G.make_particle("Sound", pos.to_pixel())
 			else:
 				delay = 1
 		elif state == "attack":
@@ -209,7 +191,7 @@ func draw_skill(type, mode=0):
 
 func roll_skill(type, mode=0):
 	var data
-	for skill in skills:
+	for skill in dat.g("actives", []):
 		data = G.data.skill_data.get(skill)
 		if data != null and data.target == type:
 			if R.r_percent(data.chance):
@@ -221,7 +203,8 @@ func get_health():
 	var vit = dat.g("vitality", 1) * 2
 	if vit <= 0:
 		return 0
-	return 1 - (damage_taken / vit)
+	var hurt = dat.g("damage", 0)
+	return 1 - (hurt / vit)
 
 func hit(_type, dmg, _hitter):
 	if dmg > 0:
@@ -239,7 +222,7 @@ func hit(_type, dmg, _hitter):
 				dmg -= block
 		if current_action == "knockout":
 			dmg *= 2
-		damage_taken += dmg
+		dat.add("damage", dmg, 0)
 		set_animation("hit")
 		delay = 2
 		buffs.on_interrupt("interrupt")
@@ -255,7 +238,7 @@ func hit(_type, dmg, _hitter):
 				if !buffs.has("injury"):
 					G.fx(self, "injury")
 	elif dmg < 0:
-		damage_taken += dmg
+		dat.add("damage", dmg, 0, dat.g("vitality"))
 		flash("green", dmg * -.2)
 		G.display_damage(pos.to_pixel(), round(dmg), Color.green)
 
@@ -318,4 +301,4 @@ func show_healthbar():
 		add_child(n_healthbar)
 	var vit = dat.g("vitality", 1) * 2
 	n_healthbar.set_mhp(vit)
-	n_healthbar.set_hp(vit - damage_taken)
+	n_healthbar.set_hp(vit - dat.g("damage", 0))

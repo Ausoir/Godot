@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/sandbag.png-3fbe8499fbfae8e10492cffd9354509e.stex"
+path="res://.import/sound.png-fd017ca1653508d75407584456f0382d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/tiles/sandbag.png"
-dest_files=[ "res://.import/sandbag.png-3fbe8499fbfae8e10492cffd9354509e.stex" ]
+source_file="res://assets/images/gui/sound.png"
+dest_files=[ "res://.import/sound.png-fd017ca1653508d75407584456f0382d.stex" ]
 
 [params]
 

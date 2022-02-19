@@ -114,7 +114,7 @@ func follow():
 		return false
 
 func set_objectives(_goal):
-	if _goal == "loot" and unit.dat.g("type") == "man":
+	if _goal == "loot" and unit.dat.g("type") != "other":
 		var strength = unit.dat.g("strength", 0)
 		objectives = []
 		for _i in range(unit.inventory.size()):

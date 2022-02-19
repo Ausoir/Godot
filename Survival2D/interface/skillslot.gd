@@ -24,7 +24,7 @@ func assign(p):
 func unassign():
 	if skill != null:
 		var item_sprite = get_node("Sprite")
-		var r = {"type":"skill", "item":skill, "sprite":item_sprite.duplicate(), "index":index}
+		var r = {"type":"skill", "item":skill, "sprite":item_sprite.duplicate(), "index":index, "active":active}
 		skill = null
 		item_sprite.hide()
 		return r
@@ -62,11 +62,19 @@ func take_from():
 		if r:
 			G.ui.set_drag_item(r)
 
-func place_to(pitem):
+func place_to(item):
 	if skill != null:
 		G.ui.set_drag_item(null)
 		take_from()
-	G.you.unit.move_skill(pitem.index, index)
+	if active == item.active:
+		if active:
+			G.you.unit.swap_skills("actives", item.index, index)
+		else:
+			G.you.unit.swap_skills("skills", item.index, index)
+	elif active:
+		G.you.unit.activate_skill(item.index)
+	else:
+		G.you.unit.deactivate_skill(item.index)
 	G.ui.set_drag_item(null)
 	G.ui.update_skills()
 	return true

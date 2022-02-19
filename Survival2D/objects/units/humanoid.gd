@@ -8,6 +8,7 @@ var gender = "m"
 var weight = 0
 
 func _ready():
+	._ready()
 	select_weapon("primary")
 
 func set_seed():
@@ -17,14 +18,15 @@ func set_seed():
 		dat.a("seed", sd)
 	else:
 		sd = int(sd)
-	var list
-	if sd % 2 == 0:
-		sd /= 2
-		list = G.data.vars_data.male
-	else:
-		list = G.data.vars_data.female
-	var sprite_name = list[sd % list.size()]
-	n_sprite.texture = G.data.get_image("units/human/"+sprite_name)
+	if dat.g("type") == "man":
+		var list
+		if sd % 2 == 0:
+			sd /= 2
+			list = G.data.vars_data.male
+		else:
+			list = G.data.vars_data.female
+		var sprite_name = list[sd % list.size()]
+		n_sprite.texture = G.data.get_image("units/human/"+sprite_name)
 
 func remove():
 	for i in overlay_sprites:
@@ -80,6 +82,7 @@ func select_weapon(p):
 	if item != null:
 		accomodate_stats(item)
 		create_overlay(p, item.dat.g("sprite"))
+	var abilities = dat.g("abilities", [])
 	if !abilities.empty() and abilities[0].begins_with("swap to "):
 		abilities.pop_front()
 	if secondary != null:
@@ -130,9 +133,13 @@ func unequip(part):
 	return false
 
 func accomodate_stats(item):
+	var abilities = dat.g("abilities", [])
 	abilities += item.dat.g("abilities", [])
-	for i in item.dat.g("skills", []):
-		add_skill(i)
+	dat.a("abilities", abilities)
+	var skills = dat.g("skills", [])
+	skills += item.dat.g("skills", [])
+	dat.a("skills", skills)
+	fill_skills()
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
 	for i in G.STATS:
@@ -142,10 +149,14 @@ func accomodate_stats(item):
 	weight += item.dat.g("weight", 0)
 
 func unaccomodate_stats(item):
+	var abilities = dat.g("abilities", [])
 	for i in item.dat.g("abilities", []):
 		abilities.erase(i)
-	for i in item.dat.g("passives", []):
+	dat.a("abilities", abilities)
+	var skills = dat.g("skills", [])
+	for i in item.dat.g("skills", []):
 		skills.erase(i)
+	dat.a("skills", skills)
 	for i in G.STATS:
 		var stat = item.dat.g(i)
 		if stat != null:

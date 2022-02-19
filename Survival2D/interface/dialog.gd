@@ -141,26 +141,22 @@ func add_tavern():
 
 func add_bulletin():
 	var lseed = G.vars.baseseed
-	R.set_seed(lseed)
+	R.set_seed(lseed + G.vars.time)
 	var items = ""
 	var count = 0
 	var opt = []
 	for _contract in range(R.ir(1, 5)):
 		var pop = R.ir(1, 6)
 		var map = R.ir(1, 3)
-		var night = R.b() and R.b()
 		var title
-		var night_text = ""
-		if night:
-			night_text = "night "
 		if map == 1:
-			title = "Urban "+night_text+"scavenge run ("
+			title = "Urban scavenge run ("
 		elif map == 2:
-			title = "Dungeon "+night_text+"crawl ("
+			title = "Dungeon crawl ("
 		elif map == 3:
-			title = "Explore "+night_text+"lab ("
+			title = "Explore lab ("
 		items += "[url="+str(count)+"]> [i]"+title+str(pop)+")[/i][/url]\n"
-		opt.append([map, pop, !night])
+		opt.append([map, pop])
 		count += 1
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 	if !("opt" in page_data):
@@ -168,7 +164,6 @@ func add_bulletin():
 	for i in range(count):
 		var map = opt[i][0]
 		var pop = opt[i][1]
-		var daytime = opt[i][2]
 		var title
 		if map == 1:
 			title = "urban"
@@ -177,8 +172,7 @@ func add_bulletin():
 		elif map == 3:
 			title = "lab"
 		var option = {"hover": ["text", "Location", title.capitalize()+"\nAllies: "+str(pop)]}
-		option["cmd"] = [["dat","a","$pu","social","follow"], ["travel", title, daytime]]
-		option["cmd"] += [["v","adj","$pup"],["make","leader scav","$t"],["ally"]]
+		option["cmd"] = [["dat","a","$pu","social","follow"], ["travel", title]]
 		var social = "leader"
 		for _i in range(pop-1):
 			var scav_type = R.r_arr(["light scav", "heavy scav", "scav", "scav"])

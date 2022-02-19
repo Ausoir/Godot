@@ -31,11 +31,15 @@ func equals(tag, compare):
 	var t = v.get(tag)
 	return t != null and t == compare
 
-func add(tag, val):
+func add(tag, val, pmin=null, pmax=null):
 	if !(tag in v):
 		v[tag] = val
 	else:
 		v[tag] += val
+	if pmin != null:
+		v[tag] = max(v[tag], pmin)
+	if pmax != null:
+		v[tag] = min(v[tag], pmax)
 
 func combine(_dict):
 	for key in _dict:

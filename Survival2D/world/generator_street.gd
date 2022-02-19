@@ -5,6 +5,7 @@ var biome
 var _stack = []
 var size
 var estates = []
+var spawn_points = []
 
 func generate():
 	.create(5, 5)
@@ -18,8 +19,11 @@ func generate():
 	biome_map = make_perlin(width, height, 2)
 	magnify(21)
 	paint_map()
-	if G.field.spawn_points.empty():
+	if spawn_points.empty():
 		paint_spawn(R.ir(0, 3))
+	else:
+		for i in spawn_points:
+			G.field.spawn_points.append(G.field.tiles[i[1]][i[0]])
 
 func paint_perlin(mx, my, sx, sy):
 	for y in range(sy):
@@ -27,23 +31,29 @@ func paint_perlin(mx, my, sx, sy):
 			var tx = mx + x
 			var ty = my + y
 			var value = biome[ty][tx]
+			var spawnable = false
 			if value > 0.75:
 				output[ty][tx] = ['rock wall']
 			elif value > 0.5:
-				output[ty][tx] = ['grass', ['old tree', 12, '/', ['tree', 4, '/', ['young tree', 2]]]]
-			elif value > 0.3:
+				output[ty][tx] = ['grass', ['old tree', 10, '/', ['tree', 4, '/', ['young tree', 2]]]]
+				spawnable = true
+			elif value > 0.25:
 				output[ty][tx] = ['dirt', ['boulder', 2, '/', ['small boulder', 3]]]
+				spawnable = true
 			else:
 				output[ty][tx] = ['water']
-			if tx == 0 or ty == 0:
-				if output[ty][tx][0] in ['dirt', 'grass'] and output[ty][tx].size() == 1:
-					G.field.spawn_points.append(G.field.tiles[ty][tx])
+			if tx == 0 or ty == 0 or tx == width*sx-1 or ty == height*sy-1:
+				if spawnable:
+					output[ty][tx] = [output[ty][tx][0]]
+					spawn_points.append([tx, ty])
 
 func magnify(mag):
 	var minimap = base
 	var default = G.data.palette_data.get(' ')
-	output = make_base(width*mag, height*mag, default)
-	biome = make_perlin(width*mag, height*mag, 5)
+	var mwidth = width * mag
+	var mheight = height * mag
+	output = make_base(mwidth, mheight, default)
+	biome = make_perlin(mwidth, mheight, 5, 2)
 	for y in range(height):
 		for x in range(width):
 			var mx = x*mag
@@ -69,8 +79,8 @@ func magnify(mag):
 						make_vault(estate, "map_road", 0)
 					elif get_tile(minimap, x, y+1, 1) == 1 and get_tile(minimap, x, y-1, 1) == 1:
 						make_vault(estate, "map_road", 1)
-	width *= mag
-	height *= mag
+	width = mwidth
+	height = mheight
 
 func fatten(block, roadh, roadv):
 	var r = []

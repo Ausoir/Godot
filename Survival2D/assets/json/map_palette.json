@@ -1,7 +1,7 @@
 {
 	" ": ["dirt"],
+	"~": ["water"],
 	",": ["grass"],
 	"_": ["wood floor"],
 	"+": ["tile"],
-	"~": ["water"],
 }

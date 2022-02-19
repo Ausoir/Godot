@@ -7,7 +7,6 @@ var sight_range = 8
 var target
 var tasks = []
 var delay = 0
-var locked = false
 var pathing = Pathing.new()
 
 func on_assign():
@@ -77,13 +76,23 @@ func perform(task):
 				if task[2] < 1:
 					G.you.on_leave()
 				else:
+					var adjs = unit.pos.get_available_adjacents("1000")
+					for tile in adjs:
+						for i in tile.items:
+							if i.item_type == "unit" and i.faction != unit.faction:
+								return
 					G.msg("Exiting map..." + str(task[2]))
 					unit.set_state("wait")
 					unit.delay = 8
-					G.influence.do(unit, "focus")
-					unit.buffs.extend("focus", 2)
-					if unit.pos.is_edge() and unit.buffs.has("focus"):
-						tasks.append(["enter", "exit", task[2]-1])
+					if unit.pos.is_edge():
+						var focused = unit.buffs.has("focus")
+						if !focused and task[2] == 3:
+							tasks.append(["enter", "exit", task[2]-1])
+							G.influence.do(unit, "focus")
+							unit.buffs.extend("focus", 12)
+						elif focused:
+							tasks.append(["enter", "exit", task[2]-1])
+							unit.buffs.extend("focus", 12)
 			else:
 				unit.pos.remove_item(unit)
 
@@ -125,7 +134,7 @@ func interact(_tile):
 					if pathing.can_open:
 						G.cmd(onuse, item)
 						return true
-				elif unit.dat.g("type") == "man":
+				elif unit.dat.g("type") != "other":
 					unit.store(item, true)
 					item.pos.remove_item(item)
 					return true

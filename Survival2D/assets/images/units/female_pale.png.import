@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/stock_pot.png-0b8dea28fa18beef8df0cafaf8e9b79f.stex"
+path="res://.import/female_pale.png-67edff2fda78b7a770f4b4849a0794c8.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/tiles/stock_pot.png"
-dest_files=[ "res://.import/stock_pot.png-0b8dea28fa18beef8df0cafaf8e9b79f.stex" ]
+source_file="res://assets/images/units/female_pale.png"
+dest_files=[ "res://.import/female_pale.png-67edff2fda78b7a770f4b4849a0794c8.stex" ]
 
 [params]
 

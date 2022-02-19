@@ -25,13 +25,13 @@ const Gfx = preload("res://classes/gfx.gd")
 var Damage_Label = load("res://objects/particles/Damage_Label.tscn")
 var influence = preload("res://objects/units/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
-var command = preload("res://classes/command.gd").new()
 var time = preload("res://classes/time.gd").new()
 var turn = preload("res://classes/turn.gd").new()
 var field = preload("res://world/field.gd").new()
 var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
+var command = load("res://classes/command.gd").new()
 var events = []
 var onloads = []
 var vars = {}
@@ -39,7 +39,6 @@ var you
 
 
 func _ready():
-	R.set_seed()
 	get_tree().get_root().call_deferred("add_child", G.ui)
 
 func process_onload():
@@ -131,7 +130,7 @@ func fx(host, effect):
 func make_particle(arg, pos, args=null):
 	var r = G.data.get_particle(arg)
 	r.position = pos
-	world.others.add_child(r)
+	r.add()
 	if args != null:
 		r.run_details(args)
 	return r
@@ -143,7 +142,8 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 	world.others.add_child(r)
 	r.set_damage(str(dmg), color, _scale)
 
-func travel(_map, _daytime):
+func travel(_map):
 	gamestate.save_game(_map)
-	G.world.daytime = _daytime
+	G.vars.time += 1
+	G.world.daytime = G.vars.time % 2 == 0
 	gamestate.load_game()

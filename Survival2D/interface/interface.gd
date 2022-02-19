@@ -3,7 +3,6 @@ extends CanvasLayer
 const ItemSlot = preload("res://interface/ItemSlot.tscn")
 const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
 const BuffSlot = preload("res://interface/BuffSlot.tscn")
-const PassiveSlot = preload("res://interface/PassiveSlot.tscn")
 const SkillSlot = preload("res://interface/SkillSlot.tscn")
 onready var menu = $Control/Menu
 onready var dialog = $Control/Dialog
@@ -180,7 +179,7 @@ func update_hud():
 		i.queue_free()
 		buffs.remove_child(i)
 	var count = 0
-	for i in G.you.unit.abilities:
+	for i in G.you.unit.dat.g("abilities", []):
 		var newslot = AbilitySlot.instance()
 		newslot.assign(i)
 		newslot.set_index(count)
@@ -210,7 +209,7 @@ func search_inventory(tile):
 		container_grid.remove_child(child)
 		child.queue_free()
 	for item in tile.items:
-		if item.item_type == "item" and item.dat.g("weight", 0) <= G.you.unit.dat.g("strength", 0):
+		if item.item_type == "item":
 			var slot = ItemSlot.instance()
 			slot.assign(item)
 			slot.tile = tile
@@ -248,15 +247,16 @@ func update_skills():
 	var slots = G.you.unit.get_active_slots()
 	var max_slots = G.you.unit.dat.g("agility", 1)
 	tab_skill_label.set_text("Slots: " + str(slots) + "/" + str(max_slots))
-	for i in range(G.you.unit.skills.size()):
-		var skill = G.you.unit.skills[i]
-		if skill != null:
-			var slot
-			if i >= G.you.unit.SKILL_SIZE:
-				slot = tab_skill_active.get_child(i - G.you.unit.SKILL_SIZE)
-			else:
-				slot = tab_skill_inactive.get_child(i)
-			slot.assign(skill)
+	var unit_skills = G.you.unit.dat.g("skills", [])
+	for i in range(unit_skills.size()):
+		var skill = unit_skills[i]
+		var slot = tab_skill_inactive.get_child(i)
+		slot.assign(skill)
+	var unit_actives = G.you.unit.dat.g("actives", [])
+	for i in range(unit_actives.size()):
+		var actives = unit_actives[i]
+		var slot = tab_skill_active.get_child(i)
+		slot.assign(actives)
 
 func update_status():
 	var header = tab_status.get_node("Panel/Label")

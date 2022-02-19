@@ -54,13 +54,13 @@ resource_local_to_scene = true
 texture = ExtResource( 20 )
 region_rect = Rect2( 0, 0, 32, 32 )
 
-[sub_resource type="DynamicFont" id=7]
+[sub_resource type="DynamicFont" id=6]
 outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
 use_mipmaps = true
 font_data = ExtResource( 7 )
 
-[sub_resource type="StyleBoxTexture" id=8]
+[sub_resource type="StyleBoxTexture" id=7]
 resource_local_to_scene = true
 texture = ExtResource( 20 )
 region_rect = Rect2( 0, 0, 32, 32 )
@@ -340,7 +340,7 @@ margin_top = 6.0
 margin_right = 150.0
 margin_bottom = 26.0
 grow_horizontal = 0
-custom_fonts/font = SubResource( 7 )
+custom_fonts/font = SubResource( 6 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "Character"
 __meta__ = {
@@ -384,7 +384,7 @@ __meta__ = {
 margin_right = 156.0
 margin_bottom = 24.0
 grow_horizontal = 0
-custom_fonts/font = SubResource( 7 )
+custom_fonts/font = SubResource( 6 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "Active:"
 __meta__ = {
@@ -406,41 +406,40 @@ margin_left = 120.0
 margin_top = 80.0
 margin_right = 152.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
-index = 12
+custom_styles/panel = SubResource( 7 )
 active = true
 
 [node name="1" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
-custom_styles/panel = SubResource( 8 )
-index = 13
+custom_styles/panel = SubResource( 7 )
+index = 1
 active = true
 
 [node name="2" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
 margin_left = 40.0
 margin_right = 72.0
-custom_styles/panel = SubResource( 8 )
-index = 14
+custom_styles/panel = SubResource( 7 )
+index = 2
 active = true
 
 [node name="3" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
 margin_left = 80.0
 margin_right = 112.0
-custom_styles/panel = SubResource( 8 )
-index = 15
+custom_styles/panel = SubResource( 7 )
+index = 3
 active = true
 
 [node name="4" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
 margin_left = 120.0
 margin_right = 152.0
-custom_styles/panel = SubResource( 8 )
-index = 16
+custom_styles/panel = SubResource( 7 )
+index = 4
 active = true
 
 [node name="5" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
 margin_top = 40.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
-index = 17
+custom_styles/panel = SubResource( 7 )
+index = 5
 active = true
 
 [node name="6" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
@@ -448,8 +447,8 @@ margin_left = 40.0
 margin_top = 40.0
 margin_right = 72.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
-index = 18
+custom_styles/panel = SubResource( 7 )
+index = 6
 active = true
 
 [node name="7" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
@@ -457,8 +456,8 @@ margin_left = 80.0
 margin_top = 40.0
 margin_right = 112.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
-index = 19
+custom_styles/panel = SubResource( 7 )
+index = 7
 active = true
 
 [node name="8" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
@@ -466,15 +465,15 @@ margin_left = 120.0
 margin_top = 40.0
 margin_right = 152.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
-index = 20
+custom_styles/panel = SubResource( 7 )
+index = 8
 active = true
 
 [node name="9" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
 margin_top = 80.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
-index = 21
+custom_styles/panel = SubResource( 7 )
+index = 9
 active = true
 
 [node name="10" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
@@ -482,8 +481,8 @@ margin_left = 40.0
 margin_top = 80.0
 margin_right = 72.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
-index = 22
+custom_styles/panel = SubResource( 7 )
+index = 10
 active = true
 
 [node name="11" parent="Control/Menu/Tabs/SKL/VBoxContainer/Active" instance=ExtResource( 21 )]
@@ -491,15 +490,15 @@ margin_left = 80.0
 margin_top = 80.0
 margin_right = 112.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
-index = 23
+custom_styles/panel = SubResource( 7 )
+index = 11
 active = true
 
 [node name="Label3" type="Label" parent="Control/Menu/Tabs/SKL/VBoxContainer"]
 margin_right = 156.0
 margin_bottom = 24.0
 grow_horizontal = 0
-custom_fonts/font = SubResource( 7 )
+custom_fonts/font = SubResource( 6 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "Reserve:"
 __meta__ = {
@@ -521,34 +520,34 @@ margin_left = 120.0
 margin_top = 80.0
 margin_right = 152.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 
 [node name="1" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 1
 
 [node name="2" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
 margin_left = 40.0
 margin_right = 72.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 2
 
 [node name="3" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
 margin_left = 80.0
 margin_right = 112.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 3
 
 [node name="4" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
 margin_left = 120.0
 margin_right = 152.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 4
 
 [node name="5" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
 margin_top = 40.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 5
 
 [node name="6" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
@@ -556,7 +555,7 @@ margin_left = 40.0
 margin_top = 40.0
 margin_right = 72.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 6
 
 [node name="7" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
@@ -564,7 +563,7 @@ margin_left = 80.0
 margin_top = 40.0
 margin_right = 112.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 7
 
 [node name="8" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
@@ -572,13 +571,13 @@ margin_left = 120.0
 margin_top = 40.0
 margin_right = 152.0
 margin_bottom = 72.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 8
 
 [node name="9" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
 margin_top = 80.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 9
 
 [node name="10" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
@@ -586,7 +585,7 @@ margin_left = 40.0
 margin_top = 80.0
 margin_right = 72.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 10
 
 [node name="11" parent="Control/Menu/Tabs/SKL/VBoxContainer/Inactive" instance=ExtResource( 21 )]
@@ -594,7 +593,7 @@ margin_left = 80.0
 margin_top = 80.0
 margin_right = 112.0
 margin_bottom = 112.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 7 )
 index = 11
 
 [node name="Container" type="TabContainer" parent="Control/Menu"]

@@ -2,7 +2,7 @@
 	"player": {
 		"controlled": true,
 		"faction": 1,
-		"unit": "human",
+		"unit": "manzard",
 		"equip": [["gi", 100], ["hood", 100], ["cutlass", 100]],
 	},
 	"bob": {
@@ -63,5 +63,9 @@
 	"scorpion": {
 		"faction": 2,
 		"unit": "scorpion",
+	},
+	"coyote": {
+		"faction": 2,
+		"unit": "coyote",
 	},
 }
