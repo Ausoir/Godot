@@ -15,6 +15,9 @@ func ir(_from, _to):
 func fr(_from, _to):
 	return randf() * (_to - _from) + _from
 
+func vfr(diff):
+	return Vector2(fr(-diff, diff), fr(-diff, diff))
+
 func f():
 	return randf()
 

@@ -1,8 +1,8 @@
 const WORK_DELAY = 5
 const Item = preload("res://objects/item.gd")
-const Unit = preload("res://objects/units/Unit.tscn")
-const Script_Unit = preload("res://objects/units/unit.gd")
-const Script_Humanoid = preload("res://objects/units/humanoid.gd")
+const Unit = preload("res://objects/Unit.tscn")
+const Script_Unit = preload("res://objects/unit.gd")
+const Script_Humanoid = preload("res://objects/humanoid.gd")
 
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
 const ACT_CONSTRUCT = ["icon_construct", [["wait",6,"work"],["cmd",0,[["equip"]]]]]

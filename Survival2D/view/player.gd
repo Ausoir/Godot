@@ -1,4 +1,4 @@
-extends "res://objects/units/controller.gd"
+extends "res://objects/controller.gd"
 
 const Step = preload("res://view/Step.tscn")
 
@@ -25,20 +25,20 @@ func on_dat():
 	if n_camera.sight_frame > 0:
 		n_camera.darken()
 	n_camera.update(unit.pos, last_pos, unit.sight_col)
+	var bodytype_list = G.data.get_json_data("bodytypes")
+	var bodyparts = bodytype_list.get(unit.dat.g("type"))
+	G.ui.menu.update_equipables(bodyparts)
+	G.ui.menu.update_inventory()
+	pathing.can_open = false
+	pathing.smash_to = 0
+	pathing.iterations = 32
+	pathing.pathing_times = 0
 
 func on_assign():
 	.on_assign()
 	unit.faction = 1
 	G.world.team[unit.faction].append(unit)
 	last_pos = unit.pos
-	var bodytype_list = G.data.get_json_data("bodytypes")
-	var bodyparts = bodytype_list.get(unit.dat.g("type"))
-	G.ui.update_equipables(bodyparts)
-	G.ui.update_inventory()
-	pathing.can_open = false
-	pathing.smash_to = 0
-	pathing.iterations = 32
-	pathing.pathing_times = 0
 
 func _on_input(event: InputEvent):
 	if event is InputEventMouseButton:

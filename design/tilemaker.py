@@ -9,6 +9,8 @@ coord_mapping = (
 )
 
 def run():
+    out = carve(Image.open("../Survival2D/assets/images/textures/bullet.png").convert("RGBA"))
+    out.save("../Survival2D/assets/images/textures/bullet.png", "PNG")
     make_autotile_8('../design/autotiles/f_fence/', 'ch_')
 
 def make_autotile_8(filedir, prefix):
@@ -202,10 +204,8 @@ def carve(img):
     pixels = img.load()
     for x in range(img.size[0]):
         for y in range(img.size[1]):
-            tx = 16 - x
-            ty = 16 - y
             pixel = img.getpixel((x, y))
-            pixels[x, y] = (0, 0, 0, 255 - pixel[0])
+            pixels[x, y] = (0, 0, 0, pixel[0])
     return img
 
 def invert(img):
@@ -217,7 +217,7 @@ def invert(img):
             out.putpixel((x, y), (pixel[0],pixel[1],pixel[2],255-pixel[3]))
     return out
 
-def glassify(img, mag):
+def glassify(img):
     sx, sy = img.size
     out = Image.new('RGBA', (sx, sy), color=0)
     for x in range(sx):

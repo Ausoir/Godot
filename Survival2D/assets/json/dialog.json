@@ -34,22 +34,6 @@
 		"true": "\"Do you have any supplies to drop off?\"\n\n",
 		"script": ["storage"]
 	},
-	"Dormkeep": {
-		"title": "Talk with Dormkeep",
-		"req": [["food", 1]],
-		"true": "\"Hey $u.\"\n",
-		"false": "\"Hey $u. There's not enough food to go around, so you can't rest here. Sorry.\nIf you do have food, make sure to supply them to the storagekeep.\"",
-		"opt": [
-			{
-				"cmd": [["menu", "dialog", "Bob2"]],
-			}
-		]
-	},
-	"Carpenter": {
-		"title": "Talk with Carpenter",
-		"true": "\"Do you have any supplies to drop off?\"\n\n",
-		"script": ["storage"]
-	},
 	"Tavernkeep": {
 		"title": "Talk with Barkeep",
 		"true": "\"If you have a map, I can organize a run.\"",
@@ -60,23 +44,9 @@
 		"true": "You see a list of contracts.\n\n",
 		"script": ["bulletin"]
 	},
-	"Trader": {
-		"title": "Talk with Trader",
-		"true": "\"Need something? We can always use some food.\"\n\n",
-		"script": ["trade"]
-	},
-	"Tinkerer": {
-		"title": "Talk with Tinkerer",
-		"true": "\"Going scaving? Need a weapon?\"\nHe shows you a [url=0]pipe[/url] and a [url=1]knife[/url]",
-		"opt": [
-			{
-				"hover": ["item", "pipe"],
-				"cmd": [["make", "pipe", null], ["give", "$t", "$pu"], ["dat","a","$pu","quest",2], ["menu", "msg", "You received a pipe."]],
-			},
-			{
-				"hover": ["item", "knife"],
-				"cmd": [["make", "knife", null], ["give", "$t", "$pu"], ["dat","a","$pu","quest",2], ["menu", "msg", "You received a knife."]],
-			}
-		]
+	"Dummy": {
+		"title": "Training Dummy",
+		"true": "You recall some of the skills used by the foes that you have defeated.\n\n",
+		"script": ["train"]
 	},
 }

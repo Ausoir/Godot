@@ -7,4 +7,6 @@ The majority of this project is proprietary. This includes the codebase and many
 
 
 To view a copy of the license for CC-BY-SA 3.0, visit http://creativecommons.org/licenses/by-sa/3.0/.
-Detailed credits for the licensed files can be found in assets/images/credits.txt
+Detailed credits for the licensed files can be found in assets/credits.txt
+
+

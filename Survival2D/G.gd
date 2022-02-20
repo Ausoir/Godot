@@ -21,9 +21,10 @@ const LEFT = 6
 const UPLEFT = 7
 
 const Properties = preload("res://classes/properties.gd")
-const Gfx = preload("res://classes/gfx.gd")
-var Damage_Label = load("res://objects/particles/Damage_Label.tscn")
-var influence = preload("res://objects/units/influence.gd").new()
+const Gfx = preload("res://fx/Gfx.tscn")
+const Sfx = preload("res://fx/Sfx.tscn")
+var Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
+var influence = preload("res://objects/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var time = preload("res://classes/time.gd").new()
 var turn = preload("res://classes/turn.gd").new()

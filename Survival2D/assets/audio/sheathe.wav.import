@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/sheathe.wav-497982525310c6c65948d2ff16f9bd96.sample"
+
+[deps]
+
+source_file="res://assets/audio/sheathe.wav"
+dest_files=[ "res://.import/sheathe.wav-497982525310c6c65948d2ff16f9bd96.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

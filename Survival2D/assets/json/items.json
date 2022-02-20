@@ -9,14 +9,14 @@
 	"potato chip": {
 		"img": "tiles/i_chips",
 		"mat": "other",
-		"value": 1,
-		"desc": "A bag of potato chip. Can be used as currency."
+		"nutrition": 1,
+		"desc": "A bag of potato chips."
 	},
 	"energy bar": {
 		"img": "tiles/i_candy",
 		"mat": "other",
-		"value": 2,
-		"desc": "An energy bar. Can be used as currency."
+		"nutrition": 2,
+		"desc": "An energy bar."
 	},
 	"stock pot": {
 		"img": "tiles/i_stock_pot",
@@ -24,6 +24,14 @@
 		"weight": 3,
 		"desc": "A cooking tool."
 	},
+	"blob vial": {
+		"img": "gui/vial",
+		"sprite": "overlay/w_vial",
+		"mat": "glass",
+		"desc": "A vial of blob."
+	},
+
+
 	"torch": {
 		"img": "loot",
 		"sprite": "overlay/w_torch",
@@ -32,11 +40,21 @@
 		"mat": "wood",
 		"desc": "A torch."
 	},
-	"blob vial": {
-		"img": "gui/vial",
-		"sprite": "overlay/w_vial",
-		"mat": "glass",
-		"desc": "A vial of blob."
+	"biggray gun": {
+		"img": "loot",
+		"sprite": "overlay/w_biggray_gun",
+		"abilities": ["shoot 16"],
+		"uses": 32,
+		"mat": "metal",
+		"desc": "An artifact of the past."
+	},
+	"smolgun": {
+		"img": "loot",
+		"sprite": "overlay/w_smolgun",
+		"abilities": ["shoot"],
+		"uses": 8,
+		"mat": "metal",
+		"desc": "An artifact of the past."
 	},
 	"spear": {
 		"img": "loot",
@@ -416,6 +434,14 @@
 		"col": "0100",
 		"onuse": [["menu", "dialog", "Bulletin"]],
 	},
+	"dummy": {
+		"img": "tiles/dummy",
+		"mat": "wood",
+		"col": "0110",
+		"durability": 8,
+		"desc": "A target dummy.",
+		"onuse": [["menu", "dialog", "Dummy"]],
+	},
 	"straw bed": {
 		"img": "tiles/straw_bed",
 		"mat": "cloth",
@@ -438,14 +464,14 @@
 		"col": "0000",
 	},
 	"table": {
-		"img": "autotiles/table_autotile",
+		"img": "tiles/table_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 6,
 		"col": "0100",
 	},
 	"desk": {
-		"img": "autotiles/desk_autotile",
+		"img": "tiles/desk_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 4,
@@ -453,7 +479,7 @@
 		"col": "0100",
 	},
 	"counter": {
-		"img": "autotiles/counter_autotile",
+		"img": "tiles/counter_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 4,
@@ -461,7 +487,7 @@
 		"col": "0100",
 	},
 	"sandbag": {
-		"img": "autotiles/sandbag_autotile",
+		"img": "tiles/sandbag_autotile",
 		"autotile": 1,
 		"mat": "other",
 		"durability": 12,
@@ -469,7 +495,7 @@
 		"col": "0010",
 	},
 	"privacy_fence": {
-		"img": "autotiles/privacy_fence_autotile",
+		"img": "tiles/privacy_fence_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"durability": 4,
@@ -477,7 +503,7 @@
 		"col": "1110",
 	},
 	"fence": {
-		"img": "autotiles/fence_autotile",
+		"img": "uc/fence_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 10,
@@ -485,14 +511,14 @@
 		"col": "0100",
 	},
 	"chainfence": {
-		"img": "autotiles/chainfence_autotile",
+		"img": "tiles/chainfence_autotile",
 		"autotile": 1,
 		"mat": "metal",
 		"weight": 16,
 		"col": "0010",
 	},
 	"wire": {
-		"img": "autotiles/wire_autotile",
+		"img": "uc/wire_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 12,
@@ -513,19 +539,19 @@
 		"col": "1000",
 	},
 	"old tree": {
-		"img": "sized/tree1",
+		"img": "uc/tree1",
 		"mat": "wood",
 		"durability": 16,
 		"col": "1110",
 	},
 	"young tree": {
-		"img": "sized/tree3",
+		"img": "uc/tree3",
 		"mat": "wood",
 		"durability": 16,
 		"col": "1110",
 	},
 	"tree": {
-		"img": "sized/tree2",
+		"img": "uc/tree2",
 		"mat": "wood",
 		"durability": 16,
 		"col": "1110",
@@ -551,7 +577,7 @@
 		"col": "0100",
 	},
 	"pit": {
-		"img": "autotiles/pit_autotile",
+		"img": "uc/pit_autotile",
 		"autotile": 1,
 		"mat": "other",
 		"weight": 99,

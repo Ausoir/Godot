@@ -1,6 +1,7 @@
-var images_cache = {}
-var particles_cache = {}
 var json_cache = {}
+var images_cache = {}
+var sounds_cache = {}
+var particles_cache = {}
 var vars_data
 var terrain_data
 var palette_data
@@ -23,6 +24,13 @@ func _init():
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
 	dialog_data = get_json_from_dir("res://assets/json/dialog.json")
 	group_data = get_json_from_dir("res://assets/json/groups.json")
+	var cache = get_json_from_dir("res://assets/json/cache.json")
+	for key in cache.json:
+		json_cache[key] = get_json_from_dir(cache.json[key])
+	for key in cache.images:
+		images_cache[key] = load("res://assets/images/" + cache.images[key])
+	for key in cache.sounds:
+		sounds_cache[key] = load("res://assets/audio/" + cache.sounds[key])
 
 func set_tile_image(_sprite, _to):
 #	var dat = tileset_map.get(to)
@@ -59,18 +67,32 @@ func get_image(p):
 		images_cache[p] = r
 		return r
 
+func get_sprite(p):
+	var r = Sprite.new()
+	r.texture = get_image(p)
+	return r
+
 func set_sprite_texture(sprite, p, autotile):
 	sprite.texture = get_image(p)
 	if autotile != 0:
 		sprite.set_region(true)
 		sprite.set_region_rect(Rect2(0, 0, 32, 32))
 
+func get_sound(p):
+	var r = sounds_cache.get(p)
+	if r != null:
+		return r
+	else:
+		r = load("res://assets/audio/" + p + ".wav")
+		sounds_cache[p] = r
+		return r
+
 func get_particle(p):
 	var r = particles_cache.get(p)
 	if r != null:
 		return r.instance()
 	else:
-		r = load("res://objects/particles/" + p + ".tscn")
+		r = load("res://fx/particles/" + p + ".tscn")
 		particles_cache[p] = r
 		return r.instance()
 

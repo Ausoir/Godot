@@ -40,8 +40,8 @@ func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
 			if event.button_index == BUTTON_LEFT:
-				if G.ui.drag_item != null and G.ui.drag_item.type == "skill":
-					place_to(G.ui.drag_item)
+				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
+					place_to(G.ui.menu.drag_item)
 				else:
 					take_from()
 			elif event.button_index == BUTTON_RIGHT:
@@ -51,7 +51,7 @@ func on_quick_action():
 	if skill != null:
 		var t = skill
 		take_from()
-		for child in G.ui.tab_skill_inactive.get_children():
+		for child in G.ui.menu.tab_skill_inactive.get_children():
 			if child.index == -1:
 				child.place_to(t)
 				return
@@ -60,11 +60,11 @@ func take_from():
 	if skill != null:
 		var r = unassign()
 		if r:
-			G.ui.set_drag_item(r)
+			G.ui.menu.set_drag_item(r)
 
 func place_to(item):
 	if skill != null:
-		G.ui.set_drag_item(null)
+		G.ui.menu.set_drag_item(null)
 		take_from()
 	if active == item.active:
 		if active:
@@ -75,6 +75,6 @@ func place_to(item):
 		G.you.unit.activate_skill(item.index)
 	else:
 		G.you.unit.deactivate_skill(item.index)
-	G.ui.set_drag_item(null)
-	G.ui.update_skills()
+	G.ui.menu.set_drag_item(null)
+	G.ui.menu.update_skills()
 	return true

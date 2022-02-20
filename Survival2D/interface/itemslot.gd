@@ -82,24 +82,24 @@ func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
 			if event.button_index == BUTTON_LEFT:
-				if G.ui.drag_item != null and G.ui.drag_item.type == "item":
-					place_to(G.ui.drag_item)
+				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "item":
+					place_to(G.ui.menu.drag_item)
 				else:
 					take_from()
 			elif event.button_index == BUTTON_RIGHT:
 				on_quick_action()
 			G.you.unit.update()
-			G.ui.update_inventory()
+			G.ui.menu.update_inventory()
 
 func on_quick_action():
 	if item != null:
 		if tile == null:
 			if part == "inv" and G.you.unit.auto_equip(item):
 				take_from()
-				G.ui.set_drag_item(null)
+				G.ui.menu.set_drag_item(null)
 			elif part != "none" and G.you.unit.store(item):
 				take_from()
-				G.ui.set_drag_item(null)
+				G.ui.menu.set_drag_item(null)
 		else:
 			if check_weight(item) and G.you.unit.store(item):
 				unassign()
@@ -112,12 +112,12 @@ func take_from():
 		if taken:
 			var r = unassign()
 			if r:
-				G.ui.set_drag_item(r)
+				G.ui.menu.set_drag_item(r)
 
 func place_to(pitem):
 	var swap = false
 	if item != null:
-		G.ui.set_drag_item(null)
+		G.ui.menu.set_drag_item(null)
 		take_from()
 		swap = true
 	if tile != null:
@@ -132,5 +132,5 @@ func place_to(pitem):
 		if !G.you.unit.equip(part, pitem.item):
 			return false
 	if !swap:
-		G.ui.set_drag_item(null)
+		G.ui.menu.set_drag_item(null)
 	return true

@@ -21,7 +21,6 @@
 		"faction": 1,
 		"unit": "scav",
 		"equip": [["suit", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Dormkeep"]]}
 	},
 	"tavernkeep": {
 		"faction": 1,
@@ -38,7 +37,6 @@
 		"faction": 1,
 		"unit": "scav",
 		"equip": [["suit", 100], ["backpack", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Trader"]]}
 	},
 	"scav": {
 		"faction": 1,
