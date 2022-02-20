@@ -220,7 +220,7 @@
 		],
 		{
 			" ": ["gray tile"],
-			".": ["wood floor"],
+			".": ["wood floor", ["potlight", 3]],
 			"b": ["wood floor", ["straw bed", 90, "+", ["trader", 10, "/", ["scav", 95, "/", ["storagekeep", 5, "/", ["dormkeep", 3]]]]]],
 			"c": ["wood floor", ["crate", 90]],
 			"C": ["wood floor", ["campfire", 100]],

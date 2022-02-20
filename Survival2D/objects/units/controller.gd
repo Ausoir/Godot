@@ -9,7 +9,7 @@ var tasks = []
 var delay = 0
 var pathing = Pathing.new()
 
-func on_assign():
+func on_dat():
 	pathing.smash_to = unit.dat.g("strength", 0)
 	if "mindless" in unit.flags:
 		pathing.hinderance = 0
@@ -20,6 +20,9 @@ func on_assign():
 		pathing.hinderance = 0
 	elif "agile" in unit.flags:
 		pathing.hinderance = .5
+
+func on_assign():
+	unit.dirty_dat = true
 
 func on_hit(_hitter):
 	pass

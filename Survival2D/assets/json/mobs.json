@@ -55,17 +55,40 @@
 		"unit": "scav",
 		"equip": [["scalemail", 100], ["backpack", 100], ["bat", 100]],
 	},
+	"manzard": {
+		"faction": 2,
+		"unit": "manzard",
+	},
+	"mantle": {
+		"faction": 2,
+		"unit": "mantle",
+	},
+	"manfly": {
+		"faction": 2,
+		"unit": "manfly",
+	},
+
+
+	"rat": {
+		"faction": 2,
+		"unit": "rat",
+	},
+	"coyote": {
+		"faction": 2,
+		"unit": "coyote",
+	},
+
 
 	"zombie": {
 		"faction": 2,
 		"unit": "zombie",
 	},
-	"scorpion": {
+	"rotting zombie": {
 		"faction": 2,
-		"unit": "scorpion",
+		"unit": "rotting zombie",
 	},
-	"coyote": {
+	"burnt zombie": {
 		"faction": 2,
-		"unit": "coyote",
+		"unit": "burnt zombie",
 	},
 }

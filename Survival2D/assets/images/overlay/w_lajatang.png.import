@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/shirt_f.png-030c63d44d703f527189cfc0d23a9c79.stex"
+path="res://.import/w_lajatang.png-5738270880722971042d3fcec34ca041.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/overlay/shirt_f.png"
-dest_files=[ "res://.import/shirt_f.png-030c63d44d703f527189cfc0d23a9c79.stex" ]
+source_file="res://assets/images/overlay/w_lajatang.png"
+dest_files=[ "res://.import/w_lajatang.png-5738270880722971042d3fcec34ca041.stex" ]
 
 [params]
 

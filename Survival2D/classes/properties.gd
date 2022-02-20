@@ -13,33 +13,37 @@ func load_data(_data):
 	for key in _data:
 		v[key] = _data[key]
 
-func g(tag, default=null):
-	if tag in v:
-		return v[tag]
+func g(key, default=null):
+	if key in v:
+		return v[key]
 	return default
 
-func a(tag, val):
-	v[tag] = val
+func a(key, val):
+	v[key] = val
 
-func d(tag):
-	v.erase(tag)
+func d(key):
+	v.erase(key)
 
-func is_dead():
-	return g("hp", Vector2()).x <= 0
-
-func equals(tag, compare):
-	var t = v.get(tag)
+func equals(key, compare):
+	var t = v.get(key)
 	return t != null and t == compare
 
-func add(tag, val, pmin=null, pmax=null):
-	if !(tag in v):
-		v[tag] = val
-	else:
-		v[tag] += val
+func erase(key, val):
+	var tag = v.get(key)
+	if tag != null:
+		for i in val:
+			tag.erase(i)
+
+func add(key, val, pmin=null, pmax=null):
+	if val != null:
+		if !(key in v):
+			v[key] = val
+		else:
+			v[key] += val
 	if pmin != null:
-		v[tag] = max(v[tag], pmin)
+		v[key] = max(v[key], pmin)
 	if pmax != null:
-		v[tag] = min(v[tag], pmax)
+		v[key] = min(v[key], pmax)
 
 func combine(_dict):
 	for key in _dict:

@@ -43,7 +43,7 @@ func do(phost, pname, pdata=null, mode=0):
 			victim = host
 			run_cmds(data.get("compensate", []))
 		if victim.item_type == "unit":
-			if !is_instance_valid(victim):
+			if victim.is_dead:
 				run_cmds(data.get("onkill", []))
 		return true
 
@@ -57,7 +57,7 @@ func run_cmds(cmds):
 				gfx.shoot(cmd[2], host.pos.to_pixel(), dest.to_pixel())
 				gfx.rotate(cmd[2], 0, 1280)
 			elif cmd[1] == "particle":
-				G.make_particle(cmd[2], victim.pos.to_pixel())
+				G.make_particle(cmd[2], victim.pos.to_pixel(), {"follow": victim})
 			elif cmd[1] == "label":
 				G.display_damage(host.pos.to_pixel(), cmd[2], cmd[3], .8)
 		elif type == "expend":
@@ -70,8 +70,18 @@ func run_cmds(cmds):
 					wpn.dat.a("uses", uses - 1)
 		elif type == "cooldown":
 			host.cooldowns[cmd[1]] = cmd[2]
-		elif type == "stat":
+		elif type == "adat":
 			host.dat.add(cmd[1], cmd[2])
+			host.dirty_dat = true
+		elif type == "sdat":
+			host.dat.erase(cmd[1], cmd[2])
+			host.dirty_dat = true
+		elif type == "cdat":
+			host.dat.a(cmd[1], host.dat.g(cmd[2]))
+			host.dirty_dat = true
+		elif type == "dat":
+			host.dat.a(cmd[1], cmd[2])
+			host.dirty_dat = true
 		elif type == "dmg":
 			var dmg_type = cmd[1]
 			victim.hit(dmg_type, host.get_damage(dmg_type, cmd[2]), host)
@@ -93,6 +103,8 @@ func run_cmds(cmds):
 			G.fx(host, host.last_skill)
 		elif type == "cast":
 			G.fx(host, cmd[1])
+		elif type == "castto":
+			G.fx(victim, cmd[1])
 		elif type == "move":
 			host.relocate(victim)
 		elif type == "mob":
@@ -124,10 +136,10 @@ func run_cmds(cmds):
 				G.cmd([["refresh"]])
 		elif type == "flag":
 			host.flags.append(cmd[1])
-			host.update_flags()
+			host.dirty_dat = true
 		elif type == "unflag":
 			host.flags.erase(cmd[1])
-			host.update_flags()
+			host.dirty_dat = true
 		elif type == "respite":
 			host.deck = []
 			var actives = host.dat.g("actives", [])
@@ -169,7 +181,7 @@ func is_valid(tgt):
 			if is_tile:
 				if law == "solid" and tgt.is_col(1):
 					continue
-				elif law == "open" and !tgt.is_cols("0110"):
+				elif law == "open" and !tgt.is_cols("0111"):
 					continue
 				elif law == "seen" and tgt.sight_frame == G.you.n_camera.sight_frame - 1:
 					continue

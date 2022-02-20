@@ -12,6 +12,7 @@ var turns = 0
 var faction = 0
 var move_delay = 0
 var move_delay_speed = 3
+var flags
 var light: int
 var hp = Vector2()
 
@@ -80,6 +81,11 @@ func swap(with):
 	var t = pos
 	relocate(with.pos)
 	with.relocate(t)
+
+func on_dat():
+	flags = dat.g("flags", [])
+	col = dat.g("col", "0000")
+	light = dat.g("light", 0)
 
 func _process(delta):
 	if move_delay <= 0:

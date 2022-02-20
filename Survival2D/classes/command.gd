@@ -26,7 +26,7 @@ func replace_vars(_args):
 				r.append(G.you.unit)
 				continue
 			elif arg == "$pua":
-				var adjs = G.you.unit.pos.get_available_adjacents("0100")
+				var adjs = G.you.unit.pos.get_available_adjacents("0011")
 				var adj = R.r_arr(adjs)
 				if adj == null:
 					r.append(G.you.unit.pos)
@@ -56,7 +56,7 @@ func run(_args):
 		elif args[1] == "pos":
 			return args[2].pos
 		elif args[1] == "adj":
-			var adjs = args[2].get_available_adjacents("0100")
+			var adjs = args[2].get_available_adjacents("0011")
 			var adj = R.r_arr(adjs)
 			if adj == null:
 				adj = args[2]

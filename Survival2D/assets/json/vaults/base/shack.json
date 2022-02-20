@@ -12,7 +12,7 @@
 			"##____##",
 		],
 		{
-			"_": ["wood floor", ["torch", 2]],
+			"_": ["wood floor", ["potlight", 2]],
 			"#": ["log wall"],
 			"=": ["dirt", ["door", 50]],
 			"B": ["wood floor", ["bookcase", 50]],
@@ -28,7 +28,7 @@
 			"########",
 		],
 		{
-			"_": ["wood floor", ["torch", 1]],
+			"_": ["wood floor", ["potlight", 1]],
 			"#": ["log wall"],
 			"=": ["dirt", ["door", 50]],
 			"b": ["wood floor", ["straw bed", 66]],
@@ -48,7 +48,7 @@
 			"________",
 		],
 		{
-			"_": ["wood floor", ["torch", 1]],
+			"_": ["wood floor", ["potlight", 1]],
 			"#": ["log wall"],
 			"s": ["wood floor", ["logstool", 100]],
 			"O": ["wood floor", ["oven", 100]],
@@ -69,7 +69,7 @@
 			"#######",
 		],
 		{
-			"_": ["wood floor", ["torch", 2]],
+			"_": ["wood floor", ["potlight", 2]],
 			"#": ["log wall"],
 			"s": ["wood floor", ["logstool", 100]],
 			"T": ["wood floor", ["table", 100]],

@@ -2,6 +2,7 @@ extends Particles2D
 
 export var canvas: bool = false
 export var duration: float = 1.0
+var follow
 
 func add():
 	if canvas:
@@ -25,6 +26,8 @@ func run_details(args):
 			process_material.direction = args[i]
 		elif i == "spread":
 			process_material.spread = args[i]
+		elif i == "follow":
+			position = args[i].position
 
 func change_text(p):
 	$Label/Control/Label.text = str(p)

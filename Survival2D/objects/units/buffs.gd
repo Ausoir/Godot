@@ -3,27 +3,40 @@ var states = {}
 var in_turn = false
 
 class buff:
+	var parent
 	var name
 	var fx
 	var duration
 	var cancels
+	var turns
+	var turn = 0
 
-	func _init(p1,p2,p3):
+	func _init(pparent,p1,p2,p3):
+		parent = pparent
 		name = p1
 		fx = p2
 		duration = p3
 		cancels = fx.get("cancel", null)
+		turns = fx.get("turns", 1)
 
 	func on_turn(host):
 		if duration == 0:
 			if "onend" in fx:
 				G.influence.do(host, name, fx, 2)
-			return true
+			parent.cancel(name)
 		elif duration > 0:
 			duration -= 1
+		turn += 1
 		if "onturn" in fx:
-			G.influence.do(host, name, fx, 1)
-		return false
+			if turn > turns:
+				turn = 0
+				G.influence.do(host, name, fx, 1)
+
+	func on_interrupt(p):
+		if cancels != null:
+			for cancel in cancels:
+				if cancel == p:
+					parent.cancel(name)
 
 func _init(phost):
 	host = phost
@@ -32,7 +45,7 @@ func add(p, effect, duration):
 	if p in states:
 		states[p].duration = duration
 	else:
-		states[p] = buff.new(p, effect, duration)
+		states[p] = buff.new(self, p, effect, duration)
 		if !G.turn.has(self):
 			G.turn.add(self)
 
@@ -40,25 +53,19 @@ func has(p):
 	return p in states
 
 func cancel(p):
-	if states.erase(p):
-		if states.empty():
-			G.turn.remove(self)
-		return true
-	else:
-		push_error("Could not remove buff " + str(p))
+	states.erase(p)
+	if states.empty():
+		G.turn.remove(self)
 
 func on_turn():
-	for i in states.keys():
-		if states[i].on_turn(host):
-			cancel(i)
+	var keys = states.keys()
+	for i in keys:
+		states[i].on_turn(host)
 
 func on_interrupt(p):
 	for i in states.keys():
 		var state = states[i]
-		if state.cancels != null:
-			for cancel in state.cancels:
-				if cancel == p:
-					cancel(i)
+		state.on_interrupt(p)
 
 func end(p):
 	if p in states:
@@ -75,8 +82,8 @@ func expend(p):
 	return null
 
 func remove():
-	G.turn.remove(self)
 	states.clear()
+	G.turn.remove(self)
 
 func clear():
 	for i in states:
@@ -95,4 +102,7 @@ func from_data(_data):
 	for i in _data:
 		var skill_data = G.data.skill_data.get(i[0])
 		if skill_data != null:
-			add(i[0], skill_data, i[1])
+			if "onstart" in skill_data:
+				G.influence.do(host, i[0], skill_data, 0)
+			else:
+				add(i[0], skill_data, i[1])

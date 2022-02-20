@@ -23,6 +23,9 @@ func to_pixel():
 func to_vector():
 	return Vector2(x, y)
 
+func to_array():
+	return [x, y]
+
 func set_visible(p):
 	if visible != p:
 		if p:

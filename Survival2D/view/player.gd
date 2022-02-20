@@ -13,9 +13,18 @@ var auto_attack_priority = 0
 var aiming = -1
 var last_pos
 var view_dirty = false
-
 var allies = []
 
+func _ready():
+	n_camera.set_process(false)
+
+func on_dat():
+	.on_dat()
+	n_camera.sight_range = unit.dat.g("perception", 8)
+	n_camera.sight2 = n_camera.sight_range * 2
+	if n_camera.sight_frame > 0:
+		n_camera.darken()
+	n_camera.update(unit.pos, last_pos, unit.sight_col)
 
 func on_assign():
 	.on_assign()
@@ -26,10 +35,6 @@ func on_assign():
 	var bodyparts = bodytype_list.get(unit.dat.g("type"))
 	G.ui.update_equipables(bodyparts)
 	G.ui.update_inventory()
-	if n_camera.sight_frame > 0:
-		n_camera.darken()
-	n_camera.sight_range = unit.dat.g("perception", 18)
-	n_camera.update(unit.pos, last_pos, unit.sight_col)
 	pathing.can_open = false
 	pathing.smash_to = 0
 	pathing.iterations = 32
@@ -163,60 +168,48 @@ func aggro(npcs):
 		i.find_player(unit)
 
 func interact(tile):
-	if G.ui.on:
-		G.ui.clear()
-	else:
+	if !G.ui.on:
 		n_cursor.hide()
 		if !tile.items.empty():
 			var item = tile.get_priority_item([unit])
 			if item != null:
-				if item.item_type == "unit":
+				var onuse = item.dat.g("onuse")
+				if onuse != null:
+					G.cmd(onuse, item)
+				elif item.item_type == "item":
+					G.ui.search_inventory(tile)
+				elif item.item_type == "unit":
 					if item.faction == unit.faction:
 						if Input.is_action_pressed("shift"):
 							auto_attack_priority = unit.pos.direction_to(tile)
 							tasks.append(["attack", tile])
 							if item.controller != null:
 								item.controller.foe = unit
-						else:
-							var onuse = item.dat.g("onuse")
-							if onuse != null:
-								G.cmd(onuse, item)
+						elif unit.delay == 0 and item.delay == 0:
+							unit.delay = 4
+							item.delay = 4
+							unit.set_animation("walk")
+							item.set_animation("walk")
+							unit.swap(item)
 					else:
 						auto_attack_priority = unit.pos.direction_to(tile)
 						tasks.append(["attack", tile])
-				elif item.item_type == "item":
-					var onuse = item.dat.g("onuse")
-					if onuse != null:
-						G.cmd(onuse, item)
-					else:
-						G.ui.search_inventory(tile)
 
 func move_to(tile, reach=0, _path=true):
 	var distance = unit.pos.distance_to(tile)
-	if reach == 0 and distance == 1:
-		if !tile.items.empty():
-			var item = tile.get_priority_item([unit])
-			if item != null:
-				if item.item_type == "unit" and item.faction == unit.faction:
-					unit.swap(item)
-					return
-				elif item.dat.g("onuse") and tile.is_cols(unit.col):
-					var onuse = item.dat.g("onuse")
-					if onuse != null:
-						G.cmd(onuse, item)
-						return
-	if distance == 1 and tile.is_cols(unit.col):
-		return
-	if _path:
-		if distance <= reach:
-			return unit.pos
-		n_cursor.position = G.pos_to_pixel(tile)
-		n_cursor.show()
-		path_to(tile, reach)
-		remove_steps()
-		show_steps()
+	if reach == 0 and distance == 1 and tile.is_cols(unit.col):
+		tasks = [["interact", tile]]
 	else:
-		path_to(tile, reach)
+		if _path:
+			if distance <= reach:
+				return unit.pos
+			n_cursor.position = G.pos_to_pixel(tile)
+			n_cursor.show()
+			path_to(tile, reach)
+			remove_steps()
+			show_steps()
+		else:
+			path_to(tile, reach)
 
 func aim_ability(idx):
 	Input.set_default_cursor_shape(Input.CURSOR_CROSS)
@@ -239,6 +232,7 @@ func on_leave():
 	G.travel("base")
 
 func save_data(remove_buffs=true):
+	var buff_data = unit.buffs.to_data()
 	if remove_buffs:
 		unit.buffs.clear()
 	var ally_data = []
@@ -249,15 +243,21 @@ func save_data(remove_buffs=true):
 		"id": p_id,
 		"unit": unit.item_name,
 		"unit_data": unit.dat.v,
-		"unit_buff": unit.buffs.to_data(),
-		"ally_data": ally_data
+		"unit_buff": buff_data,
+		"ally_data": ally_data,
 	}
+	if G.world.map_name == "base":
+		save_dict["position"] = unit.pos.to_array()
 	if unit.dat.g("type") != "other":
 		save_dict = unit.update_save_data(save_dict)
 	return save_dict
 
 func load_data(_data):
-	var player_pos = G.field.get_spawn_point()
+	var player_pos = _data.get("position")
+	if player_pos == null:
+		player_pos = G.field.get_spawn_point()
+	else:
+		player_pos = G.field.tiles[player_pos[1]][player_pos[0]]
 	var player_unit = G.cmd([["make", _data.unit, player_pos]])
 	player_unit.possess(self)
 	player_unit.dat.load_data(_data.unit_data)
@@ -268,7 +268,7 @@ func load_data(_data):
 	var adjs
 	var adj = unit.pos
 	for i in _data.ally_data:
-		adjs = adj.get_available_adjacents("0100")
+		adjs = adj.get_available_adjacents("0011")
 		adj = R.r_arr(adjs)
 		if adj == null:
 			adj = unit.pos

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/manfairy.png-355408422d45356025cf483eb3d9e8c4.stex"
+path="res://.import/vial_empty.png-5f5416fe1adfabd03a8c6095ed68ee8f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/units/manfairy.png"
-dest_files=[ "res://.import/manfairy.png-355408422d45356025cf483eb3d9e8c4.stex" ]
+source_file="res://assets/images/gui/vial_empty.png"
+dest_files=[ "res://.import/vial_empty.png-5f5416fe1adfabd03a8c6095ed68ee8f.stex" ]
 
 [params]
 

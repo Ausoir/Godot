@@ -73,20 +73,21 @@ func get_secondary_to(p):
 		return "primary"
 
 func select_weapon(p):
-	remove_overlay(selected_weapon)
-	var secondary = equipments.get(selected_weapon)
-	if secondary != null:
-		unaccomodate_stats(secondary)
-	selected_weapon = p
-	var item = equipments.get(p)
-	if item != null:
-		accomodate_stats(item)
-		create_overlay(p, item.dat.g("sprite"))
-	var abilities = dat.g("abilities", [])
-	if !abilities.empty() and abilities[0].begins_with("swap to "):
-		abilities.pop_front()
-	if secondary != null:
-		abilities.insert(0, "swap to "+get_secondary_to(p))
+	if p != selected_weapon:
+		remove_overlay(selected_weapon)
+		var secondary = equipments.get(selected_weapon)
+		if secondary != null:
+			unaccomodate_stats(secondary)
+		selected_weapon = p
+		var item = equipments.get(p)
+		if item != null:
+			accomodate_stats(item)
+			create_overlay(p, item.dat.g("sprite"))
+		var abilities = dat.g("abilities", [])
+		if !abilities.empty() and abilities[0].begins_with("swap to "):
+			abilities.pop_front()
+		if secondary != null:
+			abilities.insert(0, "swap to "+get_secondary_to(p))
 
 func is_equipment_valid(part, item):
 	var item_part = item.dat.g("part", "")
@@ -111,13 +112,14 @@ func auto_equip(item):
 func equip(part, item):
 	if !has_part(part) and is_equipment_valid(part, item):
 		equipments[part] = item
-		accomodate_stats(item)
 		if part == "body" and item.dat.g("gender") != null:
+			accomodate_stats(item)
 			create_overlay(part, item.dat.g("sprite")+"_"+gender)
 		else:
 			if part == "primary" or part == "secondary":
 				select_weapon(part)
 			else:
+				accomodate_stats(item)
 				create_overlay(part, item.dat.g("sprite"))
 		return true
 	return false
@@ -140,6 +142,7 @@ func accomodate_stats(item):
 	skills += item.dat.g("skills", [])
 	dat.a("skills", skills)
 	fill_skills()
+	dat.add("light", item.dat.g("light", 0))
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
 	for i in G.STATS:
@@ -154,9 +157,15 @@ func unaccomodate_stats(item):
 		abilities.erase(i)
 	dat.a("abilities", abilities)
 	var skills = dat.g("skills", [])
+	var actives = dat.g("actives", [])
 	for i in item.dat.g("skills", []):
-		skills.erase(i)
+		if i in skills:
+			skills.erase(i)
+		else:
+			actives.erase(i)
 	dat.a("skills", skills)
+	dat.a("actives", actives)
+	dat.add("light", -item.dat.g("light", 0))
 	for i in G.STATS:
 		var stat = item.dat.g(i)
 		if stat != null:
@@ -167,7 +176,8 @@ func unaccomodate_stats(item):
 	if remove_spaces > 0:
 		for i in range(old_inventory.size()):
 			if i >= old_inventory.size() - remove_spaces:
-				store(old_inventory[i], true)
+				if old_inventory[i] != null:
+					store(old_inventory[i], true)
 	weight -= item.dat.g("weight", 0)
 
 func has_part(p):
@@ -200,6 +210,8 @@ func update_save_data(_data):
 	var save_inv = []
 	for i in equipments:
 		save_eq[i] = equipments[i].item_name
+		if i != get_secondary_to(selected_weapon):
+			unaccomodate_stats(equipments[i])
 	for i in inventory:
 		if i != null:
 			save_inv.append(i.item_name)
@@ -208,12 +220,12 @@ func update_save_data(_data):
 	return _data
 
 func load_item_data(_data):
+	selected_weapon = null
 	var load_eq = _data.get("equip")
 	var load_inv = _data.get("inv")
 	for i in load_eq:
 		var item = G.factory.make_item(load_eq[i], null)
-		if equip(i, item):
-			unaccomodate_stats(item)
+		equip(i, item)
 	for i in load_inv:
 		var item = G.factory.make_item(i, null)
 		store(item, true)

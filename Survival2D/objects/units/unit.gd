@@ -23,8 +23,8 @@ onready var n_mat = n_sprite.material
 var n_healthbar
 
 var delay = 0
-var flags
 
+var is_dead = false
 var controller
 var deck = []
 var cooldowns = {}
@@ -32,6 +32,7 @@ var buffs = Buffs.new(self)
 var current_action = ""
 var last_skill = "wait"
 var sight_col = "1000"
+var dirty_dat = false
 
 func _ready():
 	for i in dat.g("buffs", []):
@@ -39,6 +40,11 @@ func _ready():
 
 func set_seed():
 	pass
+
+func on_dat():
+	.on_dat()
+	if controller != null:
+		controller.on_dat()
 
 func possess(ctlr = null):
 	if ctlr == null:
@@ -52,10 +58,6 @@ func possess(ctlr = null):
 	ctlr.unit = self
 	ctlr.target = pos
 	ctlr.on_assign()
-
-func update_flags():
-	if controller != null:
-		controller.on_assign()
 
 func fill_skills():
 	var skillsize = dat.g("skills", []).size()
@@ -130,9 +132,9 @@ func set_state(state, force=false):
 			if move(dir) != null:
 				var ms = dat.g("move speed", 1)
 				if "agile" in flags:
-					ms += int(pos.slow / 2)
+					ms += max(0, controller.target.slow - 4)
 				elif !("float" in flags):
-					ms += pos.slow
+					ms += controller.target.slow
 				delay = max(1, ms)
 				set_move_delay_speed(delay)
 				set_animation("walk")
@@ -158,12 +160,11 @@ func set_state(state, force=false):
 
 func set_animation(p):
 	current_action = p
-	var scale = delay
-	if scale > 0:
+	if delay > 0:
 		if p == "knockout":
 			if "getup" in flags:
 				return
-		n_animation.play(p, -1, 1/(scale*.15))
+		n_animation.play(p, -1, 1/(delay*.15))
 	else:
 		n_animation.play(p)
 
@@ -223,39 +224,45 @@ func hit(_type, dmg, _hitter):
 		if current_action == "knockout":
 			dmg *= 2
 		dat.add("damage", dmg, 0)
-		set_animation("hit")
 		delay = 2
+		set_animation("hit")
 		buffs.on_interrupt("interrupt")
 		show_healthbar()
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
 		var health_percent = get_health()
 		G.display_damage(pos.to_pixel(), round(dmg), Color(1,health_percent,0))
+		flash("red", health_percent + .1)
 		if health_percent <= 0:
-			die()
-		else:
-			flash("red", health_percent + .1)
-			if health_percent < .5:
-				if !buffs.has("injury"):
-					G.fx(self, "injury")
+			is_dead = true
+		elif health_percent <= .5:
+			if !buffs.has("injury"):
+				G.fx(self, "injury")
 	elif dmg < 0:
 		dat.add("damage", dmg, 0, dat.g("vitality"))
+		show_healthbar()
 		flash("green", dmg * -.2)
 		G.display_damage(pos.to_pixel(), round(dmg), Color.green)
 
 func on_turn():
-	if delay == 0:
-		controller.on_turn()
+	if is_dead:
+		die()
 	else:
-		if delay > 0:
-			delay -= 1
+		if dirty_dat:
+			dirty_dat = false
+			on_dat()
 		if delay == 0:
-			set_animation_direction(0)
-			set_state("idle")
-	for i in cooldowns:
-		if cooldowns[i] <= 0:
-			cooldowns.erase(i)
+			controller.on_turn()
 		else:
-			cooldowns[i] -= 1
+			if delay > 0:
+				delay -= 1
+			if delay == 0:
+				set_animation_direction(0)
+				set_state("idle")
+		for i in cooldowns:
+			if cooldowns[i] <= 0:
+				cooldowns.erase(i)
+			else:
+				cooldowns[i] -= 1
 
 func flash(color, dur):
 	n_tween.interpolate_property(n_mat, "shader_param/" + color,

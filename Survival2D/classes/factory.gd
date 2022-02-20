@@ -45,7 +45,7 @@ func make_group(arg, pos):
 						if made == null:
 							made = G.factory.make_item(group[0], adj)
 					if made.col[1] == "1":
-						adjs = adj.get_available_adjacents("0100")
+						adjs = adj.get_available_adjacents("0011")
 						adj = R.r_arr(adjs)
 		return true
 
@@ -94,9 +94,9 @@ func make_unit(arg, pos):
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = G.Properties.new(unit_data)
-		r.flags = r.dat.g("flags", [])
-		r.col = r.dat.g("col", "0100")
-		r.light = r.dat.g("light", 0)
+		if !r.dat.g("col"):
+			r.dat.a("col", "0011")
+		r.on_dat()
 		r.place(pos)
 		r.set_seed()
 		return r
@@ -115,8 +115,6 @@ func make_item(arg, pos=null):
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = G.Properties.new(item_data)
-		r.light = r.dat.g("light", 0)
-		r.col = r.dat.g("col", "0000")
 		if r.dat.g("turn", 0) > 0:
 			G.turn.add(r)
 		var onmake = item_data.get("onmake")
@@ -125,6 +123,7 @@ func make_item(arg, pos=null):
 		var onload = item_data.get("onload")
 		if onload != null:
 			G.onloads.append([r, onload])
+		r.on_dat()
 		if pos != null:
 			r.place(pos)
 		return r

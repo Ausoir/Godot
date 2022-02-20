@@ -62,7 +62,7 @@ func place_mobs(type, num):
 			var y = R.ir(0, G.field.size.y-1)
 			adj = G.field.tiles[y][x]
 			if adj.is_col(1):
-				var adjs = G.field.tiles[y][x].get_available_adjacents("0100")
+				var adjs = G.field.tiles[y][x].get_available_adjacents("0011")
 				adj = R.r_arr(adjs)
 		if adj != null:
 			G.factory.make_group(type, adj)

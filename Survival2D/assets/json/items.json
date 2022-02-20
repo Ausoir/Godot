@@ -24,9 +24,23 @@
 		"weight": 3,
 		"desc": "A cooking tool."
 	},
+	"torch": {
+		"img": "loot",
+		"sprite": "overlay/w_torch",
+		"skills": ["burn"],
+		"light": 4,
+		"mat": "wood",
+		"desc": "A torch."
+	},
+	"blob vial": {
+		"img": "gui/vial",
+		"sprite": "overlay/w_vial",
+		"mat": "glass",
+		"desc": "A vial of blob."
+	},
 	"spear": {
 		"img": "loot",
-		"sprite": "overlay/spear",
+		"sprite": "overlay/w_spear",
 		"abilities": ["reach attack"],
 		"skills": ["strike"],
 		"mat": "wood",
@@ -37,7 +51,7 @@
 	},
 	"cutlass": {
 		"img": "loot",
-		"sprite": "overlay/cutlass",
+		"sprite": "overlay/w_cutlass",
 		"abilities": [],
 		"skills": ["quick strike"],
 		"mat": "wood",
@@ -49,7 +63,7 @@
 	},
 	"bat": {
 		"img": "loot",
-		"sprite": "overlay/bat",
+		"sprite": "overlay/w_bat",
 		"abilities": [],
 		"skills": ["bash", "strike"],
 		"mat": "wood",
@@ -60,7 +74,7 @@
 	},
 	"pipe": {
 		"img": "loot",
-		"sprite": "overlay/pipe",
+		"sprite": "overlay/w_pipe",
 		"abilities": [],
 		"skills": ["bash"],
 		"mat": "metal",
@@ -71,7 +85,7 @@
 	},
 	"knife": {
 		"img": "loot",
-		"sprite": "overlay/knife",
+		"sprite": "overlay/w_knife",
 		"abilities": [],
 		"skills": ["quick strike"],
 		"mat": "metal",
@@ -81,7 +95,7 @@
 	},
 	"backpack": {
 		"img": "loot",
-		"sprite": "overlay/backpack",
+		"sprite": "overlay/back_backpack",
 		"part": "back",
 		"mat": "cotton",
 		"space": 5,
@@ -174,7 +188,7 @@
 		"weight": 16,
 		"col": "0110",
 	},
-	"torch": {
+	"potlight": {
 		"img": "tiles/torch",
 		"mat": "wood",
 		"col": "0000",
@@ -187,7 +201,7 @@
 	"campfire": {
 		"img": "tiles/campfire_lit",
 		"mat": "wood",
-		"col": "0110",
+		"col": "0010",
 		"durability": 3,
 		"light": 5,
 		"weight": 10,
@@ -203,7 +217,7 @@
 	"window curtain": {
 		"img": "tiles/window_curtain",
 		"mat": "glass",
-		"col": "1110",
+		"col": "1111",
 		"openable": true,
 		"durability": 1,
 		"slow": 8,
@@ -215,7 +229,7 @@
 	"window": {
 		"img": "tiles/window",
 		"mat": "glass",
-		"col": "0110",
+		"col": "0111",
 		"openable": true,
 		"durability": 1,
 		"slow": 8,
@@ -236,9 +250,9 @@
 	"window broken": {
 		"img": "tiles/window_broken",
 		"mat": "glass",
-		"col": "0010",
+		"col": "0000",
 		"height": 1,
-		"slow": 2,
+		"slow": 4,
 		"durability": 4,
 		"desc": "A broken window."
 	},
@@ -264,7 +278,7 @@
 	"door": {
 		"img": "tiles/door",
 		"mat": "wood",
-		"col": "1110",
+		"col": "1111",
 		"slow": 24,
 		"openable": true,
 		"height": 1,
@@ -295,16 +309,16 @@
 	"trashcan": {
 		"img": "tiles/trashcan",
 		"mat": "plastic",
+		"col": "0100",
 		"slow": 4,
 		"durability": 12,
-		"col": "0010",
 	},
 	"bookcase": {
 		"img": "tiles/bookcase",
 		"mat": "wood",
+		"col": "1110",
 		"durability": 5,
 		"weight": 12,
-		"col": "1110",
 		"onuse": [["loot", "books"]],
 	},
 	"mirror": {
@@ -319,7 +333,7 @@
 		"mat": "metal",
 		"durability": 10,
 		"weight": 16,
-		"col": "1110",
+		"col": "0110",
 	},
 	"fridge": {
 		"img": "tiles/fridge",
@@ -333,7 +347,7 @@
 		"img": "tiles/shower",
 		"mat": "ceramic",
 		"slow": 8,
-		"col": "1010",
+		"col": "1100",
 	},
 	"sink": {
 		"img": "tiles/sink",
@@ -346,28 +360,28 @@
 		"mat": "ceramic",
 		"slow": 8,
 		"durability": 12,
-		"col": "0010",
+		"col": "0100",
 	},
 	"toilet": {
 		"img": "tiles/toilet",
 		"mat": "ceramic",
 		"slow": 4,
 		"durability": 12,
-		"col": "0010",
+		"col": "0100",
 	},
 	"chair": {
 		"img": "tiles/chair",
 		"mat": "wood",
 		"slow": 4,
 		"durability": 4,
-		"col": "0010",
+		"col": "0100",
 	},
 	"slab": {
 		"img": "tiles/slab",
 		"mat": "stone",
 		"slow": 8,
 		"durability": 12,
-		"col": "0010",
+		"col": "0100",
 	},
 	"chest": {
 		"img": "tiles/chest",
@@ -375,7 +389,7 @@
 		"slow": 4,
 		"weight": 5,
 		"durability": 4,
-		"col": "0010",
+		"col": "0100",
 		"onuse": [["loot", "chest"]],
 	},
 	"dresser": {
@@ -399,7 +413,7 @@
 		"mat": "wood",
 		"slow": 4,
 		"durability": 8,
-		"col": "0010",
+		"col": "0100",
 		"onuse": [["menu", "dialog", "Bulletin"]],
 	},
 	"straw bed": {
@@ -414,21 +428,21 @@
 		"mat": "cloth",
 		"slow": 8,
 		"durability": 8,
-		"col": "0010",
+		"col": "0000",
 	},
 	"logstool": {
 		"img": "tiles/logstool",
 		"mat": "wood",
 		"slow": 4,
 		"durability": 12,
-		"col": "0010",
+		"col": "0000",
 	},
 	"table": {
 		"img": "autotiles/table_autotile",
 		"autotile": 1,
 		"mat": "wood",
-		"slow": 4,
-		"col": "0010",
+		"slow": 6,
+		"col": "0100",
 	},
 	"desk": {
 		"img": "autotiles/desk_autotile",
@@ -436,7 +450,7 @@
 		"mat": "wood",
 		"slow": 4,
 		"weight": 10,
-		"col": "0010",
+		"col": "0100",
 	},
 	"counter": {
 		"img": "autotiles/counter_autotile",
@@ -444,16 +458,15 @@
 		"mat": "wood",
 		"slow": 4,
 		"weight": 12,
-		"col": "0010",
+		"col": "0100",
 	},
 	"sandbag": {
 		"img": "autotiles/sandbag_autotile",
 		"autotile": 1,
 		"mat": "other",
-		"durability": 16,
-		"slow": 24,
+		"durability": 12,
 		"weight": 12,
-		"col": "0000",
+		"col": "0010",
 	},
 	"privacy_fence": {
 		"img": "autotiles/privacy_fence_autotile",
@@ -467,23 +480,23 @@
 		"img": "autotiles/fence_autotile",
 		"autotile": 1,
 		"mat": "wood",
-		"slow": 12,
+		"slow": 10,
 		"weight": 8,
-		"col": "0010",
+		"col": "0100",
 	},
 	"chainfence": {
 		"img": "autotiles/chainfence_autotile",
 		"autotile": 1,
 		"mat": "metal",
 		"weight": 16,
-		"col": "0100",
+		"col": "0010",
 	},
 	"wire": {
 		"img": "autotiles/wire_autotile",
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 12,
-		"col": "0010",
+		"col": "0100",
 	},
 	"crop": {
 		"img": "tiles/crop",
@@ -522,7 +535,7 @@
 		"mat": "wood",
 		"slow": 2,
 		"durability": 16,
-		"col": "0010",
+		"col": "0100",
 	},
 	"boulder": {
 		"img": "tiles/boulder",
@@ -535,7 +548,7 @@
 		"mat": "stone",
 		"slow": 3,
 		"durability": 12,
-		"col": "0010",
+		"col": "0100",
 	},
 	"pit": {
 		"img": "autotiles/pit_autotile",

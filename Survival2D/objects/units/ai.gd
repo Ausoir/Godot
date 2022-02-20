@@ -15,7 +15,8 @@ func on_assign():
 	timeout_pos = unit.pos
 
 func on_hit(_hitter):
-	foe = _hitter
+	if _hitter != null:
+		foe = _hitter
 
 func on_turn():
 	turn_delay += 1
@@ -83,10 +84,11 @@ func perceive():
 func search(faction, _dist):
 	var list = G.world.team[faction]
 	var r = []
+	var dist2 = _dist*2
 	for seen in list:
 		if is_instance_valid(seen) and seen != unit:
 			var dist = unit.pos.distance_to(seen.pos)
-			if dist < _dist:
+			if dist < _dist or (dist < dist2 and seen.pos.light >= 0):
 				var t = unit.pos.get_beam_to(seen.pos, unit.sight_col, _dist)
 				if t != null and t == seen.pos:
 					if seen.is_visible():

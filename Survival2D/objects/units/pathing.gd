@@ -1,4 +1,4 @@
-var cols = "0100"
+var cols = "0011"
 var target
 var iterations = 14
 var pathing_times = 0
