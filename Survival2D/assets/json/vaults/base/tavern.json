@@ -15,7 +15,7 @@
 			"#": ["log wall"],
 			".": ["wood floor"],
 			"T": ["wood floor", ["table", 100]],
-			"c": ["wood floor", ["logstool", 50, "+", ["scav",35,"/",["light scav",20,"/",["heavy scav",20]]]]],
+			"c": ["wood floor", ["logstool", 50, "+", ["scav", 75]]],
 			"b": ["wood floor", ["bulletin", 100]],
 			"k": ["wood floor", ["logstool", 100, "+", ["tavernkeep", 100]]],
 			"/": ["wood floor", ["window", 100]],

@@ -64,12 +64,12 @@ func make_mob(arg, pos):
 			var equips = mob_data.get("equip")
 			if equips != null:
 				for equip in equips:
-					if R.r_percent(equip[1]):
-						var item = G.factory.make_item(equip[0])
-						if item != null:
-							unit.auto_equip(item)
+					var list = G.data.get_combo(equip)
+					for list_item in list:
+						var equip_item = G.factory.make_item(list_item)
+						if equip_item != null:
+							unit.auto_equip(equip_item)
 			unit.item_name = arg
-			unit.fill_skills()
 			return unit
 		else:
 			push_error("Invalid unit "+str(mob_data[1]))

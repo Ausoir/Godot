@@ -175,7 +175,6 @@ func add_bulletin():
 		option["cmd"] = [["dat","a","$pu","social","follow"], ["travel", title]]
 		var social = "leader"
 		for _i in range(pop-1):
-			var scav_type = R.r_arr(["light scav", "heavy scav", "scav", "scav"])
-			option["cmd"] += [["v","adj","$pup"],["make",scav_type,"$t"],["dat","a","$t","social",social],["ally"]]
+			option["cmd"] += [["v","adj","$pup"],["make","scav","$t"],["dat","a","$t","social",social],["ally"]]
 			social = "follow"
 		page_data.opt.append(option)

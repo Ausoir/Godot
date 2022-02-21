@@ -8,10 +8,6 @@ var gender = "m"
 var weight = 0
 var item_skills = []
 
-func _ready():
-	._ready()
-	select_weapon("primary")
-
 func set_seed():
 	var sd = dat.g("seed", -1)
 	if sd == -1:

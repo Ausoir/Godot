@@ -41,6 +41,16 @@ func set_tile_image(_sprite, _to):
 #		sprite.region_rect.position = Vector2(dat[0] * 32, dat[1] * 32)
 	return _sprite
 
+func get_combo(dat):
+	var r = []
+	if R.r_percent(dat[1]):
+		r.append(dat[0])
+		if dat.size() > 2 and dat[2] == "+":
+			r += get_combo(dat[3])
+	elif dat.size() > 2 and dat[2] == "/":
+		r += get_combo(dat[3])
+	return r
+
 func get_group(p):
 	var r = []
 	var data = G.data.group_data.get(p)

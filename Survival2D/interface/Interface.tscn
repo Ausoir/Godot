@@ -89,17 +89,17 @@ __meta__ = {
 [node name="Dialog" type="ScrollContainer" parent="Control/Dialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 5.0
-margin_top = 39.0
-margin_right = -5.0
-margin_bottom = -5.0
+margin_left = 6.0
+margin_top = 42.0
+margin_right = -6.0
+margin_bottom = -8.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control/Dialog/Dialog"]
-margin_right = 390.0
-margin_bottom = 256.0
+margin_right = 388.0
+margin_bottom = 250.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
@@ -109,7 +109,6 @@ text = "Stuff"
 [node name="Description" parent="Control" instance=ExtResource( 3 )]
 visible = false
 margin_right = 64.0
-mouse_filter = 2
 
 [node name="Message" type="Control" parent="Control"]
 grow_vertical = 0
@@ -122,11 +121,10 @@ __meta__ = {
 }
 
 [node name="FPS" type="Label" parent="."]
-margin_left = 580.0
-margin_top = 8.0
-margin_right = 608.0
-margin_bottom = 24.0
-rect_scale = Vector2( 2, 2 )
+margin_left = 800.0
+margin_top = 4.0
+margin_right = 812.0
+margin_bottom = 18.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

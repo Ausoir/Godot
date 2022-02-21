@@ -146,5 +146,5 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 func travel(_map):
 	gamestate.save_game(_map)
 	G.vars.time += 1
-	G.world.daytime = G.vars.time % 2 == 0
+	G.world.daytime = int(G.vars.time) % 2 == 0
 	gamestate.load_game()

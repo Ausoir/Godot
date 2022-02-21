@@ -24,7 +24,9 @@ func paint_map():
 			var value = output[y][x]
 			if value != null:
 				for i in range(1, value.size()):
-					place_object(value[i], x, y)
+					var list = G.data.get_combo(value[i])
+					for item in list:
+						G.cmd([["make", item, G.field.tiles[y][x]]])
 
 func palette_assign(fromx, fromy, tox, toy):
 	for y in range(fromy, toy+1):
@@ -69,14 +71,6 @@ func paint_spawn(dir):
 				G.field.spawn_points.append(G.field.tiles[y][0])
 	if G.field.spawn_points.empty():
 		push_error("No spawn points found")
-
-func place_object(dat, x, y):
-	if R.r_percent(dat[1]):
-		G.cmd([["make", dat[0], G.field.tiles[y][x]]])
-		if dat.size() > 2 and dat[2] == "+":
-			place_object(dat[3], x, y)
-	elif dat.size() > 2 and dat[2] == "/":
-		place_object(dat[3], x, y)
 
 func make_base(sx, sy, val):
 	var r = []

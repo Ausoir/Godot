@@ -111,6 +111,14 @@
 		"cut": 1,
 		"desc": "A rusty metal knife. Still pretty sharp."
 	},
+	"rucksack": {
+		"img": "loot",
+		"sprite": "overlay/back_rucksack",
+		"part": "back",
+		"mat": "cotton",
+		"space": 7,
+		"desc": "A rucksack."
+	},
 	"backpack": {
 		"img": "loot",
 		"sprite": "overlay/back_backpack",
@@ -119,12 +127,28 @@
 		"space": 5,
 		"desc": "A backpack."
 	},
+	"looter coat": {
+		"img": "loot",
+		"sprite": "overlay/body_scavenger",
+		"part": "body",
+		"mat": "leather",
+		"space": 2,
+		"desc": "A tattered coat favored by looters."
+	},
+	"leather armor": {
+		"img": "loot",
+		"sprite": "overlay/body_leather",
+		"part": "body",
+		"mat": "leather",
+		"space": 2,
+		"desc": "A leather armor."
+	},
 	"suit": {
 		"img": "loot",
 		"sprite": "overlay/body_suit",
 		"part": "body",
 		"mat": "cotton",
-		"space": 3,
+		"space": 4,
 		"desc": "A fancy suit."
 	},
 	"suspenders": {
@@ -132,7 +156,7 @@
 		"sprite": "overlay/body_suspenders",
 		"part": "body",
 		"mat": "cotton",
-		"space": 3,
+		"space": 4,
 		"weight": 1,
 		"desc": "Suspenders for the productive."
 	},
@@ -141,18 +165,16 @@
 		"sprite": "overlay/body_casual",
 		"part": "body",
 		"gender": true,
-		"abilities": ["fly"],
 		"skills": ["headbutt"],
 		"mat": "cotton",
-		"space": 1,
+		"space": 2,
 		"desc": "A casual wear."
 	},
 	"gi": {
 		"img": "loot",
 		"sprite": "overlay/body_gi",
 		"part": "body",
-		"abilities": ["fly"],
-		"skills": ["headbutt"],
+		"skills": ["quick strike"],
 		"mat": "cotton",
 		"space": 1,
 		"desc": "Clothing worn by the martially adept."
@@ -161,9 +183,7 @@
 		"img": "loot",
 		"sprite": "overlay/body_scale",
 		"part": "body",
-		"abilities": ["fly"],
-		"skills": ["headbutt"],
-		"mat": "cotton",
+		"mat": "metal",
 		"space": 2,
 		"weight": 3,
 		"desc": "A tough armor layered with thin metallic scales."

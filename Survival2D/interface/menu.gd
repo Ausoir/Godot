@@ -27,7 +27,7 @@ func _background_input(event):
 				drag_item.item.place(G.you.unit.pos)
 				set_drag_item(null)
 		else:
-			clear()
+			G.ui.clear()
 
 func display(_arg):
 	show()
@@ -126,10 +126,18 @@ func update_skills():
 		var slot = tab_skill_inactive.get_child(i)
 		slot.assign(skill)
 	var unit_actives = G.you.unit.dat.g("actives", [])
+	var last_count = 0
 	for i in range(unit_actives.size()):
 		var actives = unit_actives[i]
 		var slot = tab_skill_active.get_child(i)
 		slot.assign(actives)
+		slot.set_is_item(false)
+		last_count = i
+	for i in range(G.you.unit.item_skills.size()):
+		var actives = G.you.unit.item_skills[i]
+		var slot = tab_skill_active.get_child(last_count+i)
+		slot.assign(actives)
+		slot.set_is_item(true)
 
 func update_status():
 	var header = tab_status.get_node("Panel/Label")

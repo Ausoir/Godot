@@ -77,8 +77,8 @@ dragger_visibility = 1
 
 [node name="Equipment" type="Panel" parent="Tabs/INV/VSplit"]
 margin_right = 158.0
-margin_bottom = 200.0
-rect_min_size = Vector2( 0, 200 )
+margin_bottom = 180.0
+rect_min_size = Vector2( 0, 180 )
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 3 )
 
@@ -233,14 +233,14 @@ margin_right = 120.0
 margin_bottom = 140.0
 
 [node name="Inventory" type="GridContainer" parent="Tabs/INV/VSplit"]
-margin_top = 212.0
+margin_top = 192.0
 margin_right = 158.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/vseparation = 8
 custom_constants/hseparation = 8
-columns = 5
+columns = 4
 
 [node name="CHA" type="ScrollContainer" parent="Tabs"]
 visible = false

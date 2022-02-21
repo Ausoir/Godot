@@ -3,9 +3,17 @@ extends Panel
 export var index = 0
 export var active = false
 var stylebox = get_stylebox("panel", "")
+var is_item = false
 var skill
 var skill_data
 var dragged_sprite
+
+func set_is_item(p):
+	is_item = p
+	if p:
+		$Sprite.modulate = Color.darkgoldenrod
+	else:
+		$Sprite.modulate = Color.white
 
 func assign(p):
 	skill = p
@@ -38,7 +46,7 @@ func _on_mouse_exited():
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
-		if event.pressed:
+		if event.pressed and !is_item:
 			if event.button_index == BUTTON_LEFT:
 				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
 					place_to(G.ui.menu.drag_item)
@@ -77,4 +85,3 @@ func place_to(item):
 		G.you.unit.deactivate_skill(item.index)
 	G.ui.menu.set_drag_item(null)
 	G.ui.menu.update_skills()
-	return true

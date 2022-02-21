@@ -177,7 +177,7 @@ func interact(tile):
 				if onuse != null:
 					G.cmd(onuse, item)
 				elif item.item_type == "item":
-					G.ui.search_inventory(tile)
+					G.ui.menu.search_inventory(tile)
 				elif item.item_type == "unit":
 					if item.faction == unit.faction:
 						if Input.is_action_pressed("shift"):
