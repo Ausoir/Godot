@@ -5,6 +5,7 @@ var width
 var height
 var base
 var output
+var spawn_points = []
 
 func create(x, y):
 	width = x
@@ -53,22 +54,25 @@ func palette_fill(_bounds, _val):
 
 func paint_spawn(dir):
 	G.field.spawn_points = []
-	if dir == 0:
-		for x in range(1, width-1):
-			if !G.field.tiles[0][x].is_col(1) and !G.field.tiles[1][x].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[0][x])
-	elif dir == 1:
-		for y in range(1, height-1):
-			if !G.field.tiles[y][width-1].is_col(1) and !G.field.tiles[y][width-2].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[y][width-1])
-	elif dir == 2:
-		for x in range(1, width-1):
-			if !G.field.tiles[height-1][x].is_col(1) and !G.field.tiles[height-2][x].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[height-1][x])
-	elif dir == 3:
-		for y in range(1, height-1):
-			if !G.field.tiles[y][0].is_col(1) and !G.field.tiles[y][1].is_col(1):
-				G.field.spawn_points.append(G.field.tiles[y][0])
+	for i in spawn_points:
+		G.field.spawn_points.append(G.field.tiles[i[1]][i[0]])
+	if G.field.spawn_points.empty():
+		if dir == 0:
+			for x in range(1, width-1):
+				if !G.field.tiles[0][x].is_col(1) and !G.field.tiles[1][x].is_col(1):
+					G.field.spawn_points.append(G.field.tiles[0][x])
+		elif dir == 1:
+			for y in range(1, height-1):
+				if !G.field.tiles[y][width-1].is_col(1) and !G.field.tiles[y][width-2].is_col(1):
+					G.field.spawn_points.append(G.field.tiles[y][width-1])
+		elif dir == 2:
+			for x in range(1, width-1):
+				if !G.field.tiles[height-1][x].is_col(1) and !G.field.tiles[height-2][x].is_col(1):
+					G.field.spawn_points.append(G.field.tiles[height-1][x])
+		elif dir == 3:
+			for y in range(1, height-1):
+				if !G.field.tiles[y][0].is_col(1) and !G.field.tiles[y][1].is_col(1):
+					G.field.spawn_points.append(G.field.tiles[y][0])
 	if G.field.spawn_points.empty():
 		push_error("No spawn points found")
 

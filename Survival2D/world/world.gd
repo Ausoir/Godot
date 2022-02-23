@@ -8,6 +8,7 @@ onready var items = $Items
 onready var players = $Players
 onready var others = $Others
 onready var canvas = $Canvas
+var lights = []
 var daytime = true
 var map_name: String
 var team = [[], [], []]
@@ -30,8 +31,8 @@ func create(_type):
 	clear()
 	var generator
 	map_name = _type
-	if map_name == "base":
-		generator = load("res://world/generator_base.gd").new()
+	if map_name == "city":
+		generator = load("res://world/generator_city.gd").new()
 		generator.generate()
 	elif map_name == "urban":
 		generator = load("res://world/generator_street.gd").new()
@@ -46,10 +47,11 @@ func create(_type):
 		generator.generate()
 		place_mobs("g_urban", 36)
 	G.field.apply_shades(Vector2(), G.field.size)
+	tilemap.update_bitmask_region(Vector2(), G.field.size)
 	for y in range(G.field.size.y):
 		for x in range(G.field.size.x):
 			G.field.apply_autotile(x, y)
-			set_dark(x, y)
+			set_dark(G.field.tiles[y][x])
 	G.process_onload()
 
 func place_mobs(type, num):
@@ -67,27 +69,14 @@ func place_mobs(type, num):
 		if adj != null:
 			G.factory.make_group(type, adj)
 
-func set_dark(x, y):
-	if shademap.get_cell(x, y) != 0:
-		var tile = G.field.tiles[y][x]
-		if tile.light >= 0:
-			shademap.set_cell(x, y, 0)
-		else:
-			shademap.set_cell(x, y, 1)
-		tile.set_visible(false)
+func set_dark(tile):
+	if tile.set_visible(false):
+		shademap.set_cell(tile.x, tile.y, 0)
 
-func set_light(x, y):
-	if shademap.get_cell(x, y) < 2:
-		var tile = G.field.tiles[y][x]
-		if tile.light >= 0:
-			shademap.set_cell(x, y, tile.shade)
-		else:
-			shademap.set_cell(x, y, 2)
-		tile.set_visible(true)
+func set_light(tile):
+	tile.set_visible(true)
+	shademap.set_cell(tile.x, tile.y, tile.shade)
 
-func update_light(x, y):
-	var tile = G.field.tiles[y][x]
-	if tile.light >= 0:
-		shademap.set_cell(x, y, tile.shade)
-	else:
-		shademap.set_cell(x, y, 2)
+func set_sight(tile):
+	tile.set_visible(true)
+	shademap.set_cell(tile.x, tile.y, 2)

@@ -44,7 +44,7 @@ func make_group(arg, pos):
 						made = G.factory.make_unit(group[0], adj)
 						if made == null:
 							made = G.factory.make_item(group[0], adj)
-					if made.col[1] == "1":
+					if made.col[2] == "1":
 						adjs = adj.get_available_adjacents("0011")
 						adj = R.r_arr(adjs)
 		return true
@@ -58,6 +58,7 @@ func make_mob(arg, pos):
 		if unit != null:
 			if !mob_data.get("controlled", false):
 				unit.possess()
+			unit.item_name = arg
 			unit.faction = mob_data.faction
 			G.world.team[unit.faction].append(unit)
 			unit.dat.combine(mob_data.get("dat", {}))
@@ -69,7 +70,7 @@ func make_mob(arg, pos):
 						var equip_item = G.factory.make_item(list_item)
 						if equip_item != null:
 							unit.auto_equip(equip_item)
-			unit.item_name = arg
+			unit.fill_skills()
 			return unit
 		else:
 			push_error("Invalid unit "+str(mob_data[1]))

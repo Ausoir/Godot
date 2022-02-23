@@ -1,7 +1,5 @@
 extends Node
 
-const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
-	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
 const QUADRANT_FLIP = [[1, 0, 1, 0],[0, 1, 1, 0],[1, 0, 0, 1],[0, 1, 0, 1]]
 const QUADRANT_ALL = [1, 1, 1, 1]
 
@@ -9,19 +7,21 @@ var processing_frame = -1
 var view_range = 16
 var sight_range = 7
 var sight2 = 14
-var col_sight = G.COL_SIGHT
 var sight_frame = 0
 var param_last_pos
 var param_pos
+
+func _ready():
+	set_process(false)
 
 func _process(_delta):
 	if processing_frame == -1:
 		param_pos.sight_frame = sight_frame
 		for i in range(8):
-			cast_sight(param_pos, 1, 1.0, 0.0, OCTANT_FLIP[i], 0)
+			cast_sight(param_pos, 1, 1.0, 0.0, G.OCTANT_FLIP[i], 0)
 		processing_frame += 1
 	elif processing_frame >= 0:
-		process_vision(param_last_pos, QUADRANT_FLIP[processing_frame])
+		process_vision(param_pos, QUADRANT_FLIP[processing_frame])
 		processing_frame += 1
 		if processing_frame == 4:
 			var diffx = abs(param_last_pos.x - param_pos.x)
@@ -38,28 +38,33 @@ func process_vision(center, quad):
 			var tile = G.field.get_tile(xx, yy)
 			if tile:
 				if tile.sight_frame == sight_frame:
-					if tile.light >= 0 or (x > -sight_range and x < sight_range and y > -sight_range and y < sight_range):
-						G.world.set_light(xx, yy)
+					if tile.light >= 0:
+						G.world.set_light(tile)
+					elif (x > -sight_range and x < sight_range and y > -sight_range and y < sight_range):
+						G.world.set_sight(tile)
+					else:
+						G.world.set_dark(tile)
 				elif tile.sight_frame == sight_frame - 1:
-					G.world.set_dark(xx, yy)
+					G.world.set_dark(tile)
 
 func stop_process():
 	sight_frame += 1
 	processing_frame = -1
-	set_process(false)
 
-func darken():
-	for y in range(-sight2, sight2+1):
-		for x in range(-sight2, sight2+1):
-			var tile = G.field.get_tile(param_pos.x+x, param_pos.y+y)
-			if tile:
-				G.world.set_dark(param_pos.x+x, param_pos.y+y)
+func get_affected_lights(pos):
+	var r = []
+	for i in G.world.lights:
+		if pos.distance_to(i) <= i.light:
+			r.append(i)
+	return r
 
-func update(last_pos, pos, sight_col):
+func set_sight(p):
+	sight_range = int(p / 2)
+	sight2 = p * 2
+
+func update(last_pos, pos):
 	param_last_pos = last_pos
 	param_pos = pos
-	set_process(true)
-	col_sight = sight_col
 
 func cast_sight(camera, row, start, end, flips, depth):
 	if start < end:
@@ -87,13 +92,13 @@ func cast_sight(camera, row, start, end, flips, depth):
 					if tile.light >= 0 or (abs(tile_x) <= sight_range and abs(tile_y) <= sight_range):
 						tile.sight_frame = sight_frame
 					if blocked:
-						if tile.is_cols(col_sight):
+						if tile.is_col(0):
 							new_start = end_slope
 						else:
 							blocked = false
 							start = new_start
 					else:
-						if tile.is_cols(col_sight) and cell < sight2:
+						if tile.is_col(0) and cell < sight2:
 							blocked = true
 							cast_sight(camera, cell + 1, start, start_slope, flips, depth + 1)
 							new_start = end_slope

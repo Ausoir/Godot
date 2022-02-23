@@ -25,7 +25,7 @@ func display_item(header, item):
 	if "part" in item:
 		if item.part != "item":
 			desc += "[color=#335]Armor ("+ str(item.part) +")[/color]\n"
-		desc = "Weight: "+ str(item.get("weight", 0)) +"\n"
+		desc = "[color=#888]Weight: "+ str(item.get("weight", 0)) +"[/color]\n"
 	else:
 		var cut = item.get("cut", 0)
 		if cut != 0:

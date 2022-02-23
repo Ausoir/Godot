@@ -261,20 +261,20 @@
 		"img": "gui/sk_shoot",
 		"target": "unit",
 		"col": "1110",
-		"delay": 4,
+		"delay": 6,
 		"range": 8,
 		"cooldown": 4,
 		"onstart": [["expend", 1],["sfx", "gun", "host"],["gfx", "particleto", "Shot"],["gfx", "particle", "Shoot"],["gfx", "projectile", "textures/bullet", [0,16]],["dmg", "cut", 4]],
 	},
-	"shoot 16": {
+	"shoot 3": {
 		"img": "gui/sk_shoot",
 		"target": "unit",
 		"col": "1110",
-		"delay": 16,
-		"range": 8,
-		"duration": 16,
+		"delay": 9,
+		"range": 12,
+		"duration": 3,
 		"onturn": [["expend", 1],["sfx", "gun", "host"],["gfx", "particleto", "Shot"],["gfx", "particle", "Shoot"],["gfx", "projectile", "textures/bullet", [0,16]],["dmg", "cut", 1]],
-		"onend": [["cooldown", "shoot 16", 8]]
+		"onend": [["cooldown", "shoot 3", 8]]
 	},
 
 
@@ -322,8 +322,8 @@
 		"img": "gui/st_fly",
 		"target": "tile",
 		"delay": 1,
-		"range": 10,
-		"reqs": ["seen"],
+		"range": 16,
+		"reqs": [],
 		"onstart": [["move"]],
 		"desc": "Debug use",
 	},
@@ -336,6 +336,13 @@
 		"reqs": ["solid"],
 		"onstart": [["color", "brown"]],
 		"onend": [["move"]],
+	},
+	"summon light": {
+		"img": "gui/sk_throw",
+		"target": "self",
+		"delay": 2,
+		"onstart": [["cmd", "v","adj","$hp"],["cmd", "make","campfire","$t"]],
+		"desc": "Debug use.",
 	},
 	"summon ally": {
 		"img": "gui/sk_throw",
@@ -350,6 +357,18 @@
 		"delay": 2,
 		"onstart": [["mob", "mantle"]],
 		"desc": "Debug use",
+	},
+	"polymorph": {
+		"img": "gui/st_death",
+		"target": "self",
+		"delay": 2,
+		"onstart": [["morph", "coyote"]],
+	},
+	"invisibility": {
+		"img": "gui/st_death",
+		"target": "self",
+		"delay": 2,
+		"onstart": [["cast", "invisible"]],
 	},
 	"swap to primary": {
 		"img": "gui/eq_primary",

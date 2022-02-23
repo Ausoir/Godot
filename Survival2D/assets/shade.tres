@@ -1,28 +1,29 @@
-[gd_resource type="TileSet" load_steps=3 format=2]
+[gd_resource type="TileSet" load_steps=4 format=2]
 
 [ext_resource path="res://assets/images/shadow.png" type="Texture" id=1]
-[ext_resource path="res://assets/images/blendmap1.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/fog.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/blendmap1.png" type="Texture" id=3]
 
 [resource]
-0/name = "fog"
+0/name = "shade"
 0/texture = ExtResource( 1 )
 0/tex_offset = Vector2( 0, 0 )
 0/modulate = Color( 1, 1, 1, 1 )
-0/region = Rect2( 0, 0, 64, 64 )
+0/region = Rect2( 0, 0, 32, 32 )
 0/tile_mode = 0
-0/occluder_offset = Vector2( 32, 32 )
-0/navigation_offset = Vector2( 32, 32 )
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
 0/shape_offset = Vector2( 0, 0 )
 0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 0/shape_one_way = false
 0/shape_one_way_margin = 0.0
 0/shapes = [  ]
 0/z_index = 0
-1/name = "shadefog"
-1/texture = ExtResource( 1 )
+1/name = "fog"
+1/texture = ExtResource( 2 )
 1/tex_offset = Vector2( 0, 0 )
 1/modulate = Color( 1, 1, 1, 1 )
-1/region = Rect2( 64, 0, 64, 64 )
+1/region = Rect2( 0, 0, 32, 32 )
 1/tile_mode = 0
 1/occluder_offset = Vector2( 0, 0 )
 1/navigation_offset = Vector2( 0, 0 )
@@ -32,11 +33,11 @@
 1/shape_one_way_margin = 0.0
 1/shapes = [  ]
 1/z_index = 0
-2/name = "shade"
-2/texture = ExtResource( 1 )
+2/name = "shadefog"
+2/texture = ExtResource( 2 )
 2/tex_offset = Vector2( 0, 0 )
 2/modulate = Color( 1, 1, 1, 1 )
-2/region = Rect2( 128, 0, 64, 64 )
+2/region = Rect2( 32, 0, 32, 32 )
 2/tile_mode = 0
 2/occluder_offset = Vector2( 0, 0 )
 2/navigation_offset = Vector2( 0, 0 )
@@ -47,10 +48,10 @@
 2/shapes = [  ]
 2/z_index = 0
 11/name = "w"
-11/texture = ExtResource( 2 )
+11/texture = ExtResource( 3 )
 11/tex_offset = Vector2( 0, 0 )
 11/modulate = Color( 1, 1, 1, 1 )
-11/region = Rect2( 0, 0, 32, 32 )
+11/region = Rect2( 0, 0, 16, 16 )
 11/tile_mode = 0
 11/occluder_offset = Vector2( 0, 0 )
 11/navigation_offset = Vector2( 0, 0 )
@@ -61,10 +62,10 @@
 11/shapes = [  ]
 11/z_index = 0
 12/name = "nw"
-12/texture = ExtResource( 2 )
+12/texture = ExtResource( 3 )
 12/tex_offset = Vector2( 0, 0 )
 12/modulate = Color( 1, 1, 1, 1 )
-12/region = Rect2( 32, 0, 32, 32 )
+12/region = Rect2( 16, 0, 16, 16 )
 12/tile_mode = 0
 12/occluder_offset = Vector2( 0, 0 )
 12/navigation_offset = Vector2( 0, 0 )
@@ -75,10 +76,10 @@
 12/shapes = [  ]
 12/z_index = 0
 13/name = "n"
-13/texture = ExtResource( 2 )
+13/texture = ExtResource( 3 )
 13/tex_offset = Vector2( 0, 0 )
 13/modulate = Color( 1, 1, 1, 1 )
-13/region = Rect2( 64, 0, 32, 32 )
+13/region = Rect2( 32, 0, 16, 16 )
 13/tile_mode = 0
 13/occluder_offset = Vector2( 0, 0 )
 13/navigation_offset = Vector2( 0, 0 )
@@ -89,10 +90,10 @@
 13/shapes = [  ]
 13/z_index = 0
 14/name = "ne"
-14/texture = ExtResource( 2 )
+14/texture = ExtResource( 3 )
 14/tex_offset = Vector2( 0, 0 )
 14/modulate = Color( 1, 1, 1, 1 )
-14/region = Rect2( 96, 0, 32, 32 )
+14/region = Rect2( 48, 0, 16, 16 )
 14/tile_mode = 0
 14/occluder_offset = Vector2( 0, 0 )
 14/navigation_offset = Vector2( 0, 0 )
@@ -103,10 +104,10 @@
 14/shapes = [  ]
 14/z_index = 0
 15/name = "e"
-15/texture = ExtResource( 2 )
+15/texture = ExtResource( 3 )
 15/tex_offset = Vector2( 0, 0 )
 15/modulate = Color( 1, 1, 1, 1 )
-15/region = Rect2( 128, 0, 32, 32 )
+15/region = Rect2( 64, 0, 16, 16 )
 15/tile_mode = 0
 15/occluder_offset = Vector2( 0, 0 )
 15/navigation_offset = Vector2( 0, 0 )
@@ -117,10 +118,10 @@
 15/shapes = [  ]
 15/z_index = 0
 16/name = "wn"
-16/texture = ExtResource( 2 )
+16/texture = ExtResource( 3 )
 16/tex_offset = Vector2( 0, 0 )
 16/modulate = Color( 1, 1, 1, 1 )
-16/region = Rect2( 0, 32, 32, 32 )
+16/region = Rect2( 0, 16, 16, 16 )
 16/tile_mode = 0
 16/occluder_offset = Vector2( 0, 0 )
 16/navigation_offset = Vector2( 0, 0 )
@@ -131,10 +132,10 @@
 16/shapes = [  ]
 16/z_index = 0
 17/name = "en"
-17/texture = ExtResource( 2 )
+17/texture = ExtResource( 3 )
 17/tex_offset = Vector2( 0, 0 )
 17/modulate = Color( 1, 1, 1, 1 )
-17/region = Rect2( 32, 32, 32, 32 )
+17/region = Rect2( 16, 16, 16, 16 )
 17/tile_mode = 0
 17/occluder_offset = Vector2( 0, 0 )
 17/navigation_offset = Vector2( 0, 0 )
@@ -145,10 +146,10 @@
 17/shapes = [  ]
 17/z_index = 0
 18/name = "we"
-18/texture = ExtResource( 2 )
+18/texture = ExtResource( 3 )
 18/tex_offset = Vector2( 0, 0 )
 18/modulate = Color( 1, 1, 1, 1 )
-18/region = Rect2( 64, 32, 32, 32 )
+18/region = Rect2( 32, 16, 16, 16 )
 18/tile_mode = 0
 18/occluder_offset = Vector2( 0, 0 )
 18/navigation_offset = Vector2( 0, 0 )
@@ -159,10 +160,10 @@
 18/shapes = [  ]
 18/z_index = 0
 19/name = "wne"
-19/texture = ExtResource( 2 )
+19/texture = ExtResource( 3 )
 19/tex_offset = Vector2( 0, 0 )
 19/modulate = Color( 1, 1, 1, 1 )
-19/region = Rect2( 96, 32, 32, 32 )
+19/region = Rect2( 48, 16, 16, 16 )
 19/tile_mode = 0
 19/occluder_offset = Vector2( 0, 0 )
 19/navigation_offset = Vector2( 0, 0 )
@@ -173,10 +174,10 @@
 19/shapes = [  ]
 19/z_index = 0
 20/name = "nwe"
-20/texture = ExtResource( 2 )
+20/texture = ExtResource( 3 )
 20/tex_offset = Vector2( 0, 0 )
 20/modulate = Color( 1, 1, 1, 1 )
-20/region = Rect2( 128, 32, 32, 32 )
+20/region = Rect2( 64, 16, 16, 16 )
 20/tile_mode = 0
 20/occluder_offset = Vector2( 0, 0 )
 20/navigation_offset = Vector2( 0, 0 )
@@ -187,10 +188,10 @@
 20/shapes = [  ]
 20/z_index = 0
 21/name = "all"
-21/texture = ExtResource( 2 )
+21/texture = ExtResource( 3 )
 21/tex_offset = Vector2( 0, 0 )
 21/modulate = Color( 1, 1, 1, 1 )
-21/region = Rect2( 0, 64, 32, 32 )
+21/region = Rect2( 0, 32, 16, 16 )
 21/tile_mode = 0
 21/occluder_offset = Vector2( 0, 0 )
 21/navigation_offset = Vector2( 0, 0 )
@@ -201,10 +202,10 @@
 21/shapes = [  ]
 21/z_index = 0
 22/name = "wtop"
-22/texture = ExtResource( 2 )
+22/texture = ExtResource( 3 )
 22/tex_offset = Vector2( 0, 0 )
 22/modulate = Color( 1, 1, 1, 1 )
-22/region = Rect2( 32, 64, 32, 32 )
+22/region = Rect2( 16, 32, 16, 16 )
 22/tile_mode = 0
 22/occluder_offset = Vector2( 0, 0 )
 22/navigation_offset = Vector2( 0, 0 )
@@ -215,10 +216,10 @@
 22/shapes = [  ]
 22/z_index = 0
 23/name = "etop"
-23/texture = ExtResource( 2 )
+23/texture = ExtResource( 3 )
 23/tex_offset = Vector2( 0, 0 )
 23/modulate = Color( 1, 1, 1, 1 )
-23/region = Rect2( 64, 64, 32, 32 )
+23/region = Rect2( 32, 32, 16, 16 )
 23/tile_mode = 0
 23/occluder_offset = Vector2( 0, 0 )
 23/navigation_offset = Vector2( 0, 0 )
@@ -229,10 +230,10 @@
 23/shapes = [  ]
 23/z_index = 0
 24/name = "nwne"
-24/texture = ExtResource( 2 )
+24/texture = ExtResource( 3 )
 24/tex_offset = Vector2( 0, 0 )
 24/modulate = Color( 1, 1, 1, 1 )
-24/region = Rect2( 96, 64, 32, 32 )
+24/region = Rect2( 48, 32, 16, 16 )
 24/tile_mode = 0
 24/occluder_offset = Vector2( 0, 0 )
 24/navigation_offset = Vector2( 0, 0 )

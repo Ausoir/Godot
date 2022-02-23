@@ -6,7 +6,6 @@ var unit
 var sight_range = 8
 var target
 var tasks = []
-var delay = 0
 var pathing = Pathing.new()
 
 func on_dat():
@@ -15,11 +14,13 @@ func on_dat():
 		pathing.hinderance = 0
 	elif "user" in unit.flags:
 		pathing.can_open = true
-		pathing.pathing_times = 5
+		pathing.pathing_times = 3
+		pathing.iterations = 24
 	elif "float" in unit.flags:
 		pathing.hinderance = 0
 	elif "agile" in unit.flags:
 		pathing.hinderance = .5
+	pathing.cols = unit.dat.g("cols", pathing.cols)
 
 func on_assign():
 	unit.dirty_dat = true
@@ -60,6 +61,8 @@ func perform(task):
 			if !interact(task[1]):
 				perform(["smash", task[1]])
 	elif task[0] == "interact":
+		unit.delay = 4
+		unit.set_animation("wait")
 		if unit.pos.distance_to(task[1]) <= 1:
 			interact(task[1])
 	elif task[0] == "smash":

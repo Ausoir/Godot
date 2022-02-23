@@ -5,10 +5,9 @@ var biome
 var _stack = []
 var size
 var estates = []
-var spawn_points = []
 
 func generate():
-	.create(5, 5)
+	.create(4, 4)
 	base = make_base(width, height, 1)
 
 	_stack = [
@@ -19,11 +18,7 @@ func generate():
 	biome_map = make_perlin(width, height, 2)
 	magnify(21)
 	paint_map()
-	if spawn_points.empty():
-		paint_spawn(R.ir(0, 3))
-	else:
-		for i in spawn_points:
-			G.field.spawn_points.append(G.field.tiles[i[1]][i[0]])
+	paint_spawn(R.ir(0, 3))
 
 func paint_perlin(mx, my, sx, sy):
 	for y in range(sy):

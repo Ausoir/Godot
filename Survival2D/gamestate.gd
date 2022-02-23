@@ -207,6 +207,7 @@ func load_game():
 			save_game.open("res://assets/template.save", File.READ)
 			node_data = parse_json(save_game.get_line())
 		G.vars = node_data
+		G.world.daytime = int(G.vars.time) % 2 == 0
 		R.set_seed(G.vars.seed)
 		if "forcemap" in G.vars:
 			G.world.create(G.vars["forcemap"])

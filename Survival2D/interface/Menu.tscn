@@ -1,36 +1,10 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://assets/font2.tres" type="DynamicFont" id=2]
-[ext_resource path="res://interface/ItemSlot.tscn" type="PackedScene" id=3]
 [ext_resource path="res://interface/SkillSlot.tscn" type="PackedScene" id=4]
 [ext_resource path="res://interface/menu.gd" type="Script" id=5]
 [ext_resource path="res://assets/images/gui/slot_full.png" type="Texture" id=7]
-[ext_resource path="res://assets/images/gui/eq_part4.png" type="Texture" id=8]
-[ext_resource path="res://assets/images/gui/eq_part2.png" type="Texture" id=9]
-[ext_resource path="res://assets/images/gui/eq_part9.png" type="Texture" id=10]
-[ext_resource path="res://assets/images/gui/eq_part21.png" type="Texture" id=11]
-[ext_resource path="res://assets/images/gui/eq_part15.png" type="Texture" id=12]
-[ext_resource path="res://assets/images/gui/eq_primary.png" type="Texture" id=13]
-[ext_resource path="res://assets/images/gui/eq_secondary.png" type="Texture" id=14]
-[ext_resource path="res://assets/images/gui/eq_part5.png" type="Texture" id=15]
-[ext_resource path="res://assets/images/gui/eq_part1.png" type="Texture" id=16]
-[ext_resource path="res://assets/images/model.png" type="Texture" id=17]
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=18]
-
-[sub_resource type="StyleBoxTexture" id=3]
-texture = ExtResource( 17 )
-region_rect = Rect2( 0, -10, 180, 220 )
-
-[sub_resource type="StyleBoxTexture" id=4]
-resource_local_to_scene = true
-texture = ExtResource( 7 )
-region_rect = Rect2( 0, 0, 32, 32 )
-
-[sub_resource type="StyleBoxTexture" id=5]
-resource_local_to_scene = true
-texture = ExtResource( 7 )
-region_rect = Rect2( 0, 0, 32, 32 )
 
 [sub_resource type="DynamicFont" id=6]
 outline_size = 1
@@ -73,174 +47,41 @@ margin_right = 158.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-dragger_visibility = 1
 
-[node name="Equipment" type="Panel" parent="Tabs/INV/VSplit"]
+[node name="Equipment" type="VBoxContainer" parent="Tabs/INV/VSplit"]
 margin_right = 158.0
-margin_bottom = 180.0
-rect_min_size = Vector2( 0, 180 )
+margin_bottom = 216.0
 size_flags_horizontal = 3
-custom_styles/panel = SubResource( 3 )
+size_flags_vertical = 3
 
-[node name="Columns" type="HBoxContainer" parent="Tabs/INV/VSplit/Equipment"]
-margin_top = 24.0
-margin_right = 140.0
-margin_bottom = 164.0
+[node name="Label2" type="Label" parent="Tabs/INV/VSplit/Equipment"]
+margin_right = 158.0
+margin_bottom = 20.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 6 )
+text = "Equipment:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="1" type="VBoxContainer" parent="Tabs/INV/VSplit/Equipment/Columns"]
-margin_right = 36.0
-margin_bottom = 140.0
-
-[node name="back" parent="Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 3 )]
-margin_right = 36.0
-margin_bottom = 36.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "back"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/1/back"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 10 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 736, 896, 32, 32 )
-
-[node name="outer" parent="Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 3 )]
-margin_top = 40.0
-margin_right = 36.0
-margin_bottom = 76.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "outer"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/1/outer"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 9 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 1312, 896, 32, 32 )
-
-[node name="offhand" parent="Tabs/INV/VSplit/Equipment/Columns/1" instance=ExtResource( 3 )]
-margin_top = 80.0
-margin_right = 36.0
-margin_bottom = 116.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "offhand"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/1/offhand"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 11 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 1120, 896, 32, 32 )
-
-[node name="2" type="VBoxContainer" parent="Tabs/INV/VSplit/Equipment/Columns"]
-margin_left = 40.0
-margin_right = 76.0
-margin_bottom = 140.0
-
-[node name="head" parent="Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 3 )]
-margin_right = 36.0
-margin_bottom = 36.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "head"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/2/head"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 8 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 576, 896, 32, 32 )
-
-[node name="body" parent="Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 3 )]
-margin_top = 40.0
-margin_right = 36.0
-margin_bottom = 76.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "body"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/2/body"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 16 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 480, 896, 32, 32 )
-
-[node name="feet" parent="Tabs/INV/VSplit/Equipment/Columns/2" instance=ExtResource( 3 )]
-margin_top = 80.0
-margin_right = 36.0
-margin_bottom = 116.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "feet"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/2/feet"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 15 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 608, 896, 32, 32 )
-
-[node name="3" type="VBoxContainer" parent="Tabs/INV/VSplit/Equipment/Columns"]
-margin_left = 80.0
-margin_right = 116.0
-margin_bottom = 140.0
-
-[node name="secondary" parent="Tabs/INV/VSplit/Equipment/Columns/3" instance=ExtResource( 3 )]
-margin_right = 36.0
-margin_bottom = 36.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 5 )
-part = "secondary"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/3/secondary"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 14 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 960, 896, 32, 32 )
-
-[node name="hands" parent="Tabs/INV/VSplit/Equipment/Columns/3" instance=ExtResource( 3 )]
-margin_top = 40.0
-margin_right = 36.0
-margin_bottom = 76.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 4 )
-part = "hands"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/3/hands"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 12 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 928, 896, 32, 32 )
-
-[node name="primary" parent="Tabs/INV/VSplit/Equipment/Columns/3" instance=ExtResource( 3 )]
-margin_top = 80.0
-margin_right = 36.0
-margin_bottom = 116.0
-rect_min_size = Vector2( 36, 36 )
-custom_styles/panel = SubResource( 5 )
-part = "primary"
-
-[node name="Overlay" type="Sprite" parent="Tabs/INV/VSplit/Equipment/Columns/3/primary"]
-modulate = Color( 1, 1, 1, 0.470588 )
-texture = ExtResource( 13 )
-offset = Vector2( 18, 18 )
-region_rect = Rect2( 960, 896, 32, 32 )
-
-[node name="belted" type="VBoxContainer" parent="Tabs/INV/VSplit/Equipment/Columns"]
-margin_left = 120.0
-margin_right = 120.0
-margin_bottom = 140.0
-
-[node name="Inventory" type="GridContainer" parent="Tabs/INV/VSplit"]
-margin_top = 192.0
+[node name="Inventory" type="VBoxContainer" parent="Tabs/INV/VSplit"]
+margin_top = 228.0
 margin_right = 158.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_constants/vseparation = 8
-custom_constants/hseparation = 8
-columns = 4
+
+[node name="Label2" type="Label" parent="Tabs/INV/VSplit/Inventory"]
+margin_right = 158.0
+margin_bottom = 20.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 6 )
+text = "Inventory:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="CHA" type="ScrollContainer" parent="Tabs"]
 visible = false
@@ -258,16 +99,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 dragger_visibility = 1
 
-[node name="Panel" type="PanelContainer" parent="Tabs/CHA/VBoxContainer"]
+[node name="Label" type="Label" parent="Tabs/CHA/VBoxContainer"]
 margin_right = 158.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 0, 32 )
-
-[node name="Label" type="Label" parent="Tabs/CHA/VBoxContainer/Panel"]
-margin_left = 6.0
-margin_top = 6.0
-margin_right = 150.0
-margin_bottom = 26.0
+margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 6 )
@@ -276,10 +110,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control" type="VBoxContainer" parent="Tabs/CHA/VBoxContainer"]
-margin_top = 44.0
+[node name="RichTextLabel" type="RichTextLabel" parent="Tabs/CHA/VBoxContainer"]
+margin_top = 32.0
 margin_right = 158.0
 margin_bottom = 444.0
+bbcode_enabled = true
 
 [node name="SKL" type="ScrollContainer" parent="Tabs"]
 visible = false
@@ -299,17 +134,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="Tabs/SKL/VBoxContainer"]
-margin_right = 156.0
-margin_bottom = 24.0
-grow_horizontal = 0
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_fonts/font = ExtResource( 2 )
-align = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label2" type="Label" parent="Tabs/SKL/VBoxContainer"]
 margin_right = 156.0
 margin_bottom = 24.0
 grow_horizontal = 0
@@ -529,8 +353,8 @@ index = 11
 visible = false
 margin_left = 460.0
 margin_top = 240.0
-margin_right = 502.0
-margin_bottom = 316.0
+margin_right = 580.0
+margin_bottom = 304.0
 custom_icons/increment = ExtResource( 18 )
 custom_icons/decrement = ExtResource( 18 )
 tab_align = 0
@@ -538,16 +362,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Container" type="GridContainer" parent="Container"]
+[node name="Container" type="VBoxContainer" parent="Container"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-columns = 4
-__meta__ = {
-"_edit_use_anchors_": false
-}
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Drag" type="Label" parent="."]
+visible = false
+use_parent_material = true
+margin_right = 66.0
+margin_bottom = 14.0
 
 [connection signal="tab_changed" from="Tabs" to="." method="_on_tab_change"]

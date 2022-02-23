@@ -12,19 +12,13 @@ var auto_attack = true
 var auto_attack_priority = 0
 var aiming = -1
 var last_pos
-var view_dirty = false
+var view_dirty
 var allies = []
-
-func _ready():
-	n_camera.set_process(false)
 
 func on_dat():
 	.on_dat()
-	n_camera.sight_range = unit.dat.g("perception", 8)
-	n_camera.sight2 = n_camera.sight_range * 2
-	if n_camera.sight_frame > 0:
-		n_camera.darken()
-	n_camera.update(unit.pos, last_pos, unit.sight_col)
+	n_camera.set_sight(unit.dat.g("perception", 4))
+	n_camera.update(unit.pos, last_pos)
 	var bodytype_list = G.data.get_json_data("bodytypes")
 	var bodyparts = bodytype_list.get(unit.dat.g("type"))
 	G.ui.menu.update_equipables(bodyparts)
@@ -39,6 +33,8 @@ func on_assign():
 	unit.faction = 1
 	G.world.team[unit.faction].append(unit)
 	last_pos = unit.pos
+	n_camera.update(last_pos, unit.pos)
+	n_camera.set_process(true)
 
 func _on_input(event: InputEvent):
 	if event is InputEventMouseButton:
@@ -90,12 +86,14 @@ func on_turn():
 	.on_turn()
 	remove_steps()
 	show_steps()
-	if last_pos != unit.pos or view_dirty:
+	if view_dirty != null:
+		n_camera.update(last_pos, unit.pos)
+		view_dirty = null
+	elif last_pos != unit.pos:
+		n_camera.update(last_pos, unit.pos)
+		last_pos = unit.pos
 		if last_pos != unit.pos and unit.pos.is_edge():
 			tasks.append(["enter", "exit", 3])
-		n_camera.update(last_pos, unit.pos, unit.sight_col)
-		last_pos = unit.pos
-		view_dirty = false
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
 	perform_auto_attack()
@@ -131,7 +129,7 @@ func key_move(dir):
 		auto_attack_priority = dir
 		var t = unit.pos.get_adjacent(auto_attack_priority)
 		if Input.is_action_pressed("shift"):
-			interact(t)
+			tasks = [["interact", t]]
 		else:
 			move_to(t, 0, false)
 
@@ -180,20 +178,12 @@ func interact(tile):
 					G.ui.menu.search_inventory(tile)
 				elif item.item_type == "unit":
 					if item.faction == unit.faction:
-						if Input.is_action_pressed("shift"):
-							auto_attack_priority = unit.pos.direction_to(tile)
-							tasks.append(["attack", tile])
-							if item.controller != null:
-								item.controller.foe = unit
-						elif unit.delay == 0 and item.delay == 0:
+						if unit.delay == 0 and item.delay == 0:
 							unit.delay = 4
 							item.delay = 4
 							unit.set_animation("walk")
 							item.set_animation("walk")
 							unit.swap(item)
-					else:
-						auto_attack_priority = unit.pos.direction_to(tile)
-						tasks.append(["attack", tile])
 
 func move_to(tile, reach=0, _path=true):
 	var distance = unit.pos.distance_to(tile)
@@ -235,29 +225,18 @@ func save_data(remove_buffs=true):
 	var buff_data = unit.buffs.to_data()
 	if remove_buffs:
 		unit.buffs.clear()
-	var ally_data = []
-	for ally in allies:
-		if ally != null and is_instance_valid(ally):
-			ally_data.append(ally.item_name)
 	var save_dict = {
 		"id": p_id,
 		"unit": unit.item_name,
 		"unit_data": unit.dat.v,
 		"unit_buff": buff_data,
-		"ally_data": ally_data,
 	}
-	if G.world.map_name == "base":
-		save_dict["position"] = unit.pos.to_array()
 	if unit.dat.g("type") != "other":
 		save_dict = unit.update_save_data(save_dict)
 	return save_dict
 
 func load_data(_data):
-	var player_pos = _data.get("position")
-	if player_pos == null:
-		player_pos = G.field.get_spawn_point()
-	else:
-		player_pos = G.field.tiles[player_pos[1]][player_pos[0]]
+	var player_pos = G.field.get_spawn_point()
 	var player_unit = G.cmd([["make", _data.unit, player_pos]])
 	player_unit.possess(self)
 	player_unit.dat.load_data(_data.unit_data)
@@ -265,15 +244,6 @@ func load_data(_data):
 		player_unit.load_item_data(_data)
 		player_unit.set_seed()
 	player_unit.buffs.from_data(_data.unit_buff)
-	var adjs
-	var adj = unit.pos
-	for i in _data.ally_data:
-		adjs = adj.get_available_adjacents("0011")
-		adj = R.r_arr(adjs)
-		if adj == null:
-			adj = unit.pos
-		var ally = G.cmd([["make", i, adj]])
-		allies.append(ally)
 
 func on_map_clear():
 	for ally in allies:

@@ -8,6 +8,8 @@ const COL_SIGHT = 0
 const COL_TERRAIN = 1
 const COL_OBJECT = 2
 const COL_MAGIC = 3
+const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
+	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
 const CARDINALS = [[0,-1],[1,0],[0,1],[-1,0]]
 const DIRS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
 const STATS = ["vitality", "strength", "intelligence", "agility", "perception", "move speed"]
@@ -146,5 +148,4 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 func travel(_map):
 	gamestate.save_game(_map)
 	G.vars.time += 1
-	G.world.daytime = int(G.vars.time) % 2 == 0
 	gamestate.load_game()

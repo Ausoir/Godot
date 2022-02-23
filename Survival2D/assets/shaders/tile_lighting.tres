@@ -3,28 +3,11 @@
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
 
-uniform float shade_UP = 0;
-uniform float shade_DOWN = 0;
-uniform float shade_LEFT = 0;
-uniform float shade_RIGHT = 0;
-uniform float Diag = 0;
-
 void fragment(){
 	vec4 input_color = texture(TEXTURE, UV);
-	float intensity = UV.x * shade_RIGHT;
-	intensity = intensity + UV.y * shade_DOWN;
-	intensity = intensity + (1.0 - UV.x) * shade_LEFT;
-	intensity = intensity + (1.0 - UV.y) * shade_UP;
-	intensity = max(0, intensity - Diag);
-	intensity = min(intensity, .7);
-	COLOR.rgba = mix(input_color.rgba, vec4(0,0,0,1), intensity);
+	COLOR.rgba = mix(input_color.rgba, vec4(0,0,0,0), .5);
 }
 "
 
 [resource]
 shader = SubResource( 1 )
-shader_param/shade_UP = 0.0
-shader_param/shade_DOWN = 0.0
-shader_param/shade_LEFT = 0.0
-shader_param/shade_RIGHT = 0.0
-shader_param/Diag = 0.0

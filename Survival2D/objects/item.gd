@@ -22,18 +22,38 @@ func get_display_name():
 	return display_name
 
 func place(p):
-	p.add_item(self)
 	position = p.to_pixel()
 	pos = p
+	var ls = []
 	if col[0] == '1' and pos.visible:
-		G.you.view_dirty = true
+		G.you.view_dirty = pos
+		ls = G.you.n_camera.get_affected_lights(pos)
+		for i in ls:
+			var t = i.light
+			i.radiate(-i.light, false)
+			i.light = t
+	p.add_item(self)
+	for i in ls:
+		var t = i.light
+		i.radiate(i.light, false)
+		i.light -= t
 
 func remove():
 	G.turn.remove(self)
+	var ls = []
+	if col[0] == '1' and pos.visible:
+		G.you.view_dirty = pos
+		ls = G.you.n_camera.get_affected_lights(pos)
+		for i in ls:
+			var t = i.light
+			i.radiate(-i.light, false)
+			i.light = t
 	pos.remove_item(self)
 	queue_free()
-	if col[0] == '1' and pos.visible:
-		G.you.view_dirty = true
+	for i in ls:
+		var t = i.light
+		i.radiate(i.light, false)
+		i.light -= t
 
 func die():
 	var ondie = dat.g("ondie")

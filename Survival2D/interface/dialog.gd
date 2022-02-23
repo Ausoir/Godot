@@ -173,7 +173,7 @@ func add_bulletin():
 			title = "lab"
 		var option = {"hover": ["text", "Location", title.capitalize()+"\nAllies: "+str(pop)]}
 		option["cmd"] = [["dat","a","$pu","social","follow"], ["travel", title]]
-		var social = "leader"
+		var social = "lead"
 		for _i in range(pop-1):
 			option["cmd"] += [["v","adj","$pup"],["make","scav","$t"],["dat","a","$t","social",social],["ally"]]
 			social = "follow"

@@ -55,7 +55,7 @@ func create_overlay(_part, _texturename):
 		newsprite.set_name(_part)
 		newsprite.set_texture(G.data.get_image(_texturename))
 		overlay_sprites[_part] = newsprite
-		if _part != get_secondary_to(selected_weapon):
+		if _part != get_secondary():
 			n_sprites.add_child(newsprite)
 			if _part != selected_weapon:
 				var wpn = overlay_sprites.get(selected_weapon)
@@ -63,8 +63,8 @@ func create_overlay(_part, _texturename):
 					n_sprites.remove_child(wpn)
 					n_sprites.add_child(wpn)
 
-func get_secondary_to(p):
-	if p == "primary":
+func get_secondary():
+	if selected_weapon == "primary":
 		return "secondary"
 	else:
 		return "primary"
@@ -84,7 +84,7 @@ func select_weapon(p):
 		if !abilities.empty() and abilities[0].begins_with("swap to "):
 			abilities.pop_front()
 		if secondary != null:
-			abilities.insert(0, "swap to "+get_secondary_to(p))
+			abilities.insert(0, "swap to "+get_secondary())
 
 func is_equipment_valid(part, item):
 	var item_part = item.dat.g("part", "")
@@ -113,7 +113,7 @@ func equip(part, item):
 			accomodate_stats(item)
 			create_overlay(part, item.dat.g("sprite")+"_"+gender)
 		else:
-			if part == "primary" or part == "secondary":
+			if part == get_secondary():
 				select_weapon(part)
 			else:
 				accomodate_stats(item)
@@ -126,9 +126,10 @@ func unequip(part):
 	for eq in equipments:
 		if eq == part:
 			var r = equipments[eq]
-			unaccomodate_stats(r)
+			if part != get_secondary():
+				unaccomodate_stats(r)
+				remove_overlay(part)
 			equipments.erase(eq)
-			remove_overlay(part)
 			return r
 	return false
 
@@ -206,7 +207,7 @@ func update_save_data(_data):
 	var save_inv = []
 	for i in equipments:
 		save_eq[i] = equipments[i].item_name
-		if i != get_secondary_to(selected_weapon):
+		if i != get_secondary():
 			unaccomodate_stats(equipments[i])
 	for i in inventory:
 		if i != null:

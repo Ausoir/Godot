@@ -1,56 +1,27 @@
-extends Panel
+extends RichTextLabel
 
+#const DragItem = preload("res://interface/DragItem.tscn")
 const SLOT_DISABLED = 0
 const SLOT_LIGHT = 1
 const SLOT_FULL = 2
 
-export var part: String = "none"
-var stylebox = get_stylebox("panel", "")
+var part = "none"
+var allow_type = SLOT_FULL
 var tile
 var item
-var allow_type = SLOT_FULL
 var dragged_sprite
 
-func _ready():
-	stylebox = stylebox.duplicate() #Make unique
-	add_stylebox_override("panel", stylebox)
-
-func make_mode(p):
+func make_mode(ppart, p):
+	var txt = ""
+	part = ppart
+	allow_type = p
 	if p == 2:
-		stylebox.texture = G.data.get_image("gui/slot_full")
-		allow_type = SLOT_FULL
+		txt = get_part_text() + "---"
 	elif p == 1:
-		stylebox.texture = G.data.get_image("gui/slot_limited")
-		allow_type = SLOT_LIGHT
+		txt = get_part_text() + "-"
 	else:
-		stylebox.texture = G.data.get_image("gui/slot_disabled")
-		allow_type = SLOT_DISABLED
-
-func is_item_valid(p):
-	var valid_part = p.dat.g("part", "any") == part
-	if part == "any":
-		valid_part = true
-	var valid_size = p.dat.g("size", 1) <= allow_type
-	return valid_part and valid_size
-
-func assign(p):
-	var r
-	if item != null:
-		r = item
-	item = p
-	var slot_sprite = get_node("Sprite")
-	var item_sprite = item.dat.g("sprite")
-	if item_sprite != null:
-		slot_sprite.texture = G.data.get_image(item_sprite)
-	else:
-		slot_sprite.texture = p.texture
-		if p is Sprite:
-			slot_sprite.region_enabled = p.region_enabled
-			slot_sprite.region_rect = p.region_rect
-	slot_sprite.show()
-	if has_node("Overlay"):
-		$Overlay.hide()
-	return r
+		txt = get_part_text() + "XXX"
+	set_bbcode(txt)
 
 func check_weight(_item):
 	if G.you.unit.dat.g("strength", 0) >= _item.dat.g("weight", 0):
@@ -59,16 +30,31 @@ func check_weight(_item):
 		G.msg("Too heavy!")
 		return false
 
+func get_part_text():
+	return "[color=#874]" + part.capitalize() + "[/color]: "
+
+func assign(p):
+	var txt = ""
+	var r
+	if item != null:
+		r = item
+	item = p
+	if part == "none":
+		txt = item.item_name.capitalize()
+	elif part == "inv":
+		txt = item.item_name.capitalize()
+	else:
+		txt = get_part_text() + item.item_name.capitalize()
+	set_bbcode(txt)
+	return r
+
 func unassign():
 	if item:
-		var item_sprite = get_node("Sprite")
-		var r = {"type":"item", "item":item, "sprite":item_sprite.duplicate()}
+		var r = {"drag":item.item_name.capitalize(),"type":"item", "item":item}
 		if tile:
 			tile.remove_item(item)
 		item = null
-		item_sprite.hide()
-		if has_node("Overlay"):
-			$Overlay.show()
+		make_mode(part, allow_type)
 		return r
 
 func _on_mouse_entered():

@@ -36,15 +36,17 @@
 		"img": "loot",
 		"sprite": "overlay/w_torch",
 		"skills": ["burn"],
-		"light": 4,
+		"light": 8,
 		"mat": "wood",
 		"desc": "A torch."
 	},
 	"biggray gun": {
 		"img": "loot",
 		"sprite": "overlay/w_biggray_gun",
-		"abilities": ["shoot 16"],
+		"abilities": ["shoot 3"],
 		"uses": 32,
+		"weight": 3,
+		"size": 2,
 		"mat": "metal",
 		"desc": "An artifact of the past."
 	},
@@ -132,6 +134,7 @@
 		"sprite": "overlay/body_scavenger",
 		"part": "body",
 		"mat": "leather",
+		"weight": 2,
 		"space": 2,
 		"desc": "A tattered coat favored by looters."
 	},
@@ -233,8 +236,6 @@
 		"durability": 2,
 		"light": 4,
 		"weight": 1,
-		"onturn": [["particle", "Fire", "$hp"]],
-		"turn": 4,
 	},
 	"campfire": {
 		"img": "tiles/campfire_lit",
@@ -313,6 +314,25 @@
 		"durability": 1,
 		"desc": "A open bead door."
 	},
+	"metal door": {
+		"img": "tiles/metal_door",
+		"mat": "metal",
+		"col": "1111",
+		"openable": true,
+		"height": 1,
+		"durability": 12,
+		"onuse": [["make", "metal open door", "$hp"], ["remove", "$h"]],
+		"desc": "A wooden door."
+	},
+	"metal open door": {
+		"img": "tiles/metal_door_open",
+		"mat": "metal",
+		"col": "0000",
+		"openable": true,
+		"durability": 12,
+		"onuse": [["make", "open door", "$hp"], ["remove", "$h"]],
+		"desc": "A wooden door."
+	},
 	"door": {
 		"img": "tiles/door",
 		"mat": "wood",
@@ -320,7 +340,7 @@
 		"slow": 24,
 		"openable": true,
 		"height": 1,
-		"durability": 8,
+		"durability": 4,
 		"onuse": [["make", "open door", "$hp"], ["remove", "$h"]],
 		"ondie": [["make", "broken door", "$hp"]],
 		"desc": "A wooden door."
@@ -330,7 +350,7 @@
 		"mat": "wood",
 		"col": "0000",
 		"height": 1,
-		"durability": 5,
+		"durability": 3,
 		"onuse": [["make", "door", "$hp"], ["remove", "$h"]],
 		"ondie": [["make", "broken door", "$hp"]],
 		"desc": "An open wooden door."
@@ -347,7 +367,7 @@
 	"trashcan": {
 		"img": "tiles/trashcan",
 		"mat": "plastic",
-		"col": "0100",
+		"col": "0000",
 		"slow": 4,
 		"durability": 12,
 	},

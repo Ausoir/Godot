@@ -90,7 +90,7 @@ func place_vault(_map, vault, palette, startX, startY, flip, rot):
 				if palet != null:
 					_map[fY][fX] = palet
 				else:
-					push_error("Invalid vault palette value: "+str(palet))
+					push_error("Invalid vault palette value: "+str(val))
 	var postSizeX
 	var postSizeY
 	if rot:

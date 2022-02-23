@@ -28,11 +28,12 @@ func assign(p):
 	else:
 		get_node("Sprite").hide()
 		$Label.set_text("")
+	set_is_item(false)
 
 func unassign():
 	if skill != null:
 		var item_sprite = get_node("Sprite")
-		var r = {"type":"skill", "item":skill, "sprite":item_sprite.duplicate(), "index":index, "active":active}
+		var r = {"drag":skill,"type":"skill", "item":skill, "index":index, "active":active}
 		skill = null
 		item_sprite.hide()
 		return r
@@ -71,9 +72,6 @@ func take_from():
 			G.ui.menu.set_drag_item(r)
 
 func place_to(item):
-	if skill != null:
-		G.ui.menu.set_drag_item(null)
-		take_from()
 	if active == item.active:
 		if active:
 			G.you.unit.swap_skills("actives", item.index, index)

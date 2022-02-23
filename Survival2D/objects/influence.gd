@@ -77,7 +77,8 @@ func run_cmds(cmds):
 			if wpn:
 				var uses = wpn.dat.g("uses", 1)
 				if uses < 1:
-					host.unequip("weapon")
+					var r = host.unequip("weapon")
+					r.remove()
 				else:
 					wpn.dat.a("uses", uses - 1)
 		elif type == "cooldown":

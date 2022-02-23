@@ -274,7 +274,7 @@ func on_turn():
 
 func flash(color, dur):
 	n_tween.interpolate_property(n_mat, "shader_param/" + color,
-		1, 0, dur,
+		1, 0, max(.1, dur),
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	n_tween.start()
 

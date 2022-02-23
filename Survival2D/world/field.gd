@@ -1,6 +1,7 @@
 extends Node
 
 const Tile = preload("res://world/tile.gd")
+const ORDERED_DIRS = [[0,-1],[1,0],[0,1],[-1,0],[1,1],[-1,1],[-1,-1],[1,-1]]
 var size
 var terrain
 var sound
@@ -37,8 +38,6 @@ func apply_autotile(x, y):
 		var v = G.get_autotile_coord(dirs)
 		var tileid = G.world.tilemap.get_cell(x, y)
 		G.world.tilemap.set_cell(x, y, tileid, false, false, false, v)
-	elif pos.autotile == 2:
-		G.world.tilemap.update_bitmask_area(Vector2(x, y))
 	for item in pos.items:
 		item.autotilize()
 
@@ -61,13 +60,11 @@ func get_spawn_point():
 
 func get_routes(pos, cols, opens=false, strength=0):
 	var r = []
-	var count = 0
-	for i in G.DIRS:
+	for i in ORDERED_DIRS:
 		var ty = pos.y + i[1]
 		var tx = pos.x + i[0]
 		if is_inbound(tx, ty) and !tiles[ty][tx].is_cols_adv(cols, opens, strength):
-			r.append(count)
-		count += 1
+			r.append(i)
 	return r
 
 func set_sound(pos, radius):

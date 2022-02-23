@@ -6,13 +6,16 @@ var lead
 var reach = 1
 var turn_delay = 0
 var think_delay = 0
-var objectives
+var objectives = []
 var timeout = 0
 var timeout_pos
+var timeout_goal = "wander"
 
 func on_assign():
 	.on_assign()
 	timeout_pos = unit.pos
+	if unit.faction == 1:
+		timeout_goal = "end"
 
 func on_hit(_hitter):
 	if _hitter != null:
@@ -40,6 +43,7 @@ func set_state(_p):
 	if state != _p:
 		state = _p
 		pathing.next_reset = 0
+	timeout = 0
 
 func think():
 	think_delay += 1
@@ -51,32 +55,27 @@ func think():
 			timeout += 1
 			if timeout > 4:
 				think_delay = -45
-				set_objectives("end")
+				set_objectives(timeout_goal)
 		timeout_pos = unit.pos
-		var social = unit.dat.g("social")
-		if social == "lead":
-			if unit.faction == 1:
-				if objectives == null:
-					var goal = unit.dat.g("goal", "loot")
-					set_objectives(goal)
-				else:
-					if do_objective():
-						objectives.pop_front()
-			elif unit.faction == 2:
-				path_to(unit.pos.get_rand_offset(16, 16), 1, true)
-		elif social == "follow":
-			var min_dist = unit.dat.g("perception", 8)
-			var seen_allies = search(unit.faction, min_dist)
-			for seen_ally in seen_allies:
-				if seen_ally[0].dat.g("social", "") == "lead":
-					lead = seen_ally[0]
-					timeout = 0
-					return
-			if objectives != null and do_objective():
-				objectives.pop_front()
+		if tasks.empty():
+			var social = unit.dat.g("social")
+			if social == "lead":
+				if unit.faction == 1:
+					if objectives.empty():
+						var goal = unit.dat.g("goal", "loot")
+						set_objectives(goal)
+			elif social == "follow":
+				var min_dist = unit.dat.g("perception", 8)
+				var seen_allies = search(unit.faction, min_dist)
+				for seen_ally in seen_allies:
+					if seen_ally[0].dat.g("social", "") == "lead":
+						lead = seen_ally[0]
+						timeout = 0
+						return
+			do_objective()
 
 func perceive():
-	var min_dist = unit.dat.g("perception", 8)
+	var min_dist = unit.dat.g("perception", 4)
 	var other_team
 	if unit.faction == 1:
 		other_team = 2
@@ -90,10 +89,11 @@ func search(faction, _dist):
 	var list = G.world.team[faction]
 	var r = []
 	var dist2 = _dist*2
+	var disthalf = int(_dist/2)
 	for seen in list:
 		if is_instance_valid(seen) and seen != unit:
 			var dist = unit.pos.distance_to(seen.pos)
-			if dist < _dist or (dist < dist2 and seen.pos.light >= 0):
+			if dist < disthalf or (dist < dist2 and seen.pos.light >= 0):
 				var t = unit.pos.get_beam_to(seen.pos, unit.sight_col, _dist)
 				if t != null and t == seen.pos:
 					if seen.is_visible():
@@ -105,7 +105,6 @@ func hunt():
 		set_state("hunt")
 		path_to(foe.pos, reach, true)
 		tasks.append(["attack", foe])
-		timeout = 0
 		return true
 	else:
 		foe = null
@@ -166,18 +165,20 @@ func do_objective():
 		set_state(goal[0])
 		if goal[0] == "move":
 			if unit.pos.distance_to(goal[1]) == 1:
-				return true
+				objectives.pop_front()
+				return do_objective()
 			else:
 				path_to(goal[1], 1, true)
 		elif goal[0] == "moveon":
 			if unit.pos.distance_to(goal[1]) == 0:
-				return true
+				objectives.pop_front()
+				return do_objective()
 			else:
 				path_to(goal[1], 0, true)
+		elif goal[0] == "wander":
+			path_to(unit.pos.get_rand_offset(16, 16), 1, true)
 		elif goal[0] == "interact":
 			tasks.append(["interact", goal[1]])
-			return true
 		elif goal[0] == "exit":
 			G.msg(unit.item_name + " has left the map.")
 			unit.remove()
-	return false

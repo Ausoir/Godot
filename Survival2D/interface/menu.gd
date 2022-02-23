@@ -4,21 +4,22 @@ const ItemSlot = preload("res://interface/ItemSlot.tscn")
 const SkillSlot = preload("res://interface/SkillSlot.tscn")
 
 onready var tabs = $Tabs
-onready var tab_equipment = $Tabs/INV/VSplit/Equipment/Columns
+onready var tab_equipment = $Tabs/INV/VSplit/Equipment
 onready var tab_inventory = $Tabs/INV/VSplit/Inventory
 onready var tab_status = $Tabs/CHA/VBoxContainer
 onready var tab_skill_label = $Tabs/SKL/VBoxContainer/Label
 onready var tab_skill_active = $Tabs/SKL/VBoxContainer/Active
 onready var tab_skill_inactive = $Tabs/SKL/VBoxContainer/Inactive
+onready var n_drag = $Drag
 onready var container = $Container
 onready var container_grid = $Container/Container
 
 var drag_item
 
 
-func _process(_delta):
+func _on_mouse_move():
 	if drag_item != null:
-		drag_item.sprite.position = get_viewport().get_mouse_position()
+		n_drag.rect_position = G.ui.mouse_pos
 
 func _background_input(event):
 	if event is InputEventMouseButton:
@@ -43,55 +44,62 @@ func clear():
 func set_drag_item(item):
 	if item == null:
 		if drag_item:
-			drag_item.sprite.queue_free()
-			remove_child(drag_item.sprite)
+			n_drag.hide()
 			drag_item = null
 	else:
 		drag_item = item
-		drag_item.sprite.position = get_viewport().get_mouse_position()
-		add_child(drag_item.sprite)
-
-func get_vacant_inventory():
-	for child in tab_inventory.get_children():
-		if child.item == null:
-			return child
+		n_drag.set_text(item.drag)
+		n_drag.show()
+		_on_mouse_move()
 
 func update_equipables(equipables):
-	for columns in tab_equipment.get_children():
-		for child in columns.get_children():
-			child.make_mode(0)
-
+	for child in tab_equipment.get_children():
+		if child is RichTextLabel:
+			child.queue_free()
+			tab_equipment.remove_child(child)
 	for slot in equipables:
-		for columns in tab_equipment.get_children():
-			for child in columns.get_children():
-				if child.name == slot:
-					var allow_type = equipables[slot]
-					child.make_mode(allow_type)
+		var newslot = ItemSlot.instance()
+		var allow_type = equipables[slot]
+		newslot.make_mode(slot, allow_type)
+		tab_equipment.add_child(newslot)
 
 func update_inventory():
-	var unit = G.you.unit
-	if unit.dat.g("type") != "other":
-		for child in tab_inventory.get_children():
+	var n_eq = []
+	var n_eq_label
+	var n_inv_label
+	for child in tab_equipment.get_children():
+		if child is RichTextLabel:
+			child.unassign()
+			n_eq.append(child)
+		else:
+			n_eq_label = child
+	for child in tab_inventory.get_children():
+		if child is RichTextLabel:
 			child.queue_free()
 			tab_inventory.remove_child(child)
-		for columns in tab_equipment.get_children():
-			for child in columns.get_children():
-				child.unassign()
-
-		for columns in tab_equipment.get_children():
-			for child in columns.get_children():
-				if child.name in unit.equipments:
-					child.assign(unit.equipments[child.name])
-
+		else:
+			n_inv_label = child
+	var unit = G.you.unit
+	if unit.dat.g("type") != "other":
+		var eq_weight = 0
+		var inv_weight = 0
+		for child in n_eq:
+			if child.part in unit.equipments:
+				var eq = unit.equipments[child.part]
+				child.assign(eq)
+				eq_weight += eq.dat.g("weight", 0)
 		for inv_item in unit.inventory:
 			var newslot = ItemSlot.instance()
+			newslot.part = "inv"
 			if inv_item != null:
 				newslot.assign(inv_item)
-			newslot.part = "inv"
+				inv_weight += inv_item.dat.g("weight", 0)
 			tab_inventory.add_child(newslot)
+		n_eq_label.set_text("Equipment ["+ str(eq_weight) +"kg]: ")
+		n_inv_label.set_text("Inventory ["+ str(inv_weight) +"kg]: ")
 
 func search_inventory(tile):
-	display(0)
+	G.ui.display(0)
 	container.show()
 	container.set_tab_title(0, tile.terrain.capitalize())
 	for child in container_grid.get_children():
@@ -119,7 +127,7 @@ func update_skills():
 		child.assign(null)
 	var slots = G.you.unit.get_active_slots()
 	var max_slots = G.you.unit.dat.g("agility", 1)
-	tab_skill_label.set_text("Slots: " + str(slots) + "/" + str(max_slots))
+	tab_skill_label.set_text("Actives [" + str(slots) + "/" + str(max_slots) + "]: ")
 	var unit_skills = G.you.unit.dat.g("skills", [])
 	for i in range(unit_skills.size()):
 		var skill = unit_skills[i]
@@ -131,22 +139,19 @@ func update_skills():
 		var actives = unit_actives[i]
 		var slot = tab_skill_active.get_child(i)
 		slot.assign(actives)
-		slot.set_is_item(false)
 		last_count = i
-	for i in range(G.you.unit.item_skills.size()):
-		var actives = G.you.unit.item_skills[i]
-		var slot = tab_skill_active.get_child(last_count+i)
-		slot.assign(actives)
-		slot.set_is_item(true)
+	if G.you.unit.dat.g("type") != "other":
+		for i in range(G.you.unit.item_skills.size()):
+			var actives = G.you.unit.item_skills[i]
+			var slot = tab_skill_active.get_child(last_count+i+1)
+			slot.assign(actives)
+			slot.set_is_item(true)
 
 func update_status():
-	var header = tab_status.get_node("Panel/Label")
+	var header = tab_status.get_node("Label")
 	header.text = "Scavenger Lv.1"
-	var stat_list = tab_status.get_node("Control")
-	for child in stat_list.get_children():
-		child.queue_free()
-		stat_list.remove_child(child)
+	var textbox = tab_status.get_node("RichTextLabel")
+	var txt = ""
 	for i in G.STATS:
-		var label = Label.new()
-		label.set_text(i.capitalize() + ": " + str(G.you.unit.dat.g(i, 0)))
-		stat_list.add_child(label)
+		txt += "[color=#A64]"+i.capitalize()+"[/color]: "+str(G.you.unit.dat.g(i, 0)) + "\n"
+	textbox.set_bbcode(txt)

@@ -8,7 +8,9 @@ var dat
 var col: String
 var autotile = 0
 var height: int
+var orig_light: int
 var light: int
+var light_source = []
 var slow = 0
 var shade = -1
 var sight_frame = 0
@@ -35,6 +37,8 @@ func set_visible(p):
 			for item in items:
 				item.hide()
 		visible = p
+		return true
+	return false
 
 func set_terrain(val):
 	var data = G.data.terrain_data.get(val)
@@ -43,9 +47,10 @@ func set_terrain(val):
 		if "autotile" in data:
 			autotile = data.autotile
 		if data.get("ceiling") != null or !G.world.daytime:
-			light = -1
+			orig_light = -1
 		else:
-			light = 0
+			orig_light = 0
+		light = orig_light
 		slow = data.get("slow", 0)
 		var tile_image = G.world.tileset.find_tile_by_name(val)
 		G.world.tilemap.set_cell(x, y, tile_image)
@@ -72,21 +77,6 @@ func remove_item(item):
 	update_tile()
 	if item.light != 0:
 		radiate(-item.light)
-
-func radiate(_light):
-	if _light > 1:
-		for i in range(4):
-			var adj = get_adjacent(i * 2)
-			if !adj.is_col(0):
-				adj.radiate(_light - 1)
-	elif _light < -1:
-		for i in range(4):
-			var adj = get_adjacent(i * 2)
-			if !adj.is_col(0):
-				adj.radiate(_light + 1)
-	light += _light
-	if visible:
-		G.world.update_light(x, y)
 
 func smash(_dmg):
 	G.make_particle("Hit", to_pixel())
@@ -161,9 +151,6 @@ func apply_shade_from_dir(shades):
 	else:
 		shade = -1
 		return
-
-func update_shade():
-	G.world.shademap.set_cell(x, y, -1)
 
 func is_col(bit):
 	return col[bit] == "1"
@@ -289,3 +276,51 @@ func get_rand_offset(_x, _y):
 	var rx = R.ir(-_x, _x)
 	var ry = R.ir(-_y, _y)
 	return G.field.fit_bound(x + rx, y + ry)
+
+func radiate(_light, new=true):
+	light += _light
+	if new:
+		if light > 0:
+			G.world.lights.append(self)
+		else:
+			G.world.lights.erase(self)
+	for i in range(8):
+		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(_light), _light)
+
+func cast_sight(camera, row, start, end, flips, sight2, intensity):
+	if start < end:
+		return
+	var new_start
+	for cell in range(row, sight2 + 1):
+		var dx = -cell - 1
+		var dy = -cell
+		var blocked = false
+		while dx <= 0:
+			dx += 1
+			var start_slope = (dx - 0.5) / (dy + 0.5)
+			var end_slope = (dx + 0.5) / (dy - 0.5)
+			if start < end_slope:
+				continue
+			elif end > start_slope:
+				break
+			else:
+				var tile_x = dx * flips[0] + dy * flips[1]
+				var tile_y = dx * flips[2] + dy * flips[3]
+				var map_x = camera.x + tile_x
+				var map_y = camera.y + tile_y
+				var tile = G.field.get_tile(map_x, map_y)
+				if tile:
+					tile.light += intensity
+					if blocked:
+						if tile.is_col(0):
+							new_start = end_slope
+						else:
+							blocked = false
+							start = new_start
+					else:
+						if tile.is_col(0) and cell < sight2:
+							blocked = true
+							cast_sight(camera, cell + 1, start, start_slope, flips, sight2, intensity)
+							new_start = end_slope
+		if blocked:
+			break

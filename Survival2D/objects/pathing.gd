@@ -1,6 +1,6 @@
 var cols = "0011"
 var target
-var iterations = 14
+var iterations = 16
 var pathing_times = 0
 var open
 var closed = []
@@ -54,8 +54,7 @@ func iterate(node):
 	closed.append(node)
 	var routes = G.field.get_routes(node.pos, cols, can_open, smash_to)
 	for route in routes:
-		var dir_pos = G.DIRS[route]
-		var pos = Vector2(node.pos.x + dir_pos[0], node.pos.y + dir_pos[1])
+		var pos = Vector2(node.pos.x + route[0], node.pos.y + route[1])
 		var achieved = distance_to(pos, target)
 		if achieved <= reach:
 			var reached = pathnode.new(node, pos)
@@ -87,7 +86,7 @@ func reset(hostpos):
 	open = [pathnode.new(null, hostpos)]
 	closed = []
 	closest = open[0]
-	heuristics_threshold = (target - hostpos).length_squared()*2
+	heuristics_threshold = (target - hostpos).length_squared()*3
 
 
 func debug_trace():

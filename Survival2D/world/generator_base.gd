@@ -6,7 +6,7 @@ var estates = []
 var fixed_buildings = []
 
 func generate():
-	.create(80, 40)
+	.create(80, 50)
 	G.field.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
@@ -29,8 +29,12 @@ func generate():
 	make_vault([0, 0, 54, 39], "map_base", -1)
 	place_complex()
 	place_buildings()
+	for x in range(width):
+		for y in range(height):
+			if output[y][x][0] == 'wood floor':
+				spawn_points.append([x, y])
 	paint_map()
-	paint_spawn(0)
+	paint_spawn(1)
 
 func place_complex():
 	for _i in range(G.vars.base.size() + 1):

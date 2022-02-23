@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://interface/interface.gd" type="Script" id=1]
 [ext_resource path="res://assets/theme.tres" type="Theme" id=2]
 [ext_resource path="res://interface/Description.tscn" type="PackedScene" id=3]
 [ext_resource path="res://interface/Menu.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/images/gui/wait.png" type="Texture" id=5]
 [ext_resource path="res://interface/message.gd" type="Script" id=8]
 [ext_resource path="res://interface/dialog.gd" type="Script" id=22]
 
@@ -119,6 +120,15 @@ script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Progress" type="TextureProgress" parent="Control"]
+visible = false
+margin_right = 64.0
+margin_bottom = 64.0
+texture_under = ExtResource( 5 )
+texture_progress = ExtResource( 5 )
+fill_mode = 4
+tint_under = Color( 0.172549, 0.172549, 0.172549, 1 )
 
 [node name="FPS" type="Label" parent="."]
 margin_left = 800.0

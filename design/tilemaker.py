@@ -9,9 +9,9 @@ coord_mapping = (
 )
 
 def run():
-    out = carve(Image.open("../Survival2D/assets/images/textures/bullet.png").convert("RGBA"))
-    out.save("../Survival2D/assets/images/textures/bullet.png", "PNG")
-    make_autotile_8('../design/autotiles/f_fence/', 'ch_')
+    #out = carve(Image.open("../Survival2D/assets/images/textures/bullet.png").convert("RGBA"))
+    #out.save("../Survival2D/assets/images/textures/bullet.png", "PNG")
+    make_autotile_8('../design/autotiles/t_wall_metal/', 't_wall_metal_')
 
 def make_autotile_8(filedir, prefix):
     tiles = ['unconnected', 'end_piece_w', 'edge_ew', 'end_piece_e',

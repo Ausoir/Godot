@@ -9,8 +9,10 @@ onready var tint = $Control/Tint
 onready var description = $Control/Description
 onready var abilities = $Control/Abilities
 onready var buffs = $Control/Status
+onready var n_progress = $Control/Progress
 var screen_size
 var screen_ratio
+var mouse_pos = Vector2()
 var on = false
 
 func _ready():
@@ -23,6 +25,12 @@ func _ready():
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
 	message._on_process()
+
+func _input(event):
+	if event is InputEventMouseMotion:
+		mouse_pos = get_viewport().get_mouse_position()
+		n_progress.rect_position = mouse_pos
+		menu._on_mouse_move()
 
 func _unhandled_input(event):
 	if event is InputEventKey:
