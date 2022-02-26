@@ -3,7 +3,7 @@
 		"img": "blank",
 		"type": "other",
 		"move speed": 4,
-		"col": "0001",
+		"col": 0,
 		"vitality": 1,
 		"strength": 1,
 		"intelligence": 1,
@@ -50,7 +50,7 @@
 		"agility": 4,
 		"perception": 4,
 		"abilities": [],
-		"skills": ["tackle", "bash", "respite"],
+		"skills": ["tackle", "bash"],
 		"flags": ["user"],
 	},
 	"manzard": {

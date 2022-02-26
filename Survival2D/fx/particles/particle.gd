@@ -15,9 +15,9 @@ func _process(delta):
 	duration -= delta
 	if duration < 0:
 		if canvas:
-			G.world.canvas.remove_child(self)
+			get_parent().remove_child(self)
 		else:
-			G.world.others.remove_child(self)
+			get_parent().remove_child(self)
 		queue_free()
 
 func run_details(args):

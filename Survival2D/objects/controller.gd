@@ -6,7 +6,7 @@ var unit
 var sight_range = 8
 var target
 var tasks = []
-var pathing = Pathing.new()
+var pathing
 
 func on_dat():
 	pathing.smash_to = unit.dat.g("strength", 0)
@@ -24,6 +24,8 @@ func on_dat():
 
 func on_assign():
 	unit.dirty_dat = true
+	pathing = Pathing.new(unit.pos.world)
+	target = null
 
 func on_hit(_hitter):
 	pass
@@ -38,33 +40,29 @@ func unassign(_dead=false):
 
 func on_turn():
 	if !tasks.empty():
-		var task = tasks.pop_front()
-		perform(task)
+		var task = tasks[0]
+		if perform(task):
+			tasks.pop_front()
 
 func perform(task):
-	if task[0] == "move":
-		target = task[1]
-		unit.face_toward(target)
-		unit.set_state("move")
-	elif task[0] == "ability":
-		unit.face_toward(target)
-		unit.ability(task[1])
+	if task[0] == "path":
+		unit.slide(task[1].to_pixel() - unit.position)
+		return unit.pos == task[1]
 	elif task[0] == "attack":
-		target = task[1]
 		if validate_target():
-			if target.item_type == "unit":
-				target = target.pos
-			unit.face_toward(target)
 			unit.set_state("attack")
+			return false
 	elif task[0] == "pave":
 		if unit.pos.distance_to(task[1]) <= 1:
 			if !interact(task[1]):
 				perform(["smash", task[1]])
 	elif task[0] == "interact":
 		unit.delay = 4
-		unit.set_animation("wait")
-		if unit.pos.distance_to(task[1]) <= 1:
+		unit.set_animation("wait", 4)
+		if unit.pos.distance_to(task[1].pos) <= 1:
 			interact(task[1])
+	elif task[0] == "ability":
+		unit.ability(task[1], task[2])
 	elif task[0] == "smash":
 		if unit.pos.distance_to(task[1]) <= 1:
 			for i in task[1].items:
@@ -75,35 +73,28 @@ func perform(task):
 							perform(["attack", i])
 							return
 			unit.face_toward(task[1])
-			unit.set_animation("attack")
-			var dmg = unit.get_damage("bash", 100)
 			unit.delay = 5
+			unit.set_animation("attack", 5)
+			var dmg = unit.get_damage("bash", 100)
 			task[1].smash(dmg)
 	elif task[0] == "enter":
-		if task[1] == "exit":
-			if self == G.you:
-				if task[2] < 1:
-					G.you.on_leave()
-				else:
-					var adjs = unit.pos.get_available_adjacents("1000")
-					for tile in adjs:
-						for i in tile.items:
-							if i.item_type == "unit" and i.faction != unit.faction:
-								return
-					G.msg("Exiting map..." + str(task[2]))
-					unit.set_state("wait")
-					unit.delay = 8
-					if unit.pos.is_edge():
-						var focused = unit.buffs.has("focus")
-						if !focused and task[2] == 3:
-							tasks.append(["enter", "exit", task[2]-1])
-							G.influence.do(unit, "focus")
-							unit.buffs.extend("focus", 12)
-						elif focused:
-							tasks.append(["enter", "exit", task[2]-1])
-							unit.buffs.extend("focus", 12)
+		if self == G.you:
+			if task[2] < 1:
+				if task[1] in unit.pos.world.connections:
+					G.travel(unit.pos.world.connections[task[1]])
 			else:
-				unit.pos.remove_item(unit)
+				var adjs = unit.pos.get_available_adjacents("1000")
+				for tile in adjs:
+					for i in tile.items:
+						if i.item_type == "unit" and i.faction != unit.faction:
+							return
+				G.msg("Moving map..." + str(task[2]))
+				unit.set_state("wait")
+				unit.delay = 6
+				tasks.append(["enter", task[1], task[2]-1])
+		else:
+			unit.pos.remove_item(unit)
+	return true
 
 func validate_target():
 	if target == null:
@@ -126,10 +117,10 @@ func path_to(pos, dist=0, destroy=false):
 		if path:
 			tasks = []
 			for p in path:
-				tasks.append(["move", G.field.tiles[p.y][p.x]])
+				tasks.append(["path", unit.pos.world.tiles[p.y][p.x]])
 			if destroy and !tasks.empty():
 				var latest_task = tasks[0]
-				if latest_task[1].is_cols(unit.col) and !latest_task[1].is_cols_adv(unit.col, pathing.can_open, pathing.smash_to):
+				if latest_task[1].is_col(unit.col) and !latest_task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
 					tasks = [["pave", latest_task[1]]]
 					return true
 

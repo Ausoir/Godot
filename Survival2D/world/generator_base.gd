@@ -7,7 +7,7 @@ var fixed_buildings = []
 
 func generate():
 	.create(80, 50)
-	G.field.create_map(width, height)
+	G.world.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
 	make_border(.1)

@@ -13,6 +13,7 @@ const animation_map = {
 	"kick": 6,
 	"wait": 7,
 }
+const SPEED = 120
 
 onready var n_sprites = $Sprites
 onready var n_animation = $Animation
@@ -26,17 +27,17 @@ var delay = 0
 
 var is_dead = false
 var controller
-var deck = []
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
-var last_skill = "wait"
 var sight_col = "1000"
 var dirty_dat = false
 
 func _ready():
+	n_collider = get_node("Body")
+	n_collider.parent = self
 	for i in dat.g("buffs", []):
-		G.fx(self, i)
+		G.influence.do(self, i)
 
 func set_seed():
 	pass
@@ -45,6 +46,9 @@ func on_dat():
 	.on_dat()
 	if controller != null:
 		controller.on_dat()
+
+func update_col(p):
+	get_node("Body").collision_layer = p
 
 func possess(ctlr = null):
 	if ctlr == null:
@@ -56,63 +60,16 @@ func possess(ctlr = null):
 		controller = null
 	controller = ctlr
 	ctlr.unit = self
-	ctlr.target = pos
 	ctlr.on_assign()
 
-func fill_skills():
-	var skillsize = dat.g("skills", []).size()
-	for _i in range(skillsize):
-		if !activate_skill(0):
-			return
+func can_carry(_w):
+	return false
 
-func swap_skills(type, idx1, idx2):
-	var skills = dat.g(type, [])
-	if idx2 >= skills.size():
-		var prim = skills[idx1]
-		skills.remove(idx1)
-		skills.append(prim)
-	else:
-		var prim = skills[idx1]
-		skills[idx1] = skills[idx2]
-		skills[idx2] = prim
-	dat.a(type, skills)
-
-func activate_skill(idx):
-	var agility = dat.g("agility", 1)
-	var skills = dat.g("skills", [])
-	var skill = skills[idx]
-	var skill_data = G.data.skill_data.get(skill)
-	if get_active_slots()+skill_data.get("cost", 0) <= agility:
-		skills.remove(idx)
-		var actives = dat.g("actives", [])
-		actives.append(skill)
-		dat.a("actives", actives)
-		dat.a("skills", skills)
-		return true
-
-func deactivate_skill(idx):
-	var actives = dat.g("actives", [])
-	var skills = dat.g("skills", [])
-	var active = actives[idx]
-	actives.remove(idx)
-	skills.append(active)
-	dat.a("actives", actives)
-	dat.a("skills", skills)
-
-func get_active_slots():
-	var slots = 0
-	var actives = dat.g("actives", [])
-	for i in range(actives.size()):
-		var data = G.data.skill_data.get(actives[i])
-		if data != null:
-			slots += data.get("cost", 0)
-	return slots
-
-func ability(idx):
+func ability(idx, at):
 	var abilities = dat.g("abilities", [])
 	if idx < abilities.size():
 		var ability = abilities[idx]
-		G.fx(self, ability)
+		G.influence.do(self, ability, null, 0, at)
 
 func get_damage(ptype, p):
 	if ptype == "true":
@@ -122,73 +79,53 @@ func get_damage(ptype, p):
 	elif ptype == "cut":
 		return round(R.f() * p)
 
-func set_delay(p):
-	delay = max(delay, p)
+func slide(diff):
+	var ms = dat.g("move speed", 1)
+	if "agile" in flags:
+		ms += max(0, pos.slow - 4)
+	elif !("float" in flags):
+		ms += pos.slow
+	set_animation("walk", max(1, ms)*2)
+	var spd = SPEED / ms
+	var diff_normalized = diff.normalized()
+	if diff_normalized.x > 0:
+		face(1)
+	elif diff_normalized.x < 0:
+		face(-1)
+	n_collider.vel = Vector2(diff_normalized.x * spd, diff_normalized.y * spd)
+	var newpos = pos.world.from_vec(position)
+	if newpos != pos:
+		pos.remove_item(self)
+		newpos.add_item(self)
+		if !newpos.visible and newpos.sight_frame <= G.you.n_camera.sight_frame - 1:
+			G.make_particle("Sound", newpos.to_pixel())
+	var col = n_collider.get_collider(faction)
+	if col != null:
+		controller.target = col
 
 func set_state(state, force=false):
 	if force or delay == 0:
-		if state == "move":
-			var dir = pos.direction_to(controller.target)
-			if move(dir) != null:
-				var ms = dat.g("move speed", 1)
-				if "agile" in flags:
-					ms += max(0, controller.target.slow - 4)
-				elif !("float" in flags):
-					ms += controller.target.slow
-				delay = max(1, ms)
-				set_move_delay_speed(delay)
-				set_animation("walk")
-				if !pos.visible and pos.sight_frame <= G.you.n_camera.sight_frame - 1:
-					G.make_particle("Sound", pos.to_pixel())
-			else:
-				delay = 1
-		elif state == "attack":
-			var used
-			var dist = pos.distance_to(controller.target)
-			if dist == 1:
-				used = draw_skill("onattack")
-			elif dist == 2:
-				set_state("move")
-				if pos.distance_to(controller.target) == 1:
-					used = roll_skill("oncharge")
-			if used == null:
-				last_skill = null
-			elif used[1].get("repeatable", true):
-				last_skill = used[0]
-		else:
-			set_animation(state)
-
-func set_animation(p):
-	current_action = p
-	if delay > 0:
-		if p == "knockout":
+		n_collider.vel = Vector2()
+		if state == "attack":
+			var enemies = n_collider.get_collider(faction)
+			if enemies != null:
+				roll_skill("onattack")
+			elif controller.target != null:
+				slide(controller.target.position - position)
+		elif state == "knockout":
 			if "getup" in flags:
+				delay = 0
 				return
-		n_animation.play(p, -1, 1/(delay*.15))
+			set_animation(state, delay)
+		else:
+			set_animation(state, delay)
+
+func set_animation(p, spd):
+	current_action = p
+	if spd > 0:
+		n_animation.play(p, -1, 1/(spd*.15))
 	else:
 		n_animation.play(p)
-
-func set_animation_direction(y):
-	if y != 0:
-		face(1)
-
-func draw_skill(type, mode=0):
-	var roll = R.ir(0, 99)
-	var skill
-	var data
-	if deck.empty():
-		skill = "wait"
-		data = G.data.skill_data.get("wait")
-		G.influence.do(self, skill, data, 0)
-		return [skill, data]
-	else:
-		skill = deck.pop_front()
-		data = G.data.skill_data.get(skill)
-		if data != null and data.target == type:
-			if data.chance > roll:
-				G.influence.do(self, skill, data, mode)
-				return [skill, data]
-		return draw_skill(type)
 
 func roll_skill(type, mode=0):
 	var data
@@ -210,8 +147,7 @@ func get_health():
 func on_kill(killed):
 	if "cannibal" in flags:
 		hit("true", -2, self)
-	if controller != null:
-		controller.on_kill(killed)
+	controller.on_kill(killed)
 
 func hit(_type, dmg, _hitter):
 	if dmg > 0:
@@ -220,18 +156,19 @@ func hit(_type, dmg, _hitter):
 		if pos.light < 0 and R.b():
 			G.display_damage(pos.to_pixel(), "MISS", Color.darkgray)
 			return
-		var used = roll_skill("onhit", 3)
-		if used != null:
-			var block = used[1].get("block", 0)
-			if block >= dmg:
-				return
-			else:
-				dmg -= block
+		if _type != "true":
+			var used = roll_skill("onhit", 3)
+			if used != null:
+				var block = used[1].get("block", 0)
+				if block >= dmg:
+					return
+				else:
+					dmg -= block
 		if current_action == "knockout":
 			dmg *= 2
 		dat.add("damage", dmg, 0)
 		delay = 2
-		set_animation("hit")
+		set_animation("hit", 2)
 		buffs.on_interrupt("interrupt")
 		show_healthbar()
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
@@ -244,7 +181,7 @@ func hit(_type, dmg, _hitter):
 				_hitter.on_kill(self)
 		elif health_percent <= .5:
 			if !buffs.has("injury"):
-				G.fx(self, "injury")
+				G.influence.do(self, "injury")
 	elif dmg < 0:
 		dat.add("damage", dmg, 0, dat.g("vitality"))
 		show_healthbar()
@@ -264,7 +201,6 @@ func on_turn():
 			if delay > 0:
 				delay -= 1
 			if delay == 0:
-				set_animation_direction(0)
 				set_state("idle")
 		for i in cooldowns:
 			if cooldowns[i] <= 0:
@@ -295,20 +231,17 @@ func die():
 	remove()
 
 func remove():
+	if n_collider != null:
+		n_collider.queue_free()
 	if n_healthbar != null:
 		n_healthbar.queue_free()
-		remove_child(n_healthbar)
-	if controller != null:
-		controller.remove()
+	controller.remove()
 	$Shadow.queue_free()
 	for child in get_children():
 		child.queue_free()
 	.remove()
 	buffs.remove()
 	G.turn.remove(self)
-
-func is_visible():
-	return n_sprites.visible
 
 func show_healthbar():
 	if n_healthbar == null:
@@ -317,3 +250,7 @@ func show_healthbar():
 	var vit = dat.g("vitality", 1) * 2
 	n_healthbar.set_mhp(vit)
 	n_healthbar.set_hp(vit - dat.g("damage", 0))
+
+func move_world(wld):
+	.move_world(wld)
+	controller.tasks.clear()

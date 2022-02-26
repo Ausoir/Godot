@@ -5,7 +5,6 @@ var equipments = {}
 var inventory = [null]
 var selected_weapon
 var gender = "m"
-var weight = 0
 var item_skills = []
 
 func set_seed():
@@ -41,6 +40,18 @@ func get_damage(ptype, p):
 
 func get_weapon():
 	return equipments.get(selected_weapon)
+
+func can_carry(w):
+	if w < 0:
+		return false
+	var r = 0
+	for i in equipments:
+		var item = equipments[i]
+		r += item.dat.g("weight", 0)
+	for i in inventory:
+		if i != null:
+			r += i.dat.g("weight", 0)
+	return dat.g("strength", 1) >= r + w
 
 func remove_overlay(_part):
 	var wpn = overlay_sprites.get(_part)
@@ -131,7 +142,6 @@ func unequip(part):
 				remove_overlay(part)
 			equipments.erase(eq)
 			return r
-	return false
 
 func accomodate_stats(item):
 	var abilities = dat.g("abilities", [])
@@ -148,7 +158,6 @@ func accomodate_stats(item):
 		var stat = item.dat.g(i)
 		if stat != null:
 			dat.add(i, stat)
-	weight += item.dat.g("weight", 0)
 	dirty_dat = true
 
 func unaccomodate_stats(item):
@@ -174,7 +183,6 @@ func unaccomodate_stats(item):
 			if i >= old_inventory.size() - remove_spaces:
 				if old_inventory[i] != null:
 					store(old_inventory[i], true)
-	weight -= item.dat.g("weight", 0)
 	dirty_dat = true
 
 func has_part(p):

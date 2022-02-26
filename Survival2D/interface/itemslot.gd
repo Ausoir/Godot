@@ -1,6 +1,5 @@
 extends RichTextLabel
 
-#const DragItem = preload("res://interface/DragItem.tscn")
 const SLOT_DISABLED = 0
 const SLOT_LIGHT = 1
 const SLOT_FULL = 2
@@ -9,7 +8,6 @@ var part = "none"
 var allow_type = SLOT_FULL
 var tile
 var item
-var dragged_sprite
 
 func make_mode(ppart, p):
 	var txt = ""
@@ -24,7 +22,7 @@ func make_mode(ppart, p):
 	set_bbcode(txt)
 
 func check_weight(_item):
-	if G.you.unit.dat.g("strength", 0) >= _item.dat.g("weight", 0):
+	if G.you.unit.can_carry(item.dat.g("weight", 0)):
 		return true
 	else:
 		G.msg("Too heavy!")
@@ -76,6 +74,7 @@ func _on_gui_input(event):
 				on_quick_action()
 			G.you.unit.update()
 			G.ui.menu.update_inventory()
+		G.ui.description.hide()
 
 func on_quick_action():
 	if item != null:

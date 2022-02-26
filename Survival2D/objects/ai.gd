@@ -1,7 +1,6 @@
 extends "res://objects/controller.gd"
 
 var state = ""
-var foe
 var lead
 var reach = 1
 var turn_delay = 0
@@ -19,7 +18,7 @@ func on_assign():
 
 func on_hit(_hitter):
 	if _hitter != null:
-		foe = _hitter
+		target = _hitter
 
 func on_kill(_victim):
 	for i in _victim.dat.g("actives", []):
@@ -30,10 +29,10 @@ func on_turn():
 	turn_delay += 1
 	if turn_delay > 3:
 		turn_delay = 0
-		if foe == null:
+		if target == null:
 			perceive()
-		elif !is_instance_valid(foe):
-			foe = null
+		elif !is_instance_valid(target):
+			target = null
 		if !hunt():
 			if !follow():
 				think()
@@ -83,7 +82,7 @@ func perceive():
 		other_team = 1
 	var seen_units = search(other_team, min_dist)
 	if !seen_units.empty():
-		foe = seen_units[0][0]
+		target = seen_units[0][0]
 
 func search(faction, _dist):
 	var list = G.world.team[faction]
@@ -93,21 +92,20 @@ func search(faction, _dist):
 	for seen in list:
 		if is_instance_valid(seen) and seen != unit:
 			var dist = unit.pos.distance_to(seen.pos)
-			if dist < disthalf or (dist < dist2 and seen.pos.light >= 0):
-				var t = unit.pos.get_beam_to(seen.pos, unit.sight_col, _dist)
-				if t != null and t == seen.pos:
-					if seen.is_visible():
+			if dist <= disthalf or (dist < dist2 and seen.pos.light >= 0):
+				if seen.n_sprites.visible:
+					if unit.n_collider.check_ray(seen.global_position, [unit.n_collider, seen.n_collider]):
 						r.append([seen, dist])
 	return r
 
 func hunt():
-	if foe != null and is_instance_valid(foe):
+	if target != null and is_instance_valid(target):
 		set_state("hunt")
-		path_to(foe.pos, reach, true)
-		tasks.append(["attack", foe])
+		path_to(target.pos, reach, true)
+		tasks.append(["attack", target])
 		return true
 	else:
-		foe = null
+		target = null
 		return false
 
 func follow():
@@ -141,8 +139,8 @@ func set_objectives(_goal):
 	elif _goal == "end":
 		var pos
 		var dir = 0
-		var dist_s = G.field.size.y - unit.pos.y
-		var dist_e = G.field.size.x - unit.pos.x
+		var dist_s = G.world.size.y - unit.pos.y
+		var dist_e = G.world.size.x - unit.pos.x
 		if dist_e < unit.pos.y:
 			dir += 1
 			if dist_s < dist_e:
@@ -150,13 +148,13 @@ func set_objectives(_goal):
 				if unit.pos.x < dist_s:
 					dir += 1
 		if dir == 0:
-			pos = G.field.tiles[0][unit.pos.x]
+			pos = G.world.tiles[0][unit.pos.x]
 		elif dir == 1:
-			pos = G.field.tiles[unit.pos.y][G.field.size.x-1]
+			pos = G.world.tiles[unit.pos.y][G.world.size.x-1]
 		elif dir == 2:
-			pos = G.field.tiles[G.field.size.y-1][unit.pos.x]
+			pos = G.world.tiles[G.world.size.y-1][unit.pos.x]
 		elif dir == 3:
-			pos = G.field.tiles[unit.pos.y][0]
+			pos = G.world.tiles[unit.pos.y][0]
 		objectives = [["moveon", pos], ["exit"]]
 
 func do_objective():

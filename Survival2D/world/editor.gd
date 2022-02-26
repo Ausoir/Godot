@@ -1,29 +1,45 @@
 extends Node
 
 onready var n_base = $Base
+onready var n_2nd = $Base2
+onready var n_sewer = $Sewer
 onready var n_tileset = n_base.tile_set
 
 func _ready():
 	G.ui.queue_free()
-	var chars = {}
+	var f1 = get_floor_json(n_sewer)
+	var f2 = get_floor_json(n_base)
+	var f3 = get_floor_json(n_2nd)
+	save([f1, f2, f3])
+
+func get_floor_json(map):
+	var chars = {
+		'.': ['dirt'],
+		',': ['grass'],
+		'_': ['wood floor'],
+		'~': ['water'],
+		'#': ['rock wall'],
+	}
 	var rows = []
-	var list = []
+	var list = {}
+	for i in chars:
+		list[n_tileset.find_tile_by_name(chars[i])] = i
 	for y in range(40):
 		var row = ""
 		for x in range(55):
-			var id = n_base.get_cell(x, y)
-			var idc = char(33+id)
+			var id = map.get_cell(x, y)
 			if id in list:
-				row += idc
+				row += list[id]
 			else:
 				if id != -1:
-					list.append(id)
+					var idc = char(33+id)
+					list[id] = idc
 					chars[idc] = [n_tileset.tile_get_name(id)]
 					row += idc
 				else:
 					row += " "
 		rows.append(row)
-	save([[100, rows, chars]])
+	return [100, rows, chars]
 
 
 func save(_data):

@@ -3,6 +3,8 @@ const Item = preload("res://objects/item.gd")
 const Unit = preload("res://objects/Unit.tscn")
 const Script_Unit = preload("res://objects/unit.gd")
 const Script_Humanoid = preload("res://objects/humanoid.gd")
+const Properties = preload("res://classes/properties.gd")
+const UnitProperties = preload("res://objects/unit_properties.gd")
 
 const CMD_GRAB = [["wait", 6, "grab"],["cmd", 0, [["wield"]]]]
 const ACT_CONSTRUCT = ["icon_construct", [["wait",6,"work"],["cmd",0,[["equip"]]]]]
@@ -44,8 +46,8 @@ func make_group(arg, pos):
 						made = G.factory.make_unit(group[0], adj)
 						if made == null:
 							made = G.factory.make_item(group[0], adj)
-					if made.col[2] == "1":
-						adjs = adj.get_available_adjacents("0011")
+					if made.col & 4 > 0:
+						adjs = adj.get_available_adjacents(12)
 						adj = R.r_arr(adjs)
 		return true
 
@@ -70,7 +72,7 @@ func make_mob(arg, pos):
 						var equip_item = G.factory.make_item(list_item)
 						if equip_item != null:
 							unit.auto_equip(equip_item)
-			unit.fill_skills()
+			unit.dat.fill_skills()
 			return unit
 		else:
 			push_error("Invalid unit "+str(mob_data[1]))
@@ -91,15 +93,15 @@ func make_unit(arg, pos):
 		var img_size = sprite.get_size()
 		if img_size.y > 32:
 			r.get_node("Sprites/Sprite").offset.y = -int((img_size.y - 32) / 2)
-		G.turn.add(r)
 		r.item_name = arg
 		r.item_type = "unit"
-		r.dat = G.Properties.new(unit_data)
+		r.dat = UnitProperties.new(unit_data)
 		if !r.dat.g("col"):
-			r.dat.a("col", "0011")
+			r.dat.a("col", 12)
 		r.on_dat()
 		r.place(pos)
 		r.set_seed()
+		G.turn.add(r)
 		return r
 
 func make_item(arg, pos=null):
@@ -115,9 +117,7 @@ func make_item(arg, pos=null):
 		r.set_script(Item)
 		r.item_name = arg
 		r.item_type = "item"
-		r.dat = G.Properties.new(item_data)
-		if r.dat.g("turn", 0) > 0:
-			G.turn.add(r)
+		r.dat = Properties.new(item_data)
 		var onmake = item_data.get("onmake")
 		if onmake != null:
 			G.cmd(onmake, r)
@@ -127,6 +127,8 @@ func make_item(arg, pos=null):
 		r.on_dat()
 		if pos != null:
 			r.place(pos)
+		if r.dat.g("turn", 0) > 0:
+			G.turn.add(r)
 		return r
 
 func make_corpse(host, pos):
@@ -136,7 +138,7 @@ func make_corpse(host, pos):
 	r.make(host)
 	var item_data = G.data.item_data.get("corpse")
 	if item_data != null:
-		r.dat = G.Properties.new(item_data)
+		r.dat = G.factory.Properties.new(item_data)
 	if pos != null:
 		r.place(pos)
 	return r
@@ -150,7 +152,7 @@ func place_scripter(pos):
 		scripter.dat = G.Properties.new({})
 		scripter.place(pos)
 	else:
-		scripter.relocate(pos, true)
+		scripter.relocate(pos)
 
 func get_duplicate(this, arr):
 	var r = []

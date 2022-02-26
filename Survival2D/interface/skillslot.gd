@@ -1,41 +1,30 @@
-extends Panel
+extends RichTextLabel
 
-export var index = 0
-export var active = false
-var stylebox = get_stylebox("panel", "")
+var index = 0
+var active = false
 var is_item = false
 var skill
 var skill_data
-var dragged_sprite
 
 func set_is_item(p):
 	is_item = p
 	if p:
-		$Sprite.modulate = Color.darkgoldenrod
+		modulate = Color.darkgoldenrod
 	else:
-		$Sprite.modulate = Color.white
+		modulate = Color.white
 
-func assign(p):
+func assign(p, idx):
 	skill = p
-	if skill != null:
-		skill_data = G.data.skill_data.get(skill)
-		if skill_data == null:
-			return false
-		var item_sprite = get_node("Sprite")
-		item_sprite.texture = G.data.get_image(skill_data.get("img"))
-		item_sprite.show()
-		$Label.set_text(str(skill_data.get("cost", 0)))
-	else:
-		get_node("Sprite").hide()
-		$Label.set_text("")
+	skill_data = G.data.skill_data.get(p)
+	index = idx
+	set_bbcode("[" + str(skill_data.get("cost", 0)) + "] " + skill.capitalize())
 	set_is_item(false)
 
 func unassign():
 	if skill != null:
-		var item_sprite = get_node("Sprite")
-		var r = {"drag":skill,"type":"skill", "item":skill, "index":index, "active":active}
-		skill = null
-		item_sprite.hide()
+		var r = {"drag":skill.capitalize(),"type":"skill", "item":skill, "index":index, "active":active}
+		queue_free()
+		get_parent().remove_child(self)
 		return r
 
 func _on_mouse_entered():
@@ -55,6 +44,7 @@ func _on_gui_input(event):
 					take_from()
 			elif event.button_index == BUTTON_RIGHT:
 				on_quick_action()
+		G.ui.description.hide()
 
 func on_quick_action():
 	if skill != null:
@@ -74,12 +64,14 @@ func take_from():
 func place_to(item):
 	if active == item.active:
 		if active:
-			G.you.unit.swap_skills("actives", item.index, index)
+			G.you.unit.dat.swap_skills("actives", item.index, index)
 		else:
-			G.you.unit.swap_skills("skills", item.index, index)
+			G.you.unit.dat.swap_skills("skills", item.index, index)
 	elif active:
-		G.you.unit.activate_skill(item.index)
+		G.you.unit.dat.deactivate_skill(index)
+		G.you.unit.dat.activate_skill(item.index)
 	else:
-		G.you.unit.deactivate_skill(item.index)
+		G.you.unit.dat.deactivate_skill(item.index)
+		G.you.unit.dat.activate_skill(index)
 	G.ui.menu.set_drag_item(null)
 	G.ui.menu.update_skills()

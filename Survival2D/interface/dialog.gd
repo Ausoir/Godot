@@ -80,12 +80,8 @@ func _on_meta_hover_ended(_meta):
 	G.ui.description.hide()
 
 func run_script(script):
-	if script[0] == "storage":
-		add_storage()
-	elif script[0] == "bulletin":
+	if script[0] == "bulletin":
 		add_bulletin()
-	elif script[0] == "tavern":
-		add_tavern()
 	elif script[0] == "trade":
 		add_trade()
 	elif script[0] == "store":
@@ -107,74 +103,33 @@ func add_trade():
 		option["script"] = ["store", i]
 		page_data.opt.append(option)
 
-func add_storage():
-	var items = ""
-	var count = 0
-	for item in G.you.unit.inventory:
-		if item != null:
-			items += "[url="+str(count)+"]> [i]Store " + item.item_name + "[/i][/url]\n"
-			count += 1
-	get_node("Dialog/RichTextLabel").append_bbcode(items)
-	if !("opt" in page_data):
-		page_data["opt"] = []
-	for i in range(count):
-		var option = {"hover": ["item", G.you.unit.inventory[i].item_name]}
-		option["script"] = ["store", i]
-		page_data.opt.append(option)
-
-func add_tavern():
-	var items = ""
-	var data = []
-	var count = 0
-	for item in G.you.unit.inventory:
-		if item != null and item.type == "map":
-			var dest = item.get("to","")
-			items += "[url="+str(count)+"]> [i]To " + dest + "[/i][/url]\n"
-			data.append(dest)
-			count += 1
-	get_node("Dialog/RichTextLabel").append_bbcode(items)
-	if !("opt" in page_data):
-		page_data["opt"] = []
-	for _i in range(count):
-		var option = {"script": ["store"]}
-		page_data.opt.append(option)
-
 func add_bulletin():
-	var lseed = G.vars.baseseed
+	var lseed = G.vars.seed
 	R.set_seed(lseed + G.vars.time)
+	if !("opt" in page_data):
+		page_data["opt"] = []
 	var items = ""
 	var count = 0
-	var opt = []
 	for _contract in range(R.ir(1, 5)):
 		var pop = R.ir(1, 6)
 		var map = R.ir(1, 3)
 		var title
-		if map == 1:
-			title = "Urban scavenge run ("
-		elif map == 2:
-			title = "Dungeon crawl ("
-		elif map == 3:
-			title = "Explore lab ("
-		items += "[url="+str(count)+"]> [i]"+title+str(pop)+")[/i][/url]\n"
-		opt.append([map, pop])
-		count += 1
-	get_node("Dialog/RichTextLabel").append_bbcode(items)
-	if !("opt" in page_data):
-		page_data["opt"] = []
-	for i in range(count):
-		var map = opt[i][0]
-		var pop = opt[i][1]
-		var title
+		var desc
 		if map == 1:
 			title = "urban"
+			desc = "Urban scavenge run ("
 		elif map == 2:
 			title = "dungeon"
+			desc = "Dungeon crawl ("
 		elif map == 3:
 			title = "lab"
+			desc = "Explore lab ("
+		items += "[url="+str(count)+"]> [i]"+desc+str(pop)+")[/i][/url]\n"
 		var option = {"hover": ["text", "Location", title.capitalize()+"\nAllies: "+str(pop)]}
-		option["cmd"] = [["dat","a","$pu","social","follow"], ["travel", title]]
+		option["cmd"] = [["dat","a","$pu","social","follow"]]
 		var social = "lead"
 		for _i in range(pop-1):
 			option["cmd"] += [["v","adj","$pup"],["make","scav","$t"],["dat","a","$t","social",social],["ally"]]
 			social = "follow"
-		page_data.opt.append(option)
+		page_data["opt"].append(option)
+	get_node("Dialog/RichTextLabel").append_bbcode(items)

@@ -72,8 +72,6 @@ func unregister_player(id):
 
 remote func pre_start_game():
 	# Change scene.
-	get_tree().get_root().add_child(G.world)
-
 	get_tree().get_root().get_node("Lobby").hide()
 
 	var spawn_points = {}
@@ -97,7 +95,6 @@ remote func pre_start_game():
 			player.p_name = other_players[p_id]["name"]
 		player.p_id = p_id
 		units.append(player)
-		G.world.players.add_child(player)
 
 	if !load_game():
 		create_game(units)
@@ -174,13 +171,13 @@ func _ready():
 
 
 func create_game(_player_units):
-	G.world.create("base")
+	G.world.create("city")
 	for unit in _player_units:
-		var player_pos = G.field.get_spawn_point()
+		var player_pos = G.world.get_spawn_point()
 		var player_unit = G.cmd([["make", "player", player_pos]])
 		player_unit.possess(unit)
 
-func save_game(_map="base"):
+func save_game(_map="city"):
 	var save_game = File.new()
 	save_game.open("user://savegame.save", File.WRITE)
 	if get_tree().is_network_server():
@@ -207,12 +204,11 @@ func load_game():
 			save_game.open("res://assets/template.save", File.READ)
 			node_data = parse_json(save_game.get_line())
 		G.vars = node_data
-		G.world.daytime = int(G.vars.time) % 2 == 0
 		R.set_seed(G.vars.seed)
 		if "forcemap" in G.vars:
-			G.world.create(G.vars["forcemap"])
+			G.travel(G.vars["forcemap"])
 		else:
-			G.world.create(node_data.map)
+			G.travel(node_data.map)
 		while save_game.get_position() < save_game.get_len():
 			node_data = parse_json(save_game.get_line())
 			if node_data.id == get_tree().get_network_unique_id():

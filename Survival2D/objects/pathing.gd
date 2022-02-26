@@ -1,4 +1,5 @@
 var cols = "0011"
+var world
 var target
 var iterations = 16
 var pathing_times = 0
@@ -32,7 +33,8 @@ class pathnode:
 	func to_pixel():
 		return Vector2(pos.x * G.W + G.HW, pos.y * G.H + G.HH)
 
-func _init():
+func _init(wld):
+	world = wld
 	result = []
 
 func check_loop(loop, pos):
@@ -52,7 +54,7 @@ func iterate(node):
 			node = v
 	open.remove(index)
 	closed.append(node)
-	var routes = G.field.get_routes(node.pos, cols, can_open, smash_to)
+	var routes = G.world.get_routes(node.pos, cols, can_open, smash_to)
 	for route in routes:
 		var pos = Vector2(node.pos.x + route[0], node.pos.y + route[1])
 		var achieved = distance_to(pos, target)
@@ -62,7 +64,7 @@ func iterate(node):
 			return reached
 		if achieved < distance_to(closest.pos, target):
 			closest = node
-		var cost = G.field.tiles[pos.y][pos.x].slow * hinderance
+		var cost = G.world.tiles[pos.y][pos.x].slow * hinderance
 		if check_loop(closed, pos):
 			continue
 		var new = pathnode.new(node, pos)

@@ -1,7 +1,6 @@
-[gd_resource type="TileSet" load_steps=4 format=2]
+[gd_resource type="TileSet" load_steps=3 format=2]
 
-[ext_resource path="res://assets/images/shadow.png" type="Texture" id=1]
-[ext_resource path="res://assets/images/fog.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/fog.png" type="Texture" id=1]
 [ext_resource path="res://assets/images/blendmap1.png" type="Texture" id=3]
 
 [resource]
@@ -9,7 +8,7 @@
 0/texture = ExtResource( 1 )
 0/tex_offset = Vector2( 0, 0 )
 0/modulate = Color( 1, 1, 1, 1 )
-0/region = Rect2( 0, 0, 32, 32 )
+0/region = Rect2( 0, 0, 8, 8 )
 0/tile_mode = 0
 0/occluder_offset = Vector2( 0, 0 )
 0/navigation_offset = Vector2( 0, 0 )
@@ -19,11 +18,11 @@
 0/shape_one_way_margin = 0.0
 0/shapes = [  ]
 0/z_index = 0
-1/name = "fog"
-1/texture = ExtResource( 2 )
+1/name = "shadefog"
+1/texture = ExtResource( 1 )
 1/tex_offset = Vector2( 0, 0 )
 1/modulate = Color( 1, 1, 1, 1 )
-1/region = Rect2( 0, 0, 32, 32 )
+1/region = Rect2( 8, 0, 8, 8 )
 1/tile_mode = 0
 1/occluder_offset = Vector2( 0, 0 )
 1/navigation_offset = Vector2( 0, 0 )
@@ -33,11 +32,11 @@
 1/shape_one_way_margin = 0.0
 1/shapes = [  ]
 1/z_index = 0
-2/name = "shadefog"
-2/texture = ExtResource( 2 )
+2/name = "fog"
+2/texture = ExtResource( 1 )
 2/tex_offset = Vector2( 0, 0 )
 2/modulate = Color( 1, 1, 1, 1 )
-2/region = Rect2( 32, 0, 32, 32 )
+2/region = Rect2( 16, 0, 8, 8 )
 2/tile_mode = 0
 2/occluder_offset = Vector2( 0, 0 )
 2/navigation_offset = Vector2( 0, 0 )

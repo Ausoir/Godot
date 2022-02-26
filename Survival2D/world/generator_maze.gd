@@ -28,24 +28,24 @@ func paint_spawn(dir):
 	var floor_tile = 'tile'
 	if dir == 0:
 		var x = R.ir(1, width-2)
-		G.field.set_terrain(x, 0, floor_tile)
-		G.field.set_terrain(x, 1, floor_tile)
-		G.field.spawn_points.append(G.field.tiles[0][x])
+		G.world.set_terrain(x, 0, floor_tile)
+		G.world.set_terrain(x, 1, floor_tile)
+		G.world.spawn_points.append(G.world.tiles[0][x])
 	elif dir == 1:
 		var y = R.ir(1, height-2)
-		G.field.set_terrain(width-1, y, floor_tile)
-		G.field.set_terrain(width-2, y, floor_tile)
-		G.field.spawn_points.append(G.field.tiles[y][width-1])
+		G.world.set_terrain(width-1, y, floor_tile)
+		G.world.set_terrain(width-2, y, floor_tile)
+		G.world.spawn_points.append(G.world.tiles[y][width-1])
 	elif dir == 2:
 		var x = R.ir(1, width-2)
-		G.field.set_terrain(x, height-1, floor_tile)
-		G.field.set_terrain(x, height-2, floor_tile)
-		G.field.spawn_points.append(G.field.tiles[height-1][x])
+		G.world.set_terrain(x, height-1, floor_tile)
+		G.world.set_terrain(x, height-2, floor_tile)
+		G.world.spawn_points.append(G.world.tiles[height-1][x])
 	elif dir == 3:
 		var y = R.ir(1, height-2)
-		G.field.set_terrain(0, y, floor_tile)
-		G.field.set_terrain(1, y, floor_tile)
-		G.field.spawn_points.append(G.field.tiles[y][0])
+		G.world.set_terrain(0, y, floor_tile)
+		G.world.set_terrain(1, y, floor_tile)
+		G.world.spawn_points.append(G.world.tiles[y][0])
 
 func place_output():
 	output = make_base(width, height, 0)

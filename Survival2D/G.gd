@@ -4,14 +4,11 @@ const W = 32
 const H = 32
 const HW = 16
 const HH = 16
-const COL_SIGHT = 0
-const COL_TERRAIN = 1
-const COL_OBJECT = 2
-const COL_MAGIC = 3
 const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
 	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
 const CARDINALS = [[0,-1],[1,0],[0,1],[-1,0]]
 const DIRS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
+const ORDERED_DIRS = [[0,-1],[1,0],[0,1],[-1,0],[1,1],[-1,1],[-1,-1],[1,-1]]
 const STATS = ["vitality", "strength", "intelligence", "agility", "perception", "move speed"]
 const UP = 0
 const UPRIGHT = 1
@@ -22,7 +19,6 @@ const DOWNLEFT = 5
 const LEFT = 6
 const UPLEFT = 7
 
-const Properties = preload("res://classes/properties.gd")
 const Gfx = preload("res://fx/Gfx.tscn")
 const Sfx = preload("res://fx/Sfx.tscn")
 var Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
@@ -30,11 +26,11 @@ var influence = preload("res://objects/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var time = preload("res://classes/time.gd").new()
 var turn = preload("res://classes/turn.gd").new()
-var field = preload("res://world/field.gd").new()
 var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
 var command = load("res://classes/command.gd").new()
+var worlds = {}
 var events = []
 var onloads = []
 var vars = {}
@@ -111,6 +107,32 @@ func get_autotile_coord(dirs):
 			v = Vector2()
 	return v
 
+func get_direction_between(from, to):
+	var tx = from.x - to.x
+	var ty = from.y - to.y
+	if tx == 0 and ty == 0:
+		return -1
+	var dir
+	var angle = atan2(ty, tx) + PI
+	var octant = int(angle / .3927)
+	if octant == 15 or octant == 0:
+		dir = G.LEFT
+	elif octant == 1 or octant == 2:
+		dir = G.UPLEFT
+	elif octant == 3 or octant == 4:
+		dir = G.UP
+	elif octant == 5 or octant == 6:
+		dir = G.UPRIGHT
+	elif octant == 7 or octant == 8:
+		dir = G.RIGHT
+	elif octant == 9 or octant == 10:
+		dir = G.DOWNRIGHT
+	elif octant == 11 or octant == 12:
+		dir = G.DOWN
+	elif octant == 13 or octant == 14:
+		dir = G.DOWNLEFT
+	return dir
+
 func cmd(args, host=null):
 	rpc("synced_cmd", args, host)
 	return command.tgt
@@ -126,9 +148,6 @@ puppetsync func synced_cmd(args, host):
 
 func msg(msg):
 	ui.message.add(msg)
-
-func fx(host, effect):
-	influence.do(host, effect)
 
 func make_particle(arg, pos, args=null):
 	var r = G.data.get_particle(arg)
@@ -146,6 +165,19 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 	r.set_damage(str(dmg), color, _scale)
 
 func travel(_map):
-	gamestate.save_game(_map)
-	G.vars.time += 1
-	gamestate.load_game()
+	var root = get_tree().get_root()
+	if G.world.get_parent() != null:
+		G.world.hide()
+	if _map in G.worlds:
+		G.world = G.worlds[_map]
+		G.world.show()
+	else:
+		var newworld = load('res://world/World.tscn').instance()
+		root.add_child(newworld)
+		G.world = newworld
+		G.world.create(_map)
+	if G.you.get_parent() != null:
+		G.you.get_parent().remove_child(G.you)
+	G.world.players.add_child(G.you)
+	if G.you.unit != null:
+		G.you.unit.move_world(G.world)

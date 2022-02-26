@@ -8,18 +8,19 @@ var output
 var spawn_points = []
 
 func create(x, y):
+	G.world.spawn_points = []
 	width = x
 	height = y
 
 func paint_map():
-	G.field.create_map(width, height)
+	G.world.create_map(width, height)
 	for x in range(width):
 		for y in range(height):
 			var value = output[y][x]
 			if value != null:
-				G.field.set_terrain(x, y, value[0])
+				G.world.set_terrain(x, y, value[0])
 			else:
-				push_error("Invalid tile: "+str(value))
+				G.world.set_terrain(x, y, 'void')
 	for x in range(width):
 		for y in range(height):
 			var value = output[y][x]
@@ -27,7 +28,7 @@ func paint_map():
 				for i in range(1, value.size()):
 					var list = G.data.get_combo(value[i])
 					for item in list:
-						G.cmd([["make", item, G.field.tiles[y][x]]])
+						G.cmd([["make", item, G.world.tiles[y][x]]])
 
 func palette_assign(fromx, fromy, tox, toy):
 	for y in range(fromy, toy+1):
@@ -53,27 +54,26 @@ func palette_fill(_bounds, _val):
 				push_error("Invalid palette value: "+str(_val))
 
 func paint_spawn(dir):
-	G.field.spawn_points = []
 	for i in spawn_points:
-		G.field.spawn_points.append(G.field.tiles[i[1]][i[0]])
-	if G.field.spawn_points.empty():
+		G.world.spawn_points.append(G.world.tiles[i[1]][i[0]])
+	if G.world.spawn_points.empty():
 		if dir == 0:
 			for x in range(1, width-1):
-				if !G.field.tiles[0][x].is_col(1) and !G.field.tiles[1][x].is_col(1):
-					G.field.spawn_points.append(G.field.tiles[0][x])
+				if !G.world.tiles[0][x].is_col(4) and !G.world.tiles[1][x].is_col(4):
+					G.world.spawn_points.append(G.world.tiles[0][x])
 		elif dir == 1:
 			for y in range(1, height-1):
-				if !G.field.tiles[y][width-1].is_col(1) and !G.field.tiles[y][width-2].is_col(1):
-					G.field.spawn_points.append(G.field.tiles[y][width-1])
+				if !G.world.tiles[y][width-1].is_col(4) and !G.world.tiles[y][width-2].is_col(4):
+					G.world.spawn_points.append(G.world.tiles[y][width-1])
 		elif dir == 2:
 			for x in range(1, width-1):
-				if !G.field.tiles[height-1][x].is_col(1) and !G.field.tiles[height-2][x].is_col(1):
-					G.field.spawn_points.append(G.field.tiles[height-1][x])
+				if !G.world.tiles[height-1][x].is_col(4) and !G.world.tiles[height-2][x].is_col(4):
+					G.world.spawn_points.append(G.world.tiles[height-1][x])
 		elif dir == 3:
 			for y in range(1, height-1):
-				if !G.field.tiles[y][0].is_col(1) and !G.field.tiles[y][1].is_col(1):
-					G.field.spawn_points.append(G.field.tiles[y][0])
-	if G.field.spawn_points.empty():
+				if !G.world.tiles[y][0].is_col(4) and !G.world.tiles[y][1].is_col(4):
+					G.world.spawn_points.append(G.world.tiles[y][0])
+	if G.world.spawn_points.empty():
 		push_error("No spawn points found")
 
 func make_base(sx, sy, val):

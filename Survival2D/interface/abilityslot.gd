@@ -49,12 +49,12 @@ func _on_gui_input(event):
 func activate():
 	if mode == MODE_NORMAL:
 		if skill_type == "self":
-			G.you.perform_ability(skill_index)
+			G.you.tasks = [["ability", skill_index, G.you.unit.position]]
 		else:
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
 	elif mode == MODE_ACTIVE:
-		G.you.perform_ability(skill_index)
+		G.you.tasks = [["ability", skill_index, G.you.unit.position]]
 
 func _update_cooldown(cd):
 	if cd > 0:

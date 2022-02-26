@@ -1,31 +1,34 @@
 var name
 var data
 var host
-var target
-var victim
+var tgt_item
+var tgt_point
+var tgt_tile
+var tgt
 
-func do(phost, pname, pdata=null, mode=0):
+func do(phost, pname, pdata=null, mode=0, dest=null):
 	host = phost
 	name = pname
+	tgt_point = dest
 	if pdata == null:
 		data = G.data.skill_data.get(name)
 		if data == null:
 			return false
 	else:
 		data = pdata
-	if host.controller != null:
-		target = host.controller.target
-	else:
-		target = host.pos
 	if !find_victim():
 		return false
 	else:
+		if tgt_point != null:
+			tgt = tgt_point
+		elif tgt_item != null:
+			tgt = tgt_item.position
 		if "cooldown" in data:
 			if name in host.cooldowns:
 				return false
 			host.cooldowns[name] = data.cooldown
 		if "delay" in data:
-			host.set_delay(data.delay)
+			host.delay = data.delay
 		if mode == 0:
 			if "duration" in data:
 				if host.buffs.has(name):
@@ -40,10 +43,10 @@ func do(phost, pname, pdata=null, mode=0):
 			run_cmds(data.get("onend", []))
 		elif mode == 3:
 			run_cmds(data.get("retaliate", []))
-			victim = host
+			tgt_item = host
 			run_cmds(data.get("compensate", []))
-		if victim.item_type == "unit":
-			if victim.is_dead:
+		if tgt_item != null:
+			if !is_instance_valid(tgt_item) or (tgt_item.item_type == "unit" and tgt_item.is_dead):
 				run_cmds(data.get("onkill", []))
 		return true
 
@@ -52,18 +55,17 @@ func run_cmds(cmds):
 		var type = cmd[0]
 		if type == "gfx":
 			if cmd[1] == "projectile":
-				var dest = host.pos.get_beam_to(target, "0010", data.range)
 				var gfx = G.Gfx.instance()
 				var shoot_from = host.pos.to_pixel()
-				var shoot_to = dest.to_pixel()
+				var shoot_to = tgt
 				if cmd.size() > 3:
 					shoot_from += R.vfr(cmd[3][0])
 					shoot_to += R.vfr(cmd[3][1])
 				gfx.shoot(cmd[2], shoot_from, shoot_to)
 			elif cmd[1] == "particle":
-				G.make_particle(cmd[2], host.pos.to_pixel(), {"follow": host})
+				G.make_particle(cmd[2], host.position, {"follow": host})
 			elif cmd[1] == "particleto":
-				G.make_particle(cmd[2], victim.pos.to_pixel(), {"follow": victim})
+				G.make_particle(cmd[2], tgt, {"follow": tgt_item})
 			elif cmd[1] == "label":
 				G.display_damage(host.pos.to_pixel(), cmd[2], cmd[3], .8)
 		elif type == "sfx":
@@ -71,14 +73,15 @@ func run_cmds(cmds):
 			if cmd[2] == "host":
 				sound.start(cmd[1], host.pos.to_pixel())
 			elif cmd[2] == "target":
-				sound.start(cmd[1], victim.pos.to_pixel())
+				sound.start(cmd[1], tgt)
 		elif type == "expend":
 			var wpn = host.get_weapon()
 			if wpn:
 				var uses = wpn.dat.g("uses", 1)
 				if uses < 1:
-					var r = host.unequip("weapon")
-					r.remove()
+					var r = host.unequip(host.selected_weapon)
+					if r != null:
+						r.remove()
 				else:
 					wpn.dat.a("uses", uses - 1)
 		elif type == "cooldown":
@@ -97,33 +100,28 @@ func run_cmds(cmds):
 			host.dirty_dat = true
 		elif type == "dmg":
 			var dmg_type = cmd[1]
-			victim.hit(dmg_type, host.get_damage(dmg_type, cmd[2]), host)
+			tgt_item.hit(dmg_type, host.get_damage(dmg_type, cmd[2]), host)
 		elif type == "heal":
 			host.hit("heal", -cmd[1], host)
 		elif type == "interrupt":
-			victim.buffs.on_interrupt(cmd[1])
+			tgt_item.buffs.on_interrupt(cmd[1])
 		elif type == "reaction":
-			victim.delay = cmd[2]
-			victim.set_animation(cmd[1])
+			tgt_item.delay = cmd[2]
+			tgt_item.set_animation(cmd[1], cmd[2])
 		elif type == "action":
-			if cmd[2] == 1:
-				if target != null and target.x == host.pos.x:
-					host.set_animation_direction(target.y - host.pos.y)
-				host.set_animation(cmd[1])
-			else:
-				host.set_animation(cmd[1])
-		elif type == "repeat":
-			G.fx(host, host.last_skill)
+			host.set_animation(cmd[1], host.delay)
 		elif type == "cast":
-			G.fx(host, cmd[1])
+			G.influence.do(host, cmd[1])
 		elif type == "castto":
-			G.fx(victim, cmd[1])
+			G.influence.do(tgt_item, cmd[1])
 		elif type == "move":
-			host.relocate(victim)
+			host.relocate(tgt_tile)
+			host.position.x = tgt_point.x
+			host.position.y = tgt_point.y
 		elif type == "mob":
-			G.factory.make_mob(cmd[1], victim)
+			G.factory.make_mob(cmd[1], tgt_tile)
 		elif type == "spawn":
-			G.cmd([["make", cmd[1], victim], ["possess", "$t"]])
+			G.cmd([["make", cmd[1], tgt_tile], ["possess", "$t"]])
 		elif type == "morph":
 			var husk = host
 			var player_unit = G.cmd([["make", cmd[1], host.pos]])
@@ -138,11 +136,6 @@ func run_cmds(cmds):
 			host.energy = max(host.dat.g("agility", 0), host.energy + cmd[1])
 		elif type == "draw":
 			host.select_weapon(cmd[1])
-		elif type == "sight":
-			host.dat.a("sight col", host.sight_col)
-			host.sight_col = cmd[1]
-			if host == G.you.unit:
-				G.cmd([["refresh"]])
 		elif type == "unsight":
 			host.sight_col = host.dat.g("sight col")
 			if host == G.you.unit:
@@ -153,66 +146,62 @@ func run_cmds(cmds):
 		elif type == "unflag":
 			host.flags.erase(cmd[1])
 			host.dirty_dat = true
-		elif type == "respite":
-			host.deck = []
-			var actives = host.dat.g("actives", [])
-			for i in actives:
-				host.deck.append(i)
 		elif type == "cmd":
 			G.cmd([cmd.slice(1, cmd.size() - 1)], host)
 		elif type == "end":
 			host.buffs.end(cmd[1])
 
 func find_victim():
-	if data.target == "unit":
-		if target != null:
-			if "col" in data:
-				target = host.pos.get_beam_to(target, data.col, data.range)
-			for i in target.get_items_by_type("unit"):
-				if is_valid(i):
-					return true
-	elif data.target == "tile":
-		if target != null:
-			if "col" in data:
-				target = host.pos.get_beam_to(target, data.col, data.range)
-			if is_valid(target):
-				return true
-	elif data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
-		for i in target.get_items_by_type("unit"):
-			if is_valid(i):
-				return true
-	else:
+	if data.target == "self":
 		if is_valid(host):
+			tgt_item = host
 			return true
+	elif data.target == "point":
+		return true
+	elif data.target == "beam":
+		tgt_point = host.n_collider.cast_ray(tgt_point, [host], data.get("col", 0))
+		tgt_tile = host.pos.world.from_vec(tgt_point)
+		return true
+	else:
+		tgt_item = host.controller.target
+		if tgt_item != null and is_instance_valid(tgt_item):
+			if data.target == "unit":
+				if "col" in data:
+					if !host.n_collider.check_ray(tgt_item.position, [host, tgt_item], data.col):
+						return false
+				if tgt_item.item_type == "unit" and is_valid(tgt_item):
+					return true
+			elif data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
+				if tgt_item.item_type == "unit" and is_valid(tgt_item):
+					return true
 	return false
 
-func is_valid(tgt):
+func is_valid(p):
 	if "reqs" in data:
-		var is_tile = tgt.item_type == "tile"
-		var is_unit = tgt.item_type == "unit"
+		var is_tile = p.item_type == "tile"
+		var is_unit = p.item_type == "unit"
 		for law in data.reqs:
 			if is_tile:
-				if law == "solid" and tgt.is_col(1):
+				if law == "solid" and p.is_col(4):
 					continue
-				elif law == "open" and !tgt.is_cols("0111"):
+				elif law == "open" and !p.is_col(14):
 					continue
-				elif law == "seen" and tgt.sight_frame == G.you.n_camera.sight_frame - 1:
+				elif law == "seen" and p.sight_frame == G.you.n_camera.sight_frame - 1:
 					continue
 			elif is_unit:
 				if law == "unit":
 					continue
-				elif law == "humanoid" and tgt.dat.g("type") != "man":
+				elif law == "humanoid" and p.dat.g("type") != "man":
 					continue
-				elif law == "foe" and host.faction != victim.faction:
+				elif law == "foe" and host.faction != p.faction:
 					continue
-				elif law == "ally" and host.faction == victim.faction:
+				elif law == "ally" and host.faction == p.faction:
 					continue
-				elif law == "larger size" and host.dat.g("size",0) > victim.dat.g("size", 0):
+				elif law == "larger size" and host.dat.g("size",0) > p.dat.g("size", 0):
 					continue
-				elif law == "smaller size" and host.dat.g("size",0) < victim.dat.g("size", 0):
+				elif law == "smaller size" and host.dat.g("size",0) < p.dat.g("size", 0):
 					continue
-				elif law == "same size" and host.dat.g("size",0) == victim.dat.g("size", 0):
+				elif law == "same size" and host.dat.g("size",0) == p.dat.g("size", 0):
 					continue
 			return false
-	victim = tgt
 	return true

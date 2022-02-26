@@ -1,11 +1,14 @@
+const COL_BITS = [1,2,4,8]
+
 var item_type = "tile"
 var x
 var y
+var world
 var terrain
 var items = []
-var visible = true
+var visible = false #Dont set to true, items will calculate lighting on creation
 var dat
-var col: String
+var col: int
 var autotile = 0
 var height: int
 var orig_light: int
@@ -15,7 +18,8 @@ var slow = 0
 var shade = -1
 var sight_frame = 0
 
-func _init(px, py):
+func _init(wld, px, py):
+	world = wld
 	x = px
 	y = py
 
@@ -46,23 +50,24 @@ func set_terrain(val):
 		terrain = val
 		if "autotile" in data:
 			autotile = data.autotile
-		if data.get("ceiling") != null or !G.world.daytime:
+		if data.get("ceiling") != null or !world.daytime:
 			orig_light = -1
 		else:
 			orig_light = 0
 		light = orig_light
 		slow = data.get("slow", 0)
-		var tile_image = G.world.tileset.find_tile_by_name(val)
-		G.world.tilemap.set_cell(x, y, tile_image)
+		var tile_image = world.tileset.find_tile_by_name(val)
+		world.tilemap.set_cell(x, y, tile_image)
 		dat = data
-		col = data.col
+		dat.col = int(dat.col)
+		col = dat.col
 		height = data.height
 	else:
 		push_error("Could not find terrain data " + val)
 
 func add_item(item):
 	if item.get_parent() == null:
-		G.world.items.add_child(item)
+		world.items.add_child(item)
 	items.append(item)
 	item.set_z_index(y * 2 - 4000)
 	item.pos = self
@@ -71,8 +76,8 @@ func add_item(item):
 		radiate(item.light)
 
 func remove_item(item):
-	if item.get_parent() == G.world.items:
-		G.world.items.remove_child(item)
+	if item.get_parent() == world.items:
+		world.items.remove_child(item)
 	items.erase(item)
 	update_tile()
 	if item.light != 0:
@@ -93,9 +98,7 @@ func update_tile():
 	slow = dat.get("slow", 0)
 	for item in items:
 		slow += item.dat.g("slow", 0)
-		for i in range(4):
-			if item.col[i] == "1":
-				col[i] = "1"
+		col = col | item.col
 		var item_height = item.dat.g("height")
 		if item_height != null:
 			height = int(max(height, item_height))
@@ -109,7 +112,7 @@ func apply_shade():
 		var shades = "00000"
 		var checks = [[-1,0],[-1,-1],[0,-1],[1,-1],[1,0]]
 		for i in range(5):
-			var tile = G.field.get_tile(x+checks[i][0], y+checks[i][1])
+			var tile = world.get_tile(x+checks[i][0], y+checks[i][1])
 			if tile:
 				if tile.height > height:
 					shades[i] = "1"
@@ -153,17 +156,11 @@ func apply_shade_from_dir(shades):
 		return
 
 func is_col(bit):
-	return col[bit] == "1"
+	return col & bit > 0
 
-func is_cols(cols):
-	for i in range(4):
-		if cols[i] == "1" and col[i] == "1":
-			return true
-	return false
-
-func is_cols_adv(cols, opens, strength):
+func is_col_adv(cols, opens, strength):
 	if !opens and strength == 0:
-		return is_cols(cols)
+		return is_col(cols)
 	var tcol = dat.col
 	for item in items:
 		if opens and item.dat.g("openable"):
@@ -171,13 +168,8 @@ func is_cols_adv(cols, opens, strength):
 		var item_hp = item.dat.g("durability")
 		if item_hp != null and item_hp <= strength:
 			continue
-		for i in range(4):
-			if item.col[i] == "1":
-				tcol[i] = "1"
-	for i in range(4):
-		if tcol[i] == "1" and cols[i] == "1":
-			return true
-	return false
+		tcol = item.col | tcol
+	return tcol & cols > 0
 
 func get_item_by_name(val):
 	for item in items:
@@ -191,40 +183,14 @@ func get_item_by_type(val):
 			return item
 	return null
 
-func direction_to(target, mult = 1):
-	var tx = target.x - x * mult
-	var ty = target.y - y * mult
-	if tx == 0 and ty == 0:
-		return -1
-	var dir
-	var angle = atan2(ty, tx) + PI
-	var octant = int(angle / .3927)
-	if octant == 15 or octant == 0:
-		dir = G.LEFT
-	elif octant == 1 or octant == 2:
-		dir = G.UPLEFT
-	elif octant == 3 or octant == 4:
-		dir = G.UP
-	elif octant == 5 or octant == 6:
-		dir = G.UPRIGHT
-	elif octant == 7 or octant == 8:
-		dir = G.RIGHT
-	elif octant == 9 or octant == 10:
-		dir = G.DOWNRIGHT
-	elif octant == 11 or octant == 12:
-		dir = G.DOWN
-	elif octant == 13 or octant == 14:
-		dir = G.DOWNLEFT
-	return dir
-
 func get_adjacent(dir, val=1):
 	if dir == -1:
 		return self
 	var t = G.DIRS[dir]
 	var ry = y + t[1]*val
 	var rx = x + t[0]*val
-	if G.field.is_inbound(rx, ry):
-		return G.field.tiles[ry][rx]
+	if world.is_inbound(rx, ry):
+		return world.tiles[ry][rx]
 	return self
 
 func distance_to(tile):
@@ -237,25 +203,11 @@ func get_items_by_type(p):
 			r.append(i)
 	return r
 
-func get_beam_to(destination, col_masks, distance):
-#	var degree = atan2(destination.y - y, destination.x - x)
-	var current = to_vector()
-	var current_tile = self
-	var dist = Vector2(destination.x - current.x, destination.y - current.y)
-	var diff = dist.normalized()
-	while current_tile != destination and distance_to(current) < distance:
-		current.x += diff.x
-		current.y += diff.y
-		current_tile = G.field.get_tile(round(current.x), round(current.y))
-		if current_tile.is_cols(col_masks):
-			break
-	return current_tile
-
 func get_available_adjacents(cols):
 	var r = []
 	for i in range(8):
 		var adj = get_adjacent(i)
-		if !adj.is_cols(cols):
+		if !adj.is_col(cols):
 			r.append(adj)
 	return r
 
@@ -270,20 +222,20 @@ func get_priority_item(exc):
 	return low
 
 func is_edge():
-	return x == 0 or x == G.field.size.x-1 or y == 0 or y == G.field.size.y-1
+	return x == 0 or x == world.size.x-1 or y == 0 or y == world.size.y-1
 
 func get_rand_offset(_x, _y):
 	var rx = R.ir(-_x, _x)
 	var ry = R.ir(-_y, _y)
-	return G.field.fit_bound(x + rx, y + ry)
+	return world.fit_bound(x + rx, y + ry)
 
 func radiate(_light, new=true):
 	light += _light
 	if new:
 		if light > 0:
-			G.world.lights.append(self)
+			world.lights.append(self)
 		else:
-			G.world.lights.erase(self)
+			world.lights.erase(self)
 	for i in range(8):
 		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(_light), _light)
 
@@ -308,17 +260,17 @@ func cast_sight(camera, row, start, end, flips, sight2, intensity):
 				var tile_y = dx * flips[2] + dy * flips[3]
 				var map_x = camera.x + tile_x
 				var map_y = camera.y + tile_y
-				var tile = G.field.get_tile(map_x, map_y)
+				var tile = world.get_tile(map_x, map_y)
 				if tile:
 					tile.light += intensity
 					if blocked:
-						if tile.is_col(0):
+						if tile.is_col(1):
 							new_start = end_slope
 						else:
 							blocked = false
 							start = new_start
 					else:
-						if tile.is_col(0) and cell < sight2:
+						if tile.is_col(1) and cell < sight2:
 							blocked = true
 							cast_sight(camera, cell + 1, start, start_slope, flips, sight2, intensity)
 							new_start = end_slope

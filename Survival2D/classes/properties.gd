@@ -18,6 +18,11 @@ func g(key, default=null):
 		return v[key]
 	return default
 
+func gi(key, default=null):
+	if key in v:
+		return int(v[key])
+	return default
+
 func a(key, val):
 	v[key] = val
 
