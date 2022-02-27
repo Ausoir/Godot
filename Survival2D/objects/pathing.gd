@@ -2,7 +2,7 @@ var cols = "0011"
 var world
 var target
 var iterations = 16
-var pathing_times = 0
+var pathing_times = 2
 var open
 var closed = []
 var closest

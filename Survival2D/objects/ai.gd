@@ -94,7 +94,7 @@ func search(faction, _dist):
 			var dist = unit.pos.distance_to(seen.pos)
 			if dist <= disthalf or (dist < dist2 and seen.pos.light >= 0):
 				if seen.n_sprites.visible:
-					if unit.n_collider.check_ray(seen.global_position, [unit.n_collider, seen.n_collider]):
+					if unit.pos.get_beam_to(seen.pos, 1, -1) == seen.pos:
 						r.append([seen, dist])
 	return r
 

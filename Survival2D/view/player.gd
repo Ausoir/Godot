@@ -52,13 +52,17 @@ func _on_input(event: InputEvent):
 				if t != null:
 					move_to(t)
 			elif Input.is_action_just_pressed("use"):
-				if aiming != -1:
-					tasks.clear()
-					var mousetarget = G.pixel_to_pos(mouse_pos)
-					var tile = G.world.get_tile(mousetarget.x, mousetarget.y)
-					if tile:
+				tasks.clear()
+				var mousetarget = G.pixel_to_pos(mouse_pos)
+				var tile = G.world.get_tile(mousetarget.x, mousetarget.y)
+				if tile:
+					if aiming != -1:
 						tasks = [["ability", aiming, mouse_pos]]
 						stop_aim()
+					elif !tile.items.empty():
+						var item = tile.get_item_by_type("item")
+						if item != null:
+							tasks = [["interact", item]]
 
 func get_cursor_position(mouse):
 	var screen_mouse = mouse * G.ui.screen_ratio
@@ -68,9 +72,10 @@ func get_cursor_position(mouse):
 
 func on_turn():
 	if auto_attack and tasks.empty():
-		var col = unit.n_collider.get_collider(unit.faction)
-		if col != null:
-			unit.set_state("attack")
+		var colld = unit.n_collider.get_collider(unit.faction)
+		if colld != null:
+			if tasks.empty():
+				tasks = [["attack", colld]]
 	var cds = !unit.cooldowns.empty()
 	.on_turn()
 	remove_steps()
@@ -109,21 +114,11 @@ func _physics_process(_delta):
 			tasks.clear()
 			var v = G.DIRS[dir]
 			unit.slide(Vector2(v[0], v[1]))
-		elif tasks.empty():
+		elif unit.n_collider.vel != Vector2.ZERO and tasks.empty():
 			unit.set_state("idle")
 
-func perform_auto_attack():
-	if auto_attack and unit.delay == 0 and tasks.empty():
-		for dir in range(8):
-			var tile = unit.pos.get_adjacent(dir)
-			for item in tile.items:
-				if item.item_type == "unit" and item.faction != unit.faction:
-					tasks.append(["attack", item])
-					return true
-	return false
-
-func on_item_click(item):
-	tasks.append(["interact", item])
+func on_item_click(item): #runs after _unhandled_input
+	tasks = [["interact", item]]
 
 func remove_steps():
 	for child in n_steps.get_children():
@@ -153,7 +148,7 @@ func interact(item):
 		else:
 			var onuse = item.dat.g("onuse")
 			if onuse != null:
-				G.cmd(onuse, item)
+				G.cmd(onuse, item, unit)
 			elif item.item_type == "item":
 				G.ui.menu.search_inventory(item.pos)
 
@@ -182,6 +177,11 @@ func remove():
 		var player_unit = G.cmd([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
 
+func on_map_clear():
+	for ally in allies:
+		ally.remove()
+	allies = []
+
 func save_data(remove_buffs=true):
 	var buff_data = unit.buffs.to_data()
 	if remove_buffs:
@@ -208,8 +208,3 @@ func load_data(_data):
 		player_unit.load_item_data(_data)
 		player_unit.set_seed()
 	player_unit.buffs.from_data(_data.unit_buff)
-
-func on_map_clear():
-	for ally in allies:
-		ally.remove()
-	allies = []

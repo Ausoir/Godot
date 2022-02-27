@@ -9,7 +9,9 @@ func assign(phost):
 func replace_vars(_args):
 	var r = []
 	for arg in _args:
-		if arg is String and arg[0] == "$":
+		if arg is Array:
+			arg = replace_vars(arg)
+		elif arg is String and arg[0] == "$":
 			if arg == "$t":
 				r.append(tgt)
 				continue
@@ -98,14 +100,8 @@ func run(_args):
 					tgt = G.factory.make_mob(args[1], args[2])
 					if tgt == null:
 						tgt = G.factory.make_unit(args[1], args[2])
-	elif command == "order":
-		if args[1] == "bottom":
-			if args[2].get_parent() == G.world.items:
-				G.world.items.move_child(args[2], 0)
-		elif args[1] == "top":
-			if args[2].get_parent() == G.world.items:
-				G.world.items.remove_child(args[2])
-				G.world.items.add_child(args[2])
+	elif command == "tasks":
+		args[1].tasks.append(args[2])
 	elif command == "possess":
 		args[1].possess(get_arg(2))
 	elif command == "menu":

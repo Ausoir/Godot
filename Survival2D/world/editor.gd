@@ -23,7 +23,7 @@ func get_floor_json(map):
 	var rows = []
 	var list = {}
 	for i in chars:
-		list[n_tileset.find_tile_by_name(chars[i])] = i
+		list[n_tileset.find_tile_by_name(chars[i][0])] = i
 	for y in range(40):
 		var row = ""
 		for x in range(55):

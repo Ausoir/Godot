@@ -13,7 +13,7 @@ tile_set = ExtResource( 1 )
 cell_size = Vector2( 32, 32 )
 cell_custom_transform = Transform2D( 48, 0, 0, 48, 0, 0 )
 collision_layer = 4
-collision_mask = 4
+collision_mask = 0
 occluder_light_mask = 0
 format = 1
 __meta__ = {
@@ -33,7 +33,6 @@ tile_set = ExtResource( 3 )
 cell_size = Vector2( 4, 4 )
 cell_custom_transform = Transform2D( 16, 0, 0, 16, 0, 0 )
 centered_textures = true
-collision_layer = 0
 collision_mask = 0
 occluder_light_mask = 0
 format = 1
@@ -42,7 +41,3 @@ format = 1
 z_index = 800
 
 [node name="Players" type="Node" parent="."]
-
-[node name="CanvasModulate" type="CanvasModulate" parent="."]
-visible = false
-color = Color( 0.337255, 0.337255, 0.337255, 1 )

@@ -27,8 +27,8 @@ func check_ray(to, exc, mask=1):
 func cast_ray(to, exc, mask=1):
 	var space_state = get_world_2d().direct_space_state
 	var result = space_state.intersect_ray(global_position, to, exc, mask)
-	for i in result:
-		return i.position
+	if !result.empty():
+		return result.position
 	return to
 
 func _input_event(_viewport, event, _shape_idx):

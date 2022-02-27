@@ -68,7 +68,10 @@ func set_terrain(val):
 func add_item(item):
 	if item.get_parent() == null:
 		world.items.add_child(item)
-	items.append(item)
+	if item.layer < 0:
+		items.insert(0, item)
+	else:
+		items.append(item)
 	item.set_z_index(y * 2 - 4000)
 	item.pos = self
 	update_tile()
@@ -211,16 +214,6 @@ func get_available_adjacents(cols):
 			r.append(adj)
 	return r
 
-func get_priority_item(exc):
-	var low
-	for item in items:
-		if !(item in exc):
-			if item.item_type == "unit":
-				return item
-			elif item.item_type == "item":
-				low = item
-	return low
-
 func is_edge():
 	return x == 0 or x == world.size.x-1 or y == 0 or y == world.size.y-1
 
@@ -276,3 +269,20 @@ func cast_sight(camera, row, start, end, flips, sight2, intensity):
 							new_start = end_slope
 		if blocked:
 			break
+
+func get_beam_to(dest, col_mask, distance):
+	var diffx = dest.x - x
+	var diffy = dest.y - y
+	var step = max(abs(diffx), abs(diffy))
+	var current = self
+	while current != dest and distance != 0:
+		distance -= 1
+		var tx = round(current.x + (diffx/step))
+		var ty = round(current.y + (diffy/step))
+		if world.is_inbound(tx, ty):
+			current = world.tiles[ty][tx]
+			if current.is_col(col_mask):
+				return current
+		else:
+			return current
+	return current

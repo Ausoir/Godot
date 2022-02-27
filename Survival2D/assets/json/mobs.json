@@ -38,6 +38,11 @@
 		"unit": "scav",
 		"equip": [["suit", 100], ["backpack", 100]],
 	},
+	"civilian": {
+		"faction": 1,
+		"unit": "human",
+		"equip": [["casual", 100]],
+	},
 	"scav": {
 		"faction": 1,
 		"unit": "scav",
@@ -60,6 +65,14 @@
 	"rat": {
 		"faction": 2,
 		"unit": "rat",
+	},
+	"ant": {
+		"faction": 2,
+		"unit": "ant",
+	},
+	"ant soldier": {
+		"faction": 2,
+		"unit": "ant soldier",
 	},
 	"coyote": {
 		"faction": 2,

@@ -299,7 +299,7 @@
 	"teleport": {
 		"img": "gui/st_fly",
 		"target": "beam",
-		"col": 1,
+		"col": 0,
 		"delay": 1,
 		"range": 16,
 		"reqs": [],
@@ -368,6 +368,7 @@
 	"wait": {
 		"target": "self",
 		"delay": 6,
+		"chance": 100,
 		"onstart": [["action", "wait"]],
 	},
 	"respawn": {

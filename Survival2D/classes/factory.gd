@@ -101,7 +101,7 @@ func make_unit(arg, pos):
 		r.on_dat()
 		r.place(pos)
 		r.set_seed()
-		G.turn.add(r)
+		G.world.turn.add(r)
 		return r
 
 func make_item(arg, pos=null):
@@ -128,7 +128,7 @@ func make_item(arg, pos=null):
 		if pos != null:
 			r.place(pos)
 		if r.dat.g("turn", 0) > 0:
-			G.turn.add(r)
+			G.world.turn.add(r)
 		return r
 
 func make_corpse(host, pos):

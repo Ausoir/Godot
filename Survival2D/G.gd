@@ -8,7 +8,6 @@ const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
 	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
 const CARDINALS = [[0,-1],[1,0],[0,1],[-1,0]]
 const DIRS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
-const ORDERED_DIRS = [[0,-1],[1,0],[0,1],[-1,0],[1,1],[-1,1],[-1,-1],[1,-1]]
 const STATS = ["vitality", "strength", "intelligence", "agility", "perception", "move speed"]
 const UP = 0
 const UPRIGHT = 1
@@ -25,7 +24,6 @@ var Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
 var influence = preload("res://objects/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var time = preload("res://classes/time.gd").new()
-var turn = preload("res://classes/turn.gd").new()
 var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
@@ -48,8 +46,8 @@ func process_onload():
 func _process(delta):
 	time.on_process(delta)
 	if time.eighth_second:
-		turn.process_frames += 1
-	turn.on_process()
+		world.turn.process_frames += 1
+	world.turn.on_process()
 	if !events.empty():
 		var ev = events.pop_back()
 		ev.call_func()
@@ -133,7 +131,9 @@ func get_direction_between(from, to):
 		dir = G.DOWNLEFT
 	return dir
 
-func cmd(args, host=null):
+func cmd(args, host=null, ptgt=null):
+	if ptgt != null:
+		command.tgt = ptgt
 	rpc("synced_cmd", args, host)
 	return command.tgt
 
@@ -167,10 +167,10 @@ func display_damage(pos, dmg, color=Color.white, _scale=1):
 func travel(_map):
 	var root = get_tree().get_root()
 	if G.world.get_parent() != null:
-		G.world.hide()
+		root.remove_child(G.world)
 	if _map in G.worlds:
 		G.world = G.worlds[_map]
-		G.world.show()
+		root.add_child(G.world)
 	else:
 		var newworld = load('res://world/World.tscn').instance()
 		root.add_child(newworld)

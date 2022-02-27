@@ -4,89 +4,59 @@
         [
             "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
             "CCCCCCCC..C..CCCCCCCCCCCCCCCCCCCC.???...CCCCCCCCC...CCC",
-            "CCCCCCCC..........CCCCCCCC...CCCC.???.C..CCCCCCC..C..CC",
-            "CAAAAACCCCCCC.C--H------CC...C.CC.???.CC.CCCCCCC.CC..CC",
-            "CA___ACCF....CC-__-____-CC..C...C.???.CC.CCC......C...C",
-            "CA___ACCCC...CC-__-____-CC..C.CCC.???.CC.CC..CCCC.CC..C",
-            "CA____...CC..CC-_______-CCCCCC....???.CC.C..CC.CC..CCCC",
-            "CA____.CC....CC-_______-CCCCC.CCC.???.CC.C.CCC.CCC.CCCC",
-            "CA___ACC.....CC---------CCCCCC.CC.???.CC...CC...CC.CCCC",
-            "CAFAAACC....CCCCCCCCCCCCCC?CCCCCC.???.CCC.CCC...CC.CCCC",
-            "CAAACCC.CCCCC..........F.......CC.???.CCC.CCCCCCC..CCCC",
-            "CCCCCCCC.CCCC.CCCCCCCC...CCCCCCCC.???..CC..CCF....CCCCC",
+            "CCCCCCCC..........CCCCCCCC...CCCC.???.C..CCCCCCC..C,,CC",
+            "CAAAAACCCCCCC.C--H------CC...C.CC.???.CC.CCCCCCC.CC,,CC",
+            "CA___ACCF....CC-__-____-CC..C...C.???.CC.CCC......C,,,C",
+            "CA___ACCCC...CC-__-____-CC..C.CCC.???.CC.CC..CCCC.CC,,C",
+            "CA____...CC..CC-_______-CCCCCC....???.CC.C..CC,,,..CCCC",
+            "CA____.CC....CC-_______-CCCCC.CCC.???.CC.C.CCC,,CC.CCCC",
+            "CA___ACC.....CC---------CCCCCC.CC.???.CC...CC,,,,C.CCCC",
+            "CAFAAACC....CCCCCCCCCCCCCC?CCCCCC.???.CCC.CCC,,,CC.CCCC",
+            "CAAACCC.CCCCC..........F.......CC.???.CCC.CCCCCCC.FCCCC",
+            "CCCCCCCC.CCCC.CCCCCCCC...CCCCCCCC.???..CC..CC.....CCCCC",
             "CCCCCCC.CCCCC.CCCCCCCCC.CCCCC..CC.???.C.CCCCCCC.CCCCCCC",
             "CCC...........CC..CCCCC.?CCC..CCC.???.CCCCCCCC..CCCCCCC",
             "CC..555555555.CC..CCCCC.?CCC.CCCC.???.CC.......CCCCCCCC",
             "CC.?5_H____F5.CCC.CCCCC.CCCC...CC.???.C...CCCCCCCCCCCCC",
-            "CC555_5D55555....CCCCCC.CCC.CC....???.C.CCCC#.CCCCCCCCC",
-            "CC5___;_____5....CCCCCC.CC..CCCCC.???...CC####.CCCCCCCC",
-            "CC5___;_____5....CCCCCC.CC.CCCCCC.???.##CC#.....CCCCCCC",
-            "CC5D;;5_____5C.CCCCCCCC.CCCCCCCCC.???.###C#F....C##CCCC",
-            "CC5_________5C....................???.CC###...##..#CCCC",
-            "CC5_________5????????????????????????.CCC######...#CCCC",
-            "CC5_________5.....................???.CCC####...#.#CCCC",
-            "CC5_________5C.CCCCCCCCCCCCCCCCCC.???.CCCC###.C##.##CCC",
-            "CC5_________5C....CCCCCAAAAAAAAAC.???.CCCCC##.CC#..CCCC",
-            "CC5_________5CCCC.CCCCCAF_BBBBBAC.???.CCCCC#..C....CCCC",
-            "CC5_________5CCCC.CCCCCAAABBBBBAC.???.CCCCCC.CCC..CCCCC",
-            "CC5_________5C....CCCCCCCABBBBBAC.???.C5555555CC_CCCCCC",
+            "CC555_5D55555....CCCCCC.CCC.CC....???.C.CCCC#,,CCCCCCCC",
+            "CC5___;_____5....CCCCCC.CC..CCCCC.???...CC####,CCCCCCCC",
+            "CC5___;_____5....CCCCCC.CC.CCCCCC.???.##CC#,,,,,CCCCCCC",
+            "CC5D;;5_____5C.CCCCCCCC.CCCCCCCCC.???.###C#F,,,,C##CCCC",
+            "CC5_________5C....................???.CC###,,,##,,#CCCC",
+            "CC5_________5????????????????????????.CCC######,,,#CCCC",
+            "CC5_________5.....................???.CCC####,,,#,#CCCC",
+            "CC5_________5C.CCCCCCCCCCCCCCCCCC.???.CCCC###,C##,##CCC",
+            "CC5_________5C....CCCCCAAAAAAAAAC.???.CCCCC##,CC#,,CCCC",
+            "CC5_________5CCCC.CCCCCAF_BBBBBAC.???.CCCCC#,,C,,,,CCCC",
+            "CC5_________5CCCC.CCCCCAAABBBBBAC.???.CCCCCC,CCC,,CCCCC",
+            "CC5_________5C....CCCCCCCABBBBBAC.???.C5555555CC,CCCCCC",
             "CC5_________5C.CCCCCCCCCCAAAAAAAC.???.C5__5__5CCCCCCCCC",
-            "CC55555555555C.CC.....CCCCCCCCCCC.???.C5__5__5CCCCCCCCC",
+            "CC55555555555C.CC.....CCCCCCCCCCC.???.C5_F5__5CCCCCCCCC",
             "CCCCCCCCCCCCCC.CC.....CCCCCCCCCCC.???.C5D55D55CCCCCCCCC",
-            "CCCCCCCCCCCCCC........C---------C.???.C5____F5CCCCCCCCC",
-            "        CF..CCCCC.....C-__F-__F-C.???.C5555555CCCCCCC??",
-            "        C.............C-___-___-C.???.CCCCCCCCCCCCCCC??",
-            "        C...CCCCCCCCCCC-___-___-C.???................??",
-            "        CCCCCCCCCCCCCCC-___-___-C.?????????????????????",
-            "        CCCCCCCCCCCCCCC-___-___-C....................??",
+            "CCCCCCCCCCCCCC........C---------C.???.C5_____5CCCCCCCCC",
+            "        CF..CCCCC.....C-_______-C.???.C5555555CCCCCCC??",
+            "        C.............C-_______-C.???.CCCCCCCCCCCCCCC??",
+            "        C...CCCCCCCCCCC-_______-C.???................??",
+            "        CCCCCCCCCCCCCCC-F______-C.?????????????????????",
+            "        CCCCCCCCCCCCCCC-_______-C....................??",
             "            CCCCCCCCCCC---------CCCCCCCCCCCCCCCCCCCCC??",
             "            CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC??",
             "            CCCCCCCCCCCCCCCCCCCCCC                     "
         ],
         {
             "#": ["rock wall"],
-            ",": ["grass"],
-            "-":
-            [
-                "concrete"
-            ],
-            ".": ["dirt"],
-            "5":
-            [
-                "brick"
-            ],
-            ";":
-            [
-                "glass"
-            ],
-            "?":
-            [
-                "water"
-            ],
-            "A":
-            [
-                "log wall"
-            ],
-            "B":
-            [
-                "plank floor"
-            ],
-            "C":
-            [
-                "soil"
-            ],
-            "D":
-            [
-                "gray tile"
-            ],
-            "F":
-            [
-                "stairup"
-            ],
-            "H":
-            [
-                "door frame"
-            ],
+            ",": ["rock floor", ["g_ants", 5]],
+            "-": ["concrete"],
+            ".": ["dirt", ["g_sewer", 5]],
+            "5": ["brick"],
+            ";": ["glass"],
+            "?": ["water"],
+            "A": ["log wall"],
+            "B": ["plank floor"],
+            "C": ["soil"],
+            "D": ["gray tile"],
+            "F": ["asphalt", ["stairup", 100]],
+            "H": ["door frame", ["door", 100]],
             "_": ["wood floor"]
         }
     ]

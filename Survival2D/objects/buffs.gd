@@ -46,8 +46,8 @@ func add(p, effect, duration):
 		states[p].duration = duration
 	else:
 		states[p] = buff.new(self, p, effect, duration)
-		if !G.turn.has(self):
-			G.turn.add(self)
+		if !G.world.turn.has(self):
+			G.world.turn.add(self)
 
 func has(p):
 	return p in states
@@ -55,7 +55,7 @@ func has(p):
 func cancel(p):
 	states.erase(p)
 	if states.empty():
-		G.turn.remove(self)
+		G.world.turn.remove(self)
 
 func on_turn():
 	var keys = states.keys()
@@ -83,14 +83,14 @@ func expend(p):
 
 func remove():
 	states.clear()
-	G.turn.remove(self)
+	G.world.turn.remove(self)
 
 func clear():
 	for i in states:
 		states[i].duration = 0
 		states[i].on_turn(host)
 	states.clear()
-	G.turn.remove(self)
+	G.world.turn.remove(self)
 
 func to_data():
 	var r = []

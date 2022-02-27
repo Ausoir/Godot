@@ -1,7 +1,9 @@
 extends Node
 
 const Tile = preload("res://world/tile.gd")
+const Turn = preload("res://classes/turn.gd")
 var tileset = preload("res://assets/tileset.tres")
+var turn = Turn.new()
 var size
 var terrain
 var sound
@@ -21,7 +23,7 @@ var map_name: String
 var team = [[], [], []]
 
 func clear():
-	G.turn.clear()
+	turn.clear()
 	team = [[], [], []]
 	G.data.json_cache.clear()
 	tilemap.clear()
@@ -45,10 +47,10 @@ func create(_type):
 		connections["up"] = "2nd"
 		generator.generate()
 	elif map_name == "sewer":
+		daytime = false
 		generator = load("res://world/generator_vault.gd").new()
 		connections["up"] = "city"
 		generator.generate("map_city_sewers")
-		daytime = false
 	elif map_name == "2nd":
 		generator = load("res://world/generator_vault.gd").new()
 		connections["down"] = "city"
@@ -148,7 +150,7 @@ func get_spawn_point():
 
 func get_routes(pos, cols, opens=false, strength=0):
 	var r = []
-	for i in G.ORDERED_DIRS:
+	for i in G.CARDINALS:
 		var ty = pos.y + i[1]
 		var tx = pos.x + i[0]
 		if is_inbound(tx, ty) and !tiles[ty][tx].is_col_adv(cols, opens, strength):

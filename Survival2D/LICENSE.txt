@@ -3,6 +3,8 @@ The majority of this project is proprietary. This includes the codebase and many
 
     images under assets/images/overlay/ are licensed under CC-BY-SA 3.0.
     images under assets/images/units/ are licensed under CC-BY-SA 3.0.
+    images under assets/images/tiles/ are licensed under CC-BY-SA 3.0.
+    images under assets/images/uc/ are licensed under CC-BY-SA 3.0.
     Baumans font (assets/Baumans-Regular.ttf) is licensed under the SIL Open Font License.
 
 

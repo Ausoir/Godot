@@ -8,6 +8,7 @@ var item_name = 'item'
 var display_name
 var col: int = 0
 var dat
+var layer: int
 var pos
 var prev_pos
 var turns = 0
@@ -39,7 +40,7 @@ func place(p):
 		i.light -= t
 
 func remove():
-	G.turn.remove(self)
+	G.world.turn.remove(self)
 	var ls = []
 	if pos != null: #not an equipment
 		if col & 1 > 0 and pos.visible:
@@ -79,7 +80,10 @@ func relocate(to):
 	position = to.to_pixel()
 	prev_pos = pos
 	to.add_item(self)
-	if to.sight_frame >= G.you.n_camera.sight_frame - 1:
+	on_relocate()
+
+func on_relocate():
+	if pos.sight_frame >= G.you.n_camera.sight_frame - 1:
 		show()
 	else:
 		hide()
@@ -87,22 +91,18 @@ func relocate(to):
 func move_world(wld):
 	var x = pos.x
 	var y = pos.y
-	pos.world.items.remove_child(self)
 	pos.remove_item(self)
 	prev_pos = pos
-	wld.items.add_child(self)
 	wld.tiles[y][x].add_item(self)
 
 func on_dat():
 	flags = dat.g("flags", [])
 	light = dat.g("light", 0)
+	layer = dat.g("layer", 0)
 	var oldcol = col
 	col = dat.g("col", 0)
 	if col != oldcol:
 		update_col(col)
-	var onuse = dat.g("onuse")
-	if onuse != null and n_collider == null:
-		update_col(16) #make collider for clickability
 
 func update_col(p):
 	if n_collider != null:
@@ -110,7 +110,6 @@ func update_col(p):
 	elif p > 0:
 		n_collider = ColBox.instance()
 		add_child(n_collider)
-		n_collider.parent = self
 		n_collider.collision_layer = p
 
 func on_turn():

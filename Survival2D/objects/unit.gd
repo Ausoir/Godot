@@ -30,7 +30,6 @@ var controller
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
-var sight_col = "1000"
 var dirty_dat = false
 
 func _ready():
@@ -79,6 +78,10 @@ func get_damage(ptype, p):
 	elif ptype == "cut":
 		return round(R.f() * p)
 
+func reposition(p):
+	position = p
+	on_slide()
+
 func slide(diff):
 	var ms = dat.g("move speed", 1)
 	if "agile" in flags:
@@ -93,32 +96,31 @@ func slide(diff):
 	elif diff_normalized.x < 0:
 		face(-1)
 	n_collider.vel = Vector2(diff_normalized.x * spd, diff_normalized.y * spd)
+	return on_slide()
+
+func on_slide():
 	var newpos = pos.world.from_vec(position)
 	if newpos != pos:
 		pos.remove_item(self)
 		newpos.add_item(self)
+		on_relocate()
 		if !newpos.visible and newpos.sight_frame <= G.you.n_camera.sight_frame - 1:
 			G.make_particle("Sound", newpos.to_pixel())
-	var col = n_collider.get_collider(faction)
-	if col != null:
-		controller.target = col
+	if delay == 0:
+		var col = n_collider.get_collider(faction)
+		if col != null:
+			controller.target = col
+			face_toward(col.pos)
+			roll_skill("onattack")
+			return col
 
 func set_state(state, force=false):
 	if force or delay == 0:
-		n_collider.vel = Vector2()
-		if state == "attack":
-			var enemies = n_collider.get_collider(faction)
-			if enemies != null:
-				roll_skill("onattack")
-			elif controller.target != null:
-				slide(controller.target.position - position)
-		elif state == "knockout":
+		if state == "knockout":
 			if "getup" in flags:
 				delay = 0
 				return
-			set_animation(state, delay)
-		else:
-			set_animation(state, delay)
+		set_animation(state, delay)
 
 func set_animation(p, spd):
 	current_action = p
@@ -129,7 +131,7 @@ func set_animation(p, spd):
 
 func roll_skill(type, mode=0):
 	var data
-	for skill in dat.g("actives", []):
+	for skill in dat.g("actives", []) + ["wait"]:
 		data = G.data.skill_data.get(skill)
 		if data != null and data.target == type:
 			if R.r_percent(data.chance):
@@ -209,6 +211,7 @@ func on_turn():
 				cooldowns[i] -= 1
 
 func flash(color, dur):
+	n_mat.set_shader_param("redness", 0)
 	n_tween.interpolate_property(n_mat, "shader_param/" + color,
 		1, 0, max(.1, dur),
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
@@ -235,13 +238,14 @@ func remove():
 		n_collider.queue_free()
 	if n_healthbar != null:
 		n_healthbar.queue_free()
-	controller.remove()
+	if controller != null:
+		controller.remove()
 	$Shadow.queue_free()
 	for child in get_children():
 		child.queue_free()
 	.remove()
 	buffs.remove()
-	G.turn.remove(self)
+	G.world.turn.remove(self)
 
 func show_healthbar():
 	if n_healthbar == null:
@@ -254,3 +258,8 @@ func show_healthbar():
 func move_world(wld):
 	.move_world(wld)
 	controller.tasks.clear()
+	if !G.world.turn.has(self):
+		G.world.turn.add(self)
+	if !buffs.states.empty():
+		if !G.world.turn.has(buffs):
+			G.world.turn.add(buffs)

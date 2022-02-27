@@ -12,6 +12,7 @@ func on_dat():
 	pathing.smash_to = unit.dat.g("strength", 0)
 	if "mindless" in unit.flags:
 		pathing.hinderance = 0
+		pathing.pathing_times = 0
 	elif "user" in unit.flags:
 		pathing.can_open = true
 		pathing.pathing_times = 3
@@ -50,7 +51,7 @@ func perform(task):
 		return unit.pos == task[1]
 	elif task[0] == "attack":
 		if validate_target():
-			unit.set_state("attack")
+			unit.slide(task[1].position - unit.position)
 			return false
 	elif task[0] == "pave":
 		if unit.pos.distance_to(task[1]) <= 1:
@@ -79,19 +80,20 @@ func perform(task):
 			task[1].smash(dmg)
 	elif task[0] == "enter":
 		if self == G.you:
-			if task[2] < 1:
+			if task[3] < 1:
 				if task[1] in unit.pos.world.connections:
+					G.you.unit.reposition(task[2].to_pixel())
 					G.travel(unit.pos.world.connections[task[1]])
 			else:
-				var adjs = unit.pos.get_available_adjacents("1000")
+				var adjs = unit.pos.get_available_adjacents(1)
 				for tile in adjs:
 					for i in tile.items:
 						if i.item_type == "unit" and i.faction != unit.faction:
 							return
-				G.msg("Moving map..." + str(task[2]))
+				G.msg("Moving map..." + str(task[3]))
 				unit.set_state("wait")
-				unit.delay = 6
-				tasks.append(["enter", task[1], task[2]-1])
+				unit.delay = 4
+				tasks.append(["enter", task[1], task[2], task[3]-1])
 		else:
 			unit.pos.remove_item(unit)
 	return true
@@ -126,21 +128,20 @@ func path_to(pos, dist=0, destroy=false):
 
 func interact(_tile):
 	if !_tile.items.empty():
-		var item = _tile.get_priority_item([unit])
+		var item = _tile.get_item_by_type("item")
 		if item != null:
-			if item.item_type == "item":
-				var onuse = item.dat.g("onuse")
-				if onuse != null:
-					if pathing.can_open:
-						G.cmd(onuse, item)
-						return true
-				elif unit.dat.g("type") != "other":
-					unit.store(item, true)
-					item.pos.remove_item(item)
+			var onuse = item.dat.g("onuse")
+			if onuse != null:
+				if pathing.can_open:
+					G.cmd(onuse, item, unit)
 					return true
-				else:
-					item.remove()
-					return true
+			elif unit.dat.g("type") != "other":
+				unit.store(item, true)
+				item.pos.remove_item(item)
+				return true
+			else:
+				item.remove()
+				return true
 	return false
 
 func remove():
