@@ -15,7 +15,7 @@ func on_dat():
 		pathing.pathing_times = 0
 	elif "user" in unit.flags:
 		pathing.can_open = true
-		pathing.pathing_times = 3
+		pathing.pathing_times = 4
 		pathing.iterations = 24
 	elif "float" in unit.flags:
 		pathing.hinderance = 0
@@ -47,16 +47,20 @@ func on_turn():
 
 func perform(task):
 	if task[0] == "path":
-		unit.slide(task[1].to_pixel() - unit.position)
-		return unit.pos == task[1]
+		if task.size() > 2 and unit.n_collider.cast_col_ray(task[2], [unit.n_collider, target.n_collider], unit.col).empty():
+			unit.slide(task[2] - unit.position)
+		else:
+			unit.slide(task[1].to_pixel() - unit.position)
+			if unit.n_collider.get_slide_count() > 0:
+				if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
+					if interact(task[1]):
+						return false
+					return perform(["smash", task[1]])
+			return unit.pos == task[1]
 	elif task[0] == "attack":
-		if validate_target():
+		if validate_target(task[1]):
 			unit.slide(task[1].position - unit.position)
 			return false
-	elif task[0] == "pave":
-		if unit.pos.distance_to(task[1]) <= 1:
-			if !interact(task[1]):
-				perform(["smash", task[1]])
 	elif task[0] == "interact":
 		unit.delay = 4
 		unit.set_animation("wait", 4)
@@ -66,13 +70,6 @@ func perform(task):
 		unit.ability(task[1], task[2])
 	elif task[0] == "smash":
 		if unit.pos.distance_to(task[1]) <= 1:
-			for i in task[1].items:
-				if i != unit:
-					if i.item_type == "unit":
-						target = i
-						if validate_target():
-							perform(["attack", i])
-							return
 			unit.face_toward(task[1])
 			unit.delay = 5
 			unit.set_animation("attack", 5)
@@ -91,22 +88,23 @@ func perform(task):
 						if i.item_type == "unit" and i.faction != unit.faction:
 							return
 				G.msg("Moving map..." + str(task[3]))
-				unit.set_state("wait")
+				unit.set_animation("wait")
 				unit.delay = 4
 				tasks.append(["enter", task[1], task[2], task[3]-1])
 		else:
 			unit.pos.remove_item(unit)
 	return true
 
-func validate_target():
-	if target == null:
+func validate_target(p):
+	if p == null:
 		return false
-	elif !is_instance_valid(target):
-		target = null
+	elif !is_instance_valid(p):
+		if p == target:
+			target = null
 		return false
 	return true
 
-func path_to(pos, dist=0, destroy=false):
+func path_to(pos, dist=0):
 	pathing.result = []
 	pathing.reach = dist
 	pathing.cols = unit.col
@@ -119,12 +117,7 @@ func path_to(pos, dist=0, destroy=false):
 		if path:
 			tasks = []
 			for p in path:
-				tasks.append(["path", unit.pos.world.tiles[p.y][p.x]])
-			if destroy and !tasks.empty():
-				var latest_task = tasks[0]
-				if latest_task[1].is_col(unit.col) and !latest_task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
-					tasks = [["pave", latest_task[1]]]
-					return true
+				tasks.append(["path", unit.pos.world.tiles[p.y][p.x], pos.to_pixel()])
 
 func interact(_tile):
 	if !_tile.items.empty():

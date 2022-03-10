@@ -6,7 +6,7 @@ var y
 var world
 var terrain
 var items = []
-var visible = false #Dont set to true, items will calculate lighting on creation
+var visible = false #Dont set to true, items will calculate lighting blockage on creation
 var dat
 var col: int
 var autotile = 0
@@ -16,7 +16,7 @@ var light: int
 var light_source = []
 var slow = 0
 var shade = -1
-var sight_frame = 0
+var sight_frame = -1
 
 func _init(wld, px, py):
 	world = wld
@@ -76,7 +76,7 @@ func add_item(item):
 	item.pos = self
 	update_tile()
 	if item.light != 0:
-		radiate(item.light)
+		G.events.append([funcref(self, "radiate"), [item.light]])
 
 func remove_item(item):
 	if item.get_parent() == world.items:
@@ -84,7 +84,7 @@ func remove_item(item):
 	items.erase(item)
 	update_tile()
 	if item.light != 0:
-		radiate(-item.light)
+		G.events.append([funcref(self, "radiate"), [-item.light]])
 
 func smash(_dmg):
 	G.make_particle("Hit", to_pixel())
@@ -168,10 +168,9 @@ func is_col_adv(cols, opens, strength):
 	for item in items:
 		if opens and item.dat.g("openable"):
 			continue
-		var item_hp = item.dat.g("durability")
-		if item_hp != null and item_hp <= strength:
-			continue
-		tcol = item.col | tcol
+		var item_hp = item.dat.g("durability", 999)
+		if item_hp > strength:
+			tcol = item.col | tcol
 	return tcol & cols > 0
 
 func get_item_by_name(val):
@@ -230,7 +229,7 @@ func radiate(_light, new=true):
 		else:
 			world.lights.erase(self)
 	for i in range(8):
-		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(_light), _light)
+		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(light), light)
 
 func cast_sight(camera, row, start, end, flips, sight2, intensity):
 	if start < end:

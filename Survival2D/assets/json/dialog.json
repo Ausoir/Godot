@@ -1,43 +1,58 @@
 {
-	"Bob": {
-		"title": "Talk with Bob",
+	"Librarian": {
+		"title": "Talk with Librarian",
 		"true": "Do you have any questions about how to [url=0]use your inventory?[/url]\nIf you have any questions about [url=1]fight[/url] or [url=2]about the runs[/url], ask away.\"",
 		"opt": [
 			{
-				"cmd": [["menu", "dialog", "Bob_items"]],
+				"cmd": [["menu", "dialog", "Librarian_items"]],
 			},
 			{
-				"cmd": [["menu", "dialog", "Bob_combat"]],
+				"cmd": [["menu", "dialog", "Librarian_combat"]],
 			},
 			{
-				"cmd": [["menu", "dialog", "Bob_runs"]],
+				"cmd": [["menu", "dialog", "Librarian_runs"]],
 			}
 		]
 	},
-	"Bob_items": {
+	"Librarian_items": {
 		"title": "Tutorial - Items",
 		"true": "\"To equip your weapon, first press TAB to access the menu.\nUnder Inventory menu, click on the weapon slot and move it to the corresponding equipment slot above.\n\nOnce outside the menu, you can swap between the 4 weapon slots using the number keys for fast weapon swapping.\"\n\n[i][url=0]> Ok[/url][/i]",
-		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
+		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
 	},
-	"Bob_combat": {
+	"Librarian_combat": {
 		"title": "Tutorial - Combat",
 		"true": "\"Press TAB and go to your Skills menu.\nThe icons at the top part of the menu are your currently equipped skills. Moving a skill from the bottom part to the top equips them.\nWhen in combat, you will use the equipped skills in their respective order.\"\n\n[i][url=0]> Alrighty[/url][/i]",
-		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
+		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
 	},
-	"Bob_runs": {
+	"Librarian_runs": {
 		"title": "Tutorial - Runs",
 		"true": "\"Gardening is ok, but at the end of the day, it's the canned goodiness that feed us.\n\nWhen we get to our destination, just follow us and stay out of harm's way. [url=0]Understand?[/url]\"",
-		"opt": [{"cmd": [["menu", "dialog", "Bob3"]]}]
+		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
 	},
-	"Storagekeep": {
-		"title": "Talk with Storagekeep",
-		"true": "\"Do you have any supplies to drop off?\"\n\n",
-		"script": ["storage"]
+	"Supplier": {
+		"title": "Talk with Supplier",
+		"true": "Do you need [url=0]medical supplies[/url]?",
+		"opt": [
+			{
+				"hover": ["item", "medikit"],
+				"cmd": [["buy", 10],["give", "$pu", "medikit"],["menu","msg","Received medikit."]],
+			},
+		]
 	},
-	"Tavernkeep": {
-		"title": "Talk with Barkeep",
-		"true": "\"If you have a map, I can organize a run.\"",
-		"script": ["tavern"]
+	"Trader": {
+		"title": "Talk with Trader",
+		"true": "What do you need.\n\n",
+		"script": ["trade"],
+	},
+	"Dormkeep": {
+		"title": "Talk with Dormkeep",
+		"true": "Do you need to [url=0]rest[/url]?",
+		"opt": [
+			{
+				"hover": ["text", "Rest / Heal", "Cost: $5"],
+				"cmd": [["buy", 5],["dat", "=", "$pu", "damage", 0],["menu","msg","Recovered from damages."],["fade"],["vars","+","time",1]],
+			},
+		]
 	},
 	"Bulletin": {
 		"title": "Bulletin Board",

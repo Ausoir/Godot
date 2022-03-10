@@ -68,7 +68,7 @@ func ability(idx, at):
 	var abilities = dat.g("abilities", [])
 	if idx < abilities.size():
 		var ability = abilities[idx]
-		G.influence.do(self, ability, null, 0, at)
+		return G.influence.do(self, ability, null, 0, at)
 
 func get_damage(ptype, p):
 	if ptype == "true":
@@ -114,15 +114,11 @@ func on_slide():
 			roll_skill("onattack")
 			return col
 
-func set_state(state, force=false):
-	if force or delay == 0:
-		if state == "knockout":
-			if "getup" in flags:
-				delay = 0
-				return
-		set_animation(state, delay)
-
-func set_animation(p, spd):
+func set_animation(p, spd=0):
+	if p == "knockout":
+		if "getup" in flags:
+			delay = 0
+			return
 	current_action = p
 	if spd > 0:
 		n_animation.play(p, -1, 1/(spd*.15))
@@ -203,7 +199,7 @@ func on_turn():
 			if delay > 0:
 				delay -= 1
 			if delay == 0:
-				set_state("idle")
+				set_animation("idle")
 		for i in cooldowns:
 			if cooldowns[i] <= 0:
 				cooldowns.erase(i)

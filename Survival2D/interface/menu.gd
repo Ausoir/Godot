@@ -3,6 +3,7 @@ extends Control
 const ItemSlot = preload("res://interface/ItemSlot.tscn")
 const SkillSlot = preload("res://interface/SkillSlot.tscn")
 
+onready var n_money = $Money
 onready var tabs = $Tabs
 onready var tab_equipment = $Tabs/INV/VSplit/Equipment
 onready var tab_inventory = $Tabs/INV/VSplit/Inventory
@@ -31,6 +32,7 @@ func _background_input(event):
 
 func display(_arg):
 	show()
+	n_money.set_text("$" + str(G.vars.money))
 	if _arg != -1:
 		tabs.set_current_tab(_arg)
 	_on_tab_change(tabs.current_tab)

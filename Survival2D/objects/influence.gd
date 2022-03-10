@@ -100,7 +100,8 @@ func run_cmds(cmds):
 			host.dirty_dat = true
 		elif type == "dmg":
 			var dmg_type = cmd[1]
-			tgt_item.hit(dmg_type, host.get_damage(dmg_type, cmd[2]), host)
+			var dmg = host.get_damage(dmg_type, cmd[2])
+			G.events.append([funcref(tgt_item, "hit"), [dmg_type, dmg, host]])
 		elif type == "heal":
 			host.hit("heal", -cmd[1], host)
 		elif type == "interrupt":
@@ -157,21 +158,24 @@ func find_victim():
 			tgt_item = host
 			return true
 	elif data.target == "point":
+		tgt_tile = host.pos.world.from_vec(tgt_point)
 		return true
+	elif data.target == "body":
+		var raycast = host.n_collider.cast_col_ray(tgt_point, [host], data.get("col", 0))
+		if !raycast.empty() and raycast.collider is KinematicBody2D:
+			tgt_point = raycast.position
+			tgt_tile = host.pos.world.from_vec(tgt_point)
+			if tgt_tile.distance_to(host.pos) <= data.get("range", 16):
+				tgt_item = raycast.collider.get_parent()
+				return is_valid(tgt_item)
 	elif data.target == "beam":
 		tgt_point = host.n_collider.cast_ray(tgt_point, [host], data.get("col", 0))
 		tgt_tile = host.pos.world.from_vec(tgt_point)
-		return true
+		return tgt_tile.distance_to(host.pos) <= data.get("range", 16)
 	else:
 		tgt_item = host.controller.target
 		if tgt_item != null and is_instance_valid(tgt_item):
-			if data.target == "unit":
-				if "col" in data:
-					if !host.n_collider.check_ray(tgt_item.position, [host, tgt_item], data.col):
-						return false
-				if tgt_item.item_type == "unit" and is_valid(tgt_item):
-					return true
-			elif data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
+			if data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
 				if tgt_item.item_type == "unit" and is_valid(tgt_item):
 					return true
 	return false

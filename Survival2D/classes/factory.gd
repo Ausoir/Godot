@@ -15,7 +15,7 @@ var spells = [
 	[
 		["Transmute Gold to Mana", [0,5], [["cost",0,5],["cost",-2,0]]],
 		["Revitalize", [1,0], [["v","host"],["state","regenerate",45],["cost",1,0]]],
-		["Enchant Health", [5,0], [["dat","g","hp",null],["v","add","$t",Vector2(1,1)],["dat","a","hp","$"],["cost",10,0]]],
+		["Enchant Health", [5,0], [["dat","g","hp",null],["v","add","$t",Vector2(1,1)],["dat","=","hp","$"],["cost",10,0]]],
 	],
 	[
 		["Summon Torch", [1,0], [["make","torch"],["wield"],["cost",1,0]]],
@@ -123,7 +123,7 @@ func make_item(arg, pos=null):
 			G.cmd(onmake, r)
 		var onload = item_data.get("onload")
 		if onload != null:
-			G.onloads.append([r, onload])
+			G.world.onloads.append([r, onload])
 		r.on_dat()
 		if pos != null:
 			r.place(pos)

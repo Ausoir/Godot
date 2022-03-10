@@ -3,24 +3,24 @@ extends "res://world/generator.gd"
 var mob_spawns = []
 
 func generate():
-	.create(55, 80)
+	.create(105, 40)
 	G.world.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
-	for y in range(height):
-		base[y][0] = .1
-		base[y][width-1] = .1
 	for x in range(width):
 		for y in range(height):
-			var value = base[y][x]
-			if value > 0.75:
-				output[y][x] = ['rock wall']
-			elif value > 0.5:
-				output[y][x] = ['grass', ['old tree', 8, '/', ['tree', 2, '/', ['young tree', 1, '/', ['shrub', 4]]]]]
-			elif value > 0.3:
-				output[y][x] = ['dirt', ['small boulder', 1, '/', ['boulder', 1]]]
-			else:
+			if y == height-1:
 				output[y][x] = ['water']
+			else:
+				var value = base[y][x]
+				if value > 0.75:
+					output[y][x] = ['rock wall']
+				elif value > 0.5:
+					output[y][x] = ['grass', ['old tree', 8, '/', ['tree', 2, '/', ['young tree', 1, '/', ['shrub', 4]]]]]
+				elif value > 0.3:
+					output[y][x] = ['dirt', ['small boulder', 1, '/', ['boulder', 1]]]
+				else:
+					output[y][x] = ['water']
 	place_complex()
 	make_vault([0, 0, 54, 39], "map_city", -1)
 	for x in range(width):
@@ -36,8 +36,8 @@ func generate():
 
 func place_complex():
 	for _i in range(7):
-		var fromx = R.ir(8, width-9)
-		var fromy = R.ir(45, height-5)
+		var fromx = R.ir(62, width-6)
+		var fromy = R.ir(6, height-6)
 		var estate = [fromx-4, fromy-4, fromx+4, fromy+4]
 		make_vault(estate, "shack", R.ir(0, 3))
 		mob_spawns.append([fromx, fromy])

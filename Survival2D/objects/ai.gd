@@ -1,29 +1,13 @@
 extends "res://objects/controller.gd"
 
 var state = ""
-var lead
 var reach = 1
 var turn_delay = 0
-var think_delay = 0
 var objectives = []
-var timeout = 0
-var timeout_pos
-var timeout_goal = "wander"
-
-func on_assign():
-	.on_assign()
-	timeout_pos = unit.pos
-	if unit.faction == 1:
-		timeout_goal = "end"
 
 func on_hit(_hitter):
 	if _hitter != null:
 		target = _hitter
-
-func on_kill(_victim):
-	for i in _victim.dat.g("actives", []):
-		if R.b():
-			G.vars.learnable.append(i)
 
 func on_turn():
 	turn_delay += 1
@@ -33,45 +17,13 @@ func on_turn():
 			perceive()
 		elif !is_instance_valid(target):
 			target = null
-		if !hunt():
-			if !follow():
-				think()
+		hunt()
 	.on_turn()
 
 func set_state(_p):
 	if state != _p:
 		state = _p
 		pathing.next_reset = 0
-	timeout = 0
-
-func think():
-	think_delay += 1
-	if think_delay > 3:
-		think_delay = 0
-		if timeout_pos != unit.pos:
-			timeout = 0
-		else:
-			timeout += 1
-			if timeout > 4:
-				think_delay = -45
-				set_objectives(timeout_goal)
-		timeout_pos = unit.pos
-		if tasks.empty():
-			var social = unit.dat.g("social")
-			if social == "lead":
-				if unit.faction == 1:
-					if objectives.empty():
-						var goal = unit.dat.g("goal", "loot")
-						set_objectives(goal)
-			elif social == "follow":
-				var min_dist = unit.dat.g("perception", 8)
-				var seen_allies = search(unit.faction, min_dist)
-				for seen_ally in seen_allies:
-					if seen_ally[0].dat.g("social", "") == "lead":
-						lead = seen_ally[0]
-						timeout = 0
-						return
-			do_objective()
 
 func perceive():
 	var min_dist = unit.dat.g("perception", 4)
@@ -94,89 +46,26 @@ func search(faction, _dist):
 			var dist = unit.pos.distance_to(seen.pos)
 			if dist <= disthalf or (dist < dist2 and seen.pos.light >= 0):
 				if seen.n_sprites.visible:
-					if unit.pos.get_beam_to(seen.pos, 1, -1) == seen.pos:
+					if unit.n_collider.cast_col_ray(seen.position, [unit, seen], 1).empty():
 						r.append([seen, dist])
 	return r
 
 func hunt():
 	if target != null and is_instance_valid(target):
 		set_state("hunt")
-		path_to(target.pos, reach, true)
-		tasks.append(["attack", target])
+		path_to(target.pos, reach)
+		if !perform_ability():
+			tasks.append(["attack", target])
 		return true
 	else:
 		target = null
 		return false
 
-func follow():
-	if lead != null and is_instance_valid(lead):
-		set_state("follow")
-		path_to(lead.pos, 1)
-		return true
-	else:
-		lead = null
-		return false
-
-func set_objectives(_goal):
-	if _goal == "loot" and unit.dat.g("type") != "other":
-		var strength = unit.dat.g("strength", 0)
-		objectives = []
-		for _i in range(unit.inventory.size()):
-			var item_count = G.world.items.get_child_count()-1
-			if item_count < 1:
-				return
-			else:
-				var item
-				var weight = 999
-				var limit = 8
-				while weight > strength and limit > 0:
-					item = G.world.items.get_child(R.ir(0, item_count))
-					weight = item.dat.g("weight", 0)
-					limit -= 1
-				if item != null:
-					objectives.append(["move", item.pos])
-					objectives.append(["interact", item.pos])
-	elif _goal == "end":
-		var pos
-		var dir = 0
-		var dist_s = G.world.size.y - unit.pos.y
-		var dist_e = G.world.size.x - unit.pos.x
-		if dist_e < unit.pos.y:
-			dir += 1
-			if dist_s < dist_e:
-				dir += 1
-				if unit.pos.x < dist_s:
-					dir += 1
-		if dir == 0:
-			pos = G.world.tiles[0][unit.pos.x]
-		elif dir == 1:
-			pos = G.world.tiles[unit.pos.y][G.world.size.x-1]
-		elif dir == 2:
-			pos = G.world.tiles[G.world.size.y-1][unit.pos.x]
-		elif dir == 3:
-			pos = G.world.tiles[unit.pos.y][0]
-		objectives = [["moveon", pos], ["exit"]]
-
-func do_objective():
-	if !objectives.empty():
-		var goal = objectives[0]
-		set_state(goal[0])
-		if goal[0] == "move":
-			if unit.pos.distance_to(goal[1]) == 1:
-				objectives.pop_front()
-				return do_objective()
-			else:
-				path_to(goal[1], 1, true)
-		elif goal[0] == "moveon":
-			if unit.pos.distance_to(goal[1]) == 0:
-				objectives.pop_front()
-				return do_objective()
-			else:
-				path_to(goal[1], 0, true)
-		elif goal[0] == "wander":
-			path_to(unit.pos.get_rand_offset(16, 16), 1, true)
-		elif goal[0] == "interact":
-			tasks.append(["interact", goal[1]])
-		elif goal[0] == "exit":
-			G.msg(unit.item_name + " has left the map.")
-			unit.remove()
+func perform_ability():
+	if R.ir(0, 3) == 0:
+		var abilities = unit.dat.g("abilities", [])
+		for i in abilities:
+			var data = G.data.skill_data.get(i)
+			if data != null:
+				var dest = target.pos.to_pixel()
+				return G.influence.do(unit, i, data, 0, dest)

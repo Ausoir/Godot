@@ -25,36 +25,38 @@ func get_display_name():
 func place(p):
 	position = p.to_pixel()
 	pos = p
-	var ls = []
-	if col & 1 > 0 and pos.visible:
-		G.you.view_dirty = pos
-		ls = G.you.n_camera.get_affected_lights(pos)
+	if col & 1 > 0 and pos.visible: #Recalc light
+		G.you.view_dirty = true
+		var ls = pos.world.get_affected_lights(pos)
 		for i in ls:
 			var t = i.light
 			i.radiate(-i.light, false)
 			i.light = t
-	p.add_item(self)
-	for i in ls:
-		var t = i.light
-		i.radiate(i.light, false)
-		i.light -= t
+		p.add_item(self)
+		for i in ls:
+			var t = i.light
+			i.light -= t
+			i.radiate(t, false)
+	else:
+		p.add_item(self)
 
 func remove():
 	G.world.turn.remove(self)
-	var ls = []
 	if pos != null: #not an equipment
 		if col & 1 > 0 and pos.visible:
-			G.you.view_dirty = pos
-			ls = G.you.n_camera.get_affected_lights(pos)
+			G.you.view_dirty = true
+			var ls = pos.world.get_affected_lights(pos)
 			for i in ls:
 				var t = i.light
 				i.radiate(-i.light, false)
 				i.light = t
-		pos.remove_item(self)
-		for i in ls:
-			var t = i.light
-			i.radiate(i.light, false)
-			i.light -= t
+			pos.remove_item(self)
+			for i in ls:
+				var t = i.light
+				i.light -= t
+				i.radiate(i.light, false)
+		else:
+			pos.remove_item(self)
 	queue_free()
 
 func die():

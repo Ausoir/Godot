@@ -13,16 +13,10 @@ var param_last_pos
 var param_pos
 var is_under_light
 
-func _ready():
-	set_process(false)
-
 func _process(_delta):
 	if processing_frame == -1:
 		param_pos.sight_frame = sight_frame
-		if param_pos.light >= 0:
-			is_under_light = true
-		else:
-			is_under_light = false
+		is_under_light = param_pos.light >= 0
 		for i in range(8):
 			cast_sight(param_pos, 1, 1.0, 0.0, G.OCTANT_FLIP[i], 0)
 		processing_frame += 1
@@ -35,6 +29,15 @@ func _process(_delta):
 	elif processing_frame >= 0:
 		process_vision(param_last_pos, QUADRANT_FLIP[processing_frame])
 		processing_frame += 1
+
+func darken():
+	for y in range(-sight2, sight2+1):
+		for x in range(-sight2, sight2+1):
+			var xx = param_pos.x+x
+			var yy = param_pos.y+y
+			var tile = G.world.get_tile(xx, yy)
+			if tile:
+				G.world.set_dark(tile)
 
 func process_vision(center, quad):
 	for y in range(-sight2 * quad[0], sight2 * quad[1] + 1):
@@ -58,13 +61,6 @@ func process_vision(center, quad):
 func stop_process():
 	sight_frame += 1
 	processing_frame = -2
-
-func get_affected_lights(pos):
-	var r = []
-	for i in G.world.lights:
-		if pos.distance_to(i) <= i.light:
-			r.append(i)
-	return r
 
 func set_sight(p, p_col=1):
 	sight_range = int(p / 2)

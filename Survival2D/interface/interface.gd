@@ -18,9 +18,12 @@ var on = false
 func _ready():
 	screen_size = get_viewport().get_size_override()
 	screen_ratio = screen_size / get_viewport().size
+	fadein()
+	tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
+
+func fadein():
 	$AnimationPlayer/Fade.set_size(screen_size)
 	$AnimationPlayer.play("FadeIn")
-	tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
 
 func _process(_delta):
 	$FPS.set_text(str(Engine.get_frames_per_second())+' FPS')
@@ -79,11 +82,11 @@ func _unhandled_input(event):
 		G.you._on_input(event)
 
 func display_dialog(_page, _host):
-	on = true
 	tint.set_size(screen_size)
 	tint.show()
 	dialog.display(_page, _host)
 	dialog.rect_position = screen_size / 2 - dialog.rect_size / 2
+	on = true
 
 func display(_arg):
 	if !on:

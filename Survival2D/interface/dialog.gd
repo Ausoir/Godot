@@ -84,30 +84,28 @@ func run_script(script):
 		add_bulletin()
 	elif script[0] == "trade":
 		add_trade()
-	elif script[0] == "store":
-		G.vars.supplies.append(G.you.unit.inventory[script[1]].item_name)
-		G.you.unit.inventory[script[1]] = null
 
 func add_trade():
+	if !("opt" in page_data):
+		page_data["opt"] = []
+	G.ui.display(0)
+	R.set_seed(G.vars.seed + G.vars.time)
 	var items = ""
 	var count = 0
-	for item in G.you.unit.inventory:
-		if item != null:
-			items += "[url="+str(count)+"]> [i]Store " + item.item_name + "[/i][/url]\n"
-			count += 1
-	get_node("Dialog/RichTextLabel").append_bbcode(items)
-	if !("opt" in page_data):
-		page_data["opt"] = []
-	for i in range(count):
-		var option = {"hover": ["item", G.you.unit.inventory[i].item_name]}
-		option["script"] = ["store", i]
+	var groups = G.data.get_group("g_trade")
+	for group in groups:
+		var item_name = group[0]
+		items += "[url="+str(count)+"]> [i]Buy " + item_name + "[/i][/url]\n"
+		count += 1
+		var option = {"hover": ["item", item_name]}
+		option["cmd"] = [["buy",10],["give", "$pu", item_name],["menu","msg","Bought "+item_name+"."]]
 		page_data.opt.append(option)
+	get_node("Dialog/RichTextLabel").append_bbcode(items)
 
 func add_bulletin():
-	var lseed = G.vars.seed
-	R.set_seed(lseed + G.vars.time)
 	if !("opt" in page_data):
 		page_data["opt"] = []
+	R.set_seed(G.vars.seed + G.vars.time)
 	var items = ""
 	var count = 0
 	for _contract in range(R.ir(1, 5)):
@@ -126,10 +124,10 @@ func add_bulletin():
 			desc = "Explore lab ("
 		items += "[url="+str(count)+"]> [i]"+desc+str(pop)+")[/i][/url]\n"
 		var option = {"hover": ["text", "Location", title.capitalize()+"\nAllies: "+str(pop)]}
-		option["cmd"] = [["dat","a","$pu","social","follow"]]
+		option["cmd"] = [["dat","=","$pu","social","follow"]]
 		var social = "lead"
 		for _i in range(pop-1):
-			option["cmd"] += [["v","adj","$pup"],["make","scav","$t"],["dat","a","$t","social",social],["ally"]]
+			option["cmd"] += [["v","adj","$pup"],["make","scav","$t"],["dat","=","$t","social",social],["ally"]]
 			social = "follow"
 		page_data["opt"].append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)

@@ -30,18 +30,12 @@ var ui = preload("res://interface/Interface.tscn").instance()
 var command = load("res://classes/command.gd").new()
 var worlds = {}
 var events = []
-var onloads = []
 var vars = {}
 var you
 
 
 func _ready():
 	get_tree().get_root().call_deferred("add_child", G.ui)
-
-func process_onload():
-	for i in onloads:
-		cmd(i[1], i[0])
-	onloads.clear()
 
 func _process(delta):
 	time.on_process(delta)
@@ -50,7 +44,7 @@ func _process(delta):
 	world.turn.on_process()
 	if !events.empty():
 		var ev = events.pop_back()
-		ev.call_func()
+		ev[0].call_funcv(ev[1])
 
 func pixel_to_pos(pos):
 	return Vector2(pos.x / G.W, pos.y / G.H).floor()
@@ -140,10 +134,13 @@ func cmd(args, host=null, ptgt=null):
 puppetsync func synced_cmd(args, host):
 	command.assign(host)
 	for arg in args:
-		if !command.ignore:
-			command.tgt = command.run(arg)
-		else:
+		if command.stop:
+			command.stop = false
+			return command.tgt
+		elif command.ignore:
 			command.ignore = false
+		else:
+			command.tgt = command.run(arg)
 	return command.tgt
 
 func msg(msg):

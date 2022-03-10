@@ -194,6 +194,13 @@ use_parent_material = true
 margin_right = 66.0
 margin_bottom = 14.0
 
+[node name="Money" type="Label" parent="."]
+margin_left = 180.0
+margin_top = 4.0
+margin_right = 196.0
+margin_bottom = 18.0
+text = "$0"
+
 [connection signal="tab_changed" from="Tabs" to="." method="_on_tab_change"]
 [connection signal="gui_input" from="Tabs/SKL/VSplit/Actives" to="Tabs/SKL/VSplit/Actives" method="_on_gui_input"]
 [connection signal="gui_input" from="Tabs/SKL/VSplit/Reserves" to="Tabs/SKL/VSplit/Reserves" method="_on_gui_input"]

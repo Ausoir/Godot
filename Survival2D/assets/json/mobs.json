@@ -5,43 +5,39 @@
 		"unit": "manzard",
 		"equip": [["gi", 100], ["hood", 100], ["cutlass", 100]],
 	},
-	"bob": {
+	"captain": {
 		"faction": 1,
 		"unit": "scav",
 		"equip": [["scalemail", 100], ["cutlass", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Bob"]]}
 	},
-	"storagekeep": {
+	"librarian": {
 		"faction": 1,
 		"unit": "scav",
-		"equip": [["casual", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Storagekeep"]]}
+		"equip": [["gi", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Librarian"]]}
 	},
 	"dormkeep": {
 		"faction": 1,
 		"unit": "scav",
 		"equip": [["suit", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Dormkeep"]]}
+	},
+	"trader": {
+		"faction": 1,
+		"unit": "scav",
+		"equip": [["suit", 100], ["backpack", 50]],
+		"dat": {"onuse": [["menu", "dialog", "Trader"]]}
 	},
 	"tavernkeep": {
 		"faction": 1,
 		"unit": "scav",
 		"equip": [["suspenders", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Tavernkeep"]]}
-	},
-	"chieftain": {
-		"faction": 1,
-		"unit": "scav",
-		"equip": [["gi", 100], ["knife", 100]],
-	},
-	"trader": {
-		"faction": 1,
-		"unit": "scav",
-		"equip": [["suit", 100], ["backpack", 100]],
 	},
 	"civilian": {
 		"faction": 1,
 		"unit": "human",
-		"equip": [["casual", 100]],
+		"equip": [["casual", 90, "/", ["gi", 100]]],
+		"dat": {"goal": "wander"}
 	},
 	"scav": {
 		"faction": 1,

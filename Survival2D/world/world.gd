@@ -21,6 +21,7 @@ var lights = []
 var daytime = true
 var map_name: String
 var team = [[], [], []]
+var onloads = []
 
 func clear():
 	turn.clear()
@@ -64,7 +65,16 @@ func create(_type):
 			var tile = tiles[y][x]
 			tile.visible = true
 			tile.set_visible(false)
-	G.process_onload()
+	process_onload()
+	$Borders.position = Vector2(size.x * G.HW, size.y * G.HH)
+	$Borders/Right.position = Vector2(size.x * G.HW + 4, 0)
+	$Borders/Top.position = Vector2(0, size.y * -G.HH - 4)
+	$Borders/Bottom.position = Vector2(0, size.y * G.HH + 4)
+
+func process_onload():
+	for i in onloads:
+		G.cmd(i[1], i[0])
+	onloads.clear()
 
 func place_mobs(type, num):
 	for _i in range(num):
@@ -83,7 +93,6 @@ func place_mobs(type, num):
 
 func set_dark(tile):
 	if tile.set_visible(false):
-#		pass
 		shademap.set_cell(tile.x, tile.y, 2)
 
 func set_light(tile):
@@ -165,3 +174,10 @@ func set_sound(pos, radius):
 			if tx >= 0 and tx < len(sound[0]):
 				if ty >= 0 and ty < len(sound):
 					sound[pos.y + y][pos.x + x] = 1
+
+func get_affected_lights(pos):
+	var r = []
+	for i in lights:
+		if pos.distance_to(i) <= i.light:
+			r.append(i)
+	return r

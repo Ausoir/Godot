@@ -22,6 +22,9 @@ func array_to_string(arr):
 
 func display_item(header, item):
 	var desc = ""
+	var value = item.get("value", 0)
+	if value != 0:
+		desc += "[color=#FB0]$"+ str(value) +"[/color]\n"
 	if "part" in item:
 		if item.part != "item":
 			desc += "[color=#335]Armor ("+ str(item.part) +")[/color]\n"
@@ -39,9 +42,6 @@ func display_item(header, item):
 		var abilities = item.get("abilities", [])
 		if !abilities.empty():
 			desc += "[color=#84A]Abilities: "+ array_to_string(abilities) +"[/color]\n"
-	var value = item.get("value", 0)
-	if value != 0:
-		desc += "[color=#FB0]Value: "+ str(value) +"[/color]\n"
 	for i in G.STATS:
 		var stat = item.get(i)
 		if stat != null:

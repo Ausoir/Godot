@@ -113,17 +113,6 @@
 		"onend": [["dmg", "bash", 100],["interrupt", "knockout"],["reaction", "knockout", 24]],
 		"desc": "Special attack that deals heavy damage to stun the target. Slow and costly.",
 	},
-	"tackle": {
-		"img": "gui/sk_kick",
-		"target": "oncharge",
-		"delay": 4,
-		"chance": 100,
-		"cost": 1,
-		"desc_dmg": "50% Bash",
-		"cancel": ["knockout"],
-		"onstart": [["action", "kick"],["dmg", "bash", 50],["interrupt", "knockout"],["reaction", "knockout", 12]],
-		"desc": "Charge attack that deals heavy damage to stun the target.",
-	},
 	"parry": {
 		"img": "gui/sk_dodge",
 		"target": "onhit",
@@ -237,7 +226,7 @@
 
 	"shoot": {
 		"img": "gui/sk_shoot",
-		"target": "unit",
+		"target": "body",
 		"col": 15,
 		"delay": 6,
 		"range": 8,
@@ -246,7 +235,7 @@
 	},
 	"shoot 3": {
 		"img": "gui/sk_shoot",
-		"target": "unit",
+		"target": "body",
 		"col": 15,
 		"delay": 9,
 		"range": 12,
@@ -256,9 +245,21 @@
 	},
 
 
+	"tackle": {
+		"img": "gui/sk_kick",
+		"target": "body",
+		"col": 15,
+		"delay": 4,
+		"range": 2,
+		"cooldown": 4,
+		"desc_dmg": "50% Bash",
+		"reqs": ["foe"],
+		"onstart": [["move"],["action", "kick"],["dmg", "bash", 50],["interrupt", "knockout"],["reaction", "knockout", 12]],
+		"desc": "Charge attack that deals heavy damage to stun the target.",
+	},
 	"reach attack": {
 		"img": "gui/sk_throw",
-		"target": "unit",
+		"target": "body",
 		"col": 15,
 		"delay": 8,
 		"range": 2,
@@ -268,7 +269,7 @@
 	},
 	"throw rock": {
 		"img": "gui/sk_throw",
-		"target": "unit",
+		"target": "body",
 		"col": 15,
 		"delay": 2,
 		"range": 4,
@@ -375,7 +376,7 @@
 		"img": "gui/st_death",
 		"target": "self",
 		"delay": 2,
-		"onstart": [["morph", "human"]],
+		"onstart": [["morph", "ghost"]],
 	},
 	"invisible": {
 		"target": "self",

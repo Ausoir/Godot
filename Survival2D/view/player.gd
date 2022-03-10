@@ -10,11 +10,12 @@ var p_id: int
 var p_name: String
 var auto_attack = true
 var aiming = -1
-var view_dirty
+var view_dirty = false
 var allies = []
 
 func on_dat():
 	.on_dat()
+	n_camera.darken()
 	n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
 	n_camera.update(unit.pos, last_pos)
 	var bodytype_list = G.data.get_json_data("bodytypes")
@@ -32,7 +33,11 @@ func on_assign():
 	G.world.team[unit.faction].append(unit)
 	last_pos = unit.pos
 	n_camera.update(last_pos, unit.pos)
-	n_camera.set_process(true)
+
+func on_kill(_victim):
+	for i in _victim.dat.g("actives", []):
+		if R.b() and !(i in G.vars.learnable):
+			G.vars.learnable.append(i)
 
 func _on_input(event: InputEvent):
 	if event is InputEventMouseButton:
@@ -80,9 +85,9 @@ func on_turn():
 	.on_turn()
 	remove_steps()
 	show_steps()
-	if view_dirty != null or last_pos != unit.pos:
+	if view_dirty or last_pos != unit.pos:
 		n_camera.update(last_pos, unit.pos)
-		view_dirty = null
+		view_dirty = false
 		last_pos = unit.pos
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
@@ -115,10 +120,11 @@ func _physics_process(_delta):
 			var v = G.DIRS[dir]
 			unit.slide(Vector2(v[0], v[1]))
 		elif unit.n_collider.vel != Vector2.ZERO and tasks.empty():
-			unit.set_state("idle")
+			unit.set_animation("idle")
 
 func on_item_click(item): #runs after _unhandled_input
-	tasks = [["interact", item]]
+	if tasks.empty():
+		tasks = [["interact", item]]
 
 func remove_steps():
 	for child in n_steps.get_children():
@@ -143,14 +149,16 @@ func on_hit(_hitter):
 
 func interact(item):
 	if !G.ui.on:
-		if item.item_type == "unit" and item.faction != unit.faction:
-			tasks.append(["attack", item])
-		else:
-			var onuse = item.dat.g("onuse")
-			if onuse != null:
-				G.cmd(onuse, item, unit)
-			elif item.item_type == "item":
-				G.ui.menu.search_inventory(item.pos)
+		var onuse = item.dat.g("onuse")
+		if onuse != null:
+			G.cmd(onuse, item, unit)
+		elif item.item_type == "item":
+			G.ui.menu.search_inventory(item.pos)
+		elif item.item_type == "unit":
+			if item.faction != unit.faction:
+				tasks.append(["attack", item])
+			elif item.controller != null:
+				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
 
 func move_to(tile, reach=0, _path=true):
 	var distance = unit.pos.distance_to(tile)

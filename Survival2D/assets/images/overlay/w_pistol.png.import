@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/w_smolgun.png-02d0acd2fda3ae9438030379de6c76c4.stex"
+path="res://.import/w_pistol.png-ddb33b848ad89e770b679b14c8676928.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/overlay/w_smolgun.png"
-dest_files=[ "res://.import/w_smolgun.png-02d0acd2fda3ae9438030379de6c76c4.stex" ]
+source_file="res://assets/images/overlay/w_pistol.png"
+dest_files=[ "res://.import/w_pistol.png-ddb33b848ad89e770b679b14c8676928.stex" ]
 
 [params]
 
@@ -18,7 +18,7 @@ compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
-compress/normal_map=0
+compress/normal_map=2
 flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
@@ -28,7 +28,8 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
-detect_3d=true
+detect_3d=false
 svg/scale=1.0

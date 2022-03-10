@@ -91,7 +91,7 @@ __meta__ = {
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 6.0
-margin_top = 42.0
+margin_top = 38.0
 margin_right = -6.0
 margin_bottom = -8.0
 size_flags_horizontal = 3
@@ -100,7 +100,7 @@ scroll_horizontal_enabled = false
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control/Dialog/Dialog"]
 margin_right = 388.0
-margin_bottom = 250.0
+margin_bottom = 254.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true

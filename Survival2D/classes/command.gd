@@ -1,6 +1,7 @@
 var host
 var tgt
 var ignore = false
+var stop = false
 var args
 
 func assign(phost):
@@ -81,13 +82,18 @@ func run(_args):
 	elif command == "dat":
 		if args[1] == "g":
 			return args[2].dat.g(args[3], args[4])
-		elif args[1] == "a":
+		elif args[1] == "=":
 			args[2].dat.a(args[3], args[4])
+		elif args[1] == "+":
+			args[2].dat.add(args[3], args[4])
 	elif command == "run":
 		return G.cmd(args[1], tgt)
 	elif command == "vars":
-		if args[1] in G.vars:
-			G.vars[args[1]] = args[2]
+		if args[2] in G.vars:
+			if args[1] == "=":
+				G.vars[args[2]] = args[3]
+			elif args[1] == "+":
+				G.vars[args[2]] += args[3]
 	elif command == "ally":
 		G.you.allies.append(tgt)
 	elif command == "make":
@@ -120,11 +126,21 @@ func run(_args):
 	elif command == "remove":
 		args[1].remove()
 	elif command == "give":
-		args[2].store(args[1], true)
-	elif command == "read":
-		return G.data.get_json_data(args[1], false).get(args[2], "")
+		var item = G.factory.make_item(args[2])
+		if item != null:
+			args[1].store(item, true)
+			return item
+	elif command == "buy":
+		if G.vars.money < args[1]:
+			stop = true
+			G.msg("Not enough money!")
+		else:
+			G.vars.money -= args[1]
+			G.msg("Lost $"+str(args[1])+".")
 	elif command == "travel":
 		G.travel(args[1])
+	elif command == "fade":
+		G.ui.fadein()
 	return tgt
 
 func get_arg(idx, default=null):

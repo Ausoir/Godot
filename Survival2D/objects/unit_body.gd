@@ -31,6 +31,11 @@ func cast_ray(to, exc, mask=1):
 		return result.position
 	return to
 
+func cast_col_ray(to, exc, mask=1):
+	var space_state = get_world_2d().direct_space_state
+	var result = space_state.intersect_ray(global_position, to, exc, mask)
+	return result
+
 func _input_event(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton \
 	and Input.is_action_just_pressed("use"):
