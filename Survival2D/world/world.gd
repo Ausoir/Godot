@@ -23,20 +23,6 @@ var map_name: String
 var team = [[], [], []]
 var onloads = []
 
-func clear():
-	turn.clear()
-	team = [[], [], []]
-	G.data.json_cache.clear()
-	tilemap.clear()
-	shademap.clear()
-	for player in players.get_children():
-		player.on_map_clear()
-	for item in items.get_children():
-		item.remove()
-	for item in others.get_children():
-		item.queue_free()
-		items.remove_child(item)
-
 func create(_type):
 	var generator
 	map_name = _type
@@ -63,7 +49,6 @@ func create(_type):
 			apply_autotile(x, y)
 			shademap.set_cell(x, y, 2)
 			var tile = tiles[y][x]
-			tile.visible = true
 			tile.set_visible(false)
 	process_onload()
 	$Borders.position = Vector2(size.x * G.HW, size.y * G.HH)
@@ -71,9 +56,18 @@ func create(_type):
 	$Borders/Top.position = Vector2(0, size.y * -G.HH - 4)
 	$Borders/Bottom.position = Vector2(0, size.y * G.HH + 4)
 
+func get_items_by_name(p):
+	var r = []
+	for y in range(size.y):
+		for x in range(size.x):
+			for item in tiles[y][x].items:
+				if item.item_name == p:
+					r.append(item)
+	return r
+
 func process_onload():
 	for i in onloads:
-		G.cmd(i[1], i[0])
+		G.cmds(i[1], i[0])
 	onloads.clear()
 
 func place_mobs(type, num):
@@ -93,15 +87,11 @@ func place_mobs(type, num):
 
 func set_dark(tile):
 	if tile.set_visible(false):
-		shademap.set_cell(tile.x, tile.y, 2)
+		shademap.set_cell(tile.x, tile.y, 1)
 
 func set_light(tile):
 	tile.set_visible(true)
 	shademap.set_cell(tile.x, tile.y, -1)
-
-func set_sight(tile):
-	tile.set_visible(true)
-	shademap.set_cell(tile.x, tile.y, 1)
 
 func create_map(sx, sy):
 	size = Vector2(sx, sy)
@@ -174,10 +164,3 @@ func set_sound(pos, radius):
 			if tx >= 0 and tx < len(sound[0]):
 				if ty >= 0 and ty < len(sound):
 					sound[pos.y + y][pos.x + x] = 1
-
-func get_affected_lights(pos):
-	var r = []
-	for i in lights:
-		if pos.distance_to(i) <= i.light:
-			r.append(i)
-	return r

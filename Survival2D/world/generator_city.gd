@@ -13,7 +13,7 @@ func generate():
 				output[y][x] = ['water']
 			else:
 				var value = base[y][x]
-				if value > 0.75:
+				if value > 0.7:
 					output[y][x] = ['rock wall']
 				elif value > 0.5:
 					output[y][x] = ['grass', ['old tree', 8, '/', ['tree', 2, '/', ['young tree', 1, '/', ['shrub', 4]]]]]

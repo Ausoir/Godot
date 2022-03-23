@@ -1,5 +1,6 @@
 extends KinematicBody2D
 
+var item_type = "unit"
 var parent
 var vel = Vector2()
 var last_col
@@ -11,12 +12,20 @@ func _physics_process(_delta):
 	position.y = 0
 	vel *= .9
 
+func check_overlap():
+	move_and_slide(Vector2.ZERO)
+	for i in get_slide_count():
+		var collision = get_slide_collision(i)
+		var tpos = collision.collider.position
+		if (tpos - position).length_squared() < 64:
+			position += Vector2(32, 32) * (tpos - position).normalized()
+
 func get_collider(faction):
 	for i in get_slide_count():
 		var collision = get_slide_collision(i)
-		if collision.collider is KinematicBody2D:
+		if collision.collider is KinematicBody2D and collision.collider.item_type == "unit":
 			var item = collision.collider.get_parent()
-			if item.faction != faction:
+			if item.dat.g("faction", -1) != faction:
 				return item
 
 func check_ray(to, exc, mask=1):

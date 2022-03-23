@@ -75,7 +75,7 @@ func _unhandled_input(event):
 			if on:
 				clear()
 			else:
-				G.cmd([["menu", "menu", -1]], G.you.unit)
+				G.cmds([["menu", "menu", -1]], G.you.unit)
 		else:
 			G.you._on_input(event)
 	elif !on:

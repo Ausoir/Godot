@@ -20,7 +20,6 @@ cell_size = Vector2( 32, 32 )
 cell_custom_transform = Transform2D( 48, 0, 0, 48, 0, 0 )
 collision_layer = 4
 collision_mask = 0
-occluder_light_mask = 0
 format = 1
 __meta__ = {
 "_edit_lock_": true
@@ -33,7 +32,7 @@ z_index = 500
 
 [node name="Shademap" type="TileMap" parent="."]
 scale = Vector2( 8, 8 )
-z_index = 100
+z_index = 501
 z_as_relative = false
 tile_set = ExtResource( 3 )
 cell_size = Vector2( 4, 4 )

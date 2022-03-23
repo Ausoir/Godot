@@ -11,33 +11,36 @@ var p_name: String
 var auto_attack = true
 var aiming = -1
 var view_dirty = false
-var allies = []
 
-func on_dat():
-	.on_dat()
-	n_camera.darken()
-	n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
-	n_camera.update(unit.pos, last_pos)
-	var bodytype_list = G.data.get_json_data("bodytypes")
-	var bodyparts = bodytype_list.get(unit.dat.g("type"))
-	G.ui.menu.update_equipables(bodyparts)
-	G.ui.menu.update_inventory()
-	pathing.can_open = false
-	pathing.smash_to = 0
-	pathing.iterations = 32
-	pathing.pathing_times = 0
+func update_dat(p):
+	.update_dat(p)
+	if p == "":
+		n_camera.darken()
+		n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
+		n_camera.update(unit.pos, last_pos)
+		var bodytype_list = G.data.get_json_data("bodytypes")
+		var bodyparts = bodytype_list.get(unit.dat.g("type"))
+		G.ui.menu.update_equipables(bodyparts)
+		G.ui.menu.update_inventory()
+		pathing.can_open = false
+		pathing.smash_to = 0
+		pathing.iterations = 32
+		pathing.pathing_times = 0
 
 func on_assign():
 	.on_assign()
-	unit.faction = 1
-	G.world.team[unit.faction].append(unit)
+	unit.dat.a("faction", 1)
 	last_pos = unit.pos
 	n_camera.update(last_pos, unit.pos)
 
 func on_kill(_victim):
-	for i in _victim.dat.g("actives", []):
-		if R.b() and !(i in G.vars.learnable):
-			G.vars.learnable.append(i)
+	var money = R.ir(0, _victim.dat.g("value", 0))
+	if money > 0:
+		G.vars.money += money
+		G.display_damage(unit.position, "+$"+str(money), Color.gold, 1, 250)
+		for i in _victim.dat.g("actives", []):
+			if R.b() and !(i in G.vars.learnable):
+				G.vars.learnable.append(i)
 
 func _on_input(event: InputEvent):
 	if event is InputEventMouseButton:
@@ -77,7 +80,7 @@ func get_cursor_position(mouse):
 
 func on_turn():
 	if auto_attack and tasks.empty():
-		var colld = unit.n_collider.get_collider(unit.faction)
+		var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
 		if colld != null:
 			if tasks.empty():
 				tasks = [["attack", colld]]
@@ -124,7 +127,9 @@ func _physics_process(_delta):
 
 func on_item_click(item): #runs after _unhandled_input
 	if tasks.empty():
-		tasks = [["interact", item]]
+		tasks.append(["interact", item])
+	elif tasks.size() == 1 and tasks[0][0] == "interact":
+		tasks[0][1] = item
 
 func remove_steps():
 	for child in n_steps.get_children():
@@ -151,11 +156,11 @@ func interact(item):
 	if !G.ui.on:
 		var onuse = item.dat.g("onuse")
 		if onuse != null:
-			G.cmd(onuse, item, unit)
+			G.cmds(onuse, item, unit)
 		elif item.item_type == "item":
 			G.ui.menu.search_inventory(item.pos)
 		elif item.item_type == "unit":
-			if item.faction != unit.faction:
+			if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
 				tasks.append(["attack", item])
 			elif item.controller != null:
 				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
@@ -182,13 +187,9 @@ func stop_aim():
 
 func remove():
 	if unit.get_health() <= 0:
-		var player_unit = G.cmd([["make", "ghost", unit.pos]])
+		G.cmds([["menu","dialog","Game Over"]])
+		var player_unit = G.cmds([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
-
-func on_map_clear():
-	for ally in allies:
-		ally.remove()
-	allies = []
 
 func save_data(remove_buffs=true):
 	var buff_data = unit.buffs.to_data()
@@ -209,7 +210,7 @@ func load_data(_data):
 	var player_pos = G.world.get_spawn_point()
 	if "position" in _data:
 		player_pos = G.world.tiles[_data.position[1]][_data.position[0]]
-	var player_unit = G.cmd([["make", _data.unit, player_pos]])
+	var player_unit = G.cmds([["make", _data.unit, player_pos]])
 	player_unit.possess(self)
 	player_unit.dat.load_data(_data.unit_data)
 	if player_unit.dat.g("type") != "other":

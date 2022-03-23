@@ -8,20 +8,18 @@ var target
 var tasks = []
 var pathing
 
-func on_dat():
-	pathing.smash_to = unit.dat.g("strength", 0)
-	if "mindless" in unit.flags:
-		pathing.hinderance = 0
-		pathing.pathing_times = 0
-	elif "user" in unit.flags:
-		pathing.can_open = true
-		pathing.pathing_times = 4
-		pathing.iterations = 24
-	elif "float" in unit.flags:
-		pathing.hinderance = 0
-	elif "agile" in unit.flags:
-		pathing.hinderance = .5
-	pathing.cols = unit.dat.g("cols", pathing.cols)
+func update_dat(p):
+	if p == "":
+		pathing.smash_to = unit.dat.g("strength", 0)
+		if "user" in unit.flags:
+			pathing.can_open = true
+			pathing.pathing_times = 5
+		elif "float" in unit.flags:
+			pathing.hinderance = 0
+		elif "agile" in unit.flags:
+			pathing.hinderance = .5
+	elif p == "col":
+		pathing.cols = unit.dat.g("cols", pathing.cols)
 
 func on_assign():
 	unit.dirty_dat = true
@@ -47,16 +45,19 @@ func on_turn():
 
 func perform(task):
 	if task[0] == "path":
-		if task.size() > 2 and unit.n_collider.cast_col_ray(task[2], [unit.n_collider, target.n_collider], unit.col).empty():
-			unit.slide(task[2] - unit.position)
-		else:
-			unit.slide(task[1].to_pixel() - unit.position)
-			if unit.n_collider.get_slide_count() > 0:
-				if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
-					if interact(task[1]):
-						return false
-					return perform(["smash", task[1]])
-			return unit.pos == task[1]
+		if task.size() > 2 and validate_target(target):
+			var exc = [unit.n_collider, target.n_collider]
+			if unit.n_collider.cast_col_ray(task[2], exc, unit.col).empty():
+				unit.slide(task[2] - unit.position)
+				return false
+		var diff = task[1].to_pixel() - unit.position
+		unit.slide(diff)
+		if unit.n_collider.get_slide_count() > 0:
+			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
+				if interact(task[1]):
+					return false
+				return perform(["smash", task[1]])
+		return diff.length_squared() < 16
 	elif task[0] == "attack":
 		if validate_target(task[1]):
 			unit.slide(task[1].position - unit.position)
@@ -70,7 +71,7 @@ func perform(task):
 		unit.ability(task[1], task[2])
 	elif task[0] == "smash":
 		if unit.pos.distance_to(task[1]) <= 1:
-			unit.face_toward(task[1])
+			unit.face_toward(task[1].to_pixel())
 			unit.delay = 5
 			unit.set_animation("attack", 5)
 			var dmg = unit.get_damage("bash", 100)
@@ -126,15 +127,11 @@ func interact(_tile):
 			var onuse = item.dat.g("onuse")
 			if onuse != null:
 				if pathing.can_open:
-					G.cmd(onuse, item, unit)
-					return true
-			elif unit.dat.g("type") != "other":
-				unit.store(item, true)
-				item.pos.remove_item(item)
-				return true
-			else:
-				item.remove()
-				return true
+					if unit == G.you.unit:
+						G.cmds(onuse, item, unit)
+					elif item.dat.g("openable"):
+						G.cmds(onuse, item, unit)
+						return true
 	return false
 
 func remove():

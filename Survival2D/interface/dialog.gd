@@ -13,7 +13,7 @@ func display_data(_data, _host):
 	host = _host
 	var cmd = page_data.get("cmd")
 	if cmd != null:
-		G.cmd(cmd, host)
+		G.cmds(cmd, host)
 	var title = page_data.get("title")
 	if title != null:
 		G.ui.dialog.set_tab_title(0, title)
@@ -58,7 +58,7 @@ func _on_meta_clicked(meta):
 				return
 		var cmd = option.get("cmd")
 		if cmd != null:
-			G.cmd(cmd, host)
+			G.cmds(cmd, host)
 		var script = option.get("script")
 		if script != null:
 			run_script(script)

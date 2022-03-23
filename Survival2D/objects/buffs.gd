@@ -7,22 +7,24 @@ class buff:
 	var name
 	var fx
 	var duration
+	var dest
 	var cancels
 	var turns
 	var turn = 0
 
-	func _init(pparent,p1,p2,p3):
+	func _init(pparent,p1,p2,p3,p4):
 		parent = pparent
 		name = p1
 		fx = p2
 		duration = p3
+		dest = p4
 		cancels = fx.get("cancel", null)
 		turns = fx.get("turns", 0)
 
 	func on_turn(host):
 		if duration == 0:
 			if "onend" in fx:
-				G.influence.do(host, name, fx, 2)
+				G.influence.do(name, host, dest, 2, fx)
 			parent.cancel(name)
 		elif duration > 0:
 			duration -= 1
@@ -30,7 +32,7 @@ class buff:
 		if "onturn" in fx:
 			if turn > turns:
 				turn = 0
-				G.influence.do(host, name, fx, 1)
+				G.influence.do(name, host, dest, 1, fx)
 
 	func on_interrupt(p):
 		if cancels != null:
@@ -41,11 +43,11 @@ class buff:
 func _init(phost):
 	host = phost
 
-func add(p, effect, duration):
+func add(p, effect, duration, dest=null):
 	if p in states:
 		states[p].duration = duration
 	else:
-		states[p] = buff.new(self, p, effect, duration)
+		states[p] = buff.new(self, p, effect, duration, dest)
 		if !G.world.turn.has(self):
 			G.world.turn.add(self)
 
@@ -103,6 +105,6 @@ func from_data(_data):
 		var skill_data = G.data.skill_data.get(i[0])
 		if skill_data != null:
 			if "onstart" in skill_data:
-				G.influence.do(host, i[0], skill_data, 0)
+				G.influence.do(i[0], host, null, 0, skill_data)
 			else:
 				add(i[0], skill_data, i[1])

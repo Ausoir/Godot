@@ -18,6 +18,13 @@
 		"ant": [75, "+", 1, 4],
 		"ant soldier": [50, "+", 1, 2],
 	},
+	"g_invade": {
+		"rot zombie": [25, "/", 1, 1],
+		"burnt zombie": [25, "/", 1, 1],
+		"zombie": [50, "/", 1, 1],
+		"zombie dog": [80, "/", 1, 1],
+		"zombie hunter": [100, "/", 1, 1],
+	},
 
 	"g_loot": {
 		"knife": [25, "+", 1, 1],

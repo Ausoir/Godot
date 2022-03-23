@@ -1,12 +1,10 @@
 extends "res://objects/controller.gd"
 
-var state = ""
 var reach = 1
 var turn_delay = 0
-var objectives = []
 
 func on_hit(_hitter):
-	if _hitter != null:
+	if _hitter != null and _hitter.dat.g("faction", -1) != unit.dat.g("faction", -1):
 		target = _hitter
 
 func on_turn():
@@ -15,20 +13,27 @@ func on_turn():
 		turn_delay = 0
 		if target == null:
 			perceive()
-		elif !is_instance_valid(target):
-			target = null
-		hunt()
+		if !hunt():
+			think()
 	.on_turn()
 
-func set_state(_p):
-	if state != _p:
-		state = _p
-		pathing.next_reset = 0
+func think():
+	if tasks.empty():
+		var goal = unit.dat.g("goal", "")
+		if goal == "wander":
+			path_to(unit.pos.get_rand_offset(12, 12), 0)
+		elif goal == "kill":
+			target = G.you.unit
+		elif goal == "sabotage":
+			var sabo = G.world.get_items_by_name("solar panel")
+			if !sabo.empty():
+				var to = R.r_arr(sabo).pos
+				path_to(to, 0)
 
 func perceive():
 	var min_dist = unit.dat.g("perception", 4)
 	var other_team
-	if unit.faction == 1:
+	if unit.dat.g("faction", -1) == 1:
 		other_team = 2
 	else:
 		other_team = 1
@@ -40,19 +45,17 @@ func search(faction, _dist):
 	var list = G.world.team[faction]
 	var r = []
 	var dist2 = _dist*2
-	var disthalf = int(_dist/2)
 	for seen in list:
 		if is_instance_valid(seen) and seen != unit:
 			var dist = unit.pos.distance_to(seen.pos)
-			if dist <= disthalf or (dist < dist2 and seen.pos.light >= 0):
+			if dist <= dist2:
 				if seen.n_sprites.visible:
-					if unit.n_collider.cast_col_ray(seen.position, [unit, seen], 1).empty():
+					if unit.pos.get_beam_to(seen.pos, 1) == seen.pos:
 						r.append([seen, dist])
 	return r
 
 func hunt():
 	if target != null and is_instance_valid(target):
-		set_state("hunt")
 		path_to(target.pos, reach)
 		if !perform_ability():
 			tasks.append(["attack", target])
@@ -63,9 +66,5 @@ func hunt():
 
 func perform_ability():
 	if R.ir(0, 3) == 0:
-		var abilities = unit.dat.g("abilities", [])
-		for i in abilities:
-			var data = G.data.skill_data.get(i)
-			if data != null:
-				var dest = target.pos.to_pixel()
-				return G.influence.do(unit, i, data, 0, dest)
+		var ability_idx = R.ir(0, unit.dat.g("abilities", []).size())
+		tasks.insert(0,["ability", ability_idx, target.position])

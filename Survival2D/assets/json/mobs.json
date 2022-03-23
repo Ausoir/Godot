@@ -1,91 +1,47 @@
 {
 	"player": {
-		"controlled": true,
-		"faction": 1,
-		"unit": "manzard",
+		"unit": "human",
 		"equip": [["gi", 100], ["hood", 100], ["cutlass", 100]],
+		"dat": {"controlled": true, "faction": 1},
 	},
 	"captain": {
-		"faction": 1,
-		"unit": "scav",
+		"unit": "civilian",
 		"equip": [["scalemail", 100], ["cutlass", 100]],
-	},
-	"librarian": {
-		"faction": 1,
-		"unit": "scav",
-		"equip": [["gi", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Librarian"]]}
-	},
-	"dormkeep": {
-		"faction": 1,
-		"unit": "scav",
-		"equip": [["suit", 100]],
-		"dat": {"onuse": [["menu", "dialog", "Dormkeep"]]}
-	},
-	"trader": {
-		"faction": 1,
-		"unit": "scav",
-		"equip": [["suit", 100], ["backpack", 50]],
-		"dat": {"onuse": [["menu", "dialog", "Trader"]]}
-	},
-	"tavernkeep": {
-		"faction": 1,
-		"unit": "scav",
-		"equip": [["suspenders", 100]],
+		"dat": {"faction": 1},
 	},
 	"civilian": {
-		"faction": 1,
-		"unit": "human",
+		"unit": "civilian",
 		"equip": [["casual", 90, "/", ["gi", 100]]],
-		"dat": {"goal": "wander"}
+		"dat": {"goal": "wander", "faction": 1}
+	},
+	"librarian": {
+		"unit": "civilian",
+		"equip": [["gi", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Librarian"]], "faction": 1}
+	},
+	"dormkeep": {
+		"unit": "human",
+		"equip": [["suit", 100]],
+		"dat": {"onuse": [["menu", "dialog", "Dormkeep"]], "faction": 1}
+	},
+	"trader": {
+		"unit": "human",
+		"equip": [["suit", 100], ["backpack", 50]],
+		"dat": {"onuse": [["menu", "dialog", "Trader"]], "faction": 1}
+	},
+	"tavernkeep": {
+		"unit": "human",
+		"equip": [["suspenders", 100]],
+		"dat": {"faction": 1},
 	},
 	"scav": {
-		"faction": 1,
 		"unit": "scav",
-		"equip": [["leather armor", 40, "/", ["scalemail", 40,"/",["looter coat",20,"/",["gi", 100]]]], ["backpack",40,"/",["rucksack", 30]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",100]]]]],
+		"equip": [["leather armor", 40, "/", ["scalemail", 40,"/",["looter coat",20,"/",["gi", 100]]]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["biggray gun",100]]]]]],
+		"dat": {"faction": 1},
 	},
-	"manzard": {
-		"faction": 2,
-		"unit": "manzard",
-	},
-	"mantle": {
-		"faction": 2,
-		"unit": "mantle",
-	},
-	"manfly": {
-		"faction": 2,
-		"unit": "manfly",
-	},
-
-
-	"rat": {
-		"faction": 2,
-		"unit": "rat",
-	},
-	"ant": {
-		"faction": 2,
-		"unit": "ant",
-	},
-	"ant soldier": {
-		"faction": 2,
-		"unit": "ant soldier",
-	},
-	"coyote": {
-		"faction": 2,
-		"unit": "coyote",
-	},
-
-
-	"zombie": {
-		"faction": 2,
-		"unit": "zombie",
-	},
-	"rotting zombie": {
-		"faction": 2,
-		"unit": "rotting zombie",
-	},
-	"burnt zombie": {
-		"faction": 2,
-		"unit": "burnt zombie",
+	"guard": {
+		"unit": "scav",
+		"equip": [["scalemail",100],["biggray gun",100]],
+		"dat": {"perception": 6, "move speed": 99, "faction": 1}
 	},
 }

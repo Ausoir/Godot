@@ -5,7 +5,6 @@ var particles_cache = {}
 var vars_data
 var terrain_data
 var palette_data
-var script_data
 var item_data
 var unit_data
 var mob_data
@@ -17,7 +16,6 @@ func _init():
 	vars_data = get_json_from_dir("res://assets/json/vars.json")
 	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
 	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
-	script_data = get_json_from_dir("res://assets/json/scripts.json")
 	item_data = get_json_from_dir("res://assets/json/items.json")
 	unit_data = get_json_from_dir("res://assets/json/units.json")
 	mob_data = get_json_from_dir("res://assets/json/mobs.json")

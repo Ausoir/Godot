@@ -1,8 +1,8 @@
 var cols = "0011"
 var world
 var target
-var iterations = 16
-var pathing_times = 2
+var iterations = 18
+var pathing_times = 3
 var open
 var closed = []
 var closest
@@ -93,7 +93,7 @@ func reset(hostpos):
 
 func debug_trace():
 	for draw in open:
-		G.cmd([["particle", "Fire", draw]])
+		G.cmds([["particle", "Fire", draw]])
 
 func update(hostpos, p):
 	target = p

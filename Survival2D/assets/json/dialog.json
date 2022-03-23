@@ -46,11 +46,11 @@
 	},
 	"Dormkeep": {
 		"title": "Talk with Dormkeep",
-		"true": "Do you need to [url=0]rest[/url]?",
+		"true": "Do you need [url=0]healing[/url]?",
 		"opt": [
 			{
-				"hover": ["text", "Rest / Heal", "Cost: $5"],
-				"cmd": [["buy", 5],["dat", "=", "$pu", "damage", 0],["menu","msg","Recovered from damages."],["fade"],["vars","+","time",1]],
+				"hover": ["text", "Heal", "Cost: $5"],
+				"cmd": [["buy", 5],["dat", "=", "$pu", "damage", 0],["menu","msg","Recovered from damages."],["fade"]],
 			},
 		]
 	},
@@ -63,5 +63,9 @@
 		"title": "Training Dummy",
 		"true": "You recall some of the skills used by the foes that you have defeated.\n\n",
 		"script": ["train"]
+	},
+	"Game Over": {
+		"title": "Game Over",
+		"true": "You die...\n\n",
 	},
 }

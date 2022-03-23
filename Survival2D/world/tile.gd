@@ -6,7 +6,7 @@ var y
 var world
 var terrain
 var items = []
-var visible = false #Dont set to true, items will calculate lighting blockage on creation
+var visible = true
 var dat
 var col: int
 var autotile = 0
@@ -75,24 +75,17 @@ func add_item(item):
 	item.set_z_index(y * 2 - 4000)
 	item.pos = self
 	update_tile()
-	if item.light != 0:
-		G.events.append([funcref(self, "radiate"), [item.light]])
 
 func remove_item(item):
 	if item.get_parent() == world.items:
 		world.items.remove_child(item)
 	items.erase(item)
 	update_tile()
-	if item.light != 0:
-		G.events.append([funcref(self, "radiate"), [-item.light]])
 
 func smash(_dmg):
-	G.make_particle("Hit", to_pixel())
-	G.display_damage(to_pixel(), round(_dmg))
 	for item in items:
-		var durability = item.dat.g("durability", 999)
-		if durability < _dmg:
-			item.die()
+		if item.hit("cut", _dmg, null):
+			return true
 
 func update_tile():
 	var t = height
@@ -168,7 +161,7 @@ func is_col_adv(cols, opens, strength):
 	for item in items:
 		if opens and item.dat.g("openable"):
 			continue
-		var item_hp = item.dat.g("durability", 999)
+		var item_hp = item.dat.g("armor", 999)
 		if item_hp > strength:
 			tcol = item.col | tcol
 	return tcol & cols > 0
@@ -229,7 +222,7 @@ func radiate(_light, new=true):
 		else:
 			world.lights.erase(self)
 	for i in range(8):
-		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(light), light)
+		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(_light), _light)
 
 func cast_sight(camera, row, start, end, flips, sight2, intensity):
 	if start < end:
@@ -269,7 +262,7 @@ func cast_sight(camera, row, start, end, flips, sight2, intensity):
 		if blocked:
 			break
 
-func get_beam_to(dest, col_mask, distance):
+func get_beam_to(dest, col_mask, distance=-1):
 	var diffx = dest.x - x
 	var diffy = dest.y - y
 	var step = max(abs(diffx), abs(diffy))

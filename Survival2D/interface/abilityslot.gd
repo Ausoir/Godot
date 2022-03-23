@@ -53,6 +53,10 @@ func activate():
 		else:
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
+	elif mode == MODE_SELECTED:
+		if skill_type != "self":
+			set_mode(MODE_NORMAL)
+			G.you.stop_aim()
 	elif mode == MODE_ACTIVE:
 		G.you.tasks = [["ability", skill_index, G.you.unit.position]]
 

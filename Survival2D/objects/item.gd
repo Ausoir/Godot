@@ -12,10 +12,12 @@ var layer: int
 var pos
 var prev_pos
 var turns = 0
-var faction = 0
 var flags
-var light: int
+var dirty_dats = ["","col","faction"]
 var hp = Vector2()
+
+func _ready():
+	update_dats()
 
 func get_display_name():
 	if display_name == null:
@@ -25,45 +27,30 @@ func get_display_name():
 func place(p):
 	position = p.to_pixel()
 	pos = p
-	if col & 1 > 0 and pos.visible: #Recalc light
+	if col & 1 > 0 and pos.visible and !pos.is_col(1): #Recalc light
 		G.you.view_dirty = true
-		var ls = pos.world.get_affected_lights(pos)
-		for i in ls:
-			var t = i.light
-			i.radiate(-i.light, false)
-			i.light = t
-		p.add_item(self)
-		for i in ls:
-			var t = i.light
-			i.light -= t
-			i.radiate(t, false)
-	else:
-		p.add_item(self)
+	p.add_item(self)
 
 func remove():
 	G.world.turn.remove(self)
 	if pos != null: #not an equipment
-		if col & 1 > 0 and pos.visible:
+		pos.remove_item(self)
+		if col & 1 > 0 and pos.visible and !pos.is_col(1):
 			G.you.view_dirty = true
-			var ls = pos.world.get_affected_lights(pos)
-			for i in ls:
-				var t = i.light
-				i.radiate(-i.light, false)
-				i.light = t
-			pos.remove_item(self)
-			for i in ls:
-				var t = i.light
-				i.light -= t
-				i.radiate(i.light, false)
-		else:
-			pos.remove_item(self)
 	queue_free()
 
 func die():
 	var ondie = dat.g("ondie")
 	if ondie != null:
-		G.cmd(ondie, self)
+		G.cmds(ondie, self)
 	remove()
+
+func hit(_type, dmg, _hitter):
+	if dmg > dat.g("armor", 99):
+		G.make_particle("Hit", pos.to_pixel())
+		G.display_damage(pos.to_pixel(), round(dmg))
+		die()
+		return true
 
 func autotilize():
 	var autotile = dat.g("autotile", 0)
@@ -97,14 +84,20 @@ func move_world(wld):
 	prev_pos = pos
 	wld.tiles[y][x].add_item(self)
 
-func on_dat():
-	flags = dat.g("flags", [])
-	light = dat.g("light", 0)
-	layer = dat.g("layer", 0)
-	var oldcol = col
-	col = dat.g("col", 0)
-	if col != oldcol:
-		update_col(col)
+func update_dats():
+	while !dirty_dats.empty():
+		var i = dirty_dats.pop_front()
+		update_dat(i)
+
+func update_dat(p):
+	if p == "":
+		flags = dat.g("flags", [])
+		layer = dat.g("layer", 0)
+	elif p == "col":
+		var oldcol = col
+		col = dat.g("col", 0)
+		if col != oldcol:
+			update_col(col)
 
 func update_col(p):
 	if n_collider != null:
@@ -119,5 +112,5 @@ func on_turn():
 	if turns > dat.g("turn", 0):
 		var onturn = dat.g("onturn")
 		if onturn != null:
-			G.cmd(onturn, self)
+			G.cmds(onturn, self)
 		turns = 0

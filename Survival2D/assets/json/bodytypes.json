@@ -6,9 +6,8 @@
 		"back": 0,
 		"outer": 0,
 		"hands": 0,
-		"primary": 0,
-		"secondary": 0,
 		"offhand": 0,
+		"weapon": 0,
 	},
 	"man": {
 		"head": 2,
@@ -17,9 +16,8 @@
 		"back": 2,
 		"outer": 2,
 		"hands": 2,
-		"primary": 2,
-		"secondary": 1,
 		"offhand": 2,
+		"weapon": 2,
 	},
 	"manzard": {
 		"head": 1,
@@ -28,9 +26,8 @@
 		"back": 2,
 		"outer": 1,
 		"hands": 0,
-		"primary": 1,
-		"secondary": 1,
 		"offhand": 2,
+		"weapon": 1,
 	},
 	"mantle": {
 		"head": 2,
@@ -39,9 +36,8 @@
 		"back": 0,
 		"outer": 0,
 		"hands": 2,
-		"primary": 2,
-		"secondary": 2,
 		"offhand": 2,
+		"weapon": 2,
 	},
 	"manfly": {
 		"head": 1,
@@ -50,8 +46,7 @@
 		"back": 2,
 		"outer": 1,
 		"hands": 0,
-		"primary": 1,
-		"secondary": 1,
 		"offhand": 2,
+		"weapon": 1,
 	}
 }

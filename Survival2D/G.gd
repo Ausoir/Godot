@@ -8,7 +8,7 @@ const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
 	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
 const CARDINALS = [[0,-1],[1,0],[0,1],[-1,0]]
 const DIRS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
-const STATS = ["vitality", "strength", "intelligence", "agility", "perception", "move speed"]
+const STATS = ["vitality", "strength", "agility", "perception", "move speed"]
 const UP = 0
 const UPRIGHT = 1
 const RIGHT = 2
@@ -20,13 +20,14 @@ const UPLEFT = 7
 
 const Gfx = preload("res://fx/Gfx.tscn")
 const Sfx = preload("res://fx/Sfx.tscn")
-var Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
+const Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
 var influence = preload("res://objects/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var time = preload("res://classes/time.gd").new()
 var factory = preload("res://classes/factory.gd").new()
 var world = preload("res://world/World.tscn").instance()
 var ui = preload("res://interface/Interface.tscn").instance()
+var custom = preload("res://classes/custom.gd").new()
 var command = load("res://classes/command.gd").new()
 var worlds = {}
 var events = []
@@ -125,27 +126,6 @@ func get_direction_between(from, to):
 		dir = G.DOWNLEFT
 	return dir
 
-func cmd(args, host=null, ptgt=null):
-	if ptgt != null:
-		command.tgt = ptgt
-	rpc("synced_cmd", args, host)
-	return command.tgt
-
-puppetsync func synced_cmd(args, host):
-	command.assign(host)
-	for arg in args:
-		if command.stop:
-			command.stop = false
-			return command.tgt
-		elif command.ignore:
-			command.ignore = false
-		else:
-			command.tgt = command.run(arg)
-	return command.tgt
-
-func msg(msg):
-	ui.message.add(msg)
-
 func make_particle(arg, pos, args=null):
 	var r = G.data.get_particle(arg)
 	r.position = pos
@@ -154,12 +134,35 @@ func make_particle(arg, pos, args=null):
 		r.run_details(args)
 	return r
 
-func display_damage(pos, dmg, color=Color.white, _scale=1):
+func display_damage(pos, dmg, color=Color.white, _scale=1, _speed=800):
 	var r = Damage_Label.instance()
 	r.rect_position = pos
-	r.rect_position.y -= HH
-	world.others.add_child(r)
-	r.set_damage(str(dmg), color, _scale)
+	r.rect_position.y -= G.HH
+	G.world.others.add_child(r)
+	r.set_damage(str(dmg), color, _scale, _speed)
+
+func cmds(args, host=null, ptgt=null):
+	if ptgt != null:
+		command.tgt = ptgt
+	command.host = host
+	for arg in args:
+		if command.stop:
+			command.stop = false
+			return command.tgt
+		elif command.ignore:
+			command.ignore = false
+		else:
+			rpc("cmd", arg)
+	return command.tgt
+
+puppetsync func cmd(arg):
+	command.tgt = command.run(arg)
+
+func script(p):
+	custom.run(p)
+
+func msg(msg):
+	ui.message.add(msg)
 
 func travel(_map):
 	var root = get_tree().get_root()

@@ -174,7 +174,7 @@ func create_game(_player_units):
 	G.world.create("city")
 	for unit in _player_units:
 		var player_pos = G.world.get_spawn_point()
-		var player_unit = G.cmd([["make", "player", player_pos]])
+		var player_unit = G.cmds([["make", "player", player_pos]])
 		player_unit.possess(unit)
 
 func save_game(_map="city"):

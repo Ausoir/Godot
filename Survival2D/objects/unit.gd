@@ -19,7 +19,6 @@ onready var n_sprites = $Sprites
 onready var n_animation = $Animation
 onready var n_sprite = $Sprites/Sprite
 onready var n_skeleton = $Skeleton2D
-onready var n_tween = $Tween
 onready var n_mat = n_sprite.material
 var n_healthbar
 
@@ -31,20 +30,38 @@ var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
 var dirty_dat = false
+var flash_state = [0, 0, 0, 0]
 
 func _ready():
 	n_collider = get_node("Body")
 	n_collider.parent = self
 	for i in dat.g("buffs", []):
-		G.influence.do(self, i)
+		G.influence.do(i, self)
+	if !dat.g("controlled", false):
+		possess()
 
 func set_seed():
 	pass
 
-func on_dat():
-	.on_dat()
+func update_dat(p):
+	if p == "":
+		flags = dat.g("flags", [])
+		layer = dat.g("layer", 0)
+	elif p == "col":
+		var oldcol = col
+		col = dat.g("col", 0)
+		if col != oldcol:
+			update_col(col)
+	elif p == "faction":
+		for team in G.world.team:
+			if self in team:
+				team.erase(self)
+		var faction = dat.g("faction", -1)
+		if faction != -1:
+			if !(self in G.world.team[faction]):
+				G.world.team[faction].append(self)
 	if controller != null:
-		controller.on_dat()
+		controller.update_dat(p)
 
 func update_col(p):
 	get_node("Body").collision_layer = p
@@ -67,8 +84,9 @@ func can_carry(_w):
 func ability(idx, at):
 	var abilities = dat.g("abilities", [])
 	if idx < abilities.size():
+		face_toward(at)
 		var ability = abilities[idx]
-		return G.influence.do(self, ability, null, 0, at)
+		return G.influence.do(ability, self, at, 0, null)
 
 func get_damage(ptype, p):
 	if ptype == "true":
@@ -82,20 +100,26 @@ func reposition(p):
 	position = p
 	on_slide()
 
+func place(p):
+	.place(p)
+	n_collider.check_overlap()
+
 func slide(diff):
 	var ms = dat.g("move speed", 1)
-	if "agile" in flags:
-		ms += max(0, pos.slow - 4)
-	elif !("float" in flags):
-		ms += pos.slow
-	set_animation("walk", max(1, ms)*2)
-	var spd = SPEED / ms
-	var diff_normalized = diff.normalized()
-	if diff_normalized.x > 0:
-		face(1)
-	elif diff_normalized.x < 0:
-		face(-1)
-	n_collider.vel = Vector2(diff_normalized.x * spd, diff_normalized.y * spd)
+	if ms < 99:
+		if "agile" in flags:
+			ms += max(0, pos.slow - 4)
+		elif !("float" in flags):
+			ms += pos.slow
+		ms = max(1, ms)
+		set_animation("walk", ms*2)
+		var spd = SPEED / ms
+		var diff_normalized = diff.normalized()
+		if diff_normalized.x > 0:
+			face(1)
+		elif diff_normalized.x < 0:
+			face(-1)
+		n_collider.vel = Vector2(diff_normalized.x * spd, diff_normalized.y * spd)
 	return on_slide()
 
 func on_slide():
@@ -107,10 +131,10 @@ func on_slide():
 		if !newpos.visible and newpos.sight_frame <= G.you.n_camera.sight_frame - 1:
 			G.make_particle("Sound", newpos.to_pixel())
 	if delay == 0:
-		var col = n_collider.get_collider(faction)
+		var col = n_collider.get_collider(dat.g("faction", -1))
 		if col != null:
 			controller.target = col
-			face_toward(col.pos)
+			face_toward(col.position)
 			roll_skill("onattack")
 			return col
 
@@ -131,7 +155,7 @@ func roll_skill(type, mode=0):
 		data = G.data.skill_data.get(skill)
 		if data != null and data.target == type:
 			if R.r_percent(data.chance):
-				G.influence.do(self, skill, data, mode)
+				G.influence.do(skill, self, controller.target, mode, data)
 				return [skill, data]
 	return null
 
@@ -172,29 +196,28 @@ func hit(_type, dmg, _hitter):
 		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
 		var health_percent = get_health()
 		G.display_damage(pos.to_pixel(), round(dmg), Color(1,health_percent,0))
-		flash("red", health_percent + .1)
+		flash(0, (1 - health_percent)*.3 + .1)
 		if health_percent <= 0:
 			is_dead = true
 			if _hitter != null:
 				_hitter.on_kill(self)
 		elif health_percent <= .5:
 			if !buffs.has("injury"):
-				G.influence.do(self, "injury")
+				G.influence.do("injury", self)
 	elif dmg < 0:
 		dat.add("damage", dmg, 0, dat.g("vitality"))
 		show_healthbar()
-		flash("green", dmg * -.2)
+		flash(1, dmg * -.2)
 		G.display_damage(pos.to_pixel(), round(dmg), Color.green)
 
 func on_turn():
 	if is_dead:
 		die()
 	else:
-		if dirty_dat:
-			dirty_dat = false
-			on_dat()
+		update_dats()
 		if delay == 0:
-			controller.on_turn()
+			if controller != null:
+				controller.on_turn()
 		else:
 			if delay > 0:
 				delay -= 1
@@ -206,12 +229,18 @@ func on_turn():
 			else:
 				cooldowns[i] -= 1
 
-func flash(color, dur):
-	n_mat.set_shader_param("redness", 0)
-	n_tween.interpolate_property(n_mat, "shader_param/" + color,
-		1, 0, max(.1, dur),
-		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	n_tween.start()
+func _process(delta):
+	if flash_state[0] > 0:
+		var percent = flash_state[0] / flash_state[1]
+		if flash_state[2] > 0:
+			n_mat.set_shader_param("red", flash_state[2]*percent)
+		elif flash_state[3] > 0:
+			n_mat.set_shader_param("green", flash_state[3]*percent)
+		flash_state[0] -= delta
+
+func flash(c, dur):
+	flash_state = [dur, dur, 0, 0]
+	flash_state[2 + c] = 1
 
 func face(p):
 	if (p > 0) != (n_sprites.scale.x > 0):
@@ -220,12 +249,16 @@ func face(p):
 
 func face_toward(p):
 	if p != null:
-		if p.x > pos.x:
+		if p.x > position.x:
 			face(1)
-		elif p.x < pos.x:
+		elif p.x < position.x:
 			face(-1)
 
 func die():
+	if self in pos.world.team:
+		var faction = dat.g("faction", -1)
+		if faction != -1:
+			pos.world.team[faction].erase(self)
 	G.factory.make_corpse(self, pos)
 	remove()
 
@@ -252,7 +285,12 @@ func show_healthbar():
 	n_healthbar.set_hp(vit - dat.g("damage", 0))
 
 func move_world(wld):
+	var faction = dat.g("faction", -1)
+	if faction != -1:
+		pos.world.team[faction].erase(self)
 	.move_world(wld)
+	if faction != -1:
+		G.world.team[faction].append(self)
 	controller.tasks.clear()
 	if !G.world.turn.has(self):
 		G.world.turn.add(self)
