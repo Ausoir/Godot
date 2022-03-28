@@ -49,6 +49,7 @@ func add(key, val, pmin=null, pmax=null):
 		v[key] = max(v[key], pmin)
 	if pmax != null:
 		v[key] = min(v[key], pmax)
+	return v[key]
 
 func combine(_dict):
 	for key in _dict:

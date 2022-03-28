@@ -43,9 +43,13 @@ func _process(delta):
 	if time.eighth_second:
 		world.turn.process_frames += 1
 	world.turn.on_process()
-	if !events.empty():
-		var ev = events.pop_back()
-		ev[0].call_funcv(ev[1])
+	for i in range(events.size()):
+		var ev = events[i]
+		ev[0] -= delta
+		if ev[0] <= 0:
+			ev[1].call_funcv(ev[1])
+			events.remove(i)
+			i -= 1
 
 func pixel_to_pos(pos):
 	return Vector2(pos.x / G.W, pos.y / G.H).floor()
@@ -134,8 +138,9 @@ func make_particle(arg, pos, args=null):
 		r.run_details(args)
 	return r
 
-func display_damage(pos, dmg, color=Color.white, _scale=1, _speed=800):
+func display_damage(pos, dmg, color=Color.white, _scale=1, _speed=800, lifetime=100):
 	var r = Damage_Label.instance()
+	r.lifetime = lifetime
 	r.rect_position = pos
 	r.rect_position.y -= G.HH
 	G.world.others.add_child(r)
@@ -158,8 +163,8 @@ func cmds(args, host=null, ptgt=null):
 puppetsync func cmd(arg):
 	command.tgt = command.run(arg)
 
-func script(p):
-	custom.run(p)
+func script(p, param):
+	custom.run(p, param)
 
 func msg(msg):
 	ui.message.add(msg)

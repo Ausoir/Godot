@@ -50,7 +50,7 @@ func search(faction, _dist):
 			var dist = unit.pos.distance_to(seen.pos)
 			if dist <= dist2:
 				if seen.n_sprites.visible:
-					if unit.pos.get_beam_to(seen.pos, 1) == seen.pos:
+					if unit.pos.get_beam_to(seen.pos, 1)[1] == seen.pos:
 						r.append([seen, dist])
 	return r
 
@@ -67,4 +67,4 @@ func hunt():
 func perform_ability():
 	if R.ir(0, 3) == 0:
 		var ability_idx = R.ir(0, unit.dat.g("abilities", []).size())
-		tasks.insert(0,["ability", ability_idx, target.position])
+		tasks = [["ability", ability_idx, target.position]]

@@ -1,4 +1,3 @@
-const WORK_DELAY = 5
 const Item = preload("res://objects/item.gd")
 const Unit = preload("res://objects/Unit.tscn")
 const Script_Unit = preload("res://objects/unit.gd")
@@ -6,8 +5,6 @@ const Script_Humanoid = preload("res://objects/humanoid.gd")
 const Properties = preload("res://classes/properties.gd")
 const UnitProperties = preload("res://objects/unit_properties.gd")
 const Projectile = preload("res://objects/Projectile.tscn")
-
-var scripter
 
 func make_group(arg, pos):
 	var groups = G.data.get_group(arg)
@@ -45,7 +42,6 @@ func make_mob(arg, pos):
 						var equip_item = G.factory.make_item(list_item)
 						if equip_item != null:
 							unit.auto_equip(equip_item)
-			unit.dat.fill_skills()
 			return unit
 		else:
 			push_error("Invalid unit "+str(mob_data[1]))
@@ -79,13 +75,15 @@ func make_unit(arg, pos):
 func make_item(arg, pos=null):
 	var item_data = G.data.item_data.get(arg)
 	if item_data != null:
+		var img = item_data.get("img")
 		var r = Sprite.new()
-		G.data.set_sprite_texture(r, item_data.img, item_data.get("autotile", 0))
-		if r.texture != null:
-			if !r.region_enabled:
-				var img_size = r.texture.get_size()
-				if img_size.y > 32:
-					r.offset.y = -int((img_size.y - 32) / 2)
+		if img != null:
+			G.data.set_sprite_texture(r, img, item_data.get("autotile", 0))
+			if r.texture != null:
+				if !r.region_enabled:
+					var img_size = r.texture.get_size()
+					if img_size.y > 32:
+						r.offset.y = -int((img_size.y - 32) / 2)
 		r.set_script(Item)
 		r.item_name = arg
 		r.item_type = "item"

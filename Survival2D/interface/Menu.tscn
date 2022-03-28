@@ -85,15 +85,23 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VSplitContainer" parent="Tabs/CHA"]
+[node name="VSplit" type="VSplitContainer" parent="Tabs/CHA"]
 margin_right = 158.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="Stats" type="VSplitContainer" parent="Tabs/CHA/VSplit"]
+margin_right = 158.0
+margin_bottom = 216.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 dragger_visibility = 1
 
-[node name="Label" type="Label" parent="Tabs/CHA/VBoxContainer"]
+[node name="Label" type="Label" parent="Tabs/CHA/VSplit/Stats"]
 margin_right = 158.0
 margin_bottom = 20.0
 grow_horizontal = 0
@@ -104,63 +112,28 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Tabs/CHA/VBoxContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Tabs/CHA/VSplit/Stats"]
 margin_top = 32.0
-margin_right = 158.0
-margin_bottom = 444.0
-bbcode_enabled = true
-
-[node name="SKL" type="ScrollContainer" parent="Tabs"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="VSplit" type="VSplitContainer" parent="Tabs/SKL"]
-margin_right = 158.0
-margin_bottom = 444.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Actives" type="VBoxContainer" parent="Tabs/SKL/VSplit"]
 margin_right = 158.0
 margin_bottom = 216.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-script = ExtResource( 2 )
-active = true
+bbcode_enabled = true
 
-[node name="Label2" type="Label" parent="Tabs/SKL/VSplit/Actives"]
-margin_right = 158.0
-margin_bottom = 20.0
-grow_horizontal = 0
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 6 )
-text = "Actives:"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Reserves" type="VBoxContainer" parent="Tabs/SKL/VSplit"]
+[node name="Skills" type="VBoxContainer" parent="Tabs/CHA/VSplit"]
 margin_top = 228.0
 margin_right = 158.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
+active = true
 
-[node name="Label2" type="Label" parent="Tabs/SKL/VSplit/Reserves"]
+[node name="Label2" type="Label" parent="Tabs/CHA/VSplit/Skills"]
 margin_right = 158.0
 margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 6 )
-text = "Reserves:"
+text = "Skills:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -194,13 +167,5 @@ use_parent_material = true
 margin_right = 66.0
 margin_bottom = 14.0
 
-[node name="Money" type="Label" parent="."]
-margin_left = 180.0
-margin_top = 4.0
-margin_right = 196.0
-margin_bottom = 18.0
-text = "$0"
-
 [connection signal="tab_changed" from="Tabs" to="." method="_on_tab_change"]
-[connection signal="gui_input" from="Tabs/SKL/VSplit/Actives" to="Tabs/SKL/VSplit/Actives" method="_on_gui_input"]
-[connection signal="gui_input" from="Tabs/SKL/VSplit/Reserves" to="Tabs/SKL/VSplit/Reserves" method="_on_gui_input"]
+[connection signal="gui_input" from="Tabs/CHA/VSplit/Skills" to="Tabs/CHA/VSplit/Skills" method="_on_gui_input"]

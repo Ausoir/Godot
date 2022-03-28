@@ -3,6 +3,7 @@ extends CanvasLayer
 const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
 const BuffSlot = preload("res://interface/BuffSlot.tscn")
 onready var menu = $Control/Menu
+onready var n_money = $Money
 onready var dialog = $Control/Dialog
 onready var message = $Control/Message
 onready var tint = $Control/Tint
@@ -18,6 +19,7 @@ var on = false
 func _ready():
 	screen_size = get_viewport().get_size_override()
 	screen_ratio = screen_size / get_viewport().size
+	n_money.rect_position.x = screen_size.x - 80
 	fadein()
 	tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
 
@@ -133,14 +135,9 @@ func update_hud():
 			buffs.add_child(slot)
 
 func describe(type, header, subject):
-	if !description.visible or !on:
+	if !description.visible:
 		if header != null and subject != null:
-			if type == "text":
-				description.display(header, subject)
-			elif type == "item":
-				description.display_item(header, subject)
-			elif type == "skill":
-				description.display_skill(header, subject)
+			description.display(type, header, subject)
 
 func _update_cooldowns(cds):
 	for ability in abilities.get_children():

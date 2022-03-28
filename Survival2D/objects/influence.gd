@@ -1,21 +1,12 @@
-var name
-var data
-var host
 var tgt
 
-func do_once():
-	G.cmds(data.get("onstart", []))
-
-func do(pname, phost=null, p=null, mode=0, pdata=null):
-	host = phost
-	name = pname
-	if pdata == null:
+func do(name, host=null, p=null, mode=0, pdata=null):
+	var data = pdata
+	if data == null:
 		data = G.data.skill_data.get(name)
 		if data == null:
 			return false
-	else:
-		data = pdata
-	if !find_victim(p):
+	if !find_victim(p, host, data):
 		return false
 	else:
 		if "cooldown" in data:
@@ -27,7 +18,7 @@ func do(pname, phost=null, p=null, mode=0, pdata=null):
 		if mode == 0:
 			if "duration" in data:
 				if host.buffs.has(name):
-					G.cmds(data.get("onstack", []))
+					G.cmds(data.get("onstack", []), host, tgt)
 					return true
 				else:
 					host.buffs.add(name, data, data.duration, tgt)
@@ -44,17 +35,16 @@ func do(pname, phost=null, p=null, mode=0, pdata=null):
 				G.cmds(data.get("onkill", []), host, tgt)
 		return true
 
-func find_victim(p):
+func find_victim(p, host, data):
 	if data.target == "auto":
 		tgt = p
 		return true
 	elif p != null:
 		if data.target == "tile":
-			tgt = p
-			tgt = get_tile()
+			tgt = get_tile(p)
 			return true
 		elif data.target == "self":
-			if is_req_met(host):
+			if is_req_met(host, host, data):
 				tgt = host
 				return true
 		elif data.target == "body":
@@ -63,22 +53,23 @@ func find_victim(p):
 				var tgt_point = raycast.position
 				if host.pos.world.from_vec(tgt_point).distance_to(host.pos) <= data.get("range", 16):
 					tgt = raycast.collider.get_parent()
-					return is_req_met(tgt)
+					return is_req_met(tgt, host, data)
 		elif data.target == "beam":
-			tgt = host.n_collider.cast_ray(p, [host], data.get("col", 0))
-			return get_tile().distance_to(host.pos) <= data.get("range", 16)
+			var rng = data.get("range", 16)
+			tgt = host.pos.get_beam_to(get_tile(p), data.get("col", 0), rng)[0]
+			return is_req_met(tgt, host, data)
 		else:
 			tgt = host.controller.target
 			if tgt != null and is_instance_valid(tgt):
 				if data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
-					if tgt.item_type == "unit" and is_req_met(tgt):
+					if tgt.item_type == "unit" and is_req_met(tgt, host, data):
 						return true
 	return false
 
-func get_tile():
-	return host.pos.world.from_vec(tgt)
+func get_tile(p):
+	return G.world.from_vec(p)
 
-func is_req_met(p):
+func is_req_met(p, host, data):
 	if "reqs" in data:
 		var is_tile = p.item_type == "tile"
 		var is_unit = p.item_type == "unit"

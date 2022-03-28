@@ -34,14 +34,24 @@
 		"equip": [["suspenders", 100]],
 		"dat": {"faction": 1},
 	},
-	"scav": {
-		"unit": "scav",
-		"equip": [["leather armor", 40, "/", ["scalemail", 40,"/",["looter coat",20,"/",["gi", 100]]]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["biggray gun",100]]]]]],
+	"scavenger": {
+		"unit": "scavenger",
+		"equip": [["leather armor", 90, "/", ["scalemail", 100]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["cutlass",100]]]]]],
+		"dat": {"faction": 1},
+	},
+	"looter": {
+		"unit": "scavenger",
+		"equip": [["looter coat",20,"/",["gi", 100]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["cutlass",100]]]]]],
 		"dat": {"faction": 1},
 	},
 	"guard": {
-		"unit": "scav",
+		"unit": "scavenger",
 		"equip": [["scalemail",100],["biggray gun",100]],
-		"dat": {"perception": 6, "move speed": 99, "faction": 1}
+		"dat": {"perception": 6, "move speed": 0, "faction": 1}
+	},
+	"agent": {
+		"unit": "human",
+		"equip": [["suit", 100],["pistol",100]],
+		"dat": {"move speed": 0, "faction": 1}
 	},
 }

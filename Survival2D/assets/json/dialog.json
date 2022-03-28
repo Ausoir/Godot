@@ -29,35 +29,20 @@
 		"true": "\"Gardening is ok, but at the end of the day, it's the canned goodiness that feed us.\n\nWhen we get to our destination, just follow us and stay out of harm's way. [url=0]Understand?[/url]\"",
 		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
 	},
-	"Supplier": {
-		"title": "Talk with Supplier",
-		"true": "Do you need [url=0]medical supplies[/url]?",
-		"opt": [
-			{
-				"hover": ["item", "medikit"],
-				"cmd": [["buy", 10],["give", "$pu", "medikit"],["menu","msg","Received medikit."]],
-			},
-		]
-	},
 	"Trader": {
 		"title": "Talk with Trader",
 		"true": "What do you need.\n\n",
 		"script": ["trade"],
 	},
-	"Dormkeep": {
-		"title": "Talk with Dormkeep",
-		"true": "Do you need [url=0]healing[/url]?",
-		"opt": [
-			{
-				"hover": ["text", "Heal", "Cost: $5"],
-				"cmd": [["buy", 5],["dat", "=", "$pu", "damage", 0],["menu","msg","Recovered from damages."],["fade"]],
-			},
-		]
-	},
 	"Bulletin": {
 		"title": "Bulletin Board",
-		"true": "You see a list of contracts.\n\n",
+		"true": "",
 		"script": ["bulletin"]
+	},
+	"Assign": {
+		"title": "Assign Unit",
+		"true": "",
+		"script": ["assign"]
 	},
 	"Dummy": {
 		"title": "Training Dummy",

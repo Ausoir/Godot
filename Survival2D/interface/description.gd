@@ -3,7 +3,7 @@ extends Control
 onready var title = $Control/Title
 onready var content = $Control/Content
 
-func display(header, desc):
+func on_display(header, desc):
 	rect_size.y = 32
 	title.set_text(header.capitalize())
 	content.set_bbcode(desc)
@@ -20,6 +20,16 @@ func array_to_string(arr):
 		prefix = ", "
 	return r
 
+func display(type, header, subject):
+	if type == "text":
+		on_display(header, subject)
+	elif type == "item":
+		display_item(header, subject)
+	elif type == "skill":
+		display_skill(header, subject)
+	elif type == "ability":
+		display_ability(header, subject)
+
 func display_item(header, item):
 	var desc = ""
 	var value = item.get("value", 0)
@@ -27,15 +37,12 @@ func display_item(header, item):
 		desc += "[color=#FB0]$"+ str(value) +"[/color]\n"
 	if "part" in item:
 		if item.part != "item":
-			desc += "[color=#335]Armor ("+ str(item.part) +")[/color]\n"
+			desc += "[color=#33A]Armor ("+ str(item.part) +")[/color]\n"
 		desc = "[color=#888]Weight: "+ str(item.get("weight", 0)) +"[/color]\n"
 	else:
 		var cut = item.get("cut", 0)
 		if cut != 0:
 			desc += "[color=#C66]Cut Damage: "+ str(cut) +"[/color]\n"
-		var nutrition = item.get("nutrition", 0)
-		if nutrition != 0:
-			desc += "[color=#F94]Nutrition: "+ str(cut) +"[/color]\n"
 		var skills = item.get("skills", [])
 		if !skills.empty():
 			desc += "[color=#56A]Skills: "+ array_to_string(skills) +"[/color]\n"
@@ -50,7 +57,7 @@ func display_item(header, item):
 	if uses > 0:
 		desc += "[color=#1B9]"+ str(uses) +" Uses[/color]\n"
 	desc += item.get("desc", "")
-	display(header, desc)
+	on_display(header, desc)
 
 func display_skill(header, skill):
 	var desc = "[color=#FB3]"+ str(skill.get("chance", 100)) +"% Chance[/color]\n"
@@ -59,5 +66,19 @@ func display_skill(header, skill):
 	desc += "[color=#1B9]"+ str(skill.get("delay", 0)) +" Turns[/color]\n"
 	if "desc_dmg" in skill:
 		desc += "[color=red]"+ skill.desc_dmg +"[/color]\n"
-	desc += skill.desc
-	display(header, desc)
+	desc += skill.get("desc", "")
+	on_display(header, desc)
+
+func display_ability(header, skill):
+	var desc = "[color=#1B9]"+ str(skill.get("delay", 0)) +" Turns[/color]\n"
+	var dur = skill.get("duration", -1)
+	if dur != -1:
+		desc += "[color=#84A]"+ str(dur) +" Duration[/color]\n"
+	var cd = skill.get("cooldown", -1)
+	if cd != -1:
+		desc += "[color=#56A]"+ str(cd) +" Cooldown[/color]\n"
+	var desc2 = skill.get("desc2")
+	if desc2 != null:
+		desc += "[color=#888]"+ desc2 +"[/color]\n"
+	desc += skill.get("desc", "")
+	on_display(header, desc)

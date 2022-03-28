@@ -4,49 +4,89 @@ var ignore = false
 var stop = false
 var args
 
+func replace_dats(arg):
+	var last = arg.find("}")
+	if last != -1:
+		var r = ""
+		var v = ""
+		var on = false
+		var once = last == len(arg) - 1 and arg[0] == "{"
+		for i in arg:
+			if i == "{":
+				on = true
+			elif i == "}":
+				var t
+				if "~" in v:
+					var split = v.split("~")
+					t = R.ir(int(split[0]), int(split[1]))
+				elif "," in v:
+					t = R.r_arr(v.split(","))
+				elif v == "t":
+					t = tgt
+				else:
+					t = host.dat.g(v,"")
+				if once:
+					return t
+				r += str(t)
+				v = ""
+				on = false
+			elif on:
+				v += i
+			else:
+				r += i
+		return r
+	return arg
+
 func replace_vars(_args):
 	var r = []
 	for arg in _args:
 		if arg is Array:
 			arg = replace_vars(arg)
-		elif arg is String and arg[0] == "$":
-			if arg == "$t":
-				r.append(tgt)
-			elif arg == "$h":
-				r.append(host)
-			elif arg == "$hp":
-				r.append(host.pos)
-			elif arg == "$hv":
-				r.append(host.position)
-			elif arg == "$tp":
-				r.append(tgt.pos)
-			elif arg == "$tv":
-				r.append(tgt.position)
-			elif arg == "$pu":
-				r.append(G.you.unit)
-			elif arg == "$pua":
-				var adjs = G.you.unit.pos.get_available_adjacents("0011")
-				var adj = R.r_arr(adjs)
-				if adj == null:
-					r.append(G.you.unit.pos)
+		elif arg is String:
+			var s = len(arg)
+			if s >= 2:
+				if arg[0] == "$":
+					var unit
+					if arg[1] == "t":
+						unit = tgt
+					elif arg[1] == "h":
+						unit = host
+					elif arg[1] == "p":
+						unit = G.you.unit
+					elif arg[1] == "$":
+						r.append(arg.substr(1))
+						continue
+					if unit == null:
+						r.append(null)
+						continue
+					if s >= 3:
+						if arg[2] == "p":
+							r.append(unit.pos)
+						elif arg[2] == "v":
+							r.append(unit.position)
+						elif arg[2] == "a":
+							var adjs = unit.pos.get_available_adjacents("0011")
+							var adj = R.r_arr(adjs)
+							if adj == null:
+								r.append(unit.pos)
+							else:
+								r.append(adj)
+					else:
+						r.append(unit)
+					continue
 				else:
-					r.append(adj)
-			elif arg == "$pup":
-				r.append(G.you.unit.pos)
-			elif arg[1] == "$":
-				r.append(arg.substr(1))
-			continue
+					arg = replace_dats(arg)
 		r.append(arg)
 	return r
 
 func run(_args):
 	args = replace_vars(_args)
 	var command = args[0]
-	if command == "=":
-		if args[1] == "t":
-			return args[2]
-		elif args[1] == "h":
-			host = args[2]
+	if command[0] == "=":
+		if command[1] == "t":
+			return args[1]
+		elif command[1] == "h":
+			host = args[1]
 	elif command == "v":
 		if args[1] == "parent":
 			return args[2].get_parent()
@@ -62,41 +102,30 @@ func run(_args):
 			if adj == null:
 				adj = args[2]
 			return adj
-	elif command == "r":
-		if args[1] == "int":
-			return R.ir(args[2], args[3])
-		elif args[1] == "p":
-			return R.r_percent(args[2])
-		elif args[1] == "cmd":
-			var chosen = R.ir(3, len(args)-1)
-			return G.cmds(args[chosen], host)
-	elif command == "?":
-		if args[1] == "=":
-			stop = tgt != args[2]
-		elif args[1] == "!=":
-			stop = tgt == args[2]
-		elif args[1] == "<":
-			stop = tgt < args[2]
-		elif args[1] == "<=":
-			stop = tgt <= args[2]
-	elif command == "col":
-		stop = args[1].is_col(int(args[2]))
-	elif command == "@dat":
-		return args[1].dat.g(args[2], args[3])
-	elif command == "=dat":
-		args[1].dat.a(args[2], args[3])
-		args[1].dirty_dat = true
-	elif command == "+dat":
-		args[1].dat.add(args[2], args[3])
-		args[1].dirty_dat = true
+	elif command[0] == "?":
+		if command == "?=":
+			stop = args[1] != args[2]
+		elif command == "?>":
+			stop = args[1] <= args[2]
+		elif command == "?>=":
+			stop = args[1] < args[2]
+	elif command[0] == "!":
+		if command == "!stop":
+			stop = !stop
+		elif command == "!ignore":
+			ignore = !ignore
+	elif command[0] == "^":
+		if args[1] in G.vars:
+			if command[1] == "=":
+				G.vars[args[1]] = args[2]
+			elif command[1] == "+":
+				G.vars[args[1]] += args[2]
+			elif command[1] == "^":
+				G.vars[args[1]].append(args[2])
+			elif command[1] == "v":
+				G.vars[args[1]].erase(args[2])
 	elif command == "run":
 		return G.cmds(args[1], tgt)
-	elif command == "vars":
-		if args[2] in G.vars:
-			if args[1] == "=":
-				G.vars[args[2]] = args[3]
-			elif args[1] == "+":
-				G.vars[args[2]] += args[3]
 	elif command == "make":
 		tgt = G.factory.make_group(args[1], args[2])
 		if tgt == null:
@@ -105,10 +134,6 @@ func run(_args):
 				tgt = G.factory.make_unit(args[1], args[2])
 				if tgt == null:
 					tgt = G.factory.make_item(args[1], args[2])
-	elif command == "tasks":
-		args[1].tasks.append(args[2])
-	elif command == "possess":
-		args[1].possess(get_arg(2))
 	elif command == "menu":
 		if args[1] == "msg":
 			G.msg(args[2])
@@ -121,7 +146,7 @@ func run(_args):
 	elif command == "gfx":
 		if args[1] == "label":
 			if args.size() > 5:
-				G.display_damage(args[2], args[3], args[4], args[5], args[6])
+				G.display_damage(args[2], args[3], args[4], args[5], args[6], args[7])
 			else:
 				G.display_damage(args[2], args[3], args[4])
 		elif args[1] == "particle":
@@ -129,60 +154,106 @@ func run(_args):
 	elif command == "sfx":
 		var sound = G.Sfx.instance()
 		sound.start(args[1], args[2])
-	elif command == "remove":
-		args[1].remove()
-	elif command == "give":
-		var item = G.factory.make_item(args[2])
-		if item != null:
-			args[1].store(item, true)
-			return item
-	elif command == "buy":
-		if G.vars.money < args[1]:
+	elif command == "money":
+		if G.vars.money + args[1] < 0:
 			stop = true
 			G.msg("Not enough money!")
 		else:
-			G.vars.money -= args[1]
-			G.msg("Lost $"+str(args[1])+".")
+			G.you.make_money(args[1])
 	elif command == "travel":
 		G.travel(args[1])
 	elif command == "fade":
 		G.ui.fadein()
 	elif command == "custom":
-		G.script(args[1])
+		G.script(args[1], args[2])
+	elif command == "point":
+		G.you.on_point = [args[1], args[2]]
+		G.you.aim_ability(-2)
+	elif command == "cast":
+		G.influence.do(args[1], args[2], args[3])
+	elif command == "projectile":
+		var r = G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4])
+		r.onattack = args[5]
+		r.onmiss = args[6]
+	elif command == "loot":
+		G.ui.menu.search_inventory(args[1])
+	else:
+		var subject = args[1]
+		if typeof(subject) == 17:
+			if command == "remove":
+				subject.remove()
+			elif command[0] == "*":
+				if command == "*":
+					return subject.dat.g(args[2], args[3])
+				elif command[1] == "=":
+					subject.dat.a(args[2], args[3])
+					subject.dirty_dat = true
+				elif command[1] == "+":
+					subject.dat.add(args[2], args[3])
+					subject.dirty_dat = true
+				elif command[1] == "-":
+					subject.dat.d(args[2])
+				elif command == "*use":
+					var use = subject.dat.add("uses", -1)
+					if use == 0:
+						subject.remove()
+					elif use < 0:
+						subject.dat.add("uses", 1)
+						stop = true
+			else:
+				var type = subject.get("item_type")
+				if type == "tile":
+					run_tile(command, subject)
+				elif is_instance_valid(subject):
+					run_item(command, subject)
+	return tgt
+
+func run_tile(command, subject):
+	if command == "col":
+		stop = subject.is_col(int(args[2]))
+	elif command == "smash":
+		subject.smash(args[2])
+
+func run_item(command, subject):
+	if command == "tasks":
+		subject.tasks.append(args[2])
+	elif command == "possess":
+		subject.possess(get_arg(2))
+	elif command == "textify":
+		subject.textify(args[2])
+	elif command == "give":
+		var item = G.factory.make_item(args[2])
+		if item != null:
+			subject.store(item, true)
+			return item
 	elif command == "move":
-		if args[1].item_type == "unit":
+		if subject.item_type == "unit":
 			host.position.x = args[2].x
 			host.position.y = args[2].y
 			host.on_slide()
 	elif command == "attack":
-		var dmg_type = args[3]
-		var dmg = args[1].get_damage(dmg_type, args[4])
-		args[2].hit(dmg_type, dmg, args[1])
-	elif command == "projectile":
-		var r = G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4])
-		r.onattack = args[5]
+		if args[2] != null and is_instance_valid(args[2]):
+			var dmg_type = args[3]
+			var dmg = subject.get_damage(dmg_type, args[4])
+			args[2].hit(dmg_type, dmg, subject)
 	elif command == "+flag":
-		args[1].flags.append(args[2])
-		args[1].dirty_dat = true
+		subject.flags.append(args[2])
+		subject.dirty_dat = true
 	elif command == "-flag":
-		args[1].flags.erase(args[2])
-		args[1].dirty_dat = true
-	elif command == "cast":
-		G.influence.do(args[1], args[2], args[3])
+		subject.flags.erase(args[2])
+		subject.dirty_dat = true
 	elif command == "delay":
-		args[1].delay = args[2]
+		subject.delay = args[2]
 	elif command == "action":
-		args[1].set_animation(args[2], args[1].delay)
+		subject.set_animation(args[2], subject.delay)
 	elif command == "cooldown":
-		args[1].cooldowns[args[2]] = args[3]
+		subject.cooldowns[args[2]] = args[3]
 	elif command == "-buff":
-		args[1].buffs.end(args[2])
+		subject.buffs.end(args[2])
 	elif command == "morph":
-		var husk = args[1]
-		var newunit = G.cmds([["make", args[2], husk.pos]])
-		newunit.possess(husk.controller)
-		husk.remove()
-	return tgt
+		var newunit = G.cmds([["make", args[2], subject.pos]])
+		newunit.possess(subject.controller)
+		subject.remove()
 
 func get_arg(idx, default=null):
 	if args.size() > idx:

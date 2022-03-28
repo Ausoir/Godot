@@ -1,5 +1,6 @@
 extends Node2D
 
+const Note = preload("res://objects/Note.tscn")
 const ColBox = preload("res://objects/CollisionBox.tscn")
 var n_collider
 var id = 0
@@ -13,11 +14,12 @@ var pos
 var prev_pos
 var turns = 0
 var flags
-var dirty_dats = ["","col","faction"]
+var dirty_dat = true
 var hp = Vector2()
+var host
 
 func _ready():
-	update_dats()
+	update_dat()
 
 func get_display_name():
 	if display_name == null:
@@ -25,13 +27,15 @@ func get_display_name():
 	return display_name
 
 func place(p):
-	position = p.to_pixel()
+	position = p.position
 	pos = p
-	if col & 1 > 0 and pos.visible and !pos.is_col(1): #Recalc light
+	if col & 1 == 0 and pos.visible and pos.is_col(1):
 		G.you.view_dirty = true
 	p.add_item(self)
 
 func remove():
+	if host != null:
+		host.on_item_remove(self)
 	G.world.turn.remove(self)
 	if pos != null: #not an equipment
 		pos.remove_item(self)
@@ -47,8 +51,8 @@ func die():
 
 func hit(_type, dmg, _hitter):
 	if dmg > dat.g("armor", 99):
-		G.make_particle("Hit", pos.to_pixel())
-		G.display_damage(pos.to_pixel(), round(dmg))
+		G.make_particle("Hit", pos.position)
+		G.display_damage(pos.position, round(dmg))
 		die()
 		return true
 
@@ -66,7 +70,7 @@ func autotilize():
 
 func relocate(to):
 	pos.remove_item(self)
-	position = to.to_pixel()
+	position = to.position
 	prev_pos = pos
 	to.add_item(self)
 	on_relocate()
@@ -84,20 +88,13 @@ func move_world(wld):
 	prev_pos = pos
 	wld.tiles[y][x].add_item(self)
 
-func update_dats():
-	while !dirty_dats.empty():
-		var i = dirty_dats.pop_front()
-		update_dat(i)
-
-func update_dat(p):
-	if p == "":
-		flags = dat.g("flags", [])
-		layer = dat.g("layer", 0)
-	elif p == "col":
-		var oldcol = col
-		col = dat.g("col", 0)
-		if col != oldcol:
-			update_col(col)
+func update_dat():
+	layer = dat.g("layer", 0)
+	var oldcol = col
+	col = dat.g("col", 0)
+	if col != oldcol:
+		update_col(col)
+	flags = dat.g("flags", [])
 
 func update_col(p):
 	if n_collider != null:
@@ -114,3 +111,14 @@ func on_turn():
 		if onturn != null:
 			G.cmds(onturn, self)
 		turns = 0
+
+func textify(p):
+	if has_node("Viewport"):
+		$Viewport/Label.set_text(p.to_upper())
+	else:
+		var note = Note.instance()
+		add_child(note)
+		var t = self
+		t.set_texture(note.get_texture())
+		$Viewport/Label.set_text(p.to_upper())
+		t.set_centered(true)

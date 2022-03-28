@@ -8,18 +8,16 @@ var target
 var tasks = []
 var pathing
 
-func update_dat(p):
-	if p == "":
-		pathing.smash_to = unit.dat.g("strength", 0)
-		if "user" in unit.flags:
-			pathing.can_open = true
-			pathing.pathing_times = 5
-		elif "float" in unit.flags:
-			pathing.hinderance = 0
-		elif "agile" in unit.flags:
-			pathing.hinderance = .5
-	elif p == "col":
-		pathing.cols = unit.dat.g("cols", pathing.cols)
+func update_dat():
+	pathing.cols = unit.dat.g("cols", pathing.cols)
+	if "user" in unit.flags:
+		pathing.can_open = true
+		pathing.pathing_times = 5
+	elif "float" in unit.flags:
+		pathing.hinderance = 0
+	elif "agile" in unit.flags:
+		pathing.hinderance = .5
+	pathing.smash_to = unit.dat.g("strength", 0)
 
 func on_assign():
 	unit.dirty_dat = true
@@ -50,14 +48,14 @@ func perform(task):
 			if unit.n_collider.cast_col_ray(task[2], exc, unit.col).empty():
 				unit.slide(task[2] - unit.position)
 				return false
-		var diff = task[1].to_pixel() - unit.position
+		var diff = task[1].position - unit.position
 		unit.slide(diff)
 		if unit.n_collider.get_slide_count() > 0:
 			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
 				if interact(task[1]):
 					return false
 				return perform(["smash", task[1]])
-		return diff.length_squared() < 16
+		return diff.length_squared() < 64
 	elif task[0] == "attack":
 		if validate_target(task[1]):
 			unit.slide(task[1].position - unit.position)
@@ -71,16 +69,18 @@ func perform(task):
 		unit.ability(task[1], task[2])
 	elif task[0] == "smash":
 		if unit.pos.distance_to(task[1]) <= 1:
-			unit.face_toward(task[1].to_pixel())
+			unit.face_toward(task[1].position)
 			unit.delay = 5
 			unit.set_animation("attack", 5)
 			var dmg = unit.get_damage("bash", 100)
 			task[1].smash(dmg)
+	elif task[0] == "command":
+		G.cmds(task[1], task[2], task[3])
 	elif task[0] == "enter":
 		if self == G.you:
 			if task[3] < 1:
 				if task[1] in unit.pos.world.connections:
-					G.you.unit.reposition(task[2].to_pixel())
+					G.you.unit.reposition(task[2].position)
 					G.travel(unit.pos.world.connections[task[1]])
 			else:
 				var adjs = unit.pos.get_available_adjacents(1)
@@ -118,7 +118,7 @@ func path_to(pos, dist=0):
 		if path:
 			tasks = []
 			for p in path:
-				tasks.append(["path", unit.pos.world.tiles[p.y][p.x], pos.to_pixel()])
+				tasks.append(["path", unit.pos.world.tiles[p.y][p.x], pos.position])
 
 func interact(_tile):
 	if !_tile.items.empty():

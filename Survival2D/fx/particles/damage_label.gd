@@ -1,14 +1,14 @@
 extends Label
 
-var lifetime = 200
+var lifetime = 100
 var vel
 var vel_angle
 var scale_mod
 var speed_mod = 800
 
 func _ready():
-	vel = Vector2(R.ir(-80, 80), R.ir(-120, 0))
-	vel_angle = R.fr(-2, 2)
+	vel = Vector2(R.ir(-48, 48), R.ir(-48, 0))
+	vel_angle = R.fr(-1, 1)
 
 func set_damage(dmg, color, _scale, _speed):
 	set_text(str(dmg))
@@ -22,12 +22,14 @@ func _physics_process(delta):
 	rect_position.y += delta * vel.y
 	vel.x *= .99
 	vel.y += delta * speed_mod
-	var scale = min(1, lifetime/.2) * scale_mod
-	rect_scale.x = scale
-	rect_scale.y = scale
 	set_rotation_degrees(rect_rotation + vel_angle)
-
 	lifetime -= delta * speed_mod
 	if lifetime < 0:
 		G.world.others.remove_child(self)
 		queue_free()
+	else:
+		var process = min(1, lifetime * .03)
+		modulate.a = process
+		var scale = process * scale_mod
+		rect_scale.x = scale
+		rect_scale.y = scale

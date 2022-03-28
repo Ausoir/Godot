@@ -80,16 +80,18 @@ func _on_meta_hover_ended(_meta):
 	G.ui.description.hide()
 
 func run_script(script):
+	if !("opt" in page_data):
+		page_data["opt"] = []
+	R.set_seed(G.vars.seed + G.vars.time)
 	if script[0] == "bulletin":
 		add_bulletin()
 	elif script[0] == "trade":
 		add_trade()
+	elif script[0] == "assign":
+		add_assign()
 
 func add_trade():
-	if !("opt" in page_data):
-		page_data["opt"] = []
 	G.ui.display(0)
-	R.set_seed(G.vars.seed + G.vars.time)
 	var items = ""
 	var count = 0
 	var groups = G.data.get_group("g_trade")
@@ -103,31 +105,36 @@ func add_trade():
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 
 func add_bulletin():
-	if !("opt" in page_data):
-		page_data["opt"] = []
-	R.set_seed(G.vars.seed + G.vars.time)
 	var items = ""
 	var count = 0
-	for _contract in range(R.ir(1, 5)):
-		var pop = R.ir(1, 6)
-		var map = R.ir(1, 3)
-		var title
-		var desc
-		if map == 1:
-			title = "urban"
-			desc = "Urban scavenge run ("
-		elif map == 2:
-			title = "dungeon"
-			desc = "Dungeon crawl ("
-		elif map == 3:
-			title = "lab"
-			desc = "Explore lab ("
-		items += "[url="+str(count)+"]> [i]"+desc+str(pop)+")[/i][/url]\n"
-		var option = {"hover": ["text", "Location", title.capitalize()+"\nAllies: "+str(pop)]}
-		option["cmd"] = [["dat","=","$pu","social","follow"]]
-		var social = "lead"
-		for _i in range(pop-1):
-			option["cmd"] += [["v","adj","$pup"],["make","scav","$t"],["dat","=","$t","social",social],["ally"]]
-			social = "follow"
-		page_data["opt"].append(option)
+	var groups = G.data.get_group("g_conscript")
+	if groups.empty():
+		items = "The board is empty.\n\n"
+	else:
+		items = "You see a list of contracts.\n\n"
+		for group in groups:
+			var item_name = group[0]
+			var price = group[1] * 10
+			items += "[url="+str(count)+"]> [i]Hire " + item_name + " for $"+str(price)+"[/i][/url]\n"
+			count += 1
+			var option = {"hover": ["item", item_name]}
+			var ann = "Hired "+item_name+" for "+str(price)+"."
+			option["cmd"] = [["buy",price],["vars","a+","hire",item_name],["menu","msg",ann]]
+			page_data.opt.append(option)
+	get_node("Dialog/RichTextLabel").append_bbcode(items)
+
+func add_assign():
+	var items = ""
+	var count = 0
+	if G.vars.hire.empty():
+		items = "You have no hires.\n\nUse the bulletin board to hire more units.\n\n"
+	else:
+		items = "Place a hired unit on the map.\n\n"
+		for hire in G.vars.hire:
+			items += "[url="+str(count)+"]> [i]Assign " + hire + "[/i][/url]\n"
+			count += 1
+			var option = {"hover": ["text", "Assign", "Assign a hired unit on the map."]}
+			var pt = {"target": "tile", "onstart": [["make",hire,"$t"],["ally"]], "col": 15}
+			option["cmd"] = [["vars","a-","hire",hire],["point",pt]]
+			page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)

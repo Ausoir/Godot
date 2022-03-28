@@ -40,6 +40,8 @@ func get_damage(ptype, p):
 func can_carry(w):
 	if w < 0:
 		return false
+	elif w == 0:
+		return true
 	var r = 0
 	for i in equipments:
 		var item = equipments[i]
@@ -87,13 +89,14 @@ func auto_equip(item):
 
 func equip(part, item):
 	if !has_part(part) and is_equipment_valid(part, item):
+		item.host = self
 		equipments[part] = item
 		accomodate_stats(item)
 		if part == "body" and item.dat.g("gender") != null:
 			create_overlay(part, item.dat.g("sprite")+"_"+gender)
 		else:
 			create_overlay(part, item.dat.g("sprite"))
-		G.Sfx.instance().start("equip_metal", pos.to_pixel())
+		G.Sfx.instance().start("equip_metal", pos.position)
 		return true
 	return false
 
@@ -104,17 +107,22 @@ func unequip(part):
 			unaccomodate_stats(r)
 			remove_overlay(part)
 			equipments.erase(eq)
+			r.host = null
 			return r
+
+func on_item_remove(item):
+	if item in inventory:
+		inventory.erase(item)
+	else:
+		var part = item.dat.g("part", "weapon")
+		if equipments[part] == item:
+			unequip(part)
 
 func accomodate_stats(item):
 	var abilities = dat.g("abilities", [])
 	abilities += item.dat.g("abilities", [])
 	dat.a("abilities", abilities)
 	item_skills += item.dat.g("skills", [])
-	var item_light = item.dat.g("light", 0)
-	if item_light != 0:
-		dat.add("light", item_light)
-		pos.radiate(item_light)
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
 	for i in G.STATS:
@@ -130,10 +138,6 @@ func unaccomodate_stats(item):
 	dat.a("abilities", abilities)
 	for i in item.dat.g("skills", []):
 		item_skills.erase(i)
-	var item_light = item.dat.g("light", 0)
-	if item_light != 0:
-		dat.add("light", -item_light)
-		pos.radiate(-item_light)
 	for i in G.STATS:
 		var stat = item.dat.g(i)
 		if stat != null:
@@ -158,6 +162,7 @@ func store(item, drop=false):
 	for i in range(inventory.size()):
 		if inventory[i] == null:
 			inventory[i] = item
+			item.host = self
 			return true
 	if drop:
 		drop(item)
@@ -166,23 +171,13 @@ func store(item, drop=false):
 func unstore(item):
 	for i in range(inventory.size()):
 		if inventory[i] == item:
+			item.host = null
 			inventory[i] = null
 			return true
 	return false
 
 func drop(item):
 	pos.add_item(item)
-
-func expend():
-	var wpn = equipments.get("weapon")
-	if wpn:
-		var uses = wpn.dat.g("uses", 1)
-		if uses < 1:
-			var r = unequip("weapon")
-			if r != null:
-				r.remove()
-		else:
-			wpn.dat.a("uses", uses - 1)
 
 func update_save_data(_data):
 	var save_eq = {}

@@ -13,7 +13,7 @@ const animation_map = {
 	"kick": 6,
 	"wait": 7,
 }
-const SPEED = 120
+const SPEED = 8
 
 onready var n_sprites = $Sprites
 onready var n_animation = $Animation
@@ -29,7 +29,6 @@ var controller
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
-var dirty_dat = false
 var flash_state = [0, 0, 0, 0]
 
 func _ready():
@@ -43,25 +42,22 @@ func _ready():
 func set_seed():
 	pass
 
-func update_dat(p):
-	if p == "":
-		flags = dat.g("flags", [])
-		layer = dat.g("layer", 0)
-	elif p == "col":
-		var oldcol = col
-		col = dat.g("col", 0)
-		if col != oldcol:
-			update_col(col)
-	elif p == "faction":
-		for team in G.world.team:
-			if self in team:
-				team.erase(self)
-		var faction = dat.g("faction", -1)
-		if faction != -1:
-			if !(self in G.world.team[faction]):
-				G.world.team[faction].append(self)
+func update_dat():
+	layer = dat.g("layer", 0)
+	var oldcol = col
+	col = dat.g("col", 0)
+	if col != oldcol:
+		update_col(col)
+	for team in G.world.team:
+		if self in team:
+			team.erase(self)
+	var faction = dat.g("faction", -1)
+	if faction != -1:
+		if !(self in G.world.team[faction]):
+			G.world.team[faction].append(self)
+	flags = dat.g("flags", [])
 	if controller != null:
-		controller.update_dat(p)
+		controller.update_dat()
 
 func update_col(p):
 	get_node("Body").collision_layer = p
@@ -105,21 +101,18 @@ func place(p):
 	n_collider.check_overlap()
 
 func slide(diff):
-	var ms = dat.g("move speed", 1)
-	if ms < 99:
-		if "agile" in flags:
-			ms += max(0, pos.slow - 4)
-		elif !("float" in flags):
-			ms += pos.slow
-		ms = max(1, ms)
-		set_animation("walk", ms*2)
-		var spd = SPEED / ms
+	var ms = dat.g("move speed", 0)
+	if ms > 0:
+		if !("float" in flags):
+			ms = max(.2, ms * pos.slow)
+		n_animation.play("walk", -1, ms / 4)
 		var diff_normalized = diff.normalized()
 		if diff_normalized.x > 0:
 			face(1)
 		elif diff_normalized.x < 0:
 			face(-1)
-		n_collider.vel = Vector2(diff_normalized.x * spd, diff_normalized.y * spd)
+		ms *= SPEED
+		n_collider.vel = Vector2(diff_normalized.x * ms, diff_normalized.y * ms)
 	return on_slide()
 
 func on_slide():
@@ -129,7 +122,7 @@ func on_slide():
 		newpos.add_item(self)
 		on_relocate()
 		if !newpos.visible and newpos.sight_frame <= G.you.n_camera.sight_frame - 1:
-			G.make_particle("Sound", newpos.to_pixel())
+			G.make_particle("Sound", newpos.position)
 	if delay == 0:
 		var col = n_collider.get_collider(dat.g("faction", -1))
 		if col != null:
@@ -151,7 +144,7 @@ func set_animation(p, spd=0):
 
 func roll_skill(type, mode=0):
 	var data
-	for skill in dat.g("actives", []) + ["wait"]:
+	for skill in dat.g("skills", []) + ["wait"]:
 		data = G.data.skill_data.get(skill)
 		if data != null and data.target == type:
 			if R.r_percent(data.chance):
@@ -176,7 +169,7 @@ func hit(_type, dmg, _hitter):
 		if _hitter != null and controller != null:
 			controller.on_hit(_hitter)
 		if pos.light < 0 and R.b():
-			G.display_damage(pos.to_pixel(), "MISS", Color.darkgray)
+			G.display_damage(pos.position, "MISS", Color.darkgray)
 			return
 		if _type != "true":
 			var used = roll_skill("onhit", 3)
@@ -193,9 +186,9 @@ func hit(_type, dmg, _hitter):
 		set_animation("hit", 2)
 		buffs.on_interrupt("interrupt")
 		show_healthbar()
-		G.make_particle("Blood", pos.to_pixel(), {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
+		G.make_particle("Blood", pos.position, {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
 		var health_percent = get_health()
-		G.display_damage(pos.to_pixel(), round(dmg), Color(1,health_percent,0))
+		G.display_damage(pos.position, round(dmg), Color(1,health_percent,0))
 		flash(0, (1 - health_percent)*.3 + .1)
 		if health_percent <= 0:
 			is_dead = true
@@ -208,13 +201,15 @@ func hit(_type, dmg, _hitter):
 		dat.add("damage", dmg, 0, dat.g("vitality"))
 		show_healthbar()
 		flash(1, dmg * -.2)
-		G.display_damage(pos.to_pixel(), round(dmg), Color.green)
+		G.display_damage(pos.position, round(dmg), Color.green)
 
 func on_turn():
 	if is_dead:
 		die()
 	else:
-		update_dats()
+		if dirty_dat:
+			update_dat()
+			dirty_dat = false
 		if delay == 0:
 			if controller != null:
 				controller.on_turn()
@@ -239,6 +234,7 @@ func _process(delta):
 		flash_state[0] -= delta
 
 func flash(c, dur):
+	dur = max(.1, dur)
 	flash_state = [dur, dur, 0, 0]
 	flash_state[2 + c] = 1
 

@@ -3,6 +3,7 @@ extends "res://objects/controller.gd"
 const Step = preload("res://view/Step.tscn")
 
 onready var n_camera = $Camera
+onready var n_cursor = $Cursor
 onready var n_steps = $Steps
 
 var last_pos
@@ -11,25 +12,24 @@ var p_name: String
 var auto_attack = true
 var aiming = -1
 var view_dirty = false
+var on_point
 
-func update_dat(p):
-	.update_dat(p)
-	if p == "":
-		n_camera.darken()
-		n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
-		n_camera.update(unit.pos, last_pos)
-		var bodytype_list = G.data.get_json_data("bodytypes")
-		var bodyparts = bodytype_list.get(unit.dat.g("type"))
-		G.ui.menu.update_equipables(bodyparts)
-		G.ui.menu.update_inventory()
-		pathing.can_open = false
-		pathing.smash_to = 0
-		pathing.iterations = 32
-		pathing.pathing_times = 0
+func update_dat():
+	.update_dat()
+	n_camera.darken()
+	n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
+	n_camera.update(unit.pos, last_pos)
+	var bodytype_list = G.data.get_json_data("bodytypes")
+	var bodyparts = bodytype_list.get(unit.dat.g("type"))
+	G.ui.menu.update_equipables(bodyparts)
+	G.ui.menu.update_inventory()
+	pathing.can_open = false
+	pathing.smash_to = 0
+	pathing.iterations = 32
+	pathing.pathing_times = 0
 
 func on_assign():
 	.on_assign()
-	unit.dat.a("faction", 1)
 	last_pos = unit.pos
 	n_camera.update(last_pos, unit.pos)
 
@@ -43,7 +43,10 @@ func on_kill(_victim):
 				G.vars.learnable.append(i)
 
 func _on_input(event: InputEvent):
-	if event is InputEventMouseButton:
+	if event is InputEventMouseMotion:
+		var mouse_pos = get_cursor_position(event.global_position)
+		n_cursor.position = G.pos_to_pixel(G.pixel_to_pos(mouse_pos))
+	elif event is InputEventMouseButton:
 		var mouse_pos = get_cursor_position(event.global_position)
 		if event.pressed:
 			if event.button_index == BUTTON_WHEEL_UP:
@@ -65,7 +68,11 @@ func _on_input(event: InputEvent):
 				var tile = G.world.get_tile(mousetarget.x, mousetarget.y)
 				if tile:
 					if aiming != -1:
-						tasks = [["ability", aiming, mouse_pos]]
+						if aiming == -2 and on_point != null:
+							tasks = [["command", on_point[0], on_point[1], tile]]
+							on_point = null
+						else:
+							tasks = [["ability", aiming, mouse_pos]]
 						stop_aim()
 					elif !tile.items.empty():
 						var item = tile.get_item_by_type("item")
@@ -95,6 +102,10 @@ func on_turn():
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
 	G.ui.update_hud()
+
+func make_money(p):
+	G.vars.money += p
+	G.ui.n_money.display(p)
 
 func _physics_process(_delta):
 	n_camera.position = unit.n_collider.global_position
@@ -177,10 +188,12 @@ func move_to(tile, reach=0, _path=true):
 		path_to(tile, reach)
 
 func aim_ability(idx):
+	n_cursor.show()
 	Input.set_default_cursor_shape(Input.CURSOR_CROSS)
 	aiming = idx
 
 func stop_aim():
+	n_cursor.hide()
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	aiming = -1
 	G.ui.update_hud()
@@ -217,3 +230,4 @@ func load_data(_data):
 		player_unit.load_item_data(_data)
 		player_unit.set_seed()
 	player_unit.buffs.from_data(_data.unit_buff)
+	make_money(0)

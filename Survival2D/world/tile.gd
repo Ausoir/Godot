@@ -3,6 +3,7 @@ const COL_BITS = [1,2,4,8]
 var item_type = "tile"
 var x
 var y
+var position
 var world
 var terrain
 var items = []
@@ -14,7 +15,7 @@ var height: int
 var orig_light: int
 var light: int
 var light_source = []
-var slow = 0
+var slow = 1
 var shade = -1
 var sight_frame = -1
 
@@ -22,9 +23,7 @@ func _init(wld, px, py):
 	world = wld
 	x = px
 	y = py
-
-func to_pixel():
-	return Vector2(x * G.W + G.HW, y * G.H + G.HH)
+	position = Vector2(x * G.W + G.HW, y * G.H + G.HH)
 
 func to_vector():
 	return Vector2(x, y)
@@ -55,7 +54,7 @@ func set_terrain(val):
 		else:
 			orig_light = 0
 		light = orig_light
-		slow = data.get("slow", 0)
+		slow = data.get("slow", 1)
 		var tile_image = world.tileset.find_tile_by_name(val)
 		world.tilemap.set_cell(x, y, tile_image)
 		dat = data
@@ -91,9 +90,9 @@ func update_tile():
 	var t = height
 	col = dat.col
 	height = dat.height
-	slow = dat.get("slow", 0)
+	slow = dat.get("slow", 1)
 	for item in items:
-		slow += item.dat.g("slow", 0)
+		slow = max(0, slow - item.dat.g("slow", 0))
 		col = col | item.col
 		var item_height = item.dat.g("height")
 		if item_height != null:
@@ -267,6 +266,7 @@ func get_beam_to(dest, col_mask, distance=-1):
 	var diffy = dest.y - y
 	var step = max(abs(diffx), abs(diffy))
 	var current = self
+	var prev = self
 	while current != dest and distance != 0:
 		distance -= 1
 		var tx = round(current.x + (diffx/step))
@@ -274,7 +274,8 @@ func get_beam_to(dest, col_mask, distance=-1):
 		if world.is_inbound(tx, ty):
 			current = world.tiles[ty][tx]
 			if current.is_col(col_mask):
-				return current
+				break
 		else:
-			return current
-	return current
+			break
+		prev = current
+	return [prev, current]

@@ -30,9 +30,6 @@ class pathnode:
 	func set_h(destination):
 		h = (pos - destination).length_squared()
 	
-	func to_pixel():
-		return Vector2(pos.x * G.W + G.HW, pos.y * G.H + G.HH)
-
 func _init(wld):
 	world = wld
 	result = []

@@ -8,6 +8,7 @@ var part = "none"
 var allow_type = SLOT_FULL
 var tile
 var item
+var is_hovering_use = false
 
 func make_mode(ppart, p):
 	var txt = ""
@@ -43,6 +44,8 @@ func assign(p):
 		txt = item.item_name.capitalize()
 	else:
 		txt = get_part_text() + item.item_name.capitalize()
+	if item.dat.g("onuse") != null:
+		txt += "[right][url=0]USE[/url][/right]"
 	set_bbcode(txt)
 	return r
 
@@ -64,7 +67,7 @@ func _on_mouse_exited():
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
-		if event.pressed:
+		if !event.pressed and !is_hovering_use:
 			if event.button_index == BUTTON_LEFT:
 				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "item":
 					place_to(G.ui.menu.drag_item)
@@ -119,3 +122,13 @@ func place_to(pitem):
 	if !swap:
 		G.ui.menu.set_drag_item(null)
 	return true
+
+func _on_meta_clicked(_meta):
+	G.you.tasks = [["command", item.dat.g("onuse"), item, null]]
+	G.ui.clear()
+
+func _on_meta_hover_ended(_meta):
+	is_hovering_use = false
+
+func _on_meta_hover_started(_meta):
+	is_hovering_use = true

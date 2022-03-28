@@ -11,11 +11,7 @@ func _on_gui_input(event):
 					place_to(G.ui.menu.drag_item)
 
 func place_to(item):
-	if active:
-		if !item.active:
-			G.you.unit.dat.activate_skill(item.index)
-	else:
-		if item.active:
-			G.you.unit.dat.deactivate_skill(item.index)
+	var t = G.you.unit.dat
+	t.swap_skills("skills", item.index, t.g("skills",[]).size())
 	G.ui.menu.set_drag_item(null)
 	G.ui.menu.update_skills()

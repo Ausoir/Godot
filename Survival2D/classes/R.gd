@@ -10,10 +10,16 @@ func set_seed(_seed=-1):
 	seed(init_seed)
 
 func ir(_from, _to):
-	return randi() % int(_to - _from + 1) + _from
+	var diff = int(_to - _from + 1)
+	if diff == 0:
+		return _from
+	return randi() % diff + _from
 
 func fr(_from, _to):
-	return randf() * (_to - _from) + _from
+	var diff = _to - _from
+	if diff == 0:
+		return _from
+	return randf() * diff + _from
 
 func vfr(diff):
 	return Vector2(fr(-diff, diff), fr(-diff, diff))

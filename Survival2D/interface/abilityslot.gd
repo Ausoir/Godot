@@ -10,6 +10,7 @@ var mode = MODE_NORMAL
 var skill_index: int
 var stylebox = get_stylebox("panel", "")
 var skill
+var skill_data
 var skill_type
 var skill_description
 
@@ -33,7 +34,7 @@ func set_mode(p):
 
 func assign(p):
 	skill = p
-	var skill_data = G.data.skill_data.get(p)
+	skill_data = G.data.skill_data.get(p)
 	if skill_data == null:
 		return false
 	skill_description = skill_data.get("desc")
@@ -69,7 +70,7 @@ func _update_cooldown(cd):
 		set_modulate(Color.white)
 
 func _on_mouse_entered():
-	G.ui.describe("text", skill, skill_description)
+	G.ui.describe("ability", skill, skill_data)
 
 func _on_mouse_exited():
 	G.ui.description.hide()

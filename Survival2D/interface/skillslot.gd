@@ -1,7 +1,6 @@
 extends RichTextLabel
 
 var index = 0
-var active = false
 var is_item = false
 var skill
 var skill_data
@@ -22,7 +21,7 @@ func assign(p, idx):
 
 func unassign():
 	if skill != null:
-		var r = {"drag":skill.capitalize(),"type":"skill", "item":skill, "index":index, "active":active}
+		var r = {"drag":skill.capitalize(),"type":"skill", "item":skill, "index":index}
 		queue_free()
 		get_parent().remove_child(self)
 		return r
@@ -42,18 +41,7 @@ func _on_gui_input(event):
 					place_to(G.ui.menu.drag_item)
 				else:
 					take_from()
-			elif event.button_index == BUTTON_RIGHT:
-				on_quick_action()
 		G.ui.description.hide()
-
-func on_quick_action():
-	if skill != null:
-		var t = skill
-		take_from()
-		for child in G.ui.menu.tab_skill_inactive.get_children():
-			if child.index == -1:
-				child.place_to(t)
-				return
 
 func take_from():
 	if skill != null:
@@ -62,16 +50,6 @@ func take_from():
 			G.ui.menu.set_drag_item(r)
 
 func place_to(item):
-	if active == item.active:
-		if active:
-			G.you.unit.dat.swap_skills("actives", item.index, index)
-		else:
-			G.you.unit.dat.swap_skills("skills", item.index, index)
-	elif active:
-		G.you.unit.dat.deactivate_skill(index)
-		G.you.unit.dat.activate_skill(item.index)
-	else:
-		G.you.unit.dat.deactivate_skill(item.index)
-		G.you.unit.dat.activate_skill(index)
+	G.you.unit.dat.swap_skills("skills", item.index, index)
 	G.ui.menu.set_drag_item(null)
 	G.ui.menu.update_skills()

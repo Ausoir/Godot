@@ -9,30 +9,33 @@ var host
 var lifetime = 2
 
 var onattack
+var onmiss
 
 func init(phost, img, from, to, time, spd, variation):
 	host = phost
 	get_node("Sprite").texture = img
 	G.world.others.add_child(self)
 	position = from + R.vfr(variation[0])
-	dest = to + R.vfr(variation[1])
+	dest = to
 	speed = spd
 	lifetime = time
 	var space_state = get_world_2d().direct_space_state
 	var result = space_state.intersect_ray(position, to, [host.n_collider], collision_mask)
 	if !result.empty():
 		dest = result.position
-	vel = (dest - from).normalized() * speed
-	rotate(atan2(vel.y, vel.x))
+	var rot = atan2(dest.y - from.y, dest.x - from.x) + R.fr(-variation[1], variation[1])
+	rotate(rot)
+	vel.x = cos(rot) * speed
+	vel.y = sin(rot) * speed
 	add_collision_exception_with(host.n_collider)
 
 func _physics_process(_delta):
 	var c = move_and_collide(vel)
 	if c != null:
 		on_collide(c.collider)
-	elif (position - dest).length_squared() <= speed:
-		remove()
 	elif lifetime < 0:
+		if onmiss != null:
+			G.cmds(onmiss, host, position)
 		remove()
 	else:
 		lifetime -= _delta
@@ -41,6 +44,10 @@ func on_collide(body):
 	if onattack != null:
 		if body is PhysicsBody2D:
 			G.cmds(onattack, host, body.get_parent())
+			remove()
+			return
+	if onmiss != null:
+		G.cmds(onmiss, host, position)
 	remove()
 
 func remove():

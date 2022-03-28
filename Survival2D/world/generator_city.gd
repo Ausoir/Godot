@@ -11,6 +11,11 @@ func generate():
 		for y in range(height):
 			if y == height-1:
 				output[y][x] = ['water']
+			elif x == width-1:
+				if y % 9 == 0:
+					output[y][x] = ['dirt', ["late spawner", 100]]
+				else:
+					output[y][x] = ['dirt']
 			else:
 				var value = base[y][x]
 				if value > 0.7:
