@@ -1,10 +1,10 @@
-var host
 var tgt
 var ignore = false
 var stop = false
+var onstop = null
 var args
 
-func replace_dats(arg):
+func replace_dats(host, arg):
 	var last = arg.find("}")
 	if last != -1:
 		var r = ""
@@ -37,11 +37,11 @@ func replace_dats(arg):
 		return r
 	return arg
 
-func replace_vars(_args):
+func replace_vars(host, _args):
 	var r = []
 	for arg in _args:
 		if arg is Array:
-			arg = replace_vars(arg)
+			arg = replace_vars(host, arg)
 		elif arg is String:
 			var s = len(arg)
 			if s >= 2:
@@ -75,12 +75,12 @@ func replace_vars(_args):
 						r.append(unit)
 					continue
 				else:
-					arg = replace_dats(arg)
+					arg = replace_dats(host, arg)
 		r.append(arg)
 	return r
 
-func run(_args):
-	args = replace_vars(_args)
+func run(host, _args):
+	args = replace_vars(host, _args)
 	var command = args[0]
 	if command[0] == "=":
 		if command[1] == "t":
@@ -116,7 +116,9 @@ func run(_args):
 			ignore = !ignore
 	elif command[0] == "^":
 		if args[1] in G.vars:
-			if command[1] == "=":
+			if command == "^":
+				return G.vars[args[1]]
+			elif command[1] == "=":
 				G.vars[args[1]] = args[2]
 			elif command[1] == "+":
 				G.vars[args[1]] += args[2]
@@ -126,6 +128,8 @@ func run(_args):
 				G.vars[args[1]].erase(args[2])
 	elif command == "run":
 		return G.cmds(args[1], tgt)
+	elif command == "onstop":
+		onstop = args[1]
 	elif command == "make":
 		tgt = G.factory.make_group(args[1], args[2])
 		if tgt == null:
@@ -149,6 +153,11 @@ func run(_args):
 				G.display_damage(args[2], args[3], args[4], args[5], args[6], args[7])
 			else:
 				G.display_damage(args[2], args[3], args[4])
+		elif args[1] == "$":
+			if args[2] < 0:
+				G.display_damage("+$"+str(args[2]), args[3], "#D33", 1, 100, 50)
+			else:
+				G.display_damage("-$"+str(-args[2]), args[3], "#3D3", 1, 100, 50)
 		elif args[1] == "particle":
 			G.make_particle(args[2], args[3])
 	elif command == "sfx":
@@ -172,9 +181,7 @@ func run(_args):
 	elif command == "cast":
 		G.influence.do(args[1], args[2], args[3])
 	elif command == "projectile":
-		var r = G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4])
-		r.onattack = args[5]
-		r.onmiss = args[6]
+		var r = G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4], args[5], args[6])
 	elif command == "loot":
 		G.ui.menu.search_inventory(args[1])
 	else:
@@ -197,24 +204,27 @@ func run(_args):
 					var use = subject.dat.add("uses", -1)
 					if use == 0:
 						subject.remove()
+						G.msg(subject.item_name + " was used up.")
 					elif use < 0:
 						subject.dat.add("uses", 1)
 						stop = true
 			else:
 				var type = subject.get("item_type")
 				if type == "tile":
-					run_tile(command, subject)
+					run_tile(command, host, subject)
 				elif is_instance_valid(subject):
-					run_item(command, subject)
+					run_item(command, host, subject)
 	return tgt
 
-func run_tile(command, subject):
+func run_tile(command, _host, subject):
 	if command == "col":
 		stop = subject.is_col(int(args[2]))
+	elif command == "terrain":
+		stop = !(subject.terrain in args[2])
 	elif command == "smash":
 		subject.smash(args[2])
 
-func run_item(command, subject):
+func run_item(command, host, subject):
 	if command == "tasks":
 		subject.tasks.append(args[2])
 	elif command == "possess":

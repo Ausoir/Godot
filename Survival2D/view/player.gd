@@ -37,7 +37,7 @@ func on_kill(_victim):
 	var money = R.ir(0, _victim.dat.g("value", 0))
 	if money > 0:
 		G.vars.money += money
-		G.display_damage(unit.position, "+$"+str(money), Color.gold, 1, 250)
+		G.display_damage("+$"+str(money), unit.position, Color.gold, 1, 250)
 		for i in _victim.dat.g("actives", []):
 			if R.b() and !(i in G.vars.learnable):
 				G.vars.learnable.append(i)
@@ -58,10 +58,13 @@ func _on_input(event: InputEvent):
 			elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
 				pass
 			elif Input.is_action_just_pressed("move"):
-				var mousetarget = G.pixel_to_pos(mouse_pos)
-				var t = G.world.get_tile(mousetarget.x, mousetarget.y)
-				if t != null:
-					move_to(t)
+				if aiming != -1:
+					stop_aim()
+				else:
+					var mousetarget = G.pixel_to_pos(mouse_pos)
+					var t = G.world.get_tile(mousetarget.x, mousetarget.y)
+					if t != null:
+						move_to(t)
 			elif Input.is_action_just_pressed("use"):
 				tasks.clear()
 				var mousetarget = G.pixel_to_pos(mouse_pos)
@@ -71,9 +74,12 @@ func _on_input(event: InputEvent):
 						if aiming == -2 and on_point != null:
 							tasks = [["command", on_point[0], on_point[1], tile]]
 							on_point = null
+							stop_aim()
 						else:
 							tasks = [["ability", aiming, mouse_pos]]
-						stop_aim()
+							var abilities = unit.dat.g("abilities", [])
+							if abilities.size() > aiming:
+								G.data.skill_data.get(abilities[aiming])
 					elif !tile.items.empty():
 						var item = tile.get_item_by_type("item")
 						if item != null:
@@ -130,9 +136,7 @@ func _physics_process(_delta):
 		elif Input.is_action_pressed("move_left"):
 			dir = 6
 		if dir != -1:
-			tasks.clear()
-			var v = G.DIRS[dir]
-			unit.slide(Vector2(v[0], v[1]))
+			tasks = [["move", dir]]
 		elif unit.n_collider.vel != Vector2.ZERO and tasks.empty():
 			unit.set_animation("idle")
 

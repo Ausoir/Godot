@@ -3,7 +3,7 @@ extends "res://world/generator.gd"
 var mob_spawns = []
 
 func generate():
-	.create(105, 40)
+	.create(80, 40)
 	G.world.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)

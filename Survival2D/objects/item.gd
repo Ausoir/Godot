@@ -19,7 +19,12 @@ var hp = Vector2()
 var host
 
 func _ready():
-	update_dat()
+	on_make()
+
+func on_make():
+	var onmake = dat.g("onmake")
+	if onmake != null:
+		G.cmds(onmake, self)
 
 func get_display_name():
 	if display_name == null:
@@ -27,10 +32,14 @@ func get_display_name():
 	return display_name
 
 func place(p):
+	update_dat()
 	position = p.position
 	pos = p
-	if col & 1 == 0 and pos.visible and pos.is_col(1):
-		G.you.view_dirty = true
+	if pos.visible:
+		if col & 1 == 0 and pos.is_col(1):
+			G.you.view_dirty = true
+		elif col & 1 > 0 and !pos.is_col(1):
+			G.you.view_dirty = true
 	p.add_item(self)
 
 func remove():
@@ -39,8 +48,11 @@ func remove():
 	G.world.turn.remove(self)
 	if pos != null: #not an equipment
 		pos.remove_item(self)
-		if col & 1 > 0 and pos.visible and !pos.is_col(1):
-			G.you.view_dirty = true
+		if pos.visible:
+			if col & 1 == 0 and pos.is_col(1):
+				G.you.view_dirty = true
+			elif col & 1 > 0 and !pos.is_col(1):
+				G.you.view_dirty = true
 	queue_free()
 
 func die():
@@ -52,7 +64,7 @@ func die():
 func hit(_type, dmg, _hitter):
 	if dmg > dat.g("armor", 99):
 		G.make_particle("Hit", pos.position)
-		G.display_damage(pos.position, round(dmg))
+		G.display_damage(round(dmg), pos.position)
 		die()
 		return true
 

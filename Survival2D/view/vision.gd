@@ -53,7 +53,7 @@ func stop_process():
 	processing_frame = -2
 
 func set_sight(p, p_col=1):
-	sight_range = p * 2
+	sight_range = p
 	sight_bits = p_col
 
 func update(last_pos, pos):
@@ -98,3 +98,6 @@ func cast_sight(camera, row, start, end, flips, depth):
 							new_start = end_slope
 		if blocked:
 			break
+
+func is_in_range(pos):
+	return pos.distance_to(param_pos) <= sight_range

@@ -34,16 +34,74 @@
 		"slow": 0.5,
 		"armor": 8,
 		"col": 2,
+		"turn": 16,
+		"onturn": [["^+","time",1],["^","time"],["custom","time",null]],
 		"onuse": [["menu", "dialog", "Bulletin"]],
 	},
 
-	"builder (dispenser)": {
-		"img": "tiles/bandage",
-		"mat": "cloth",
-		"desc": "Use to place a dispenser which will generate money over time.",
+	"builder (solar panel)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a solar panel.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["*use","$h"],["point",[["make","loading","$$t"],["*=","$$t","spawn","dispenser"]],"$h"]]
+		"onuse": [["point",[["onstop","This building must be placed on asphalt."],["terrain","$$t",["asphalt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","solar panel"]],"$h"]]
+	},
+	"builder (dispenser)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a dispenser which will generate money over time.",
+		"uses": 1,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","dispenser"]],"$h"]]
+	},
+	"builder (fence)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a chainlink fence.",
+		"uses": 3,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","chainfence"]],"$h"]]
+	},
+	"builder (door)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a chainlink door.",
+		"uses": 3,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","chain door"]],"$h"]]
+	},
+	"builder (sandbag)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a sandbag wall.",
+		"uses": 1,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","sandbag"]],"$h"]]
+	},
+	"builder (lathe)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a lathe.",
+		"uses": 1,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This building must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","lathe"]],"$h"]]
+	},
+	"builder (turret)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to construct a turret.",
+		"uses": 4,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This construct must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","turret"]],"$h"]]
+	},
+	"radio (resident)": {
+		"img": "tiles/machine1",
+		"mat": "metal",
+		"desc": "Use to summon a resident who will generate money over time.",
+		"uses": 4,
+		"weight": 0,
+		"onuse": [["point",[["onstop","Invalid position."],["col","$$t",15],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","resident"]],"$h"]]
 	},
 	"medikit": {
 		"img": "tiles/bandage",
@@ -76,6 +134,14 @@
 		"weight": 0,
 		"desc": "A long lasting source of food. Valuable."
 	},
+	"eggs": {
+		"img": "tiles/eggs",
+		"mat": "flesh",
+		"weight": 1,
+		"desc": "Use to create a colony of friendly ants.",
+		"turn": 64,
+		"onturn": [["make","g_ants","$hp"]],
+	},
 	"stock pot": {
 		"img": "tiles/i_stock_pot",
 		"mat": "metal",
@@ -104,7 +170,7 @@
 	"biggray gun": {
 		"img": "loot",
 		"sprite": "overlay/w_biggray_gun",
-		"abilities": ["shoot 3"],
+		"abilities": ["shoot 4"],
 		"value": 11,
 		"weight": 3,
 		"size": 2,
@@ -301,18 +367,19 @@
 		"armor": 1,
 		"weight": 12,
 		"col": 12,
-		"turn": 32,
-		"onturn": [["=t","{0~2}"],["money","$t"],["gfx","label","$hv","+${t}","#C96",1,100,50]],
+		"turn": 64,
+		"onturn": [["=t","{-4~8}"],["money","$t"],["gfx","$","{t}","$hv"]],
 		"desc": "Continuously generates resources.",
 	},
 	"lathe": {
 		"img": "tiles/machine3",
 		"mat": "metal",
 		"armor": 1,
-		"weight": 20,
+		"weight": 6,
 		"col": 12,
 		"turn": 128,
-		"onturn": [["=t","{-20~60}"],["money","$t"],["gfx","label","$hv","+${t}","#C96"]],
+		"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"]],
+		"onuse": [["menu", "dialog", "Lathe"]],
 		"desc": "Allows you to create items from resources.",
 	},
 	"mannequin": {
@@ -505,11 +572,30 @@
 	"metal open door": {
 		"img": "tiles/metal_door_open",
 		"mat": "metal",
-		"col": 0,
+		"col": 16,
 		"openable": true,
 		"armor": 10,
 		"onuse": [["make", "metal open door", "$hp"], ["remove", "$h"]],
 		"desc": "A wooden door."
+	},
+	"chain door": {
+		"img": "tiles/chaindoor",
+		"mat": "metal",
+		"col": 15,
+		"openable": true,
+		"height": 1,
+		"armor": 3,
+		"onuse": [["make", "open chain door", "$hp"], ["remove", "$h"]],
+		"desc": "A chainlink door."
+	},
+	"open chain door": {
+		"img": "tiles/chaindoor_open",
+		"mat": "metal",
+		"col": 16,
+		"height": 1,
+		"armor": 2,
+		"onuse": [["make", "chain door", "$hp"], ["remove", "$h"]],
+		"desc": "An open chainlink door."
 	},
 	"door": {
 		"img": "tiles/door",
@@ -648,7 +734,7 @@
 		"weight": 5,
 		"armor": 6,
 		"col": 7,
-		"onuse": [["make", "g_wardrobe", "$hp"],["loot", "$hp"],["*-","$h","onuse"]],
+		"onuse": [["make", "g_dresser", "$hp"],["loot", "$hp"],["*-","$h","onuse"]],
 	},
 	"punching bag": {
 		"img": "tiles/punch_bag",

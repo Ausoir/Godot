@@ -13,7 +13,7 @@ const animation_map = {
 	"kick": 6,
 	"wait": 7,
 }
-const SPEED = 8
+const SPEED = 10
 
 onready var n_sprites = $Sprites
 onready var n_animation = $Animation
@@ -34,6 +34,7 @@ var flash_state = [0, 0, 0, 0]
 func _ready():
 	n_collider = get_node("Body")
 	n_collider.parent = self
+	on_make()
 	for i in dat.g("buffs", []):
 		G.influence.do(i, self)
 	if !dat.g("controlled", false):
@@ -121,8 +122,8 @@ func on_slide():
 		pos.remove_item(self)
 		newpos.add_item(self)
 		on_relocate()
-		if !newpos.visible and newpos.sight_frame <= G.you.n_camera.sight_frame - 1:
-			G.make_particle("Sound", newpos.position)
+		if !newpos.visible and G.you.n_camera.is_in_range(newpos):
+			G.make_particle("Sound", newpos.position, null, true)
 	if delay == 0:
 		var col = n_collider.get_collider(dat.g("faction", -1))
 		if col != null:
@@ -169,7 +170,7 @@ func hit(_type, dmg, _hitter):
 		if _hitter != null and controller != null:
 			controller.on_hit(_hitter)
 		if pos.light < 0 and R.b():
-			G.display_damage(pos.position, "MISS", Color.darkgray)
+			G.display_damage("MISS", pos.position, Color.darkgray)
 			return
 		if _type != "true":
 			var used = roll_skill("onhit", 3)
@@ -188,7 +189,7 @@ func hit(_type, dmg, _hitter):
 		show_healthbar()
 		G.make_particle("Blood", pos.position, {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
 		var health_percent = get_health()
-		G.display_damage(pos.position, round(dmg), Color(1,health_percent,0))
+		G.display_damage(round(dmg), pos.position, Color(1,health_percent,0))
 		flash(0, (1 - health_percent)*.3 + .1)
 		if health_percent <= 0:
 			is_dead = true
@@ -201,7 +202,7 @@ func hit(_type, dmg, _hitter):
 		dat.add("damage", dmg, 0, dat.g("vitality"))
 		show_healthbar()
 		flash(1, dmg * -.2)
-		G.display_damage(pos.position, round(dmg), Color.green)
+		G.display_damage(round(dmg), pos.position, Color.green)
 
 func on_turn():
 	if is_dead:
@@ -223,6 +224,7 @@ func on_turn():
 				cooldowns.erase(i)
 			else:
 				cooldowns[i] -= 1
+		.on_turn()
 
 func _process(delta):
 	if flash_state[0] > 0:

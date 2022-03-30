@@ -5,17 +5,17 @@
 		"dat": {"controlled": true, "faction": 1},
 	},
 	"captain": {
-		"unit": "civilian",
+		"unit": "human",
 		"equip": [["scalemail", 100], ["cutlass", 100]],
 		"dat": {"faction": 1},
 	},
-	"civilian": {
-		"unit": "civilian",
+	"resident": {
+		"unit": "bum",
 		"equip": [["casual", 90, "/", ["gi", 100]]],
 		"dat": {"goal": "wander", "faction": 1}
 	},
 	"librarian": {
-		"unit": "civilian",
+		"unit": "human",
 		"equip": [["gi", 100]],
 		"dat": {"onuse": [["menu", "dialog", "Librarian"]], "faction": 1}
 	},
@@ -35,17 +35,17 @@
 		"dat": {"faction": 1},
 	},
 	"scavenger": {
-		"unit": "scavenger",
+		"unit": "human",
 		"equip": [["leather armor", 90, "/", ["scalemail", 100]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["cutlass",100]]]]]],
 		"dat": {"faction": 1},
 	},
 	"looter": {
-		"unit": "scavenger",
+		"unit": "human",
 		"equip": [["looter coat",20,"/",["gi", 100]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["cutlass",100]]]]]],
 		"dat": {"faction": 1},
 	},
 	"guard": {
-		"unit": "scavenger",
+		"unit": "human",
 		"equip": [["scalemail",100],["biggray gun",100]],
 		"dat": {"perception": 6, "move speed": 0, "faction": 1}
 	},

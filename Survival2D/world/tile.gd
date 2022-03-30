@@ -74,6 +74,8 @@ func add_item(item):
 	item.set_z_index(y * 2 - 4000)
 	item.pos = self
 	update_tile()
+	if !visible:
+		item.hide()
 
 func remove_item(item):
 	if item.get_parent() == world.items:

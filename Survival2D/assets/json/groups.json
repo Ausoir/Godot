@@ -1,6 +1,6 @@
 {
 	"g_resident": {
-		"civilian": [90, "/", 1, 1],
+		"resident": [90, "/", 1, 1],
 		"scavenger": [50, "/", 1, 1],
 	},
 	"g_urban": {
@@ -15,7 +15,7 @@
 	"g_invade": {
 		"rot zombie": [25, "/", 1, 1],
 		"burnt zombie": [25, "/", 1, 1],
-		"zombie": [50, "/", 1, 1],
+		"prisoner zombie": [50, "/", 1, 1],
 		"zombie dog": [80, "/", 1, 1],
 		"zombie hunter": [100, "/", 1, 1],
 	},
@@ -31,10 +31,10 @@
 		"manzard": [5, "+", 1, 1],
 	},
 	"g_conscript": {
-		"scavenger": [15, "+", 2, 4],
-		"looter": [15, "+", 2, 4],
-		"guard": [15, "+", 5, 10],
-		"agent": [15, "+", 5, 10],
+		"scavenger": [15, "+", 20, 40],
+		"looter": [15, "+", 20, 40],
+		"guard": [15, "+", 50, 100],
+		"agent": [15, "+", 50, 100],
 	},
 
 	"g_dresser": {
@@ -47,15 +47,15 @@
 		"suit": [9, "+", 1, 1],
 		"suspenders": [9, "+", 1, 1],
 		"blob vial": [9, "+", 1, 1],
-	},
-	"g_wardrobe": {
 		"spear": [9, "+", 1, 1],
-		"backpack": [9, "+", 1, 1],
-		"gi": [9, "+", 1, 1],
-		"casual": [9, "+", 1, 1],
-		"hood": [9, "+", 1, 1],
-		"suit": [9, "+", 1, 1],
-		"suspenders": [9, "+", 1, 1],
+		"rucksack": [9, "+", 1, 1],
+	},
+	"g_lathe": {
+		"builder (solar panel)": [25, "+", 200, 400],
+		"builder (dispenser)": [25, "+", 100, 200],
+		"builder (fence)": [25, "+", 5, 10],
+		"builder (sandbag)": [25, "+", 10, 20],
+		"builder (lathe)": [25, "+", 10, 20],
 	},
 	"g_trade": {
 		"medikit": [10, "+", 1, 1],

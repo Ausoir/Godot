@@ -130,38 +130,53 @@ func get_direction_between(from, to):
 		dir = G.DOWNLEFT
 	return dir
 
-func make_particle(arg, pos, args=null):
-	var r = G.data.get_particle(arg)
-	r.position = pos
-	r.add()
-	if args != null:
-		r.run_details(args)
-	return r
+func is_vec_in_range(pos):
+	var dist = pos - you.n_camera.position
+	var length = max(abs(dist.x), abs(dist.y))
+	return length/H < you.n_camera.sight_range
 
-func display_damage(pos, dmg, color=Color.white, _scale=1, _speed=800, lifetime=100):
-	var r = Damage_Label.instance()
-	r.lifetime = lifetime
-	r.rect_position = pos
-	r.rect_position.y -= G.HH
-	G.world.others.add_child(r)
-	r.set_damage(str(dmg), color, _scale, _speed)
+func is_vec_visible(p):
+	var pos = pixel_to_pos(p)
+	var tile = world.get_tile(pos.x, pos.y)
+	return tile != null and tile.visible
+
+func make_particle(arg, pos, args=null, force=false):
+	if force or is_vec_visible(pos):
+		var r = G.data.get_particle(arg)
+		r.position = pos
+		r.add()
+		if args != null:
+			r.run_details(args)
+		return r
+
+func display_damage(val, pos, color=Color.white, _scale=1, _speed=800, lifetime=100):
+	if is_vec_visible(pos):
+		var r = Damage_Label.instance()
+		r.lifetime = lifetime
+		r.rect_position = pos
+		r.rect_position.y -= G.HH
+		G.world.others.add_child(r)
+		r.set_damage(str(val), color, _scale, _speed)
 
 func cmds(args, host=null, ptgt=null):
 	if ptgt != null:
 		command.tgt = ptgt
-	command.host = host
 	for arg in args:
 		if command.stop:
+			if command.onstop != null:
+				G.msg(command.onstop)
 			command.stop = false
+			command.onstop = null
 			return command.tgt
 		elif command.ignore:
 			command.ignore = false
 		else:
-			rpc("cmd", arg)
+			rpc("cmd", host, arg)
+	command.onstop = null
 	return command.tgt
 
-puppetsync func cmd(arg):
-	command.tgt = command.run(arg)
+puppetsync func cmd(arg, host=null):
+	command.tgt = command.run(arg, host)
 
 func script(p, param):
 	custom.run(p, param)

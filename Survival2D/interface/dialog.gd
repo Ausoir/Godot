@@ -82,25 +82,26 @@ func _on_meta_hover_ended(_meta):
 func run_script(script):
 	if !("opt" in page_data):
 		page_data["opt"] = []
-	R.set_seed(G.vars.seed + G.vars.time)
+	R.set_seed(G.vars.seed + int(G.vars.time/60))
 	if script[0] == "bulletin":
 		add_bulletin()
 	elif script[0] == "trade":
-		add_trade()
+		add_trade(page_data.get("type"))
 	elif script[0] == "assign":
 		add_assign()
 
-func add_trade():
+func add_trade(type):
 	G.ui.display(0)
 	var items = ""
 	var count = 0
-	var groups = G.data.get_group("g_trade")
+	var groups = G.data.get_group(type)
 	for group in groups:
 		var item_name = group[0]
-		items += "[url="+str(count)+"]> [i]Buy " + item_name + "[/i][/url]\n"
+		var price = group[1]
+		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
 		count += 1
 		var option = {"hover": ["item", item_name]}
-		option["cmd"] = [["buy",10],["give", "$pu", item_name],["menu","msg","Bought "+item_name+"."]]
+		option["cmd"] = [["money",-price],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
 		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 
@@ -114,7 +115,7 @@ func add_bulletin():
 		items = "You see a list of contracts.\n\n"
 		for group in groups:
 			var item_name = group[0]
-			var price = group[1] * 10
+			var price = group[1]
 			items += "[url="+str(count)+"]> [i]Hire " + item_name + " for $"+str(price)+"[/i][/url]\n"
 			count += 1
 			var option = {"hover": ["item", item_name]}

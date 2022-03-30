@@ -30,8 +30,15 @@
 		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
 	},
 	"Trader": {
-		"title": "Talk with Trader",
-		"true": "What do you need.\n\n",
+		"title": "Trade",
+		"true": "\"Do you need something?\"\n\n",
+		"type": "g_trade",
+		"script": ["trade"],
+	},
+	"Lathe": {
+		"title": "Use lathe",
+		"true": "You can produce various useful items using this machine.\n\n",
+		"type": "g_lathe",
 		"script": ["trade"],
 	},
 	"Bulletin": {

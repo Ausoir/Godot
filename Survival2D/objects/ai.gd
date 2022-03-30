@@ -44,11 +44,10 @@ func perceive():
 func search(faction, _dist):
 	var list = G.world.team[faction]
 	var r = []
-	var dist2 = _dist*2
 	for seen in list:
 		if is_instance_valid(seen) and seen != unit:
 			var dist = unit.pos.distance_to(seen.pos)
-			if dist <= dist2:
+			if dist <= _dist:
 				if seen.n_sprites.visible:
 					if unit.pos.get_beam_to(seen.pos, 1)[1] == seen.pos:
 						r.append([seen, dist])

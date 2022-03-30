@@ -209,6 +209,7 @@ func load_game():
 			G.travel(G.vars["forcemap"])
 		else:
 			G.travel(node_data.map)
+		G.ui.menu.display_time()
 		while save_game.get_position() < save_game.get_len():
 			node_data = parse_json(save_game.get_line())
 			if node_data.id == get_tree().get_network_unique_id():

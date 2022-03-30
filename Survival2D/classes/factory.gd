@@ -88,23 +88,20 @@ func make_item(arg, pos=null):
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = Properties.new(item_data)
-		var onmake = item_data.get("onmake")
-		if onmake != null:
-			G.cmds(onmake, r)
-		var onload = item_data.get("onload")
-		if onload != null:
-			G.world.onloads.append([r, onload])
 		if pos != null:
 			r.place(pos)
 		if r.dat.g("turn", 0) > 0:
 			G.world.turn.add(r)
 		return r
 
-func make_projectile(host, arg, pos, dest, time, spd, variation):
-	var r = Projectile.instance()
-	r.item_name = arg
-	r.init(host, G.data.get_image(arg), pos, dest, time, spd, variation)
-	return r
+func make_projectile(host, arg, pos, dest, time, spd, variation, onattack, onmiss):
+	if G.is_vec_visible(pos) or G.is_vec_visible(dest):
+		var r = Projectile.instance()
+		r.item_name = arg
+		r.init(host, G.data.get_image(arg), pos, dest, time, spd, variation)
+		r.onattack = onattack
+		r.onmiss = onmiss
+		return r
 
 func make_corpse(host, pos):
 	var r = G.data.get_particle("Corpse")

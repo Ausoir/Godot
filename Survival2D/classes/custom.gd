@@ -9,5 +9,7 @@ func run(p, _params):
 		if solars.size() == 1:
 			G.cmds([["attack","$p","$p","true",999]])
 			run("game over", {})
+	elif p == "time":
+		G.ui.menu.display_time()
 	elif p == "game over":
 		pass

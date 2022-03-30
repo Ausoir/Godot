@@ -56,6 +56,9 @@ func perform(task):
 					return false
 				return perform(["smash", task[1]])
 		return diff.length_squared() < 64
+	elif task[0] == "move":
+		var v = G.DIRS[task[1]]
+		unit.slide(Vector2(v[0], v[1]))
 	elif task[0] == "attack":
 		if validate_target(task[1]):
 			unit.slide(task[1].position - unit.position)

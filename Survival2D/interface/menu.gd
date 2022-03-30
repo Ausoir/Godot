@@ -11,6 +11,7 @@ onready var tab_cha_skills = $Tabs/CHA/VSplit/Skills
 onready var n_drag = $Drag
 onready var container = $Container
 onready var container_grid = $Container/Container
+onready var n_time = $Time
 
 var drag_item
 
@@ -146,3 +147,14 @@ func update_status():
 	for i in G.STATS:
 		txt += "[color=#A64]"+i.capitalize()+"[/color]: "+str(G.you.unit.dat.g(i, 0)) + "\n"
 	textbox.set_bbcode(txt)
+
+func display_time():
+	var hour = int(G.vars.time / 60) % 24
+	n_time.rect_position.x = G.ui.screen_size.x / 2
+	n_time.rect_position.y = G.ui.screen_size.y - 64
+	var minute = int(G.vars.time) % 60
+	if minute < 10:
+		minute = "0" + str(minute)
+	else:
+		minute = str(minute)
+	n_time.set_text(str(hour) + ":" + minute)
