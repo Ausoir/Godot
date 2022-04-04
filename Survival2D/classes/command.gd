@@ -87,21 +87,8 @@ func run(host, _args):
 			return args[1]
 		elif command[1] == "h":
 			host = args[1]
-	elif command == "v":
-		if args[1] == "parent":
-			return args[2].get_parent()
-		elif args[1] == "controller":
-			return args[2].controller
-		elif args[1] == "add":
-			return args[2] + args[3]
-		elif args[1] == "pos":
-			return args[2].pos
-		elif args[1] == "adj":
-			var adjs = args[2].get_available_adjacents("0011")
-			var adj = R.r_arr(adjs)
-			if adj == null:
-				adj = args[2]
-			return adj
+		elif command[1] == "+":
+			return args[1] + args[2]
 	elif command[0] == "?":
 		if command == "?=":
 			stop = args[1] != args[2]
@@ -126,6 +113,10 @@ func run(host, _args):
 				G.vars[args[1]].append(args[2])
 			elif command[1] == "v":
 				G.vars[args[1]].erase(args[2])
+	elif command[0] == "&":
+		if args[1] in G.temp:
+			if command == "&":
+				return G.temp[args[1]]
 	elif command == "run":
 		return G.cmds(args[1], tgt)
 	elif command == "onstop":
@@ -154,15 +145,14 @@ func run(host, _args):
 			else:
 				G.display_damage(args[2], args[3], args[4])
 		elif args[1] == "$":
-			if args[2] < 0:
-				G.display_damage("+$"+str(args[2]), args[3], "#D33", 1, 100, 50)
-			else:
-				G.display_damage("-$"+str(-args[2]), args[3], "#3D3", 1, 100, 50)
+			if args[2] > 0:
+				G.display_damage("+$"+str(args[2]), args[3], "#3D3", 1, 100, 50)
+			elif args[2] < 0:
+				G.display_damage("-$"+str(-args[2]), args[3], "#D33", 1, 100, 50)
 		elif args[1] == "particle":
 			G.make_particle(args[2], args[3])
 	elif command == "sfx":
-		var sound = G.Sfx.instance()
-		sound.start(args[1], args[2])
+		G.sfx.play(args[1], args[2])
 	elif command == "money":
 		if G.vars.money + args[1] < 0:
 			stop = true
@@ -181,7 +171,7 @@ func run(host, _args):
 	elif command == "cast":
 		G.influence.do(args[1], args[2], args[3])
 	elif command == "projectile":
-		var r = G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4], args[5], args[6])
+		G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4], args[5], args[6])
 	elif command == "loot":
 		G.ui.menu.search_inventory(args[1])
 	else:
@@ -200,6 +190,10 @@ func run(host, _args):
 					subject.dirty_dat = true
 				elif command[1] == "-":
 					subject.dat.d(args[2])
+				elif command == "*dmg":
+					var hp = subject.dat.add("damage", args[2])
+					subject.dat.a("damage", max(0, hp))
+					subject.on_health_change()
 				elif command == "*use":
 					var use = subject.dat.add("uses", -1)
 					if use == 0:
@@ -211,12 +205,12 @@ func run(host, _args):
 			else:
 				var type = subject.get("item_type")
 				if type == "tile":
-					run_tile(command, host, subject)
+					run_tile(command, subject)
 				elif is_instance_valid(subject):
-					run_item(command, host, subject)
+					run_item(command, subject)
 	return tgt
 
-func run_tile(command, _host, subject):
+func run_tile(command, subject):
 	if command == "col":
 		stop = subject.is_col(int(args[2]))
 	elif command == "terrain":
@@ -224,7 +218,7 @@ func run_tile(command, _host, subject):
 	elif command == "smash":
 		subject.smash(args[2])
 
-func run_item(command, host, subject):
+func run_item(command, subject):
 	if command == "tasks":
 		subject.tasks.append(args[2])
 	elif command == "possess":
@@ -237,10 +231,16 @@ func run_item(command, host, subject):
 			subject.store(item, true)
 			return item
 	elif command == "move":
+		subject.position.x = args[2].x
+		subject.position.y = args[2].y
 		if subject.item_type == "unit":
-			host.position.x = args[2].x
-			host.position.y = args[2].y
-			host.on_slide()
+			subject.on_slide()
+	elif command == "push":
+		if subject.item_type == "unit":
+			var deg = atan2(subject.position.y - args[2].y, subject.position.x - args[2].x)
+			subject.n_collider.vel.x += cos(deg) * args[3]
+			subject.n_collider.vel.y += sin(deg) * args[3]
+			subject.on_slide()
 	elif command == "attack":
 		if args[2] != null and is_instance_valid(args[2]):
 			var dmg_type = args[3]

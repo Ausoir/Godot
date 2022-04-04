@@ -2,6 +2,8 @@ extends Node2D
 
 const Note = preload("res://objects/Note.tscn")
 const ColBox = preload("res://objects/CollisionBox.tscn")
+const Healthbar = preload("res://interface/Health.tscn")
+var n_healthbar
 var n_collider
 var id = 0
 var item_type
@@ -17,14 +19,7 @@ var flags
 var dirty_dat = true
 var hp = Vector2()
 var host
-
-func _ready():
-	on_make()
-
-func on_make():
-	var onmake = dat.g("onmake")
-	if onmake != null:
-		G.cmds(onmake, self)
+var flash_state = [0, 0, 0, 0]
 
 func get_display_name():
 	if display_name == null:
@@ -32,7 +27,7 @@ func get_display_name():
 	return display_name
 
 func place(p):
-	update_dat()
+	on_change("dat")
 	position = p.position
 	pos = p
 	if pos.visible:
@@ -43,8 +38,10 @@ func place(p):
 	p.add_item(self)
 
 func remove():
-	if host != null:
+	if host != null and is_instance_valid(host):
 		host.on_item_remove(self)
+	if n_healthbar != null:
+		n_healthbar.queue_free()
 	G.world.turn.remove(self)
 	if pos != null: #not an equipment
 		pos.remove_item(self)
@@ -61,12 +58,56 @@ func die():
 		G.cmds(ondie, self)
 	remove()
 
+func get_defense(_p):
+	return dat.g("armor", 0)
+
 func hit(_type, dmg, _hitter):
-	if dmg > dat.g("armor", 99):
-		G.make_particle("Hit", pos.position)
-		G.display_damage(round(dmg), pos.position)
+	if dmg > 0:
+		if _type != "true":
+			var block = get_defense(_type)
+			if block >= dmg:
+				G.make_particle("Hit", pos.position)
+				return
+			else:
+				dmg -= block
+			if dmg > 1:
+				if _type == "cut":
+					G.make_particle("Cut", pos.position)
+				elif _type == "bash":
+					G.make_particle("Hit", pos.position)
+		G.sfx.play_hit(_type, dat.g("mat","other"), position)
+		dat.add("damage", dmg, 0)
+		show_healthbar()
+		G.display_damage(round(dmg), pos.position, Color.red)
+		flash(0, dmg * .2)
+		on_health_change()
+	elif dmg < 0:
+		dat.add("damage", dmg, 0, dat.g("vitality"))
+		show_healthbar()
+		G.display_damage(round(dmg), pos.position, Color.green)
+		flash(1, dmg * -.2)
+
+func on_health_change():
+	if get_health() <= 0:
 		die()
-		return true
+
+func show_healthbar():
+	var vit = dat.g("vitality", 0) * 2
+	if vit > 0:
+		if n_healthbar == null:
+			n_healthbar = Healthbar.instance()
+			add_child(n_healthbar)
+		n_healthbar.set_mhp(vit)
+		n_healthbar.set_hp(vit - dat.g("damage", 0))
+
+func get_health():
+	var vit = dat.g("vitality", -1)
+	if vit == -1:
+		return 1
+	elif vit == 0:
+		return 0
+	var hurt = dat.g("damage", 0)
+	return 1 - (hurt / vit)
 
 func autotilize():
 	var autotile = dat.g("autotile", 0)
@@ -100,13 +141,14 @@ func move_world(wld):
 	prev_pos = pos
 	wld.tiles[y][x].add_item(self)
 
-func update_dat():
-	layer = dat.g("layer", 0)
-	var oldcol = col
-	col = dat.g("col", 0)
-	if col != oldcol:
-		update_col(col)
-	flags = dat.g("flags", [])
+func on_change(p):
+	if p == "dat":
+		layer = dat.g("layer", 0)
+		var oldcol = col
+		col = dat.g("col", 0)
+		if col != oldcol:
+			update_col(col)
+		flags = dat.g("flags", [])
 
 func update_col(p):
 	if n_collider != null:
@@ -119,9 +161,7 @@ func update_col(p):
 func on_turn():
 	turns += 1
 	if turns > dat.g("turn", 0):
-		var onturn = dat.g("onturn")
-		if onturn != null:
-			G.cmds(onturn, self)
+		dat.run(self, "onturn")
 		turns = 0
 
 func textify(p):
@@ -134,3 +174,24 @@ func textify(p):
 		t.set_texture(note.get_texture())
 		$Viewport/Label.set_text(p.to_upper())
 		t.set_centered(true)
+
+func _process(delta):
+	if flash_state[0] > 0:
+		var percent = flash_state[0] / flash_state[1]
+		if flash_state[2] > 0:
+			modulate.r = 1
+			modulate.g = 1-flash_state[2]*percent
+			modulate.b = modulate.g
+		elif flash_state[3] > 0:
+			modulate.r = 1-flash_state[3]*percent
+			modulate.g = 1
+			modulate.b = modulate.r
+		flash_state[0] -= delta
+	else:
+		set_process(false)
+
+func flash(c, dur):
+	dur = max(.1, dur)
+	flash_state = [dur, dur, 0, 0]
+	flash_state[2 + c] = 1
+	set_process(true)

@@ -8,16 +8,15 @@ var target
 var tasks = []
 var pathing
 
-func update_dat():
-	pathing.cols = unit.dat.g("cols", pathing.cols)
-	if "user" in unit.flags:
-		pathing.can_open = true
-		pathing.pathing_times = 5
-	elif "float" in unit.flags:
-		pathing.hinderance = 0
-	elif "agile" in unit.flags:
-		pathing.hinderance = .5
-	pathing.smash_to = unit.dat.g("strength", 0)
+func on_change(p):
+	if p == "dat":
+		pathing.cols = unit.dat.g("cols", pathing.cols)
+		if "user" in unit.flags:
+			pathing.can_open = true
+			pathing.pathing_times = 5
+		elif "float" in unit.flags:
+			pathing.hinderance = 0
+		pathing.smash_to = unit.dat.g("strength", 0)
 
 func on_assign():
 	unit.dirty_dat = true
@@ -46,22 +45,23 @@ func perform(task):
 		if task.size() > 2 and validate_target(target):
 			var exc = [unit.n_collider, target.n_collider]
 			if unit.n_collider.cast_col_ray(task[2], exc, unit.col).empty():
-				unit.slide(task[2] - unit.position)
+				unit.slide(task[2])
 				return false
-		var diff = task[1].position - unit.position
-		unit.slide(diff)
+		unit.slide(task[1].position)
 		if unit.n_collider.get_slide_count() > 0:
 			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
 				if interact(task[1]):
 					return false
 				return perform(["smash", task[1]])
-		return diff.length_squared() < 64
+			else:
+				return true
+		return (task[1].position - unit.position).length_squared() < 64
 	elif task[0] == "move":
 		var v = G.DIRS[task[1]]
-		unit.slide(Vector2(v[0], v[1]))
+		unit.slide(Vector2(unit.position.x+v[0], unit.position.y+v[1]))
 	elif task[0] == "attack":
 		if validate_target(task[1]):
-			unit.slide(task[1].position - unit.position)
+			unit.slide(task[1].position)
 			return false
 	elif task[0] == "interact":
 		unit.delay = 4

@@ -53,7 +53,7 @@ func stop_process():
 	processing_frame = -2
 
 func set_sight(p, p_col=1):
-	sight_range = p
+	sight_range = min(16, p)
 	sight_bits = p_col
 
 func update(last_pos, pos):

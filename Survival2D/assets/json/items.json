@@ -1,14 +1,19 @@
 {
-	"spawner": {
-		"col": 2,
-		"weight": -1,
-		"turn": 32,
-		"upgrade": 0,
-		"onturn": [["cast","explode","$h","$hv"],["col","$hp",4],["?=","{0~2}",0],["make","g_invade","$hp"],
-			["*+","$h","upgrade",1],["?>=","{upgrade}",1],["make","spawner2","$hp"],["remove","$h"]],
+	"spawner init": {
+		"onmake": [["make","spawner","$hp"],["remove","$h"]],
 	},
-	"spawner2": {
-		"col": 2,
+	"spawner": {
+		"col": 0,
+		"weight": -1,
+		"upgrade": 0,
+		"level": 1,
+		"turn": 48,
+		"onmake": [["&","spawner w"],["*=","$h","type","$t"]],
+		"onturn": [["cast","explode","$h","$hv"],["col","$hp",4],["?=",0,0],["make","{type}{level}","$hp"],["?>=","{level}",3],["!stop"],
+			["*+","$h","upgrade",1],["?>=","{upgrade}",2],["menu","msg","upgraded"],["*=","$h","upgrade",0],["*+","$h","level",1]],
+	},
+	"spawner m": {
+		"col": 0,
 		"weight": -1,
 		"turn": 32,
 		"upgrade": 0,
@@ -18,7 +23,7 @@
 	"late spawner": {
 		"col": 2,
 		"weight": -1,
-		"turn": 1280,
+		"turn": 512,
 		"onturn": [["make","spawner2","$hp"],["remove","$h"]],
 	},
 	"loading": {
@@ -32,31 +37,39 @@
 		"img": "tiles/bulletin",
 		"mat": "wood",
 		"slow": 0.5,
+		"vitality": 20,
 		"armor": 8,
 		"col": 2,
 		"turn": 16,
-		"onturn": [["^+","time",1],["^","time"],["custom","time",null]],
-		"onuse": [["menu", "dialog", "Bulletin"]],
+		"oninteract": [["menu", "dialog", "Bulletin"]],
 	},
 
 	"builder (solar panel)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
-		"desc": "Use to construct a solar panel.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed on asphalt."],["terrain","$$t",["asphalt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","solar panel"]],"$h"]]
+		"onuse": [["point",[["onstop","This building must be placed on asphalt."],["terrain","$$t",["asphalt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","solar panel"]],"$h"]],
+		"desc": "Use to construct a solar panel.",
+	},
+	"builder (machine)": {
+		"img": "tiles/package",
+		"mat": "metal",
+		"desc": "Increases the maximum amount of money you can have.",
+		"uses": 3,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","machine"]],"$h"]]
 	},
 	"builder (dispenser)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
 		"desc": "Use to construct a dispenser which will generate money over time.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","dispenser"]],"$h"]]
+		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","dispenser"]], "$h"]],
 	},
 	"builder (fence)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
 		"desc": "Use to construct a chainlink fence.",
 		"uses": 3,
@@ -64,7 +77,7 @@
 		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","chainfence"]],"$h"]]
 	},
 	"builder (door)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
 		"desc": "Use to construct a chainlink door.",
 		"uses": 3,
@@ -72,7 +85,7 @@
 		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","chain door"]],"$h"]]
 	},
 	"builder (sandbag)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
 		"desc": "Use to construct a sandbag wall.",
 		"uses": 1,
@@ -80,7 +93,7 @@
 		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","sandbag"]],"$h"]]
 	},
 	"builder (lathe)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
 		"desc": "Use to construct a lathe.",
 		"uses": 1,
@@ -88,72 +101,87 @@
 		"onuse": [["point",[["onstop","This building must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","lathe"]],"$h"]]
 	},
 	"builder (turret)": {
-		"img": "tiles/machine1",
+		"img": "tiles/package",
 		"mat": "metal",
-		"desc": "Use to construct a turret.",
+		"desc": "Use to construct a close range laser turret.",
 		"uses": 4,
 		"weight": 0,
 		"onuse": [["point",[["onstop","This construct must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","turret"]],"$h"]]
 	},
 	"radio (resident)": {
-		"img": "tiles/machine1",
+		"img": "tiles/radio",
 		"mat": "metal",
 		"desc": "Use to summon a resident who will generate money over time.",
 		"uses": 4,
 		"weight": 0,
 		"onuse": [["point",[["onstop","Invalid position."],["col","$$t",15],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","resident"]],"$h"]]
 	},
+	"radio (guard)": {
+		"img": "tiles/radio",
+		"mat": "metal",
+		"desc": "Use to summon a guard to defend an area.",
+		"uses": 1,
+		"weight": 0,
+		"onuse": [["point",[["onstop","Invalid position."],["col","$$t",15],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","guard"]],"$h"]]
+	},
 	"medikit": {
 		"img": "tiles/bandage",
 		"mat": "cloth",
-		"desc": "Use to heal.",
+		"desc": "Use to heal 10 damage.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["*use","$h"],["*=","$p","damage",0]]
-	},
-	"potato chip": {
-		"img": "tiles/i_chips",
-		"mat": "other",
-		"value": 1,
-		"weight": 0,
-		"desc": "A bag of potato chips.",
-		"onuse": [["*","$p","damage",0],["?>","$t",0],["*+","$p","damage",-1],["remove","$h"]]
-	},
-	"energy bar": {
-		"img": "tiles/i_candy",
-		"mat": "other",
-		"value": 2,
-		"weight": 0,
-		"desc": "An energy bar.",
-		"onuse": [["*","$p","damage",0],["?>","$t",1],["*+","$p","damage",-2],["remove","$h"]]
-	},
-	"canned food": {
-		"img": "loot",
-		"mat": "other",
-		"value": 3,
-		"weight": 0,
-		"desc": "A long lasting source of food. Valuable."
+		"onuse": [["gfx","particle","Heal","$t"],["*use","$h"],["*dmg","$h",-10]]
 	},
 	"eggs": {
 		"img": "tiles/eggs",
 		"mat": "flesh",
 		"weight": 1,
-		"desc": "Use to create a colony of friendly ants.",
-		"turn": 64,
-		"onturn": [["make","g_ants","$hp"]],
+		"desc": "Drop on the ground to create a colony of ants.",
+		"turn": 128,
+		"onturn": [["col","$hp",4],["make","g_ants","$hp"]],
 	},
 	"stock pot": {
 		"img": "tiles/i_stock_pot",
 		"mat": "metal",
 		"weight": 3,
-		"desc": "A cooking tool."
+		"desc": "A stock pot full of soup. -1 Agility, +2 Strength",
+		"onuse": [["*+","$p","strength",2],["*+","$p","agility",-1],["remove","$h"]],
 	},
 	"blob vial": {
 		"img": "gui/vial",
 		"sprite": "overlay/w_vial",
 		"mat": "glass",
 		"weight": 0,
-		"desc": "A vial of blob."
+		"desc": "A vial of blob. -1 Perception, +1 Vitality",
+		"onuse": [["*+","$p","perception",-1],["*+","$p","vitality",1],["remove","$h"]],
+	},
+	"potato chip": {
+		"img": "tiles/i_chips",
+		"mat": "other",
+		"weight": 0,
+		"desc": "A bag of potato chips. -1 Perception, +1 Agility",
+		"onuse": [["*+","$p","agility",1],["*+","$p","perception",-1],["remove","$h"]],
+	},
+	"energy bar": {
+		"img": "tiles/i_candy",
+		"mat": "other",
+		"weight": 0,
+		"desc": "An energy bar. -1 Vitality, +1 Move Speed",
+		"onuse": [["*+","$p","vitality",-1],["*+","$p","move speed",1],["remove","$h"]]
+	},
+	"canned food": {
+		"img": "tiles/i_can",
+		"mat": "other",
+		"weight": 0,
+		"desc": "A can of sardines. -1 Perception, +1 Agility",
+		"onuse": [["*+","$p","agility",1],["*+","$p","perception",-1],["remove","$h"]]
+	},
+	"tea": {
+		"img": "tiles/i_kettle",
+		"mat": "other",
+		"weight": 1,
+		"desc": "A kettle of tea. +1 Perception",
+		"onuse": [["*+","$p","perception",1],["remove","$h"]]
 	},
 
 
@@ -162,65 +190,91 @@
 		"sprite": "overlay/w_torch",
 		"skills": ["burn"],
 		"light": 3,
-		"value": 1,
 		"mat": "wood",
 		"weight": 1,
 		"desc": "A torch."
 	},
-	"biggray gun": {
+	"automatic rifle": {
 		"img": "loot",
-		"sprite": "overlay/w_biggray_gun",
-		"abilities": ["shoot 4"],
-		"value": 11,
+		"sprite": "overlay/w_full_auto_rifle",
+		"abilities": ["burst fire","spray bullets"],
 		"weight": 3,
 		"size": 2,
 		"mat": "metal",
 		"weight": 4,
 		"desc": "An artifact of the past."
 	},
+	"assault rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_assault_rifle",
+		"abilities": ["burst fire"],
+		"weight": 3,
+		"size": 2,
+		"mat": "metal",
+		"weight": 4,
+		"desc": "An artifact of the past."
+	},
+	"laser rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_laser_gun",
+		"abilities": ["burst laser"],
+		"mat": "metal",
+		"weight": 1,
+		"desc": "An artifact of the past."
+	},
 	"pistol": {
 		"img": "loot",
 		"sprite": "overlay/w_pistol",
 		"abilities": ["shoot"],
-		"value": 7,
 		"mat": "metal",
 		"weight": 1,
 		"desc": "An artifact of the past."
+	},
+	"bow": {
+		"img": "loot",
+		"sprite": "overlay/w_bow",
+		"abilities": ["shoot arrow"],
+		"mat": "wood",
+		"weight": 1,
+	},
+	"crossbow": {
+		"img": "loot",
+		"sprite": "overlay/w_crossbow",
+		"abilities": ["shoot bolt"],
+		"mat": "wood",
+		"weight": 1,
 	},
 	"spear": {
 		"img": "loot",
 		"sprite": "overlay/w_spear",
 		"abilities": ["reach attack"],
-		"skills": ["strike"],
+		"skills": ["stab"],
 		"mat": "wood",
-		"value": 4,
-		"weight": 2,
+		"weight": 3,
 		"cut": 2,
 		"size": 2,
-		"desc": "A spear."
+		"desc": "A spear capable of attacking from afar."
 	},
 	"cutlass": {
 		"img": "loot",
 		"sprite": "overlay/w_cutlass",
 		"abilities": [],
-		"skills": ["quick strike"],
+		"skills": ["quick strike", "slice"],
 		"mat": "wood",
-		"value": 5,
 		"weight": 2,
+		"bash": 1,
 		"cut": 2,
 		"strength": 1,
 		"size": 2,
-		"desc": "A branch."
 	},
 	"bat": {
 		"img": "loot",
 		"sprite": "overlay/w_bat",
 		"abilities": [],
-		"skills": ["bash", "strike"],
+		"skills": ["bash", "quick strike"],
 		"mat": "wood",
-		"value": 4,
 		"weight": 1,
-		"strength": 2,
+		"bash": 2,
 		"size": 2,
 		"desc": "A wooden bat. It's very light."
 	},
@@ -230,9 +284,8 @@
 		"abilities": [],
 		"skills": ["bash"],
 		"mat": "metal",
-		"value": 4,
 		"weight": 1,
-		"strength": 2,
+		"bash": 2,
 		"size": 2,
 		"desc": "A metal pipe. It's hollow and light, and a bit unwieldy."
 	},
@@ -240,21 +293,30 @@
 		"img": "loot",
 		"sprite": "overlay/w_knife",
 		"abilities": [],
-		"skills": ["quick strike"],
+		"skills": ["quick stab"],
 		"mat": "metal",
-		"value": 4,
 		"weight": 0,
 		"cut": 1,
 		"desc": "A rusty metal knife. Still pretty sharp."
+	},
+	"knuckles": {
+		"img": "loot",
+		"sprite": "overlay/w_knuckles",
+		"abilities": [],
+		"skills": ["quick strike","quick strike"],
+		"mat": "metal",
+		"weight": 0,
+		"bash": 1,
+		"cut": 1,
+		"desc": "Knuckles used for street fights."
 	},
 	"rucksack": {
 		"img": "loot",
 		"sprite": "overlay/back_rucksack",
 		"part": "back",
 		"mat": "cotton",
-		"value": 6,
 		"weight": 5,
-		"space": 7,
+		"space": 5,
 		"desc": "A rucksack."
 	},
 	"backpack": {
@@ -262,9 +324,8 @@
 		"sprite": "overlay/back_backpack",
 		"part": "back",
 		"mat": "cotton",
-		"value": 6,
 		"weight": 3,
-		"space": 5,
+		"space": 3,
 		"desc": "A backpack."
 	},
 	"looter coat": {
@@ -272,7 +333,6 @@
 		"sprite": "overlay/body_scavenger",
 		"part": "body",
 		"mat": "leather",
-		"value": 6,
 		"weight": 2,
 		"space": 2,
 		"desc": "A tattered coat favored by looters."
@@ -346,24 +406,19 @@
 
 
 
-	"solar panel": {
-		"img": "tiles/solar_panel",
+	"machine": {
+		"img": "tiles/machine3",
 		"mat": "metal",
-		"armor": 1,
-		"weight": 8,
+		"vitality": 20,
+		"armor": 2,
+		"weight": -1,
 		"col": 6,
 		"ondie": [["custom", "sabotaged", null]]
 	},
-	"machine": {
-		"img": "tiles/machine1",
+	"solar panel": {
+		"img": "tiles/solar_panel",
 		"mat": "metal",
-		"armor": 1,
-		"weight": 8,
-		"col": 12,
-	},
-	"dispenser": {
-		"img": "tiles/machine2",
-		"mat": "metal",
+		"vitality": 4,
 		"armor": 1,
 		"weight": 12,
 		"col": 12,
@@ -371,20 +426,33 @@
 		"onturn": [["=t","{-4~8}"],["money","$t"],["gfx","$","{t}","$hv"]],
 		"desc": "Continuously generates resources.",
 	},
-	"lathe": {
-		"img": "tiles/machine3",
+	"battery": {
+		"img": "tiles/machine1",
 		"mat": "metal",
-		"armor": 1,
+		"vitality": 20,
+		"armor": 2,
+		"weight": -1,
+		"col": 12,
+		"desc": "Increases the maximum amount of money you can have.",
+		"onmake": [["^+", "money_", 10]],
+		"ondie": [["^+", "money_", -10]],
+	},
+	"lathe": {
+		"img": "tiles/machine2",
+		"mat": "metal",
+		"vitality": 40,
+		"armor": 2,
 		"weight": 6,
 		"col": 12,
 		"turn": 128,
 		"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"]],
-		"onuse": [["menu", "dialog", "Lathe"]],
+		"oninteract": [["menu", "dialog", "Lathe"]],
 		"desc": "Allows you to create items from resources.",
 	},
 	"mannequin": {
 		"img": "tiles/mannequin",
 		"mat": "wood",
+		"vitality": 8,
 		"armor": 2,
 		"weight": 8,
 		"col": 6,
@@ -392,6 +460,7 @@
 	"statue": {
 		"img": "tiles/statue",
 		"mat": "stone",
+		"vitality": 4,
 		"armor": 6,
 		"weight": 10,
 		"col": 6,
@@ -399,6 +468,7 @@
 	"hanger": {
 		"img": "tiles/hanger",
 		"mat": "wood",
+		"vitality": 4,
 		"armor": 3,
 		"weight": 6,
 		"col": 6,
@@ -406,6 +476,7 @@
 	"rack": {
 		"img": "tiles/rack",
 		"mat": "wood",
+		"vitality": 20,
 		"armor": 3,
 		"weight": 5,
 		"col": 6,
@@ -413,6 +484,7 @@
 	"air conditioner": {
 		"img": "tiles/acmachine",
 		"mat": "metal",
+		"vitality": 20,
 		"armor": 12,
 		"weight": 12,
 		"col": 6,
@@ -420,13 +492,13 @@
 	"anvil": {
 		"img": "tiles/anvil",
 		"mat": "metal",
-		"armor": 12,
 		"weight": 16,
 		"col": 6,
 	},
 	"forge": {
 		"img": "tiles/forge",
 		"mat": "metal",
+		"vitality": 20,
 		"armor": 12,
 		"weight": 16,
 		"col": 6,
@@ -435,6 +507,7 @@
 		"img": "tiles/street_light",
 		"mat": "metal",
 		"col": 14,
+		"vitality": 20,
 		"armor": 8,
 		"light": 12,
 		"weight": 15,
@@ -443,17 +516,10 @@
 		"img": "tiles/lamp",
 		"mat": "glass",
 		"col": 0,
+		"vitality": 4,
 		"armor": 3,
 		"light": 6,
 		"weight": 2,
-	},
-	"potlight": {
-		"img": "tiles/torch",
-		"mat": "wood",
-		"col": 0,
-		"armor": 2,
-		"light": 4,
-		"weight": 1,
 	},
 	"stairup": {
 		"img": "tiles/stairup",
@@ -462,7 +528,7 @@
 		"armor": 12,
 		"weight": -1,
 		"layer": -1,
-		"_onuse": [["v","controller","$t"],["tasks", "$t", ["enter", "up", "$hp", 3]]],
+		"_oninteract": [["v","controller","$t"],["tasks", "$t", ["enter", "up", "$hp", 3]]],
 	},
 	"stairdown": {
 		"img": "tiles/stairdown",
@@ -471,7 +537,7 @@
 		"armor": 12,
 		"weight": -1,
 		"layer": -1,
-		"_onuse": [["v","controller","$t"],["tasks", "$t", ["enter", "down", "$hp", 3]]],
+		"_oninteract": [["v","controller","$t"],["tasks", "$t", ["enter", "down", "$hp", 3]]],
 	},
 	"manhole": {
 		"img": "tiles/manhole",
@@ -480,7 +546,7 @@
 		"armor": 12,
 		"weight": -1,
 		"layer": -1,
-		"onuse": [["v","controller","$t"],["tasks","$t", ["enter","down","$hp",3]]],
+		"oninteract": [["v","controller","$t"],["tasks","$t", ["enter","down","$hp",3]]],
 	},
 	"campfire": {
 		"img": "tiles/campfire_lit",
@@ -506,7 +572,7 @@
 		"armor": 1,
 		"slow": 0.5,
 		"height": 1,
-		"onuse": [["make", "window open", "$hp"], ["remove", "$h"]],
+		"oninteract": [["make", "window open", "$hp"], ["remove", "$h"]],
 		"ondie": [["make", "window broken", "$hp"]],
 		"desc": "A curtained window.",
 	},
@@ -515,10 +581,10 @@
 		"mat": "glass",
 		"col": 14,
 		"openable": true,
-		"armor": 1,
+		"vitality": 8,
 		"slow": 0.5,
 		"height": 1,
-		"onuse": [["make", "window open", "$hp"], ["remove", "$h"]],
+		"oninteract": [["make", "window open", "$hp"], ["remove", "$h"]],
 		"ondie": [["make", "window broken", "$hp"]],
 		"desc": "A shut window."
 	},
@@ -526,8 +592,9 @@
 		"img": "tiles/window_open",
 		"mat": "glass",
 		"armor": 1,
+		"vitality": 4,
 		"height": 1,
-		"onuse": [["make", "window", "$hp"], ["remove", "$h"]],
+		"oninteract": [["make", "window", "$hp"], ["remove", "$h"]],
 		"ondie": [["make", "window broken", "$hp"]],
 		"desc": "An open window."
 	},
@@ -537,18 +604,19 @@
 		"col": 0,
 		"height": 1,
 		"slow": 0.5,
-		"armor": 4,
+		"armor": 3,
+		"vitality": 2,
 		"desc": "A broken window."
 	},
 	"bead door": {
 		"img": "tiles/bead_door",
 		"mat": "other",
 		"col": 1,
-		"slow": 0.5,
+		"slow": 0.1,
 		"openable": true,
 		"height": 1,
-		"armor": 1,
-		"onuse": [["make", "open bead door", "$hp"], ["remove", "$h"]],
+		"vitality": 1,
+		"oninteract": [["make", "open bead door", "$hp"], ["remove", "$h"]],
 		"desc": "A bead door."
 	},
 	"open bead door": {
@@ -556,7 +624,7 @@
 		"mat": "other",
 		"col": 0,
 		"height": 1,
-		"armor": 1,
+		"vitality": 1,
 		"desc": "A open bead door."
 	},
 	"metal door": {
@@ -565,27 +633,33 @@
 		"col": 15,
 		"openable": true,
 		"height": 1,
+		"vitality": 10,
+		"damage": 0,
 		"armor": 10,
-		"onuse": [["make", "metal open door", "$hp"], ["remove", "$h"]],
-		"desc": "A wooden door."
+		"oninteract": [["sfx","door_metal","$hv"],["make", "metal open door", "$hp"],["*=","$t","damage","{damage}"], ["remove", "$h"]],
+		"desc": "A metal door."
 	},
 	"metal open door": {
 		"img": "tiles/metal_door_open",
 		"mat": "metal",
 		"col": 16,
 		"openable": true,
+		"vitality": 10,
+		"damage": 0,
 		"armor": 10,
-		"onuse": [["make", "metal open door", "$hp"], ["remove", "$h"]],
+		"oninteract": [["sfx","door_metal","$hv"],["make", "metal open door", "$hp"],["*=","$t","damage","{damage}"], ["remove", "$h"]],
 		"desc": "A wooden door."
 	},
 	"chain door": {
 		"img": "tiles/chaindoor",
 		"mat": "metal",
-		"col": 15,
+		"col": 12,
 		"openable": true,
 		"height": 1,
-		"armor": 3,
-		"onuse": [["make", "open chain door", "$hp"], ["remove", "$h"]],
+		"vitality": 12,
+		"damage": 0,
+		"armor": 2,
+		"oninteract": [["make", "open chain door", "$hp"],["*=","$t","damage","{damage}"],["remove", "$h"]],
 		"desc": "A chainlink door."
 	},
 	"open chain door": {
@@ -593,8 +667,10 @@
 		"mat": "metal",
 		"col": 16,
 		"height": 1,
+		"vitality": 10,
+		"damage": 0,
 		"armor": 2,
-		"onuse": [["make", "chain door", "$hp"], ["remove", "$h"]],
+		"oninteract": [["make", "chain door", "$hp"],["*=","$t","damage","{damage}"],["remove", "$h"]],
 		"desc": "An open chainlink door."
 	},
 	"door": {
@@ -603,8 +679,10 @@
 		"col": 15,
 		"openable": true,
 		"height": 1,
-		"armor": 3,
-		"onuse": [["make", "open door", "$hp"], ["remove", "$h"]],
+		"vitality": 12,
+		"damage": 0,
+		"armor": 1,
+		"oninteract": [["sfx","door_wood","$hv"],["make","open door","$hp"],["*=","$t","damage","{damage}"],["remove","$h"]],
 		"ondie": [["make", "broken door", "$hp"]],
 		"desc": "A wooden door."
 	},
@@ -613,8 +691,10 @@
 		"mat": "wood",
 		"col": 16,
 		"height": 1,
-		"armor": 2,
-		"onuse": [["make", "door", "$hp"], ["remove", "$h"]],
+		"vitality": 10,
+		"damage": 0,
+		"armor": 1,
+		"oninteract": [["sfx","close_wood","$hv"],["make", "door", "$hp"],["*=","$t","damage","{damage}"], ["remove", "$h"]],
 		"ondie": [["make", "broken door", "$hp"]],
 		"desc": "An open wooden door."
 	},
@@ -623,8 +703,8 @@
 		"mat": "wood",
 		"col": 12,
 		"height": 1,
+		"vitality": 8,
 		"armor": 2,
-		"onuse": [["make", "door", "$hp"], ["remove", "$h"]],
 		"desc": "A broken wooden door."
 	},
 	"trashcan": {
@@ -632,37 +712,42 @@
 		"mat": "plastic",
 		"col": 0,
 		"slow": 0.5,
-		"armor": 12,
+		"vitality": 4,
+		"armor": 2,
 	},
 	"bookcase": {
 		"img": "tiles/bookcase",
 		"mat": "wood",
 		"col": 7,
-		"armor": 4,
+		"vitality": 10,
+		"armor": 2,
 		"weight": 12,
-		"onuse": [["loot", "books"]],
+		"oninteract": [["loot", "books"]],
 	},
 	"mirror": {
 		"img": "tiles/mirror",
 		"mat": "glass",
-		"armor": 2,
+		"vitality": 2,
+		"armor": 1,
 		"weight": 12,
 		"col": 7,
 	},
 	"oven": {
 		"img": "tiles/oven",
 		"mat": "metal",
-		"armor": 8,
+		"vitality": 20,
+		"armor": 6,
 		"weight": 16,
 		"col": 6,
 	},
 	"fridge": {
 		"img": "tiles/fridge",
 		"mat": "metal",
+		"vitality": 20,
 		"armor": 8,
 		"weight": 12,
 		"col": 7,
-		"onuse": [["loot", "fridge"]],
+		"oninteract": [["loot", "fridge"]],
 	},
 	"shower": {
 		"img": "tiles/shower",
@@ -673,6 +758,7 @@
 	"sink": {
 		"img": "tiles/sink",
 		"mat": "ceramic",
+		"vitality": 20,
 		"armor": 8,
 		"col": 6,
 	},
@@ -680,6 +766,7 @@
 		"img": "tiles/bathtub",
 		"mat": "ceramic",
 		"slow": 0.8,
+		"vitality": 20,
 		"armor": 8,
 		"col": 2,
 	},
@@ -687,6 +774,7 @@
 		"img": "tiles/toilet",
 		"mat": "ceramic",
 		"slow": 0.3,
+		"vitality": 20,
 		"armor": 6,
 		"col": 2,
 	},
@@ -694,6 +782,7 @@
 		"img": "tiles/chair",
 		"mat": "wood",
 		"slow": 0.3,
+		"vitality": 6,
 		"armor": 2,
 		"col": 2,
 	},
@@ -701,13 +790,13 @@
 		"img": "tiles/slab",
 		"mat": "stone",
 		"slow": 0.3,
-		"armor": 12,
 		"col": 2,
 	},
 	"crate": {
 		"img": "tiles/crate",
 		"mat": "metal",
 		"weight": 5,
+		"vitality": 10,
 		"armor": 2,
 		"col": 6,
 	},
@@ -716,55 +805,60 @@
 		"mat": "metal",
 		"slow": 0.5,
 		"weight": 5,
+		"vitality": 20,
 		"armor": 6,
 		"col": 2,
-		"onuse": [["make", "g_trade", "$hp"],["loot", "$hp"],["*-","$h","onuse"]],
+		"oninteract": [["make", "g_trade", "$hp"],["loot", "$hp"],["*-","$h","oninteract"]],
 	},
 	"dresser": {
 		"img": "tiles/dresser",
 		"mat": "metal",
 		"weight": 5,
-		"armor": 6,
+		"vitality": 20,
+		"armor": 2,
 		"col": 6,
-		"onuse": [["make", "g_dresser", "$hp"],["loot", "$hp"],["*-","$h","onuse"]],
+		"oninteract": [["make", "g_dresser", "$hp"],["loot", "$hp"],["*-","$h","oninteract"]],
 	},
 	"wardrobe": {
 		"img": "tiles/wardrobe",
 		"mat": "metal",
 		"weight": 5,
-		"armor": 6,
+		"vitality": 20,
+		"armor": 2,
 		"col": 7,
-		"onuse": [["make", "g_dresser", "$hp"],["loot", "$hp"],["*-","$h","onuse"]],
+		"oninteract": [["make", "g_dresser", "$hp"],["loot", "$hp"],["*-","$h","oninteract"]],
 	},
 	"punching bag": {
 		"img": "tiles/punch_bag",
 		"mat": "wood",
 		"col": 6,
+		"vitality": 200,
 		"armor": 8,
 		"desc": "A punching bag.",
-		"onuse": [["menu", "dialog", "Dummy"]],
+		"oninteract": [["menu", "dialog", "Dummy"]],
 	},
 	"straw bed": {
 		"img": "tiles/straw_bed",
 		"mat": "cloth",
 		"slow": 0.2,
+		"vitality": 4,
 		"armor": 4,
 		"col": 0,
-		"onuse": [["event","sleep"]]
+		"oninteract": [["event","sleep"]]
 	},
 	"bed": {
 		"img": "tiles/bed",
 		"mat": "cloth",
 		"slow": 0.5,
+		"vitality": 20,
 		"armor": 8,
 		"col": 0,
-		"onuse": [["event","sleep"]]
+		"oninteract": [["event","sleep"]]
 	},
 	"logstool": {
 		"img": "tiles/logstool",
 		"mat": "wood",
 		"slow": 0.5,
-		"armor": 12,
 		"col": 0,
 	},
 	"sofa": {
@@ -772,6 +866,7 @@
 		"autotile": 1,
 		"mat": "cloth",
 		"slow": 0.5,
+		"vitality": 30,
 		"weight": 8,
 		"col": 2,
 	},
@@ -779,6 +874,7 @@
 		"img": "tiles/table_autotile",
 		"autotile": 1,
 		"mat": "wood",
+		"vitality": 20,
 		"slow": 0.5,
 		"col": 2,
 	},
@@ -787,6 +883,7 @@
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 0.5,
+		"vitality": 20,
 		"weight": 10,
 		"col": 2,
 	},
@@ -795,6 +892,7 @@
 		"autotile": 1,
 		"mat": "wood",
 		"slow": 0.5,
+		"vitality": 40,
 		"weight": 12,
 		"col": 2,
 	},
@@ -802,7 +900,8 @@
 		"img": "tiles/sandbag_autotile",
 		"autotile": 1,
 		"mat": "other",
-		"armor": 12,
+		"vitality": 100,
+		"armor": 8,
 		"slow": 0.8,
 		"weight": 12,
 		"col": 0,
@@ -811,6 +910,7 @@
 		"img": "tiles/privacy_fence_autotile",
 		"autotile": 1,
 		"mat": "wood",
+		"vitality": 20,
 		"armor": 4,
 		"weight": 10,
 		"col": 7,
@@ -819,6 +919,7 @@
 		"img": "uc/fence_autotile",
 		"autotile": 1,
 		"mat": "wood",
+		"vitality": 20,
 		"slow": 0.8,
 		"weight": 8,
 		"col": 2,
@@ -829,7 +930,8 @@
 		"mat": "metal",
 		"weight": 16,
 		"col": 4,
-		"armor": 3,
+		"vitality": 14,
+		"armor": 2,
 	},
 	"wire": {
 		"img": "uc/wire_autotile",
@@ -837,19 +939,19 @@
 		"mat": "wood",
 		"slow": 0.8,
 		"col": 2,
-		"armor": 2,
+		"vitality": 6,
 	},
 	"crop": {
 		"img": "tiles/crop",
 		"mat": "wood",
-		"armor": 1,
+		"vitality": 2,
 		"slow": 0.1,
 		"col": 0,
 	},
 	"shrub": {
 		"img": "tiles/shrub",
 		"mat": "wood",
-		"armor": 6,
+		"vitality": 6,
 		"slow": 0.5,
 		"weight": 3,
 		"col": 0,
@@ -857,6 +959,7 @@
 	"old tree": {
 		"img": "uc/tree1",
 		"mat": "wood",
+		"vitality": 120,
 		"armor": 16,
 		"weight": 24,
 		"col": 7,
@@ -864,6 +967,7 @@
 	"tree": {
 		"img": "uc/tree2",
 		"mat": "wood",
+		"vitality": 120,
 		"armor": 16,
 		"weight": 20,
 		"col": 7,
@@ -871,6 +975,7 @@
 	"young tree": {
 		"img": "uc/tree3",
 		"mat": "wood",
+		"vitality": 20,
 		"armor": 16,
 		"weight": 12,
 		"col": 7,
@@ -879,6 +984,7 @@
 		"img": "tiles/stump",
 		"mat": "wood",
 		"slow": 0.5,
+		"vitality": 200,
 		"armor": 16,
 		"weight": 20,
 		"col": 2,
@@ -886,6 +992,7 @@
 	"boulder": {
 		"img": "tiles/boulder",
 		"mat": "stone",
+		"vitality": 20,
 		"armor": 16,
 		"col": 6,
 	},
@@ -893,6 +1000,7 @@
 		"img": "tiles/boulder_s",
 		"mat": "stone",
 		"slow": 0.5,
+		"vitality": 20,
 		"armor": 12,
 		"col": 2,
 	},
@@ -907,6 +1015,7 @@
 	"corpse": {
 		"weight": 5,
 		"skills": ["block"],
+		"vitality": 10,
 		"mat": "flesh",
 		"desc": "A corpse."
 	},

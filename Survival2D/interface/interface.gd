@@ -104,6 +104,12 @@ func clear():
 	description.hide()
 	dialog.hide()
 
+func unselect_skills():
+	for child in abilities.get_children():
+		if !(child is RichTextLabel):
+			if child.mode == 1:
+				child.set_mode(0)
+
 func update_hud():
 	for child in abilities.get_children():
 		child.queue_free()
@@ -112,15 +118,17 @@ func update_hud():
 		i.queue_free()
 		buffs.remove_child(i)
 	var count = 0
-	for i in G.you.unit.dat.g("abilities", []):
+	var ab = G.you.unit.dat.g("abilities", [])
+	if G.you.unit.dat.g("type") == "man":
+		ab += G.you.unit.get_usable_items()
+	for i in ab:
 		var newslot = AbilitySlot.instance()
 		newslot.assign(i)
 		newslot.set_index(count)
 		abilities.add_child(newslot)
-		if newslot.skill_type == "self":
-			if G.you.unit.buffs.has(i):
-				newslot.set_mode(3)
-		if G.you.aiming == count:
+		if newslot.skill_type == "self" and G.you.unit.buffs.has(i):
+			newslot.set_mode(3)
+		elif G.you.aiming == count:
 			newslot.set_mode(1)
 		else:
 			newslot.set_mode(0)

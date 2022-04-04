@@ -25,10 +25,14 @@ func think():
 		elif goal == "kill":
 			target = G.you.unit
 		elif goal == "sabotage":
-			var sabo = G.world.get_items_by_name("solar panel")
+			var sabo = G.temp.machines
 			if !sabo.empty():
-				var to = R.r_arr(sabo).pos
-				path_to(to, 0)
+				var machine = R.r_arr(sabo)
+				if machine == null or !is_instance_valid(machine):
+					G.temp.machines.erase(machine)
+				else:
+					var to = machine.pos
+					path_to(to, 0)
 
 func perceive():
 	var min_dist = unit.dat.g("perception", 4)
@@ -65,5 +69,7 @@ func hunt():
 
 func perform_ability():
 	if R.ir(0, 3) == 0:
-		var ability_idx = R.ir(0, unit.dat.g("abilities", []).size())
-		tasks = [["ability", ability_idx, target.position]]
+		var exc = [unit.n_collider, target.n_collider]
+		if unit.n_collider.cast_col_ray(target.position, exc, unit.col).empty():
+			var ability_idx = R.ir(0, unit.dat.g("abilities", []).size())
+			tasks = [["ability", ability_idx, target.position]]

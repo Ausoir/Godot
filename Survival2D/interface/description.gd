@@ -35,14 +35,20 @@ func display_item(header, item):
 	var value = item.get("value", 0)
 	if value != 0:
 		desc += "[color=#FB0]$"+ str(value) +"[/color]\n"
+	desc += "[color=#888]Weight: "+ str(item.get("weight", 0)) +"[/color]\n"
 	if "part" in item:
 		if item.part != "item":
-			desc += "[color=#33A]Armor ("+ str(item.part) +")[/color]\n"
-		desc = "[color=#888]Weight: "+ str(item.get("weight", 0)) +"[/color]\n"
+			desc += "[color=#229]Armor ("+ str(item.part) +")[/color]\n"
+			var space = item.get("space", 0)
+			if space != 0:
+				desc += "[color=#86A]Storage: "+ str(space) +" items[/color]\n"
 	else:
+		var bash = item.get("bash", 0)
+		if bash != 0:
+			desc += "[color=#C84]Bash Damage: "+ str(bash) +"[/color]\n"
 		var cut = item.get("cut", 0)
 		if cut != 0:
-			desc += "[color=#C66]Cut Damage: "+ str(cut) +"[/color]\n"
+			desc += "[color=#C48]Cut Damage: "+ str(cut) +"[/color]\n"
 		var skills = item.get("skills", [])
 		if !skills.empty():
 			desc += "[color=#56A]Skills: "+ array_to_string(skills) +"[/color]\n"

@@ -65,11 +65,11 @@ func make_unit(arg, pos):
 		r.item_name = arg
 		r.item_type = "unit"
 		r.dat = UnitProperties.new(unit_data)
-		if !r.dat.g("col"):
-			r.dat.a("col", 12)
+		r.col = -1
 		r.place(pos)
 		r.set_seed()
 		G.world.turn.add(r)
+		r.dat.run(r, "onmake")
 		return r
 
 func make_item(arg, pos=null):
@@ -90,8 +90,9 @@ func make_item(arg, pos=null):
 		r.dat = Properties.new(item_data)
 		if pos != null:
 			r.place(pos)
-		if r.dat.g("turn", 0) > 0:
+		if r.dat.g("onturn") != null:
 			G.world.turn.add(r)
+		r.dat.run(r, "onmake")
 		return r
 
 func make_projectile(host, arg, pos, dest, time, spd, variation, onattack, onmiss):

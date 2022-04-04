@@ -31,6 +31,9 @@ func to_vector():
 func to_array():
 	return [x, y]
 
+func to_string():
+	return str(x) + "," + str(y)
+
 func set_visible(p):
 	if visible != p:
 		if p:
@@ -281,3 +284,6 @@ func get_beam_to(dest, col_mask, distance=-1):
 			break
 		prev = current
 	return [prev, current]
+
+func play_step_sound():
+	G.sfx.play("step", position)

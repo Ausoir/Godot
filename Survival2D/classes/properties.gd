@@ -13,6 +13,11 @@ func load_data(_data):
 	for key in _data:
 		v[key] = _data[key]
 
+func run(host, script):
+	var onmake = v.get(script)
+	if onmake != null:
+		G.cmds(onmake, host)
+
 func g(key, default=null):
 	if key in v:
 		return v[key]

@@ -193,6 +193,7 @@ func save_game(_map="city"):
 		save_game.close()
 
 func load_game():
+	G.custom.run("pre gen", null)
 	var r = false
 	var save_game = File.new()
 	if save_game.file_exists("user://savegame.save"):
@@ -218,6 +219,7 @@ func load_game():
 			else:
 				other_players[node_data.id]["controller"].load_data(node_data)
 	save_game.close()
+	G.custom.run("post gen", null)
 	return r
 
 func _notification(what):

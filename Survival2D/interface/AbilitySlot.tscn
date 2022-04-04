@@ -11,8 +11,8 @@ texture = ExtResource( 4 )
 region_rect = Rect2( 0, 0, 32, 32 )
 
 [sub_resource type="DynamicFont" id=2]
-outline_size = 3
-outline_color = Color( 0, 0, 0, 0.627451 )
+outline_size = 2
+outline_color = Color( 0, 0, 0, 0.470588 )
 font_data = ExtResource( 1 )
 
 [node name="Slot" type="Panel"]
@@ -27,6 +27,8 @@ __meta__ = {
 }
 
 [node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 2, 2 )
+scale = Vector2( 0.875, 0.875 )
 offset = Vector2( 16, 16 )
 
 [node name="Label" type="Label" parent="."]
@@ -34,7 +36,6 @@ margin_right = 32.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
 custom_fonts/font = SubResource( 2 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1"
 align = 2
 valign = 2

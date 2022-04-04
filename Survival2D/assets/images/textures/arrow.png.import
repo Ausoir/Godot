@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/pavement.png-ff6c6ba59bf5d7b990781c6780affe65.stex"
+path="res://.import/arrow.png-7935318329ac21d5366d9ef124421b99.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/tiles/pavement.png"
-dest_files=[ "res://.import/pavement.png-ff6c6ba59bf5d7b990781c6780affe65.stex" ]
+source_file="res://assets/images/textures/arrow.png"
+dest_files=[ "res://.import/arrow.png-7935318329ac21d5366d9ef124421b99.stex" ]
 
 [params]
 
@@ -18,7 +18,7 @@ compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
-compress/normal_map=0
+compress/normal_map=2
 flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
@@ -28,7 +28,8 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
-detect_3d=true
+detect_3d=false
 svg/scale=1.0

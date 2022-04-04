@@ -12,17 +12,27 @@
 		"ant": [75, "+", 1, 4],
 		"ant soldier": [50, "+", 1, 2],
 	},
-	"g_invade": {
+	"spawner variants": {
+		"g_zombie": 50,
+		"g_mutant": 100,
+	},
+	"g_zombie1": {
+		"prisoner zombie": [90, "/", 1, 1],
+		"zombie dog": [80, "/", 1, 1],
+	},
+	"g_zombie2": {
 		"rot zombie": [25, "/", 1, 1],
 		"burnt zombie": [25, "/", 1, 1],
 		"prisoner zombie": [50, "/", 1, 1],
 		"zombie dog": [80, "/", 1, 1],
 		"zombie hunter": [100, "/", 1, 1],
 	},
-	"g_invade2": {
-		"manfly": [25, "/", 1, 1],
+	"g_mutant1": {
+		"manzard": [50, "/", 1, 1],
+	},
+	"g_mutant2": {
+		"manfly": [50, "/", 1, 1],
 		"mantle": [25, "/", 1, 1],
-		"manzard": [25, "/", 1, 1],
 	},
 	"g_sewer": {
 		"rat": [80, "/", 1, 4],
@@ -53,9 +63,11 @@
 	"g_lathe": {
 		"builder (solar panel)": [25, "+", 200, 400],
 		"builder (dispenser)": [25, "+", 100, 200],
+		"builder (machine)": [25, "+", 100, 200],
 		"builder (fence)": [25, "+", 5, 10],
 		"builder (sandbag)": [25, "+", 10, 20],
 		"builder (lathe)": [25, "+", 10, 20],
+		"builder (turret)": [25, "+", 10, 20],
 	},
 	"g_trade": {
 		"medikit": [10, "+", 1, 1],
@@ -63,7 +75,7 @@
 		"energy bar": [10, "+", 1, 1],
 		"torch": [10, "+", 1, 1],
 		"pistol": [10, "+", 1, 1],
-		"biggray gun": [10, "+", 1, 1],
+		"assault rifle": [10, "+", 1, 1],
 		"spear": [10, "+", 1, 1],
 		"cutlass": [10, "+", 1, 1],
 		"bat": [10, "+", 1, 1],

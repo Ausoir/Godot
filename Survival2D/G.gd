@@ -18,9 +18,9 @@ const DOWNLEFT = 5
 const LEFT = 6
 const UPLEFT = 7
 
-const Gfx = preload("res://fx/Gfx.tscn")
-const Sfx = preload("res://fx/Sfx.tscn")
 const Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
+const Gfx = preload("res://fx/Gfx.tscn")
+var sfx = preload("res://fx/Sfx.tscn").instance()
 var influence = preload("res://objects/influence.gd").new()
 var data = preload("res://classes/json.gd").new()
 var time = preload("res://classes/time.gd").new()
@@ -32,6 +32,7 @@ var command = load("res://classes/command.gd").new()
 var worlds = {}
 var events = []
 var vars = {}
+var temp = {}
 var you
 
 
@@ -42,12 +43,14 @@ func _process(delta):
 	time.on_process(delta)
 	if time.eighth_second:
 		world.turn.process_frames += 1
+		if time.second:
+			custom.on_time()
 	world.turn.on_process()
 	for i in range(events.size()):
 		var ev = events[i]
 		ev[0] -= delta
 		if ev[0] <= 0:
-			ev[1].call_funcv(ev[1])
+			ev[1].call_funcv(ev[2])
 			events.remove(i)
 			i -= 1
 
@@ -188,6 +191,7 @@ func travel(_map):
 	var root = get_tree().get_root()
 	if G.world.get_parent() != null:
 		root.remove_child(G.world)
+		G.world.others.remove_child(G.sfx)
 	if _map in G.worlds:
 		G.world = G.worlds[_map]
 		root.add_child(G.world)
@@ -196,6 +200,7 @@ func travel(_map):
 		root.add_child(newworld)
 		G.world = newworld
 		G.world.create(_map)
+	G.world.others.add_child(G.sfx)
 	if G.you.get_parent() != null:
 		G.you.get_parent().remove_child(G.you)
 	G.world.players.add_child(G.you)

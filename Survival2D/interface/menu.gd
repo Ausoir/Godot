@@ -127,12 +127,6 @@ func update_skills():
 			var slots = G.you.unit.dat.get_active_slots()
 			var max_slots = G.you.unit.dat.g("agility", 1)
 			child.set_text("Skills [" + str(slots) + "/" + str(max_slots) + "]: ")
-	var unit_skills = G.you.unit.dat.g("skills", [])
-	for i in range(unit_skills.size()):
-		var actives = unit_skills[i]
-		var newslot = SkillSlot.instance()
-		newslot.assign(actives, i)
-		tab_cha_skills.add_child(newslot)
 	if G.you.unit.dat.g("type") != "other":
 		for i in range(G.you.unit.item_skills.size()):
 			var actives = G.you.unit.item_skills[i]
@@ -140,8 +134,15 @@ func update_skills():
 			newslot.assign(actives, -1)
 			newslot.set_is_item(true)
 			tab_cha_skills.add_child(newslot)
+	var unit_skills = G.you.unit.dat.g("skills", [])
+	for i in range(unit_skills.size()):
+		var actives = unit_skills[i]
+		var newslot = SkillSlot.instance()
+		newslot.assign(actives, i)
+		tab_cha_skills.add_child(newslot)
 
 func update_status():
+	tab_cha_stats.get_node("Label").set_text(G.you.unit.item_name.capitalize())
 	var textbox = tab_cha_stats.get_node("RichTextLabel")
 	var txt = ""
 	for i in G.STATS:

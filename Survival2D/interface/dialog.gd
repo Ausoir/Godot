@@ -89,6 +89,8 @@ func run_script(script):
 		add_trade(page_data.get("type"))
 	elif script[0] == "assign":
 		add_assign()
+	elif script[0] == "upgrade":
+		add_upgrade(page_data.get("type"))
 
 func add_trade(type):
 	G.ui.display(0)
@@ -102,6 +104,21 @@ func add_trade(type):
 		count += 1
 		var option = {"hover": ["item", item_name]}
 		option["cmd"] = [["money",-price],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
+		page_data.opt.append(option)
+	get_node("Dialog/RichTextLabel").append_bbcode(items)
+
+func add_upgrade(type):
+	G.ui.display(0)
+	var items = ""
+	var count = 0
+	var groups = G.data.get_group(type)
+	for group in groups:
+		var item_name = group[0]
+		var price = group[1]
+		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
+		count += 1
+		var option = {"hover": ["item", item_name]}
+		option["cmd"] = [["money",-price],["make", item_name, "$hp"], ["remove", "$h"]]
 		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 

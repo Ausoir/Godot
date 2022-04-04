@@ -61,7 +61,7 @@ func get_items_by_name(p):
 	for y in range(size.y):
 		for x in range(size.x):
 			for item in tiles[y][x].items:
-				if item.item_name == p:
+				if item.item_name == p and is_instance_valid(item):
 					r.append(item)
 	return r
 

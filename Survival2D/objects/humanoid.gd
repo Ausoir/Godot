@@ -6,6 +6,29 @@ var inventory = [null]
 var gender = "m"
 var item_skills = []
 
+func ability(idx, at):
+	var abilities = dat.g("abilities", [])
+	var s_abilities = abilities.size()
+	if idx < s_abilities:
+		face_toward(at)
+		var ability = abilities[idx]
+		return G.influence.do(ability, self, at, 0, null)
+	else:
+		var items = get_usable_items()
+		var s_items = items.size()
+		if idx < s_abilities + s_items:
+			face_toward(at)
+			G.cmds(items[idx - s_abilities].dat.g("onuse"), self, at)
+
+func get_usable_items():
+	var r = []
+	for i in inventory:
+		if i != null:
+			var onuse = i.dat.g("onuse")
+			if onuse != null:
+				r.append(i)
+	return r
+
 func set_seed():
 	var sd = dat.g("seed", -1)
 	if sd == -1:
@@ -34,7 +57,10 @@ func get_damage(ptype, p):
 	var r = .get_damage(ptype, p)
 	var wpn = equipments.get("weapon")
 	if wpn:
-		r += wpn.dat.g("cut", 0)
+		if ptype == "bash":
+			r += round(R.f() * wpn.dat.g("bash", 0))
+		elif ptype == "cut":
+			r += round(R.f() * wpn.dat.g("cut", 0))
 	return r
 
 func can_carry(w):
@@ -96,7 +122,9 @@ func equip(part, item):
 			create_overlay(part, item.dat.g("sprite")+"_"+gender)
 		else:
 			create_overlay(part, item.dat.g("sprite"))
-		G.Sfx.instance().start("equip_metal", pos.position)
+		G.sfx.play("equip_metal", pos.position)
+		if controller != null:
+			controller.on_change("equip")
 		return true
 	return false
 
@@ -108,15 +136,27 @@ func unequip(part):
 			remove_overlay(part)
 			equipments.erase(eq)
 			r.host = null
+			if controller != null:
+				controller.on_change("equip")
 			return r
 
 func on_item_remove(item):
 	if item in inventory:
-		inventory.erase(item)
+		unstore(item)
 	else:
 		var part = item.dat.g("part", "weapon")
 		if equipments[part] == item:
 			unequip(part)
+
+func roll_skill(type, mode=0):
+	var data
+	for skill in item_skills + dat.g("skills", []) + ["wait"]:
+		data = G.data.skill_data.get(skill)
+		if data != null and data.target == type:
+			if R.r_percent(data.chance):
+				G.influence.do(skill, self, controller.target, mode, data)
+				return [skill, data]
+	return null
 
 func accomodate_stats(item):
 	var abilities = dat.g("abilities", [])
@@ -163,6 +203,8 @@ func store(item, drop=false):
 		if inventory[i] == null:
 			inventory[i] = item
 			item.host = self
+			if controller != null:
+				controller.on_change("item")
 			return true
 	if drop:
 		drop(item)
@@ -173,11 +215,20 @@ func unstore(item):
 		if inventory[i] == item:
 			item.host = null
 			inventory[i] = null
+			if controller != null:
+				controller.on_change("item")
 			return true
 	return false
 
 func drop(item):
 	pos.add_item(item)
+
+func get_defense(_type):
+	var def = .get_defense(_type)
+	if _type == "bash":
+		return def + dat.g("abash", 0)
+	elif _type == "cut":
+		return def + dat.g("acut", 0)
 
 func update_save_data(_data):
 	var save_eq = {}

@@ -1,6 +1,7 @@
 var host
 var states = {}
 var in_turn = false
+var disrupt_hit = false
 
 class buff:
 	var parent
@@ -8,7 +9,7 @@ class buff:
 	var fx
 	var duration
 	var dest
-	var cancels
+	var cancelable
 	var turns
 	var turn = 0
 
@@ -18,7 +19,7 @@ class buff:
 		fx = p2
 		duration = p3
 		dest = p4
-		cancels = fx.get("cancel", null)
+		cancelable = fx.get("cancelable", false)
 		turns = fx.get("turns", 0)
 
 	func on_turn(host):
@@ -33,12 +34,6 @@ class buff:
 			if turn > turns:
 				turn = 0
 				G.influence.do(name, host, dest, 1, fx)
-
-	func on_interrupt(p):
-		if cancels != null:
-			for cancel in cancels:
-				if cancel == p:
-					parent.cancel(name)
 
 func _init(phost):
 	host = phost
@@ -62,12 +57,11 @@ func cancel(p):
 func on_turn():
 	var keys = states.keys()
 	for i in keys:
-		states[i].on_turn(host)
-
-func on_interrupt(p):
-	for i in states.keys():
 		var state = states[i]
-		state.on_interrupt(p)
+		if disrupt_hit and state.cancelable:
+			cancel(i)
+			continue
+		state.on_turn(host)
 
 func end(p):
 	if p in states:

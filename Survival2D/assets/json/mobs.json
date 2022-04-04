@@ -46,7 +46,7 @@
 	},
 	"guard": {
 		"unit": "human",
-		"equip": [["scalemail",100],["biggray gun",100]],
+		"equip": [["scalemail",100],["assault rifle",100]],
 		"dat": {"perception": 6, "move speed": 0, "faction": 1}
 	},
 	"agent": {

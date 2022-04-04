@@ -7,6 +7,12 @@ func _ready():
 
 func display(p):
 	set_text("$" + str(G.vars.money))
+	if G.vars.money >= G.vars.money_:
+		modulate.g = 0
+		modulate.b = 0
+	else:
+		modulate.g = 1
+		modulate.b = 1
 	if p != 0:
 		set_process(true)
 		var label = Label.new()
@@ -26,7 +32,7 @@ func _process(delta):
 		if color == null:
 			child.set("custom_colors/font_color", Color(1, 1, 1, 1))
 		elif color.a > .2:
-			var alpha = color.a-delta
+			var alpha = color.a-delta * 3
 			child.set("custom_colors/font_color", Color(color.r, color.g, color.b, alpha))
 			child.rect_position.y += alpha
 		else:

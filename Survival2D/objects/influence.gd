@@ -16,7 +16,7 @@ func do(name, host=null, p=null, mode=0, pdata=null):
 		if "delay" in data:
 			host.delay = data.delay
 		if mode == 0:
-			if "duration" in data:
+			if "duration" in data and host.item_type == "unit":
 				if host.buffs.has(name):
 					G.cmds(data.get("onstack", []), host, tgt)
 					return true

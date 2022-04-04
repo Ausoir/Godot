@@ -14,19 +14,21 @@ var aiming = -1
 var view_dirty = false
 var on_point
 
-func update_dat():
-	.update_dat()
-	n_camera.darken()
-	n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
-	n_camera.update(unit.pos, last_pos)
-	var bodytype_list = G.data.get_json_data("bodytypes")
-	var bodyparts = bodytype_list.get(unit.dat.g("type"))
-	G.ui.menu.update_equipables(bodyparts)
-	G.ui.menu.update_inventory()
-	pathing.can_open = false
-	pathing.smash_to = 0
-	pathing.iterations = 32
-	pathing.pathing_times = 0
+func on_change(p):
+	.on_change(p)
+	if p == "dat":
+		n_camera.darken()
+		n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
+		n_camera.update(unit.pos, last_pos)
+		var bodytype_list = G.data.get_json_data("bodytypes")
+		var bodyparts = bodytype_list.get(unit.dat.g("type"))
+		G.ui.menu.update_equipables(bodyparts)
+		G.ui.menu.update_inventory()
+		pathing.can_open = false
+		pathing.smash_to = 0
+		pathing.iterations = 32
+		pathing.pathing_times = 0
+	G.ui.update_hud()
 
 func on_assign():
 	.on_assign()
@@ -77,9 +79,6 @@ func _on_input(event: InputEvent):
 							stop_aim()
 						else:
 							tasks = [["ability", aiming, mouse_pos]]
-							var abilities = unit.dat.g("abilities", [])
-							if abilities.size() > aiming:
-								G.data.skill_data.get(abilities[aiming])
 					elif !tile.items.empty():
 						var item = tile.get_item_by_type("item")
 						if item != null:
@@ -107,7 +106,6 @@ func on_turn():
 		last_pos = unit.pos
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
-	G.ui.update_hud()
 
 func make_money(p):
 	G.vars.money += p
@@ -169,9 +167,9 @@ func on_hit(_hitter):
 
 func interact(item):
 	if !G.ui.on:
-		var onuse = item.dat.g("onuse")
-		if onuse != null:
-			G.cmds(onuse, item, unit)
+		var oninteract = item.dat.g("oninteract")
+		if oninteract != null:
+			G.cmds(oninteract, item, unit)
 		elif item.item_type == "item":
 			G.ui.menu.search_inventory(item.pos)
 		elif item.item_type == "unit":
@@ -235,3 +233,4 @@ func load_data(_data):
 		player_unit.set_seed()
 	player_unit.buffs.from_data(_data.unit_buff)
 	make_money(0)
+	G.ui.update_hud()

@@ -49,6 +49,13 @@ func get_combo(dat):
 		r += get_combo(dat[3])
 	return r
 
+func get_category(p):
+	var data = G.data.group_data.get(p)
+	if data != null:
+		for mobs in data:
+			if R.r_percent(data[mobs]):
+				return mobs
+
 func get_group(p):
 	var r = []
 	var data = G.data.group_data.get(p)

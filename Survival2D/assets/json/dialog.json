@@ -1,7 +1,7 @@
 {
 	"Librarian": {
 		"title": "Talk with Librarian",
-		"true": "Do you have any questions about how to [url=0]use your inventory?[/url]\nIf you have any questions about [url=1]fight[/url] or [url=2]about the runs[/url], ask away.\"",
+		"true": "Do you have any questions on how to [url=0]use your inventory[/url] or how to [url=1]fight[/url], ask away.\"",
 		"opt": [
 			{
 				"cmd": [["menu", "dialog", "Librarian_items"]],
@@ -9,9 +9,6 @@
 			{
 				"cmd": [["menu", "dialog", "Librarian_combat"]],
 			},
-			{
-				"cmd": [["menu", "dialog", "Librarian_runs"]],
-			}
 		]
 	},
 	"Librarian_items": {
@@ -22,11 +19,6 @@
 	"Librarian_combat": {
 		"title": "Tutorial - Combat",
 		"true": "\"Press TAB and go to your Skills menu.\nThe icons at the top part of the menu are your currently equipped skills. Moving a skill from the bottom part to the top equips them.\nWhen in combat, you will use the equipped skills in their respective order.\"\n\n[i][url=0]> Alrighty[/url][/i]",
-		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
-	},
-	"Librarian_runs": {
-		"title": "Tutorial - Runs",
-		"true": "\"Gardening is ok, but at the end of the day, it's the canned goodiness that feed us.\n\nWhen we get to our destination, just follow us and stay out of harm's way. [url=0]Understand?[/url]\"",
 		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
 	},
 	"Trader": {

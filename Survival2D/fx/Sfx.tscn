@@ -2,8 +2,31 @@
 
 [ext_resource path="res://fx/sfx.gd" type="Script" id=1]
 
-[node name="Node2D" type="AudioStreamPlayer2D"]
-max_distance = 512.0
+[node name="Node2D" type="Node"]
 script = ExtResource( 1 )
 
-[connection signal="finished" from="." to="." method="_on_finished"]
+[node name="0" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="1" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="2" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="3" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="4" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="5" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="6" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="7" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[connection signal="finished" from="0" to="." method="_on_finished" binds= [ 0 ]]

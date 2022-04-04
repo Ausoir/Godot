@@ -2,7 +2,6 @@ extends "res://objects/item.gd"
 
 const Ai = preload("res://objects/ai.gd")
 const Buffs = preload("res://objects/buffs.gd")
-const Healthbar = preload("res://interface/Health.tscn")
 const animation_map = {
 	"idle": 0,
 	"walk": 1,
@@ -13,14 +12,12 @@ const animation_map = {
 	"kick": 6,
 	"wait": 7,
 }
-const SPEED = 10
+const SPEED = 5
 
 onready var n_sprites = $Sprites
 onready var n_animation = $Animation
 onready var n_sprite = $Sprites/Sprite
 onready var n_skeleton = $Skeleton2D
-onready var n_mat = n_sprite.material
-var n_healthbar
 
 var delay = 0
 
@@ -29,12 +26,10 @@ var controller
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
-var flash_state = [0, 0, 0, 0]
 
 func _ready():
 	n_collider = get_node("Body")
 	n_collider.parent = self
-	on_make()
 	for i in dat.g("buffs", []):
 		G.influence.do(i, self)
 	if !dat.g("controlled", false):
@@ -43,25 +38,27 @@ func _ready():
 func set_seed():
 	pass
 
-func update_dat():
-	layer = dat.g("layer", 0)
-	var oldcol = col
-	col = dat.g("col", 0)
-	if col != oldcol:
-		update_col(col)
-	for team in G.world.team:
-		if self in team:
-			team.erase(self)
-	var faction = dat.g("faction", -1)
-	if faction != -1:
-		if !(self in G.world.team[faction]):
-			G.world.team[faction].append(self)
-	flags = dat.g("flags", [])
+func on_change(p):
+	if p == "dat":
+		layer = dat.g("layer", 0)
+		var oldcol = col
+		col = dat.g("col", 6)
+		if col != oldcol:
+			update_col(col)
+		for team in G.world.team:
+			if self in team:
+				team.erase(self)
+		var faction = dat.g("faction", -1)
+		if faction != -1:
+			if !(self in G.world.team[faction]):
+				G.world.team[faction].append(self)
+		flags = dat.g("flags", [])
 	if controller != null:
-		controller.update_dat()
+		controller.on_change(p)
 
 func update_col(p):
 	get_node("Body").collision_layer = p
+	get_node("Body").collision_mask = p
 
 func possess(ctlr = null):
 	if ctlr == null:
@@ -101,19 +98,22 @@ func place(p):
 	.place(p)
 	n_collider.check_overlap()
 
-func slide(diff):
+func slide(toward):
 	var ms = dat.g("move speed", 0)
 	if ms > 0:
 		if !("float" in flags):
 			ms = max(.2, ms * pos.slow)
 		n_animation.play("walk", -1, ms / 4)
-		var diff_normalized = diff.normalized()
-		if diff_normalized.x > 0:
+		var deg = atan2(toward.y-position.y, toward.x-position.x)
+		var vx = cos(deg)
+		var vy = sin(deg)
+		if vx > 0:
 			face(1)
-		elif diff_normalized.x < 0:
+		elif vx < 0:
 			face(-1)
 		ms *= SPEED
-		n_collider.vel = Vector2(diff_normalized.x * ms, diff_normalized.y * ms)
+		n_collider.vel.x += vx * ms
+		n_collider.vel.y += vy * ms
 	return on_slide()
 
 func on_slide():
@@ -122,6 +122,7 @@ func on_slide():
 		pos.remove_item(self)
 		newpos.add_item(self)
 		on_relocate()
+		newpos.play_step_sound()
 		if !newpos.visible and G.you.n_camera.is_in_range(newpos):
 			G.make_particle("Sound", newpos.position, null, true)
 	if delay == 0:
@@ -153,13 +154,6 @@ func roll_skill(type, mode=0):
 				return [skill, data]
 	return null
 
-func get_health():
-	var vit = dat.g("vitality", 1) * 2
-	if vit <= 0:
-		return 0
-	var hurt = dat.g("damage", 0)
-	return 1 - (hurt / vit)
-
 func on_kill(killed):
 	if "cannibal" in flags:
 		hit("true", -2, self)
@@ -169,47 +163,56 @@ func hit(_type, dmg, _hitter):
 	if dmg > 0:
 		if _hitter != null and controller != null:
 			controller.on_hit(_hitter)
-		if pos.light < 0 and R.b():
-			G.display_damage("MISS", pos.position, Color.darkgray)
-			return
 		if _type != "true":
+			var block = get_defense(_type)
 			var used = roll_skill("onhit", 3)
 			if used != null:
-				var block = used[1].get("block", 0)
-				if block >= dmg:
-					return
-				else:
-					dmg -= block
+				block += used[1].get("block", 0)
+			if block >= dmg:
+				G.display_damage("MISS", pos.position, Color.darkgray)
+				return
+			else:
+				dmg -= block
+			if dmg > 0:
+				G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
+				if _type == "cut":
+					G.make_particle("Cut", pos.position)
+				elif _type == "bash":
+					G.make_particle("Hit", pos.position)
 		if current_action == "knockout":
 			dmg *= 2
 		dat.add("damage", dmg, 0)
 		delay = 2
 		set_animation("hit", 2)
-		buffs.on_interrupt("interrupt")
+		buffs.disrupt_hit = true
 		show_healthbar()
 		G.make_particle("Blood", pos.position, {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})
-		var health_percent = get_health()
-		G.display_damage(round(dmg), pos.position, Color(1,health_percent,0))
-		flash(0, (1 - health_percent)*.3 + .1)
-		if health_percent <= 0:
-			is_dead = true
+		G.display_damage(round(dmg), pos.position, Color.red)
+		flash(0, dmg * .2)
+		on_health_change()
+		if is_dead:
 			if _hitter != null:
 				_hitter.on_kill(self)
-		elif health_percent <= .5:
-			if !buffs.has("injury"):
-				G.influence.do("injury", self)
 	elif dmg < 0:
 		dat.add("damage", dmg, 0, dat.g("vitality"))
 		show_healthbar()
 		flash(1, dmg * -.2)
 		G.display_damage(round(dmg), pos.position, Color.green)
 
+func on_health_change():
+	var health_percent = get_health()
+	if health_percent <= 0:
+		is_dead = true
+	elif health_percent <= .5:
+		if !buffs.has("injury"):
+			G.influence.do("injury", self)
+
 func on_turn():
 	if is_dead:
 		die()
 	else:
 		if dirty_dat:
-			update_dat()
+			on_change("dat")
 			dirty_dat = false
 		if delay == 0:
 			if controller != null:
@@ -225,20 +228,6 @@ func on_turn():
 			else:
 				cooldowns[i] -= 1
 		.on_turn()
-
-func _process(delta):
-	if flash_state[0] > 0:
-		var percent = flash_state[0] / flash_state[1]
-		if flash_state[2] > 0:
-			n_mat.set_shader_param("red", flash_state[2]*percent)
-		elif flash_state[3] > 0:
-			n_mat.set_shader_param("green", flash_state[3]*percent)
-		flash_state[0] -= delta
-
-func flash(c, dur):
-	dur = max(.1, dur)
-	flash_state = [dur, dur, 0, 0]
-	flash_state[2 + c] = 1
 
 func face(p):
 	if (p > 0) != (n_sprites.scale.x > 0):
@@ -263,8 +252,6 @@ func die():
 func remove():
 	if n_collider != null:
 		n_collider.queue_free()
-	if n_healthbar != null:
-		n_healthbar.queue_free()
 	if controller != null:
 		controller.remove()
 	$Shadow.queue_free()
@@ -273,14 +260,6 @@ func remove():
 	.remove()
 	buffs.remove()
 	G.world.turn.remove(self)
-
-func show_healthbar():
-	if n_healthbar == null:
-		n_healthbar = Healthbar.instance()
-		add_child(n_healthbar)
-	var vit = dat.g("vitality", 1) * 2
-	n_healthbar.set_mhp(vit)
-	n_healthbar.set_hp(vit - dat.g("damage", 0))
 
 func move_world(wld):
 	var faction = dat.g("faction", -1)

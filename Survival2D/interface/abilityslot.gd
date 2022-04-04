@@ -20,26 +20,33 @@ func set_index(p):
 
 func set_mode(p):
 	if p == 3:
-		overlay.show()
-		stylebox.texture = G.data.get_image("gui/skillslot")
+		overlay.hide()
+		stylebox.texture = G.data.get_image("gui/skillslot_use")
 	elif p == 2:
 		overlay.hide()
 		stylebox.texture = G.data.get_image("gui/skillslot_disabled")
 	elif p == 1:
-		overlay.hide()
-		stylebox.texture = G.data.get_image("gui/skillslot_use")
+		overlay.show()
+		stylebox.texture = G.data.get_image("gui/skillslot")
 	else:
+		overlay.hide()
 		stylebox.texture = G.data.get_image("gui/skillslot")
 	mode = p
 
 func assign(p):
 	skill = p
-	skill_data = G.data.skill_data.get(p)
-	if skill_data == null:
-		return false
-	skill_description = skill_data.get("desc")
-	skill_type = skill_data.target
-	$Sprite.texture = G.data.get_image(skill_data.img)
+	if p is String:
+		skill_data = G.data.skill_data.get(p)
+		if skill_data == null:
+			return false
+		skill_type = skill_data.get("target")
+		skill_description = skill_data.get("desc")
+		$Sprite.texture = G.data.get_image(skill_data.img)
+	else:
+		skill_data = G.data.item_data.get(p)
+		skill_type = "item"
+		skill_description = skill.dat.g("desc")
+		$Sprite.texture = skill.texture
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
@@ -49,8 +56,12 @@ func _on_gui_input(event):
 
 func activate():
 	if mode == MODE_NORMAL:
+		G.ui.unselect_skills()
 		if skill_type == "self":
 			G.you.tasks = [["ability", skill_index, G.you.unit.position]]
+		elif skill_type == "item":
+			set_mode(MODE_SELECTED)
+			G.you.tasks = [["command", skill.dat.g("onuse"), skill, G.you.unit.position]]
 		else:
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
@@ -60,6 +71,7 @@ func activate():
 			G.you.stop_aim()
 	elif mode == MODE_ACTIVE:
 		G.you.tasks = [["ability", skill_index, G.you.unit.position]]
+	G.ui.description.hide()
 
 func _update_cooldown(cd):
 	if cd > 0:
@@ -70,7 +82,10 @@ func _update_cooldown(cd):
 		set_modulate(Color.white)
 
 func _on_mouse_entered():
-	G.ui.describe("ability", skill, skill_data)
+	if skill_type == "item":
+		G.ui.describe("item", skill.get_display_name(), skill.dat.v)
+	else:
+		G.ui.describe("ability", skill, skill_data)
 
 func _on_mouse_exited():
 	G.ui.description.hide()
