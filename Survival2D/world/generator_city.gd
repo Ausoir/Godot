@@ -3,7 +3,7 @@ extends "res://world/generator.gd"
 var mob_spawns = []
 
 func generate():
-	.create(80, 40)
+	.create(85, 40)
 	G.world.create_map(width, height)
 	base = make_perlin(width, height, 6)
 	output = make_base(width, height, 0)
@@ -36,7 +36,7 @@ func generate():
 	paint_spawn(1)
 	for i in mob_spawns:
 		var adj = G.world.tiles[i[1]][i[0]]
-		if !adj.is_col(12):
+		if !adj.is_col(14):
 			G.factory.make_group("g_urban", adj)
 
 func place_complex():

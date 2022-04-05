@@ -88,7 +88,7 @@ func remove_item(item):
 
 func smash(_dmg):
 	for item in items:
-		if item.hit("cut", _dmg, null):
+		if item.hit("true", _dmg, null):
 			return true
 
 func update_tile():

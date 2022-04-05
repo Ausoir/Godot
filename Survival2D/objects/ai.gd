@@ -68,7 +68,7 @@ func hunt():
 		return false
 
 func perform_ability():
-	if R.ir(0, 3) == 0:
+	if R.b():
 		var exc = [unit.n_collider, target.n_collider]
 		if unit.n_collider.cast_col_ray(target.position, exc, unit.col).empty():
 			var ability_idx = R.ir(0, unit.dat.g("abilities", []).size())

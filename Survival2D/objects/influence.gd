@@ -59,7 +59,7 @@ func find_victim(p, host, data):
 			tgt = host.pos.get_beam_to(get_tile(p), data.get("col", 0), rng)[0]
 			return is_req_met(tgt, host, data)
 		else:
-			tgt = host.controller.target
+			tgt = p
 			if tgt != null and is_instance_valid(tgt):
 				if data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
 					if tgt.item_type == "unit" and is_req_met(tgt, host, data):

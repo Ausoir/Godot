@@ -108,7 +108,7 @@ func on_turn():
 		G.ui._update_cooldowns(unit.cooldowns)
 
 func make_money(p):
-	G.vars.money += p
+	G.vars.money = min(G.vars.money_, G.vars.money+p)
 	G.ui.n_money.display(p)
 
 func _physics_process(_delta):

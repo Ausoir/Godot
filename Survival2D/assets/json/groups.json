@@ -8,13 +8,10 @@
 		"zombie": [50, "/", 1, 6],
 		"coyote": [75, "/", 1, 6],
 	},
-	"g_ants": {
-		"ant": [75, "+", 1, 4],
-		"ant soldier": [50, "+", 1, 2],
-	},
 	"spawner variants": {
 		"g_zombie": 50,
 		"g_mutant": 100,
+		"g_hive": 100,
 	},
 	"g_zombie1": {
 		"prisoner zombie": [90, "/", 1, 1],
@@ -28,17 +25,27 @@
 		"zombie hunter": [100, "/", 1, 1],
 	},
 	"g_mutant1": {
-		"manzard": [50, "/", 1, 1],
+		"infected": [50, "/", 1, 1],
 	},
 	"g_mutant2": {
-		"manfly": [50, "/", 1, 1],
-		"mantle": [25, "/", 1, 1],
+		"mutant": [75, "/", 1, 1],
 	},
-	"g_sewer": {
-		"rat": [80, "/", 1, 4],
-		"manfly": [5, "+", 1, 1],
-		"mantle": [5, "+", 1, 1],
-		"manzard": [5, "+", 1, 1],
+	"g_mutant3": {
+		"manzard": [50, "/", 1, 1],
+		"mantle": [15, "/", 1, 1],
+		"manfly": [100, "/", 1, 1],
+	},
+	"g_hive1": {
+		"ant": [75, "/", 1, 1],
+	},
+	"g_hive2": {
+		"ant": [75, "/", 1, 1],
+		"ant soldier": [40, "/", 1, 1],
+	},
+	"g_hive3": {
+		"ant princess": [5, "/", 1, 1],
+		"ant soldier": [40, "/", 1, 1],
+		"ant": [100, "/", 1, 1],
 	},
 	"g_conscript": {
 		"scavenger": [15, "+", 20, 40],

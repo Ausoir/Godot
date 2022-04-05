@@ -176,7 +176,7 @@ func run(host, _args):
 		G.ui.menu.search_inventory(args[1])
 	else:
 		var subject = args[1]
-		if typeof(subject) == 17:
+		if typeof(subject) == 17 and is_instance_valid(subject):
 			if command == "remove":
 				subject.remove()
 			elif command[0] == "*":
@@ -190,6 +190,8 @@ func run(host, _args):
 					subject.dirty_dat = true
 				elif command[1] == "-":
 					subject.dat.d(args[2])
+				elif command[1] == "a":
+					subject.dat.g(args[2]).append(args[3])
 				elif command == "*dmg":
 					var hp = subject.dat.add("damage", args[2])
 					subject.dat.a("damage", max(0, hp))
@@ -264,6 +266,7 @@ func run_item(command, subject):
 		var newunit = G.cmds([["make", args[2], subject.pos]])
 		newunit.possess(subject.controller)
 		subject.remove()
+		return newunit
 
 func get_arg(idx, default=null):
 	if args.size() > idx:

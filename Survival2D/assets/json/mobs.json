@@ -1,8 +1,8 @@
 {
 	"player": {
 		"unit": "human",
-		"equip": [["gi", 100], ["hood", 100], ["cutlass", 100]],
-		"dat": {"controlled": true, "faction": 1},
+		"equip": [],
+		"dat": {"controlled": true, "faction": 1, "seed": -1},
 	},
 	"captain": {
 		"unit": "human",

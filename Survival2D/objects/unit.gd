@@ -2,16 +2,6 @@ extends "res://objects/item.gd"
 
 const Ai = preload("res://objects/ai.gd")
 const Buffs = preload("res://objects/buffs.gd")
-const animation_map = {
-	"idle": 0,
-	"walk": 1,
-	"attack": 2,
-	"hit": 3,
-	"headbutt": 4,
-	"knockout": 5,
-	"kick": 6,
-	"wait": 7,
-}
 const SPEED = 5
 
 onready var n_sprites = $Sprites
@@ -42,7 +32,7 @@ func on_change(p):
 	if p == "dat":
 		layer = dat.g("layer", 0)
 		var oldcol = col
-		col = dat.g("col", 6)
+		col = dat.g("col", 12)
 		if col != oldcol:
 			update_col(col)
 		for team in G.world.team:
@@ -57,8 +47,12 @@ func on_change(p):
 		controller.on_change(p)
 
 func update_col(p):
-	get_node("Body").collision_layer = p
-	get_node("Body").collision_mask = p
+	var body = get_node("Body")
+	body.collision_mask = p
+	if p & 12 > 0:
+		body.collision_layer = p | 2
+	else:
+		body.collision_layer = p
 
 func possess(ctlr = null):
 	if ctlr == null:
@@ -174,11 +168,17 @@ func hit(_type, dmg, _hitter):
 			else:
 				dmg -= block
 			if dmg > 0:
-				G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
 				if _type == "cut":
+					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
 					G.make_particle("Cut", pos.position)
 				elif _type == "bash":
+					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
 					G.make_particle("Hit", pos.position)
+				elif _type == "steal":
+					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
+					G.make_particle("Hit", pos.position)
+					if _hitter != null:
+						G.cmd(["*dmg",_hitter,-dmg])
 		if current_action == "knockout":
 			dmg *= 2
 		dat.add("damage", dmg, 0)

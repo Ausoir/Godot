@@ -92,7 +92,7 @@ func on_health_change():
 		die()
 
 func show_healthbar():
-	var vit = dat.g("vitality", 0) * 2
+	var vit = dat.g("vitality", 0)
 	if vit > 0:
 		if n_healthbar == null:
 			n_healthbar = Healthbar.instance()

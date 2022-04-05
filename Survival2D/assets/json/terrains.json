@@ -1,7 +1,7 @@
 {
 	"void": {"mat": "other", "col": 15, "height": 0},
 	"dirt": {"mat": "dirt", "col": 0, "height": 0},
-	"glass": {"mat": "metal", "col": 14, "height": 1},
+	"glass": {"mat": "glass", "col": 14, "height": 1},
 	"concrete": {"mat": "metal", "col": 15, "height": 1, "ceiling": 1, "autotile": 1},
 	"grass": {"mat": "dirt", "col": 0, "height": 0},
 	"water": {"mat": "water", "col": 6, "height": 0},

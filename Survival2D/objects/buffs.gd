@@ -62,6 +62,7 @@ func on_turn():
 			cancel(i)
 			continue
 		state.on_turn(host)
+	disrupt_hit = false
 
 func end(p):
 	if p in states:

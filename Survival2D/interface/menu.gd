@@ -112,7 +112,7 @@ func search_inventory(tile):
 		container_grid.remove_child(child)
 		child.queue_free()
 	for item in tile.items:
-		if item.item_type == "item":
+		if item.item_type == "item" and item.dat.g("weight", -1) != -1:
 			var slot = ItemSlot.instance()
 			slot.assign(item)
 			slot.tile = tile
