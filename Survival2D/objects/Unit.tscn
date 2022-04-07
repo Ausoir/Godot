@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/images/unit_shade.png" type="Texture" id=1]
 [ext_resource path="res://assets/images/units/zombie.png" type="Texture" id=2]
@@ -83,6 +83,45 @@ tracks/2/keys = {
 "values": [ Vector2( 0, 4 ) ]
 }
 
+[sub_resource type="Animation" id=16]
+resource_name = "flip"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Lower:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, -26.0, 360.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Lower:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1, 0.8 ), Vector2( 1, 1 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Skeleton2D/Lower:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.3, 0.4, 0.5, 0.6, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, 4 ), Vector2( -8, -6 ), Vector2( -8, -14 ), Vector2( 0, -16 ), Vector2( 0, 4 ) ]
+}
+
 [sub_resource type="Animation" id=3]
 length = 0.5
 
@@ -119,10 +158,10 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0.4, 1 ),
-"transitions": PoolRealArray( 1, 1 ),
+"times": PoolRealArray( 0, 0.4, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ -59.9999, 0.0 ]
+"values": [ 15.0, -59.9999, 0.0 ]
 }
 
 [sub_resource type="Animation" id=5]
@@ -389,6 +428,33 @@ tracks/3/keys = {
 "values": [ 0.0, -30.0, 0.0 ]
 }
 
+[sub_resource type="Animation" id=15]
+resource_name = "strike"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Skeleton2D/Lower:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 8.0, -15.0, -15.0, 4.0, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Skeleton2D/Lower:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 8, 0 ), Vector2( -4, 0 ), Vector2( -4, 0 ), Vector2( 0, 0 ) ]
+}
+
 [sub_resource type="Animation" id=9]
 resource_name = "up"
 tracks/0/type = "value"
@@ -534,12 +600,14 @@ default_length = 4.0
 [node name="Animation" type="AnimationPlayer" parent="."]
 anims/attack = SubResource( 1 )
 anims/down = SubResource( 2 )
+anims/flip = SubResource( 16 )
 anims/grab = SubResource( 3 )
 anims/headbutt = SubResource( 4 )
 anims/hit = SubResource( 5 )
 anims/idle = SubResource( 6 )
 anims/kick = SubResource( 7 )
 anims/knockout = SubResource( 8 )
+anims/strike = SubResource( 15 )
 anims/up = SubResource( 9 )
 anims/wait = SubResource( 10 )
 anims/walk = SubResource( 11 )
@@ -559,8 +627,6 @@ skeleton = NodePath("../../Skeleton2D")
 polygon = PoolVector2Array( 0, 0, 16, 0, 32, 0, 32, 16, 32, 32, 16, 32, 0, 32, 0, 16 )
 uv = PoolVector2Array( 0, 0, 16, 0, 32, 0, 32, 16, 32, 32, 16, 32, 0, 32, 0, 16 )
 bones = [ "Lower", PoolRealArray( 0, 0, 0, 0, 0.5, 0.5, 0.5, 0 ), "Lower/Upper", PoolRealArray( 0, 0, 0, 0.5, 0, 0, 0, 0.5 ), "Lower/Upper/Head", PoolRealArray( 0.5, 0.5, 0.5, 0, 0, 0, 0, 0 ) ]
-
-[node name="Tween" type="Tween" parent="."]
 
 [node name="Body" type="KinematicBody2D" parent="."]
 collision_layer = 6

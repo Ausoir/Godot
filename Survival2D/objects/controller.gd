@@ -73,8 +73,8 @@ func perform(task):
 	elif task[0] == "smash":
 		if unit.pos.distance_to(task[1]) <= 1:
 			unit.face_toward(task[1].position)
-			unit.delay = 5
-			unit.set_animation("attack", 5)
+			unit.delay = 8
+			unit.set_animation("strike", 8)
 			var dmg = unit.get_damage("bash", 100)
 			task[1].smash(dmg)
 	elif task[0] == "command":

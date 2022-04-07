@@ -7,4 +7,4 @@ func make(host):
 	for i in range(1, 8):
 		var node = get_node("Part" + str(i))
 		node.texture = texture
-	$AnimationPlayer.play("Die")
+	$AnimationPlayer.play("Die" + str(R.ir(1, 3)))

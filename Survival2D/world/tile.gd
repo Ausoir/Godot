@@ -86,9 +86,9 @@ func remove_item(item):
 	items.erase(item)
 	update_tile()
 
-func smash(_dmg):
+func smash(_dmg, _type="true"):
 	for item in items:
-		if item.hit("true", _dmg, null):
+		if item.hit(_type, R.ir(0, _dmg), null):
 			return true
 
 func update_tile():
@@ -191,6 +191,16 @@ func get_adjacent(dir, val=1):
 	if world.is_inbound(rx, ry):
 		return world.tiles[ry][rx]
 	return self
+
+func get_area(p):
+	var r = []
+	for iy in range(-p, p+1):
+		for ix in range(-p, p+1):
+			var rx = x + ix
+			var ry = y + iy
+			if world.is_inbound(rx, ry):
+				r.append(world.tiles[ry][rx])
+	return r
 
 func distance_to(tile):
 	return max(abs(x - tile.x), abs(y - tile.y))

@@ -178,16 +178,16 @@ func interact(item):
 			elif item.controller != null:
 				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
 
-func move_to(tile, reach=0, _path=true):
+func move_to(tile, reach=0):
 	var distance = unit.pos.distance_to(tile)
-	if _path:
-		if distance <= reach:
-			return unit.pos
-		path_to(tile, reach)
-		remove_steps()
-		show_steps()
-	else:
-		path_to(tile, reach)
+	if distance <= reach:
+		return unit.pos
+	elif distance == 1:
+		tasks = [["smash", tile]]
+		return unit.pos
+	path_to(tile, reach)
+	remove_steps()
+	show_steps()
 
 func aim_ability(idx):
 	n_cursor.show()

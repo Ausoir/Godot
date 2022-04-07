@@ -24,9 +24,8 @@ class buff:
 
 	func on_turn(host):
 		if duration == 0:
-			if "onend" in fx:
-				G.influence.do(name, host, dest, 2, fx)
 			parent.cancel(name)
+			return
 		elif duration > 0:
 			duration -= 1
 		turn += 1
@@ -50,9 +49,13 @@ func has(p):
 	return p in states
 
 func cancel(p):
-	states.erase(p)
-	if states.empty():
-		G.world.turn.remove(self)
+	var state = states.get(p)
+	if state != null:
+		if "onend" in state.fx:
+			G.influence.do(p, host, state.dest, 2, state.fx)
+		states.erase(p)
+		if states.empty():
+			G.world.turn.remove(self)
 
 func on_turn():
 	var keys = states.keys()

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/confuse.wav-33023464e7c3ebce4b32dd0ca507a1f2.sample"
+
+[deps]
+
+source_file="res://assets/audio/confuse.wav"
+dest_files=[ "res://.import/confuse.wav-33023464e7c3ebce4b32dd0ca507a1f2.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

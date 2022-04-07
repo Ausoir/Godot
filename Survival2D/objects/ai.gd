@@ -25,11 +25,11 @@ func think():
 		elif goal == "kill":
 			target = G.you.unit
 		elif goal == "sabotage":
-			var sabo = G.temp.machines
-			if !sabo.empty():
+			var sabo = G.temp.get("sabotage")
+			if sabo != null and !sabo.empty():
 				var machine = R.r_arr(sabo)
 				if machine == null or !is_instance_valid(machine):
-					G.temp.machines.erase(machine)
+					G.temp.sabotage.erase(machine)
 				else:
 					var to = machine.pos
 					path_to(to, 0)

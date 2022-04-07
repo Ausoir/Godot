@@ -29,4 +29,26 @@ max_distance = 512.0
 [node name="7" type="AudioStreamPlayer2D" parent="."]
 max_distance = 512.0
 
-[connection signal="finished" from="0" to="." method="_on_finished" binds= [ 0 ]]
+[node name="8" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="9" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="10" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="11" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="12" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="13" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="14" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0
+
+[node name="15" type="AudioStreamPlayer2D" parent="."]
+max_distance = 512.0

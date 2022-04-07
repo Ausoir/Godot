@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/gui_tile1.png-dee6b0bba25b19aa72c4057380b69bbf.stex"
+path="res://.import/bound.png-17f4351bdac07c99ae73c9fa03f7d586.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/gui/gui_tile1.png"
-dest_files=[ "res://.import/gui_tile1.png-dee6b0bba25b19aa72c4057380b69bbf.stex" ]
+source_file="res://assets/images/textures/bound.png"
+dest_files=[ "res://.import/bound.png-17f4351bdac07c99ae73c9fa03f7d586.stex" ]
 
 [params]
 
@@ -18,7 +18,7 @@ compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/bptc_ldr=0
-compress/normal_map=0
+compress/normal_map=2
 flags/repeat=0
 flags/filter=false
 flags/mipmaps=false
@@ -31,5 +31,5 @@ process/invert_color=false
 process/normal_map_invert_y=false
 stream=false
 size_limit=0
-detect_3d=true
+detect_3d=false
 svg/scale=1.0

@@ -101,9 +101,9 @@ func slide(toward):
 		var deg = atan2(toward.y-position.y, toward.x-position.x)
 		var vx = cos(deg)
 		var vy = sin(deg)
-		if vx > 0:
+		if vx > .1:
 			face(1)
-		elif vx < 0:
+		elif vx < -.1:
 			face(-1)
 		ms *= SPEED
 		n_collider.vel.x += vx * ms

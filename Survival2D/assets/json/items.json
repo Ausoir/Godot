@@ -1,4 +1,14 @@
 {
+	"pre gen": {
+		"onmake": [["&=","spawner1","{g_zombie,g_mutant,g_hive}"],["&=","invade",1]],
+	},
+	"post gen": {
+		"turn": 64,
+		"level": 0,
+		"onmake": [["=items","machine"],["&=","sabotage","$t"]],
+		"onturn": [["=items","machine"],["&=","sabotage","$t"],
+				["*+","$h","level",1],["?>=","{level}",9],["&*=","invade",-1],["*=","$h","level",0]],
+	},
 	"spawner init": {
 		"onmake": [["make","spawner","$hp"],["remove","$h"]],
 	},
@@ -8,15 +18,15 @@
 		"upgrade": 0,
 		"level": 1,
 		"turn": 64,
-		"onmake": [["&","spawner w"],["*=","$h","type","$t"]],
-		"onturn": [["cast","explode","$h","$hv"],["col","$hp",4],["make","{type}{level}","$hp"],["?>=","{level}",3],["!stop"],
+		"onmake": [["&","spawner1"],["*=","$h","type","$t"]],
+		"onturn": [["&","invade"],["?>","$t",0],["cast","explode","$h","$hv"],["col","$hp",4],["make","{type}{level}","$hp"],["?>=","{level}",3],["!stop"],
 			["*+","$h","upgrade",1],["?>=","{upgrade}",2],["menu","msg","upgraded"],["*=","$h","upgrade",0],["*+","$h","level",1]],
 	},
 	"late spawner": {
 		"col": 2,
 		"weight": -1,
 		"turn": 512,
-		"onturn": [["make","spawner2","$hp"],["remove","$h"]],
+		"onturn": [["make","spawner","$hp"],["remove","$h"]],
 	},
 	"loading": {
 		"col": 2,
@@ -122,7 +132,7 @@
 		"desc": "Use to heal 10 damage.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["gfx","particle","Heal","$t"],["*use","$h"],["*dmg","$h",-10]]
+		"onuse": [["gfx","particle","Heal","$t"],["*use","$h"],["*dmg","$hh",-10]]
 	},
 	"eggs": {
 		"img": "tiles/eggs",
@@ -401,8 +411,8 @@
 	"machine": {
 		"img": "tiles/machine3",
 		"mat": "metal",
-		"vitality": 20,
-		"armor": 2,
+		"vitality": 12,
+		"armor": 1,
 		"weight": -1,
 		"col": 6,
 		"ondie": [["custom", "sabotaged", null]]
@@ -415,7 +425,7 @@
 		"weight": 12,
 		"col": 12,
 		"turn": 64,
-		"onturn": [["=t","{-4~8}"],["money","$t"],["gfx","$","{t}","$hv"]],
+		"onturn": [["=t","{0~2}"],["money","$t"],["gfx","$","{t}","$hv"]],
 		"desc": "Continuously generates resources.",
 	},
 	"battery": {
@@ -640,7 +650,7 @@
 		"vitality": 10,
 		"damage": 0,
 		"armor": 10,
-		"oninteract": [["sfx","door_metal","$hv"],["make", "metal open door", "$hp"],["*=","$t","damage","{damage}"], ["remove", "$h"]],
+		"oninteract": [["sfx","close_metal","$hv"],["make", "metal open door", "$hp"],["*=","$t","damage","{damage}"], ["remove", "$h"]],
 		"desc": "A wooden door."
 	},
 	"chain door": {
@@ -652,7 +662,7 @@
 		"vitality": 12,
 		"damage": 0,
 		"armor": 2,
-		"oninteract": [["make", "open chain door", "$hp"],["*=","$t","damage","{damage}"],["remove", "$h"]],
+		"oninteract": [["sfx","door_metal","$hv"],["make", "open chain door", "$hp"],["*=","$t","damage","{damage}"],["remove", "$h"]],
 		"desc": "A chainlink door."
 	},
 	"open chain door": {
@@ -663,7 +673,7 @@
 		"vitality": 10,
 		"damage": 0,
 		"armor": 2,
-		"oninteract": [["make", "chain door", "$hp"],["*=","$t","damage","{damage}"],["remove", "$h"]],
+		"oninteract": [["sfx","close_metal","$hv"],["make", "chain door", "$hp"],["*=","$t","damage","{damage}"],["remove", "$h"]],
 		"desc": "An open chainlink door."
 	},
 	"door": {
@@ -787,7 +797,7 @@
 	},
 	"crate": {
 		"img": "tiles/crate",
-		"mat": "metal",
+		"mat": "wood",
 		"weight": 5,
 		"vitality": 10,
 		"armor": 2,
@@ -795,7 +805,7 @@
 	},
 	"chest": {
 		"img": "tiles/chest",
-		"mat": "metal",
+		"mat": "wood",
 		"slow": 0.5,
 		"weight": 5,
 		"vitality": 20,
@@ -805,7 +815,7 @@
 	},
 	"dresser": {
 		"img": "tiles/dresser",
-		"mat": "metal",
+		"mat": "wood",
 		"weight": 5,
 		"vitality": 20,
 		"armor": 2,
@@ -814,7 +824,7 @@
 	},
 	"wardrobe": {
 		"img": "tiles/wardrobe",
-		"mat": "metal",
+		"mat": "wood",
 		"weight": 5,
 		"vitality": 20,
 		"armor": 2,
@@ -823,7 +833,7 @@
 	},
 	"punching bag": {
 		"img": "tiles/punch_bag",
-		"mat": "wood",
+		"mat": "cloth",
 		"col": 6,
 		"vitality": 200,
 		"armor": 8,
@@ -1018,6 +1028,8 @@
 		"weight": 5,
 		"vitality": 1,
 		"mat": "flesh",
+		"turn": 512,
+		"onturn": [["remove","$h"]],
 		"desc": "A corpse."
 	},
 }
