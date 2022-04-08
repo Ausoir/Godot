@@ -23,6 +23,7 @@ func _on_host_pressed():
 	var player_name = $Connect/Name.text
 	gamestate.host_game(player_name)
 	refresh_lobby()
+	hide()
 	gamestate.call_deferred("begin_game")
 
 

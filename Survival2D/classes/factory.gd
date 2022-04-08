@@ -114,4 +114,5 @@ func make_corpse(host, pos):
 		r.dat = G.factory.Properties.new(item_data)
 	if pos != null:
 		r.place(pos)
+	G.world.turn.add(r)
 	return r

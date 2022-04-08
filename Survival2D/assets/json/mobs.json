@@ -2,7 +2,7 @@
 	"player": {
 		"unit": "human",
 		"equip": [],
-		"dat": {"controlled": true, "faction": 1, "seed": -1},
+		"dat": {"controlled": true, "faction": 1},
 	},
 	"captain": {
 		"unit": "human",
@@ -47,11 +47,13 @@
 	"guard": {
 		"unit": "human",
 		"equip": [["scalemail",100],["assault rifle",100]],
-		"dat": {"perception": 6, "move speed": 0, "faction": 1}
+		"dat": {"perception": 6, "move speed": 0, "faction": 1, "turn": 128,
+			"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"]]}
 	},
 	"agent": {
 		"unit": "human",
 		"equip": [["suit", 100],["pistol",100]],
-		"dat": {"move speed": 0, "faction": 1}
+		"dat": {"move speed": 0, "faction": 1, "turn": 128,
+			"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"]]}
 	},
 }

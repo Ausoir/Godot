@@ -10,9 +10,9 @@ config_version=4
 
 [application]
 
-config/name="Yayayoyo"
-config/description="A multiplayer game."
-run/main_scene="res://lobby.tscn"
+config/name="Cataclysmic Defense"
+config/description="A tower defense game."
+run/main_scene="res://Start.tscn"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://Icon.png"
 

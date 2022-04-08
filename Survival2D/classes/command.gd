@@ -82,7 +82,7 @@ func replace_vars(host, _args):
 		r.append(arg)
 	return r
 
-func run_operation(command, args, dict, tgt):
+func run_operation(command, args, dict, _tgt):
 	if command.length() == 1:
 		return dict.get(args[1])
 	elif command[1] == "=":
@@ -96,9 +96,9 @@ func run_operation(command, args, dict, tgt):
 			dict[args[1]].erase(args[2])
 		elif command[1] == "*" and command[2] == "=":
 			dict[args[1]] *= args[2]
-	return tgt
+	return _tgt
 
-func run(host, p):
+func run(p, host):
 	var args = replace_vars(host, p)
 	var command = args[0]
 	if command[0] == "=":
@@ -282,7 +282,7 @@ func run_unit(command, args, subject):
 		subject.remove()
 		return newunit
 	elif command == "give":
-		if subject.get("type", "") == "man":
+		if subject.dat.g("type", "") == "man":
 			var item = G.factory.make_item(args[2])
 			if item != null:
 				subject.store(item, true)

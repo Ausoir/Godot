@@ -41,8 +41,8 @@ func generate():
 
 func place_complex():
 	for _i in range(12):
-		var fromx = R.ir(62, width-6)
-		var fromy = R.ir(6, height-6)
+		var fromx = R.ir(62, width-5)
+		var fromy = R.ir(5, height-5)
 		var estate = [fromx-4, fromy-4, fromx+4, fromy+4]
 		make_vault(estate, "shack", R.ir(0, 3))
 		mob_spawns.append([fromx, fromy])

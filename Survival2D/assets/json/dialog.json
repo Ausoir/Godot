@@ -27,9 +27,15 @@
 		"type": "g_trade",
 		"script": ["trade"],
 	},
-	"Lathe": {
+	"Dispenser": {
 		"title": "Use lathe",
 		"true": "You can produce various useful items using this machine.\n\n",
+		"type": "g_trade",
+		"script": ["trade"],
+	},
+	"Lathe": {
+		"title": "Use lathe",
+		"true": "You can create builders and conscript summons using this machine.\n\n",
 		"type": "g_lathe",
 		"script": ["trade"],
 	},
@@ -48,8 +54,17 @@
 		"true": "You recall some of the skills used by the foes that you have defeated.\n\n",
 		"script": ["train"]
 	},
+	"Death": {
+		"title": "Death",
+		"true": "You die...\n\nYou may choose to spectate or respawn by standing over a cloning chamber.",
+	},
 	"Game Over": {
 		"title": "Game Over",
-		"true": "You die...\n\n",
+		"true": "You failed to protect your targets!\n\n[url=0]Continue[/url]\n",
+		"opt": [
+			{
+				"cmd": [["custom", "start menu", null]],
+			},
+		]
 	},
 }

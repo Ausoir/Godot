@@ -29,6 +29,7 @@ angle = 720.0
 angle_random = 1.0
 scale = 0.2
 scale_random = 0.5
+color = Color( 0.627451, 0.627451, 0.627451, 1 )
 color_ramp = ExtResource( 3 )
 
 [node name="Particles2D" type="Particles2D"]

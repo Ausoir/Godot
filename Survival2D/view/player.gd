@@ -202,7 +202,7 @@ func stop_aim():
 
 func remove():
 	if unit.get_health() <= 0:
-		G.cmds([["menu","dialog","Game Over"]])
+		G.cmds([["menu","dialog","Death"]])
 		var player_unit = G.cmds([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
 

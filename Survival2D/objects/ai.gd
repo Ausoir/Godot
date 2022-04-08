@@ -70,6 +70,6 @@ func hunt():
 func perform_ability():
 	if R.b():
 		var exc = [unit.n_collider, target.n_collider]
-		if unit.n_collider.cast_col_ray(target.position, exc, unit.col).empty():
+		if unit.n_collider.cast_col_ray(target.position, exc, 4).empty():
 			var ability_idx = R.ir(0, unit.dat.g("abilities", []).size())
 			tasks = [["ability", ability_idx, target.position]]

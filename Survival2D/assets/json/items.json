@@ -45,6 +45,15 @@
 		"turn": 16,
 		"oninteract": [["menu", "dialog", "Bulletin"]],
 	},
+	"cloner": {
+		"img": "tiles/cloner",
+		"mat": "metal",
+		"col": 14,
+		"weight": -1,
+		"turn": 256,
+		"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"],["onstop","Requires $50 to respawn."],["money",-50],["custom", "respawn", "$h"]],
+		"desc": "Wait over this structure as a ghost to respawn. Costs $50.",
+	},
 
 	"builder (solar panel)": {
 		"img": "tiles/package",
@@ -52,12 +61,12 @@
 		"uses": 1,
 		"weight": 0,
 		"onuse": [["point",[["onstop","This building must be placed on asphalt."],["terrain","$$t",["asphalt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","solar panel"]],"$h"]],
-		"desc": "Use to construct a solar panel.",
+		"desc": "Use to construct a solar panel, which generates resource over time.",
 	},
-	"builder (machine)": {
+	"builder (battery)": {
 		"img": "tiles/package",
 		"mat": "metal",
-		"desc": "Increases the maximum amount of money you can have.",
+		"desc": "Use to construct a battery, which increases the maximum amount of money you can have.",
 		"uses": 3,
 		"weight": 0,
 		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","machine"]],"$h"]]
@@ -65,7 +74,7 @@
 	"builder (dispenser)": {
 		"img": "tiles/package",
 		"mat": "metal",
-		"desc": "Use to construct a dispenser which will generate money over time.",
+		"desc": "Use to construct a dispenser, where you can create items.",
 		"uses": 1,
 		"weight": 0,
 		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","dispenser"]], "$h"]],
@@ -105,15 +114,23 @@
 	"builder (turret)": {
 		"img": "tiles/package",
 		"mat": "metal",
-		"desc": "Use to construct a close range laser turret.",
-		"uses": 4,
+		"desc": "Use to construct a laser turret.",
+		"uses": 3,
 		"weight": 0,
 		"onuse": [["point",[["onstop","This construct must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","turret"]],"$h"]]
+	},
+	"builder (cloner)": {
+		"img": "tiles/package",
+		"mat": "metal",
+		"desc": "Use to construct a cloner, where you can respawn.",
+		"uses": 1,
+		"weight": 0,
+		"onuse": [["point",[["onstop","This construct must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","cloner"]],"$h"]]
 	},
 	"radio (resident)": {
 		"img": "tiles/radio",
 		"mat": "metal",
-		"desc": "Use to summon a resident who will generate money over time.",
+		"desc": "Use to summon a resident who can generate money over time.",
 		"uses": 4,
 		"weight": 0,
 		"onuse": [["point",[["onstop","Invalid position."],["col","$$t",15],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","resident"]],"$h"]]
@@ -336,17 +353,20 @@
 		"part": "body",
 		"mat": "leather",
 		"weight": 2,
-		"space": 2,
-		"desc": "A tattered coat favored by looters."
+		"armor": 1,
+		"perception": 1,
+		"space": 3,
+		"desc": "A tattered coat favored by looters. Provides some storage and armor."
 	},
 	"leather armor": {
 		"img": "loot",
 		"sprite": "overlay/body_leather",
 		"part": "body",
 		"mat": "leather",
-		"space": 2,
+		"space": 1,
+		"armor": 2,
 		"weight": 1,
-		"desc": "A leather armor."
+		"desc": "A leather armor. Tough but lacks storage."
 	},
 	"suit": {
 		"img": "loot",
@@ -355,14 +375,16 @@
 		"mat": "cotton",
 		"space": 4,
 		"weight": 0,
-		"desc": "A fancy suit."
+		"desc": "A fancy suit with many pockets."
 	},
 	"suspenders": {
 		"img": "loot",
 		"sprite": "overlay/body_suspenders",
 		"part": "body",
 		"mat": "cotton",
-		"space": 4,
+		"space": 3,
+		"strength": 2,
+		"agility": -1,
 		"weight": 1,
 		"desc": "Suspenders for the productive."
 	},
@@ -425,7 +447,7 @@
 		"weight": 12,
 		"col": 12,
 		"turn": 64,
-		"onturn": [["=t","{0~2}"],["money","$t"],["gfx","$","{t}","$hv"]],
+		"onturn": [["=t","{1~4}"],["money","$t"],["gfx","$","{t}","$hv"]],
 		"desc": "Continuously generates resources.",
 	},
 	"battery": {
@@ -435,9 +457,21 @@
 		"armor": 2,
 		"weight": -1,
 		"col": 12,
-		"desc": "Increases the maximum amount of money you can have.",
+		"desc": "Increases the maximum amount of money you can have by 10.",
+		"turn": 128,
+		"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"]],
 		"onmake": [["^+", "money_", 10]],
 		"ondie": [["^+", "money_", -10]],
+	},
+	"dispenser": {
+		"img": "tiles/dispenser",
+		"mat": "metal",
+		"vitality": 8,
+		"armor": 2,
+		"weight": 6,
+		"col": 12,
+		"oninteract": [["menu", "dialog", "Dispenser"]],
+		"desc": "Allows you to create items from resources.",
 	},
 	"lathe": {
 		"img": "tiles/machine2",
@@ -446,10 +480,8 @@
 		"armor": 2,
 		"weight": 6,
 		"col": 12,
-		"turn": 128,
-		"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"]],
 		"oninteract": [["menu", "dialog", "Lathe"]],
-		"desc": "Allows you to create items from resources.",
+		"desc": "Allows you to create builders and radio from resources.",
 	},
 	"mannequin": {
 		"img": "tiles/mannequin",
@@ -1028,7 +1060,7 @@
 		"weight": 5,
 		"vitality": 1,
 		"mat": "flesh",
-		"turn": 512,
+		"turn": 256,
 		"onturn": [["remove","$h"]],
 		"desc": "A corpse."
 	},

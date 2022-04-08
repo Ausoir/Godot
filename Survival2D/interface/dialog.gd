@@ -103,7 +103,7 @@ func add_trade(type):
 		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
 		count += 1
 		var option = {"hover": ["item", item_name]}
-		option["cmd"] = [["money",-price],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
+		option["cmd"] = [["money",-price],["remove","$h"],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
 		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 

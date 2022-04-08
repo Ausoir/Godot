@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/chewer.png-c9a3a76ff612fe68fab57f6edcf0cfd6.stex"
+path="res://.import/dispenser.png-2a8b2ffb587ead4615af38e0522ec5f4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/units/chewer.png"
-dest_files=[ "res://.import/chewer.png-c9a3a76ff612fe68fab57f6edcf0cfd6.stex" ]
+source_file="res://assets/images/tiles/dispenser.png"
+dest_files=[ "res://.import/dispenser.png-2a8b2ffb587ead4615af38e0522ec5f4.stex" ]
 
 [params]
 

@@ -9,17 +9,15 @@ const DEFAULT_PORT = 10567
 const MAX_PEERS = 12
 
 var peer = null
-
 var player_name = "Player"
-
 var other_players = {}
+var local = true
 
 signal player_list_changed()
 signal connection_failed()
 signal connection_succeeded()
 signal game_ended()
 signal game_error(what)
-
 
 # Callback from SceneTree.
 func _player_connected(id):
@@ -71,9 +69,6 @@ func unregister_player(id):
 
 
 remote func pre_start_game():
-	# Change scene.
-	get_tree().get_root().get_node("Lobby").hide()
-
 	var spawn_points = {}
 	spawn_points[1] = 0 # Server in spawn point 0.
 	var spawn_point_idx = 1
@@ -96,10 +91,12 @@ remote func pre_start_game():
 		player.p_id = p_id
 		units.append(player)
 
-	if !load_game():
-		create_game(units)
+	G.start()
+	load_game()
 
-	if not get_tree().is_network_server():
+	if local:
+		post_start_game()
+	elif not get_tree().is_network_server():
 		rpc_id(1, "ready_to_start", get_tree().get_network_unique_id())
 	elif other_players.size() == 0:
 		post_start_game()
@@ -169,6 +166,16 @@ func _ready():
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
+func start_local(p):
+	player_name = p
+	var Player = preload("res://view/Player.tscn")
+	var player = Player.instance()
+	player.set_name(str(1))
+	G.you = player
+	player.p_name = player_name
+	G.start()
+	load_game()
+	post_start_game()
 
 func create_game(_player_units):
 	G.world.create("city")
@@ -195,28 +202,30 @@ func save_game(_map="city"):
 func load_game():
 	var r = false
 	var save_game = File.new()
-	if save_game.file_exists("user://savegame.save"):
+	var node_data
+	var save_exists = save_game.file_exists("user://savegame.save")
+	if save_exists:
 		save_game.open("user://savegame.save", File.READ)
-		var node_data = parse_json(save_game.get_line())
-		if node_data == null:
-			save_game.close()
-			save_game = File.new()
-			save_game.open("res://assets/template.save", File.READ)
-			node_data = parse_json(save_game.get_line())
-		G.vars = node_data
-		R.set_seed(G.vars.seed)
-		if "forcemap" in G.vars:
-			G.travel(G.vars["forcemap"])
+		node_data = parse_json(save_game.get_line())
+	if !save_exists or node_data == null:
+		save_game.close()
+		save_game = File.new()
+		save_game.open("res://assets/template.save", File.READ)
+		node_data = parse_json(save_game.get_line())
+	G.vars = node_data
+	R.set_seed(G.vars.seed)
+	if "forcemap" in G.vars:
+		G.travel(G.vars["forcemap"])
+	else:
+		G.travel(node_data.map)
+	G.ui.menu.display_time()
+	while save_game.get_position() < save_game.get_len():
+		node_data = parse_json(save_game.get_line())
+		if local or node_data.id == get_tree().get_network_unique_id():
+			G.you.load_data(node_data)
+			r = true
 		else:
-			G.travel(node_data.map)
-		G.ui.menu.display_time()
-		while save_game.get_position() < save_game.get_len():
-			node_data = parse_json(save_game.get_line())
-			if node_data.id == get_tree().get_network_unique_id():
-				G.you.load_data(node_data)
-				r = true
-			else:
-				other_players[node_data.id]["controller"].load_data(node_data)
+			other_players[node_data.id]["controller"].load_data(node_data)
 	save_game.close()
 	return r
 

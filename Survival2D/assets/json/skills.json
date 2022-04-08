@@ -1,4 +1,10 @@
 {
+	"wait": {
+		"target": "onattack",
+		"delay": 4,
+		"chance": 100,
+		"onstart": [["action","$h", "wait"]],
+	},
 	"burn": {
 		"target": "onattack",
 		"delay": 4,
@@ -390,12 +396,6 @@
 		"delay": 2,
 		"onstart": [["morph", "$h", "coyote"],["*a","$t","abilities","human form"]],
 	},
-	"invisibility": {
-		"img": "gui/st_death",
-		"target": "self",
-		"delay": 2,
-		"onstart": [["cast","invisible","$h","$h"]],
-	},
 	"debug": {
 		"img": "gui/st_pain",
 		"target": "self",
@@ -407,16 +407,17 @@
 		"desc": "Become god",
 		"desc2": "Debug use",
 	},
-	"wait": {
-		"target": "onattack",
-		"delay": 4,
-		"chance": 100,
-		"onstart": [["action","$h", "wait"]],
-	},
 	"respawn": {
 		"img": "gui/st_death",
 		"target": "self",
 		"delay": 2,
 		"onstart": [["morph", "$h", "player"]],
+	},
+	"game over": {
+		"img": "gui/st_death",
+		"target": "self",
+		"delay": 0,
+		"onstart": [["custom", "start menu", null]],
+		"desc": "Surrender and return to start menu.",
 	},
 }
