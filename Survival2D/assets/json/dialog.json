@@ -44,11 +44,6 @@
 		"true": "",
 		"script": ["bulletin"]
 	},
-	"Assign": {
-		"title": "Assign Unit",
-		"true": "",
-		"script": ["assign"]
-	},
 	"Dummy": {
 		"title": "Training Dummy",
 		"true": "You recall some of the skills used by the foes that you have defeated.\n\n",

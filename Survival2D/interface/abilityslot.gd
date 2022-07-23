@@ -47,12 +47,13 @@ func assign(p):
 		skill_type = "item"
 		skill_description = skill.dat.g("desc")
 		$Sprite.texture = skill.texture
+		$Sprite.set_region(true)
+		$Sprite.set_region_rect(Rect2(0, 0, 32, 32))
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
-			if event.button_index == BUTTON_LEFT:
-				activate()
+			activate()
 
 func activate():
 	if mode == MODE_NORMAL:
@@ -60,8 +61,12 @@ func activate():
 		if skill_type == "self":
 			G.you.tasks = [["ability", skill_index, G.you.unit.position]]
 		elif skill_type == "item":
-			set_mode(MODE_SELECTED)
-			G.you.tasks = [["command", skill.dat.g("onuse"), skill, G.you.unit.position]]
+			if skill.dat.g("aimable") != null:
+				set_mode(MODE_SELECTED)
+				G.you.aim_ability(-2)
+				G.you.on_point = [skill.dat.g("onuse"), skill]
+			else:
+				G.you.tasks = [["command", skill.dat.g("onuse"), skill, G.you.unit.position]]
 		else:
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
@@ -83,7 +88,8 @@ func _update_cooldown(cd):
 
 func _on_mouse_entered():
 	if skill_type == "item":
-		G.ui.describe("item", skill.get_display_name(), skill.dat.v)
+		if skill != null and is_instance_valid(skill):
+			G.ui.describe("item", skill.get_display_name(), skill.dat.v)
 	else:
 		G.ui.describe("ability", skill, skill_data)
 

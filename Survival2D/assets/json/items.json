@@ -60,7 +60,8 @@
 		"mat": "metal",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed on asphalt."],["terrain","$$t",["asphalt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","solar panel"]],"$h"]],
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed on asphalt."],["terrain","$t",["asphalt"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","solar panel"]],
 		"desc": "Use to construct a solar panel, which generates resource over time.",
 	},
 	"builder (battery)": {
@@ -69,7 +70,8 @@
 		"desc": "Use to construct a battery, which increases the maximum amount of money you can have.",
 		"uses": 3,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","machine"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed on asphalt or dirt."],["terrain","$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","machine"]],
 	},
 	"builder (dispenser)": {
 		"img": "tiles/package",
@@ -77,7 +79,8 @@
 		"desc": "Use to construct a dispenser, where you can create items.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed on asphalt or dirt."],["terrain","$$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","dispenser"]], "$h"]],
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed on asphalt or dirt."],["terrain","$t",["asphalt","dirt"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","dispenser"]],
 	},
 	"builder (fence)": {
 		"img": "tiles/package",
@@ -85,7 +88,8 @@
 		"desc": "Use to construct a chainlink fence.",
 		"uses": 3,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","chainfence"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed outside."],["terrain","$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","chainfence"]],
 	},
 	"builder (door)": {
 		"img": "tiles/package",
@@ -93,7 +97,8 @@
 		"desc": "Use to construct a chainlink door.",
 		"uses": 3,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","chain door"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed outside."],["terrain","$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","chain door"]],
 	},
 	"builder (sandbag)": {
 		"img": "tiles/package",
@@ -101,7 +106,8 @@
 		"desc": "Use to construct a sandbag wall.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed outside."],["terrain","$$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","sandbag"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed outside."],["terrain","$t",["asphalt","dirt","grass"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","sandbag"]],
 	},
 	"builder (lathe)": {
 		"img": "tiles/package",
@@ -109,7 +115,8 @@
 		"desc": "Use to construct a lathe.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This building must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","lathe"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","This building must be placed on flat surface."],["terrain","$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","lathe"]],
 	},
 	"builder (turret)": {
 		"img": "tiles/package",
@@ -117,15 +124,8 @@
 		"desc": "Use to construct a laser turret.",
 		"uses": 3,
 		"weight": 0,
-		"onuse": [["point",[["onstop","This construct must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","turret"]],"$h"]]
-	},
-	"builder (cloner)": {
-		"img": "tiles/package",
-		"mat": "metal",
-		"desc": "Use to construct a cloner, where you can respawn.",
-		"uses": 1,
-		"weight": 0,
-		"onuse": [["point",[["onstop","This construct must be placed on flat surface."],["terrain","$$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","cloner"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","This construct must be placed on flat surface."],["terrain","$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","turret"]],
 	},
 	"radio (resident)": {
 		"img": "tiles/radio",
@@ -133,7 +133,7 @@
 		"desc": "Use to summon a resident who can generate money over time.",
 		"uses": 4,
 		"weight": 0,
-		"onuse": [["point",[["onstop","Invalid position."],["col","$$t",15],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","resident"]],"$h"]]
+		"onuse": [["gfx","particle","Heal","$t"],["*use","$h"],["make","loading","$hp"],["*=","$t","spawn","resident"]]
 	},
 	"radio (guard)": {
 		"img": "tiles/radio",
@@ -141,7 +141,8 @@
 		"desc": "Use to summon a guard to defend an area.",
 		"uses": 1,
 		"weight": 0,
-		"onuse": [["point",[["onstop","Invalid position."],["col","$$t",15],["*use","$h"],["make","loading","$$t"],["*=","$$t","spawn","guard"]],"$h"]]
+		"aimable": true,
+		"onuse": [["onstop","Invalid position."],["col","$t",15],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","guard"]],
 	},
 	"medikit": {
 		"img": "tiles/bandage",

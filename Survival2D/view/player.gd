@@ -1,17 +1,14 @@
 extends "res://objects/controller.gd"
 
-const Step = preload("res://view/Step.tscn")
-
+onready var control = preload("res://objects/controller.gd")
 onready var n_camera = $Camera
 onready var n_cursor = $Cursor
-onready var n_steps = $Steps
 
 var last_pos
-var p_id: int
-var p_name: String
-var auto_attack = true
 var aiming = -1
 var view_dirty = false
+var interactables = []
+var unhandled_input = false
 var on_point
 
 func on_change(p):
@@ -23,6 +20,7 @@ func on_change(p):
 		var bodytype_list = G.data.get_json_data("bodytypes")
 		var bodyparts = bodytype_list.get(unit.dat.g("type"))
 		G.ui.menu.update_equipables(bodyparts)
+		G.ui.menu.update_equipment()
 		G.ui.menu.update_inventory()
 		pathing.can_open = false
 		pathing.smash_to = 0
@@ -44,72 +42,35 @@ func on_kill(_victim):
 			if R.b() and !(i in G.vars.learnable):
 				G.vars.learnable.append(i)
 
+func get_mouse_tile():
+	var screen_mouse = G.ui.mouse_pos
+	screen_mouse -= G.ui.screen_size / 2
+	var mouse_pos = Vector2(screen_mouse.x*n_camera.zoom.x + n_camera.position.x,
+					screen_mouse.y*n_camera.zoom.y + n_camera.position.y)
+	return G.pixel_to_pos(mouse_pos)
+
 func _on_input(event: InputEvent):
-	if event is InputEventMouseMotion:
-		var mouse_pos = get_cursor_position(event.global_position)
-		n_cursor.position = G.pos_to_pixel(G.pixel_to_pos(mouse_pos))
-	elif event is InputEventMouseButton:
-		var mouse_pos = get_cursor_position(event.global_position)
-		if event.pressed:
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			unhandled_input = true
 			if event.button_index == BUTTON_WHEEL_UP:
 				if n_camera.zoom.x > .5:
 					n_camera.zoom *= .8
 			elif event.button_index == BUTTON_WHEEL_DOWN:
 				if n_camera.zoom.x < 2:
 					n_camera.zoom *= 1.2
-			elif event.button_index == BUTTON_MIDDLE: #Teleport to cursor
-				pass
-			elif Input.is_action_just_pressed("move"):
-				if aiming != -1:
+			elif aiming != -1:
+				var mtile = get_mouse_tile()
+				var tile = G.world.get_tile(mtile.x, mtile.y)
+				if aiming == -2 and on_point != null:
+					tasks = [["command", on_point[0], on_point[1], tile]]
+					on_point = null
 					stop_aim()
 				else:
-					var mousetarget = G.pixel_to_pos(mouse_pos)
-					var t = G.world.get_tile(mousetarget.x, mousetarget.y)
-					if t != null:
-						move_to(t)
-			elif Input.is_action_just_pressed("use"):
-				tasks.clear()
-				var mousetarget = G.pixel_to_pos(mouse_pos)
-				var tile = G.world.get_tile(mousetarget.x, mousetarget.y)
-				if tile:
-					if aiming != -1:
-						if aiming == -2 and on_point != null:
-							tasks = [["command", on_point[0], on_point[1], tile]]
-							on_point = null
-							stop_aim()
-						else:
-							tasks = [["ability", aiming, mouse_pos]]
-					elif !tile.items.empty():
-						var item = tile.get_item_by_type("item")
-						if item != null:
-							tasks = [["interact", item]]
-
-func get_cursor_position(mouse):
-	var screen_mouse = mouse * G.ui.screen_ratio
-	screen_mouse -= G.ui.screen_size / 2
-	return Vector2(screen_mouse.x*n_camera.zoom.x + n_camera.position.x,
-					screen_mouse.y*n_camera.zoom.y + n_camera.position.y)
-
-func on_turn():
-	if auto_attack and tasks.empty():
-		var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
-		if colld != null:
-			if tasks.empty():
-				tasks = [["attack", colld]]
-	var cds = !unit.cooldowns.empty()
-	.on_turn()
-	remove_steps()
-	show_steps()
-	if view_dirty or last_pos != unit.pos:
-		n_camera.update(last_pos, unit.pos)
-		view_dirty = false
-		last_pos = unit.pos
-	if cds:
-		G.ui._update_cooldowns(unit.cooldowns)
-
-func make_money(p):
-	G.vars.money = min(G.vars.money_, G.vars.money+p)
-	G.ui.n_money.display(p)
+					tasks = [["ability", aiming, tile.position]]
+					stop_aim()
+		else:
+			unhandled_input = false
 
 func _physics_process(_delta):
 	n_camera.position = unit.n_collider.global_position
@@ -133,10 +94,45 @@ func _physics_process(_delta):
 			dir = 2
 		elif Input.is_action_pressed("move_left"):
 			dir = 6
-		if dir != -1:
-			tasks = [["move", dir]]
-		elif unit.n_collider.vel != Vector2.ZERO and tasks.empty():
-			unit.set_animation("idle")
+		if tasks.empty():
+			if unhandled_input and Input.is_action_pressed("use"):
+				var mtile = get_mouse_tile()
+				tasks = [["move", mtile.x-unit.pos.x, mtile.y-unit.pos.y]]
+			elif dir != -1:
+				var to = G.DIRS[dir]
+				tasks = [["move", to[0] * 10, to[1] * 10]]
+
+func on_turn():
+	if tasks.empty():
+		var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
+		if colld != null:
+			if tasks.empty():
+				tasks = [["attack", colld]]
+	var cds = !unit.cooldowns.empty()
+	.on_turn()
+	if view_dirty or last_pos != unit.pos:
+		n_camera.update(last_pos, unit.pos)
+		view_dirty = false
+		last_pos = unit.pos
+	check_nearby_interactibles()
+	if cds:
+		G.ui._update_cooldowns(unit.cooldowns)
+
+func check_nearby_interactibles():
+	if unit.dat.g("type") == "man":
+		var vicinity = unit.pos.get_area(1)
+		var ninteractables = []
+		for tile in vicinity:
+			var item = tile.get_item_by_type("item")
+			if item != null:
+				ninteractables.append(item)
+		if interactables != ninteractables:
+			interactables = ninteractables
+			G.ui.update_hud()
+
+func make_money(p):
+	G.vars.money = min(G.vars.money_, G.vars.money+p)
+	G.ui.n_money.display(p)
 
 func on_item_click(item): #runs after _unhandled_input
 	if tasks.empty():
@@ -144,50 +140,25 @@ func on_item_click(item): #runs after _unhandled_input
 	elif tasks.size() == 1 and tasks[0][0] == "interact":
 		tasks[0][1] = item
 
-func remove_steps():
-	for child in n_steps.get_children():
-		n_steps.remove_child(child)
-		child.queue_free()
-
-func show_steps():
-	var last_step = unit.pos.to_vector()
-	for task in tasks:
-		if task[0] == "path":
-			var step = Step.instance()
-			step.position = G.pos_to_pixel(task[1])
-			var new_step = task[1].to_vector()
-			var p = (new_step - last_step).angle()
-			step.rotate(p)
-			n_steps.add_child(step)
-			last_step = new_step
-
 func on_hit(_hitter):
 	if _hitter != null and target == null:
 		target = _hitter
 
 func interact(item):
 	if !G.ui.on:
-		var oninteract = item.dat.g("oninteract")
-		if oninteract != null:
-			G.cmds(oninteract, item, unit)
-		elif item.item_type == "item":
-			G.ui.menu.search_inventory(item.pos)
-		elif item.item_type == "unit":
-			if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
-				tasks.append(["attack", item])
-			elif item.controller != null:
-				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
-
-func move_to(tile, reach=0):
-	var distance = unit.pos.distance_to(tile)
-	if distance <= reach:
-		return unit.pos
-	elif distance == 1:
-		tasks = [["smash", tile]]
-		return unit.pos
-	path_to(tile, reach)
-	remove_steps()
-	show_steps()
+		if item == unit:
+			G.cmds([["menu", "menu", -1]], unit)
+		else:
+			var oninteract = item.dat.g("oninteract")
+			if oninteract != null:
+				G.cmds(oninteract, item, unit)
+			elif item.item_type == "item":
+				G.ui.menu.search_inventory(item.pos)
+			elif item.item_type == "unit":
+				if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
+					tasks.append(["attack", item])
+				elif item.controller != null:
+					item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
 
 func aim_ability(idx):
 	n_cursor.show()
@@ -211,7 +182,6 @@ func save_data(remove_buffs=true):
 	if remove_buffs:
 		unit.buffs.clear()
 	var save_dict = {
-		"id": p_id,
 		"unit": unit.item_name,
 		"unit_data": unit.dat.v,
 		"unit_buff": buff_data,

@@ -1,5 +1,3 @@
-const COL_BITS = [1,2,4,8]
-
 var item_type = "tile"
 var x
 var y
@@ -12,9 +10,6 @@ var dat
 var col: int
 var autotile = 0
 var height: int
-var orig_light: int
-var light: int
-var light_source = []
 var slow = 1
 var shade = -1
 var sight_frame = -1
@@ -52,11 +47,6 @@ func set_terrain(val):
 		terrain = val
 		if "autotile" in data:
 			autotile = data.autotile
-		if data.get("ceiling") != null or !world.daytime:
-			orig_light = -1
-		else:
-			orig_light = 0
-		light = orig_light
 		slow = data.get("slow", 1)
 		var tile_image = world.tileset.find_tile_by_name(val)
 		world.tilemap.set_cell(x, y, tile_image)
@@ -228,16 +218,6 @@ func get_rand_offset(_x, _y):
 	var ry = R.ir(-_y, _y)
 	return world.fit_bound(x + rx, y + ry)
 
-func radiate(_light, new=true):
-	light += _light
-	if new:
-		if light > 0:
-			world.lights.append(self)
-		else:
-			world.lights.erase(self)
-	for i in range(8):
-		cast_sight(self, 1, 1.0, 0.0, G.OCTANT_FLIP[i], abs(_light), _light)
-
 func cast_sight(camera, row, start, end, flips, sight2, intensity):
 	if start < end:
 		return
@@ -261,7 +241,6 @@ func cast_sight(camera, row, start, end, flips, sight2, intensity):
 				var map_y = camera.y + tile_y
 				var tile = world.get_tile(map_x, map_y)
 				if tile:
-					tile.light += intensity
 					if blocked:
 						if tile.is_col(1):
 							new_start = end_slope

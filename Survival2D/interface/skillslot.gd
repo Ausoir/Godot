@@ -36,11 +36,10 @@ func _on_mouse_exited():
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed and !is_item:
-			if event.button_index == BUTTON_LEFT:
-				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
-					place_to(G.ui.menu.drag_item)
-				else:
-					take_from()
+			if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
+				place_to(G.ui.menu.drag_item)
+			else:
+				take_from()
 		G.ui.description.hide()
 
 func take_from():

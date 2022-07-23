@@ -1,11 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://assets/font3.tres" type="DynamicFont" id=1]
 [ext_resource path="res://interface/skillslot.gd" type="Script" id=3]
-
-[sub_resource type="DynamicFont" id=2]
-size = 12
-font_data = ExtResource( 1 )
 
 [sub_resource type="StyleBoxFlat" id=1]
 content_margin_left = 4.0
@@ -20,7 +16,7 @@ margin_right = 16.0
 margin_bottom = 16.0
 rect_min_size = Vector2( 16, 16 )
 mouse_default_cursor_shape = 2
-custom_fonts/normal_font = SubResource( 2 )
+custom_fonts/normal_font = ExtResource( 1 )
 custom_styles/normal = SubResource( 1 )
 bbcode_enabled = true
 fit_content_height = true

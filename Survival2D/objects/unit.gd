@@ -74,7 +74,7 @@ func ability(idx, at):
 	if idx < abilities.size():
 		face_toward(at)
 		var ability = abilities[idx]
-		return G.influence.do(ability, self, at, 0, null)
+		return G.influence.do(ability, self, at)
 
 func get_damage(ptype, p):
 	if ptype == "true":
@@ -92,13 +92,13 @@ func place(p):
 	.place(p)
 	n_collider.check_overlap()
 
-func slide(toward):
+func slide(tox, toy):
 	var ms = dat.g("move speed", 0)
 	if ms > 0:
 		if !("float" in flags):
 			ms = max(.2, ms * pos.slow)
 		n_animation.play("walk", -1, ms / 4)
-		var deg = atan2(toward.y-position.y, toward.x-position.x)
+		var deg = atan2(toy-position.y, tox-position.x)
 		var vx = cos(deg)
 		var vy = sin(deg)
 		if vx > .1:
@@ -128,10 +128,6 @@ func on_slide():
 			return col
 
 func set_animation(p, spd=0):
-	if p == "knockout":
-		if "getup" in flags:
-			delay = 0
-			return
 	current_action = p
 	if spd > 0:
 		n_animation.play(p, -1, 1/(spd*.15))
@@ -182,8 +178,6 @@ func hit(_type, dmg, _hitter):
 		if current_action == "knockout":
 			dmg *= 2
 		dat.add("damage", dmg, 0)
-		delay = 2
-		set_animation("hit", 2)
 		buffs.disrupt_hit = true
 		show_healthbar()
 		G.make_particle("Blood", pos.position, {"direction": Vector3(R.fr(-1, 1), R.fr(-1, 1), 0), "spread": 60})

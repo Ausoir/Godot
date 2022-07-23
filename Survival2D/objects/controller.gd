@@ -45,9 +45,9 @@ func perform(task):
 		if task.size() > 2 and validate_target(target):
 			var exc = [unit.n_collider, target.n_collider]
 			if unit.n_collider.cast_col_ray(task[2], exc, unit.col).empty():
-				unit.slide(task[2])
+				unit.slide(task[2].x, task[2].y)
 				return false
-		unit.slide(task[1].position)
+		unit.slide(task[1].position.x, task[1].position.y)
 		if unit.n_collider.get_slide_count() > 0:
 			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
 				if interact(task[1]):
@@ -57,11 +57,10 @@ func perform(task):
 				return true
 		return (task[1].position - unit.position).length_squared() < 64
 	elif task[0] == "move":
-		var v = G.DIRS[task[1]]
-		unit.slide(Vector2(unit.position.x+v[0], unit.position.y+v[1]))
+		unit.slide(unit.position.x+task[1], unit.position.y+task[2])
 	elif task[0] == "attack":
 		if validate_target(task[1]):
-			unit.slide(task[1].position)
+			unit.slide(task[1].position.x, task[1].position.y)
 			return false
 	elif task[0] == "interact":
 		unit.delay = 4

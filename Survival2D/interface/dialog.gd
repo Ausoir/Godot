@@ -87,8 +87,6 @@ func run_script(script):
 		add_bulletin()
 	elif script[0] == "trade":
 		add_trade(page_data.get("type"))
-	elif script[0] == "assign":
-		add_assign()
 	elif script[0] == "upgrade":
 		add_upgrade(page_data.get("type"))
 
@@ -103,7 +101,7 @@ func add_trade(type):
 		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
 		count += 1
 		var option = {"hover": ["item", item_name]}
-		option["cmd"] = [["money",-price],["remove","$h"],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
+		option["cmd"] = [["money",-price,true],["remove","$h"],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
 		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 
@@ -118,7 +116,7 @@ func add_upgrade(type):
 		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
 		count += 1
 		var option = {"hover": ["item", item_name]}
-		option["cmd"] = [["money",-price],["make", item_name, "$hp"], ["remove", "$h"]]
+		option["cmd"] = [["money",-price,true],["make", item_name, "$hp"], ["remove", "$h"]]
 		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 
@@ -137,22 +135,6 @@ func add_bulletin():
 			count += 1
 			var option = {"hover": ["item", item_name]}
 			var ann = "Hired "+item_name+" for "+str(price)+"."
-			option["cmd"] = [["buy",price],["vars","a+","hire",item_name],["menu","msg",ann]]
-			page_data.opt.append(option)
-	get_node("Dialog/RichTextLabel").append_bbcode(items)
-
-func add_assign():
-	var items = ""
-	var count = 0
-	if G.vars.hire.empty():
-		items = "You have no hires.\n\nUse the bulletin board to hire more units.\n\n"
-	else:
-		items = "Place a hired unit on the map.\n\n"
-		for hire in G.vars.hire:
-			items += "[url="+str(count)+"]> [i]Assign " + hire + "[/i][/url]\n"
-			count += 1
-			var option = {"hover": ["text", "Assign", "Assign a hired unit on the map."]}
-			var pt = {"target": "tile", "onstart": [["make",hire,"$t"],["ally"]], "col": 15}
-			option["cmd"] = [["vars","a-","hire",hire],["point",pt]]
+			option["cmd"] = [["money",-price,true],["*^","hire",item_name],["menu","msg",ann]]
 			page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)

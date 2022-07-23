@@ -25,6 +25,7 @@ func _background_input(event):
 		if event.pressed:
 			if drag_item != null and drag_item.type == "item":
 				drag_item.item.place(G.you.unit.pos)
+				G.you.unit.on_item_remove(drag_item.item)
 				set_drag_item(null)
 		else:
 			G.ui.clear()
@@ -42,6 +43,7 @@ func clear():
 
 func _on_tab_change(page):
 	if page == 0:
+		update_equipment()
 		update_inventory()
 	elif page == 1:
 		update_status()
@@ -69,16 +71,27 @@ func update_equipables(equipables):
 		newslot.make_mode(slot, allow_type)
 		tab_equipment.add_child(newslot)
 
-func update_inventory():
+func update_equipment():
 	var n_eq = []
 	var n_eq_label
-	var n_inv_label
 	for child in tab_equipment.get_children():
 		if child is RichTextLabel:
 			child.unassign()
 			n_eq.append(child)
 		else:
 			n_eq_label = child
+	var unit = G.you.unit
+	if unit.dat.g("type") != "other":
+		var eq_weight = 0
+		for child in n_eq:
+			if child.part in unit.equipments:
+				var eq = unit.equipments[child.part]
+				child.assign(eq)
+				eq_weight += eq.dat.g("weight", 0)
+		n_eq_label.set_text("Equipment ["+ str(eq_weight) +"kg]: ")
+
+func update_inventory():
+	var n_inv_label
 	for child in tab_inventory.get_children():
 		if child is RichTextLabel:
 			child.queue_free()
@@ -87,21 +100,17 @@ func update_inventory():
 			n_inv_label = child
 	var unit = G.you.unit
 	if unit.dat.g("type") != "other":
-		var eq_weight = 0
 		var inv_weight = 0
-		for child in n_eq:
-			if child.part in unit.equipments:
-				var eq = unit.equipments[child.part]
-				child.assign(eq)
-				eq_weight += eq.dat.g("weight", 0)
+		var index = 0
 		for inv_item in unit.inventory:
 			var newslot = ItemSlot.instance()
 			newslot.part = "inv"
+			newslot.index = index
+			index += 1
 			if inv_item != null:
 				newslot.assign(inv_item)
 				inv_weight += inv_item.dat.g("weight", 0)
 			tab_inventory.add_child(newslot)
-		n_eq_label.set_text("Equipment ["+ str(eq_weight) +"kg]: ")
 		n_inv_label.set_text("Inventory ["+ str(inv_weight) +"kg]: ")
 
 func search_inventory(tile):

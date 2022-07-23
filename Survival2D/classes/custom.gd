@@ -10,12 +10,7 @@ func run(p, _params):
 			G.cmds([["attack","$p","$p","true",999]])
 			G.cmds([["menu","dialog","Game Over"]])
 	elif p == "start menu":
-		var root = G.get_tree().get_root()
-		for i in root.get_children():
-			i.queue_free()
-			root.remove_child(i)
-		root.add_child(load("res://G.gd").new())
-		root.add_child(load("res://Start.tscn").instance())
+		gamestate.restart()
 	elif p == "respawn":
 		var pos = _params.pos
 		if G.you.unit.pos == pos:

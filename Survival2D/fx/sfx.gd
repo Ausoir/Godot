@@ -22,7 +22,7 @@ func play_hit(_type, mat, ppos):
 		play("hit_other", ppos)
 
 func play(sound, ppos):
-	if nodes != null:
+	if nodes != null and G.is_vec_in_range(ppos):
 		var player = nodes[find_player()]
 		player.position = ppos
 		player.set_stream(G.data.get_sound(sound))

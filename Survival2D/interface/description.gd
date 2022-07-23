@@ -8,9 +8,8 @@ func on_display(header, desc):
 	title.set_text(header.capitalize())
 	content.set_bbcode(desc)
 	show()
-	rect_global_position = get_global_mouse_position()
-	rect_global_position.x = min(rect_global_position.x, G.ui.screen_size.x - rect_size.x)
-	rect_global_position.y = min(rect_global_position.y, G.ui.screen_size.y - rect_size.y)
+	rect_global_position.x = G.ui.screen_size.x - rect_size.x - 80
+	rect_global_position.y = 0
 
 func array_to_string(arr):
 	var r = ""

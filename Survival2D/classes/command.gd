@@ -165,7 +165,8 @@ func run(p, host):
 	elif command == "money":
 		if G.vars.money + args[1] < 0:
 			stop = true
-			G.msg("Not enough money!")
+			if get_arg(args, 2) == true:
+				G.msg("Not enough money!")
 		else:
 			G.you.make_money(args[1])
 	elif command == "travel":

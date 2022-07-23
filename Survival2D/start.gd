@@ -8,7 +8,8 @@ func _ready():
 	$Label.rect_position.x = screen_size.x / 2 - $Label.rect_size.x / 2
 	$Label.rect_position.y = screen_size.y - 40
 	$Sprite.position = screen_size / 2
-	$AnimationPlayer.play("FadeIn")
+#	$AnimationPlayer.play("FadeIn")
+	on_fadeout()
 
 func _input(event):
 	if state == 1:
@@ -28,5 +29,4 @@ func on_fadein():
 	state = 1
 
 func on_fadeout():
-	get_tree().get_root().remove_child(self)
-	gamestate.start_local("Player")
+	get_tree().change_scene_to(load("res://world/Creation.tscn"))

@@ -6,9 +6,8 @@ export var active: bool
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.pressed:
-			if event.button_index == BUTTON_LEFT:
-				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
-					place_to(G.ui.menu.drag_item)
+			if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
+				place_to(G.ui.menu.drag_item)
 
 func place_to(item):
 	var t = G.you.unit.dat

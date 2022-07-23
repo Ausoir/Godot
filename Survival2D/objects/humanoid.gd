@@ -123,8 +123,6 @@ func equip(part, item):
 		else:
 			create_overlay(part, item.dat.g("sprite"))
 		G.sfx.play("equip_metal", pos.position)
-		if controller != null:
-			controller.on_change("equip")
 		return true
 	return false
 
@@ -136,8 +134,6 @@ func unequip(part):
 			remove_overlay(part)
 			equipments.erase(eq)
 			r.host = null
-			if controller != null:
-				controller.on_change("equip")
 			return r
 
 func on_item_remove(item):
@@ -147,6 +143,7 @@ func on_item_remove(item):
 		var part = item.dat.g("part", "weapon")
 		if equipments[part] == item:
 			unequip(part)
+	controller.on_change("ui")
 
 func roll_skill(type, mode=0):
 	var data
@@ -198,13 +195,25 @@ func has_part(p):
 			return true
 	return false
 
+func store_at(item, index):
+	if index >= inventory.size():
+		store(item)
+	else:
+		inventory[index] = item
+		item.host = self
+		item.pos = pos
+		if controller != null:
+			controller.on_change("ui")
+	return true
+
 func store(item, drop=false):
 	for i in range(inventory.size()):
 		if inventory[i] == null:
 			inventory[i] = item
 			item.host = self
+			item.pos = pos
 			if controller != null:
-				controller.on_change("item")
+				controller.on_change("ui")
 			return true
 	if drop:
 		drop(item)
@@ -216,7 +225,7 @@ func unstore(item):
 			item.host = null
 			inventory[i] = null
 			if controller != null:
-				controller.on_change("item")
+				controller.on_change("ui")
 			return true
 	return false
 

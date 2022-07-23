@@ -26,22 +26,10 @@ var onloads = []
 func create(_type):
 	var generator
 	map_name = _type
-	G.worlds[map_name] = self
 	daytime = int(G.vars.time) % 2 == 0
 	if map_name == "city":
-		generator = load("res://world/generator_city.gd").new()
-		connections["down"] = "sewer"
-		connections["up"] = "2nd"
-		generator.generate()
-	elif map_name == "sewer":
-		daytime = false
 		generator = load("res://world/generator_vault.gd").new()
-		connections["up"] = "city"
-		generator.generate("map_city_sewers")
-	elif map_name == "2nd":
-		generator = load("res://world/generator_vault.gd").new()
-		connections["down"] = "city"
-		generator.generate("map_city_2nd")
+		generator.generate("map_city")
 	apply_shades(Vector2(), size)
 	tilemap.update_bitmask_region(Vector2(), size)
 	for y in range(size.y):

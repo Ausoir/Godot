@@ -20,16 +20,15 @@ const UPLEFT = 7
 
 const Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
 const Gfx = preload("res://fx/Gfx.tscn")
-var sfx = preload("res://fx/Sfx.tscn").instance()
-var influence = preload("res://objects/influence.gd").new()
-var data = preload("res://classes/json.gd").new()
-var time = preload("res://classes/time.gd").new()
-var factory = preload("res://classes/factory.gd").new()
-var world = preload("res://world/World.tscn").instance()
-var ui = preload("res://interface/Interface.tscn").instance()
-var custom = preload("res://classes/custom.gd").new()
-var command = load("res://classes/command.gd").new()
-var worlds = {}
+var sfx
+var influence
+var data
+var time
+var factory
+var world
+var ui
+var custom
+var command
 var events = []
 var vars = {}
 var temp = {}
@@ -40,6 +39,15 @@ func _ready():
 	set_process(false)
 
 func start():
+	sfx = preload("res://fx/Sfx.tscn").instance()
+	influence = preload("res://classes/influence.gd").new()
+	data = preload("res://classes/json.gd").new()
+	time = preload("res://classes/time.gd").new()
+	factory = preload("res://classes/factory.gd").new()
+	world = preload("res://world/World.tscn").instance()
+	ui = preload("res://interface/Interface.tscn").instance()
+	custom = preload("res://classes/custom.gd").new()
+	command = load("res://classes/command.gd").new()
 	get_tree().get_root().add_child(G.ui)
 	set_process(true)
 
@@ -148,7 +156,7 @@ func is_vec_visible(p):
 	return tile != null and tile.visible
 
 func make_particle(arg, pos, args=null, force=false):
-	if force or is_vec_visible(pos):
+	if (force and is_vec_in_range(pos)) or is_vec_visible(pos):
 		var r = G.data.get_particle(arg)
 		r.position = pos
 		r.add()
@@ -156,7 +164,7 @@ func make_particle(arg, pos, args=null, force=false):
 			r.run_details(args)
 		return r
 
-func display_damage(val, pos, color=Color.white, _scale=1, _speed=800, lifetime=100):
+func display_damage(val, pos, color=Color.white, _scale=1, _speed=800, lifetime=200):
 	if is_vec_visible(pos):
 		var r = Damage_Label.instance()
 		r.lifetime = lifetime
@@ -192,21 +200,19 @@ func msg(msg):
 	ui.message.add(msg)
 
 func travel(_map):
+	get_tree().set_pause(true)
 	var root = get_tree().get_root()
 	if G.world.get_parent() != null:
 		root.remove_child(G.world)
 		G.world.others.remove_child(G.sfx)
-	if _map in G.worlds:
-		G.world = G.worlds[_map]
-		root.add_child(G.world)
-	else:
-		var newworld = load('res://world/World.tscn').instance()
-		root.add_child(newworld)
-		G.world = newworld
-		G.world.create(_map)
+	var newworld = load('res://world/World.tscn').instance()
+	root.add_child(newworld)
+	G.world = newworld
+	G.world.create(_map)
 	G.world.others.add_child(G.sfx)
 	if G.you.get_parent() != null:
 		G.you.get_parent().remove_child(G.you)
 	G.world.players.add_child(G.you)
 	if G.you.unit != null:
 		G.you.unit.move_world(G.world)
+	get_tree().set_pause(false)

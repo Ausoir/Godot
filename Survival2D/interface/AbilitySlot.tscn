@@ -19,12 +19,10 @@ font_data = ExtResource( 1 )
 margin_right = 32.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
+rect_scale = Vector2( 2, 2 )
 mouse_default_cursor_shape = 2
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 2, 2 )
@@ -39,9 +37,6 @@ custom_fonts/font = SubResource( 2 )
 text = "1"
 align = 2
 valign = 2
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Overlay" type="Sprite" parent="."]
 visible = false

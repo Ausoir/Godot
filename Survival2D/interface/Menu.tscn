@@ -26,7 +26,7 @@ __meta__ = {
 }
 
 [node name="Tabs" type="TabContainer" parent="."]
-margin_right = 166.0
+margin_right = 360.0
 margin_bottom = 480.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -42,20 +42,20 @@ margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VSplit" type="VSplitContainer" parent="Tabs/INV"]
-margin_right = 158.0
+[node name="VSplit" type="HSplitContainer" parent="Tabs/INV"]
+margin_right = 352.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Equipment" type="VBoxContainer" parent="Tabs/INV/VSplit"]
-margin_right = 158.0
-margin_bottom = 216.0
+margin_right = 170.0
+margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label2" type="Label" parent="Tabs/INV/VSplit/Equipment"]
-margin_right = 158.0
+[node name="Label1" type="Label" parent="Tabs/INV/VSplit/Equipment"]
+margin_right = 232.0
 margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -66,14 +66,14 @@ __meta__ = {
 }
 
 [node name="Inventory" type="VBoxContainer" parent="Tabs/INV/VSplit"]
-margin_top = 228.0
-margin_right = 158.0
+margin_left = 182.0
+margin_right = 352.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label2" type="Label" parent="Tabs/INV/VSplit/Inventory"]
-margin_right = 158.0
+margin_right = 232.0
 margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -94,21 +94,21 @@ margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VSplit" type="VSplitContainer" parent="Tabs/CHA"]
-margin_right = 158.0
+[node name="VSplit" type="HSplitContainer" parent="Tabs/CHA"]
+margin_right = 352.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Stats" type="VSplitContainer" parent="Tabs/CHA/VSplit"]
-margin_right = 158.0
-margin_bottom = 216.0
+margin_right = 170.0
+margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 dragger_visibility = 1
 
 [node name="Label" type="Label" parent="Tabs/CHA/VSplit/Stats"]
-margin_right = 158.0
+margin_right = 170.0
 margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -120,13 +120,13 @@ __meta__ = {
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Tabs/CHA/VSplit/Stats"]
 margin_top = 32.0
-margin_right = 158.0
-margin_bottom = 216.0
+margin_right = 170.0
+margin_bottom = 444.0
 bbcode_enabled = true
 
 [node name="Skills" type="VBoxContainer" parent="Tabs/CHA/VSplit"]
-margin_top = 228.0
-margin_right = 158.0
+margin_left = 182.0
+margin_right = 352.0
 margin_bottom = 444.0
 size_flags_horizontal = 3
 size_flags_vertical = 3

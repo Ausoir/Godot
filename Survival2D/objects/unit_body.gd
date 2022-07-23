@@ -46,6 +46,5 @@ func cast_col_ray(to, exc, mask=1):
 	return result
 
 func _input_event(_viewport, event, _shape_idx):
-	if event is InputEventMouseButton \
-	and Input.is_action_just_pressed("use"):
+	if event is InputEventMouseButton:
 		G.you.on_item_click(parent)
