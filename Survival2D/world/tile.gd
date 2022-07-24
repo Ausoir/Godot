@@ -166,9 +166,9 @@ func get_item_by_name(val):
 			return item
 	return null
 
-func get_item_by_type(val):
+func get_item_by_type(val, exc=null):
 	for item in items:
-		if item.item_type == val:
+		if item.item_type == val and item != exc:
 			return item
 	return null
 

@@ -49,7 +49,7 @@ func _unhandled_input(event):
 				clear()
 			else:
 				G.cmds([["menu", "menu", -1]], G.you.unit)
-		else:
+		elif G.you != null:
 			G.you._on_input(event)
 	elif !on:
 		G.you._on_input(event)
@@ -90,18 +90,20 @@ func update_hud():
 		i.queue_free()
 		buffs.remove_child(i)
 	var count = 0
-	var ab = G.you.unit.dat.g("abilities", [])
-	if G.you.unit.dat.g("type") == "man":
+	var ab = []
+	for i in G.you.unit.dat.g("abilities", []):
+		ab.append([i, "skill"])
+	if G.you.unit.dat.g("type") != "other":
 		ab += G.you.unit.get_usable_items()
 	for i in G.you.interactables:
 		if i != null and is_instance_valid(i):
-			ab.append(i)
+			ab.append([i, "object"])
 	for i in ab:
 		var newslot = AbilitySlot.instance()
-		newslot.assign(i)
+		newslot.assign(i[0], i[1])
 		newslot.set_index(count)
 		abilities.add_child(newslot)
-		if newslot.skill_type == "self" and G.you.unit.buffs.has(i):
+		if newslot.skill_type == "self" and G.you.unit.buffs.has(i[0]):
 			newslot.set_mode(3)
 		elif G.you.aiming == count:
 			newslot.set_mode(1)

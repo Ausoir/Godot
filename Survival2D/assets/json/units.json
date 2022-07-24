@@ -3,7 +3,7 @@
 		"img": "blank",
 		"type": "other",
 		"col": 0,
-		"move speed": 8,
+		"move speed": 40,
 		"armor": 999,
 		"vitality": 999,
 		"strength": 1,
@@ -18,7 +18,7 @@
 	"human": {
 		"img": "units/zombie",
 		"type": "man",
-		"move speed": 8,
+		"move speed": 40,
 		"vitality": 8,
 		"strength": 8,
 		"agility": 8,
@@ -31,7 +31,7 @@
 	"bum": {
 		"img": "units/zombie",
 		"type": "man",
-		"move speed": 2,
+		"move speed": 10,
 		"vitality": 4,
 		"strength": 0,
 		"agility": 8,
@@ -63,7 +63,7 @@
 	"rat": {
 		"img": "units/rat",
 		"type": "other",
-		"move speed": 9,
+		"move speed": 45,
 		"vitality": 1,
 		"strength": 2,
 		"agility": 4,
@@ -77,7 +77,7 @@
 	"coyote": {
 		"img": "units/coyote",
 		"type": "other",
-		"move speed": 12,
+		"move speed": 60,
 		"vitality": 2,
 		"strength": 2,
 		"agility": 8,
@@ -93,7 +93,7 @@
 	"ant": {
 		"img": "units/ant",
 		"type": "other",
-		"move speed": 12,
+		"move speed": 60,
 		"vitality": 2,
 		"strength": 2,
 		"agility": 4,
@@ -109,7 +109,7 @@
 	"ant soldier": {
 		"img": "units/ant_soldier",
 		"type": "other",
-		"move speed": 8,
+		"move speed": 40,
 		"armor": 1,
 		"vitality": 4,
 		"strength": 4,
@@ -124,7 +124,7 @@
 	"ant princess": {
 		"img": "units/ant_princess",
 		"type": "other",
-		"move speed": 10,
+		"move speed": 60,
 		"vitality": 4,
 		"strength": 4,
 		"agility": 4,
@@ -139,7 +139,7 @@
 	"blob": {
 		"img": "units/slime",
 		"type": "other",
-		"move speed": 4,
+		"move speed": 20,
 		"vitality": 20,
 		"strength": 2,
 		"agility": 1,
@@ -153,7 +153,7 @@
 	"zombie": {
 		"img": "units/zombie",
 		"type": "other",
-		"move speed": 8,
+		"move speed": 40,
 		"vitality": 4,
 		"strength": 4,
 		"agility": 4,
@@ -168,9 +168,9 @@
 	"prisoner zombie": {
 		"img": "units/zombie_prisoner",
 		"type": "other",
-		"move speed": 8,
-		"vitality": 8,
-		"strength": 8,
+		"move speed": 40,
+		"vitality": 6,
+		"strength": 6,
 		"agility": 4,
 		"perception": 2,
 		"value": 1,
@@ -183,7 +183,7 @@
 	"rot zombie": {
 		"img": "units/zombie_rot",
 		"type": "other",
-		"move speed": 8,
+		"move speed": 40,
 		"vitality": 4,
 		"strength": 4,
 		"agility": 2,
@@ -197,7 +197,7 @@
 	"burnt zombie": {
 		"img": "units/zombie_burnt",
 		"type": "other",
-		"move speed": 4,
+		"move speed": 20,
 		"vitality": 8,
 		"strength": 4,
 		"agility": 1,
@@ -212,7 +212,7 @@
 	"zombie dog": {
 		"img": "units/zombie_dog",
 		"type": "other",
-		"move speed": 12,
+		"move speed": 60,
 		"vitality": 2,
 		"strength": 2,
 		"agility": 1,
@@ -226,7 +226,7 @@
 	"zombie hunter": {
 		"img": "units/zombie_hunter",
 		"type": "other",
-		"move speed": 10,
+		"move speed": 50,
 		"vitality": 5,
 		"strength": 4,
 		"agility": 1,
@@ -242,7 +242,7 @@
 	"infected": {
 		"img": "units/infected",
 		"type": "other",
-		"move speed": 5,
+		"move speed": 25,
 		"vitality": 5,
 		"strength": 5,
 		"agility": 5,
@@ -257,7 +257,7 @@
 	"mutant": {
 		"img": "units/mutant",
 		"type": "other",
-		"move speed": 8,
+		"move speed": 40,
 		"vitality": 6,
 		"strength": 4,
 		"agility": 6,
@@ -272,7 +272,7 @@
 	"manzard": {
 		"img": "units/manzard",
 		"type": "manzard",
-		"move speed": 6,
+		"move speed": 40,
 		"vitality": 8,
 		"strength": 4,
 		"agility": 4,
@@ -286,7 +286,7 @@
 	"mansect": {
 		"img": "units/manzard",
 		"type": "manzard",
-		"move speed": 8,
+		"move speed": 40,
 		"vitality": 8,
 		"strength": 8,
 		"agility": 8,
@@ -300,7 +300,7 @@
 	"mantle": {
 		"img": "units/mantle",
 		"type": "mantle",
-		"move speed": 2,
+		"move speed": 10,
 		"vitality": 16,
 		"strength": 8,
 		"agility": 1,
@@ -315,7 +315,7 @@
 	"manfly": {
 		"img": "units/manfly",
 		"type": "manfly",
-		"move speed": 10,
+		"move speed": 50,
 		"vitality": 3,
 		"strength": 4,
 		"agility": 6,
@@ -329,7 +329,7 @@
 	"manbird": {
 		"img": "units/manbird",
 		"type": "manfly",
-		"move speed": 10,
+		"move speed": 50,
 		"vitality": 3,
 		"strength": 4,
 		"agility": 6,

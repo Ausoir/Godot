@@ -134,7 +134,7 @@ func update_skills():
 			tab_cha_skills.remove_child(child)
 		else:
 			var slots = G.you.unit.dat.get_active_slots()
-			var max_slots = G.you.unit.dat.g("agility", 1)
+			var max_slots = G.you.unit.dat.g("intelligence", 1)
 			child.set_text("Skills [" + str(slots) + "/" + str(max_slots) + "]: ")
 	if G.you.unit.dat.g("type") != "other":
 		for i in range(G.you.unit.item_skills.size()):
@@ -154,8 +154,9 @@ func update_status():
 	tab_cha_stats.get_node("Label").set_text(G.you.unit.item_name.capitalize())
 	var textbox = tab_cha_stats.get_node("RichTextLabel")
 	var txt = ""
-	for i in G.STATS:
-		txt += "[color=#A64]"+i.capitalize()+"[/color]: "+str(G.you.unit.dat.g(i, 0)) + "\n"
+	for i in G.data.vars.stats:
+		var stat = G.data.vars.stats[i].name
+		txt += "[color=#A64]"+stat.capitalize()+"[/color]: "+str(G.you.unit.dat.g(stat, 0)) + "\n"
 	textbox.set_bbcode(txt)
 
 func display_time():

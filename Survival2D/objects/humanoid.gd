@@ -26,7 +26,7 @@ func get_usable_items():
 		if i != null:
 			var onuse = i.dat.g("onuse")
 			if onuse != null:
-				r.append(i)
+				r.append([i, "item"])
 	return r
 
 func set_seed():
@@ -40,9 +40,9 @@ func set_seed():
 		var list
 		if sd % 2 == 0:
 			sd /= 2
-			list = G.data.vars_data.male
+			list = G.data.vars.male
 		else:
-			list = G.data.vars_data.female
+			list = G.data.vars.female
 		var sprite_name = list[sd % list.size()]
 		n_sprite.texture = G.data.get_image("units/human/"+sprite_name)
 
@@ -141,7 +141,7 @@ func on_item_remove(item):
 		unstore(item)
 	else:
 		var part = item.dat.g("part", "weapon")
-		if equipments[part] == item:
+		if part in equipments and equipments[part] == item:
 			unequip(part)
 	controller.on_change("ui")
 
@@ -162,10 +162,11 @@ func accomodate_stats(item):
 	item_skills += item.dat.g("skills", [])
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
-	for i in G.STATS:
-		var stat = item.dat.g(i)
+	for i in G.data.vars.stats:
+		var s = G.data.vars.stats[i].name
+		var stat = item.dat.g(s)
 		if stat != null:
-			dat.add(i, stat)
+			dat.add(s, stat)
 	dirty_dat = true
 
 func unaccomodate_stats(item):
@@ -175,10 +176,11 @@ func unaccomodate_stats(item):
 	dat.a("abilities", abilities)
 	for i in item.dat.g("skills", []):
 		item_skills.erase(i)
-	for i in G.STATS:
-		var stat = item.dat.g(i)
+	for i in G.data.vars.stats:
+		var s = G.data.vars.stats[i].name
+		var stat = item.dat.g(s)
 		if stat != null:
-			dat.add(i, -stat)
+			dat.add(s, -stat)
 	var remove_spaces = item.dat.g("space", 0)
 	var old_inventory = inventory
 	inventory = inventory.slice(0, inventory.size()-remove_spaces-1)

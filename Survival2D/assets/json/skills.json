@@ -59,9 +59,9 @@
 		"delay": 5,
 		"chance": 25,
 		"cost": 3,
-		"desc_dmg": "4 Cut",
-		"onstart": [["action","$h","strike"],["attack","$h","$t","cut", 4]],
-		"desc": "An attack that delivers a deep cut damage.",
+		"desc_dmg": "3 Cut",
+		"onstart": [["action","$h","strike"],["attack","$h","$t","cut", 3]],
+		"desc": "An attack that deals cut damage.",
 	},
 	"stab": {
 		"target": "onattack",
@@ -141,7 +141,7 @@
 	"somersault": {
 		"target": "onattack",
 		"delay": 10,
-		"chance": 15,
+		"chance": 12,
 		"duration": 4,
 		"cost": 4,
 		"desc_dmg": "50% Bash over 3x3 area",

@@ -1,20 +1,18 @@
 {
-	"pre gen": {
+	"init spawners": {
 		"onmake": [["&=","spawner1","{g_zombie,g_mutant,g_hive}"],["&=","invade",1]],
 	},
-	"post gen": {
+	"ready sabo solars": {
 		"turn": 64,
 		"level": 0,
-		"onmake": [["=items","machine"],["&=","sabotage","$t"]],
-		"onturn": [["=items","machine"],["&=","sabotage","$t"],
-				["*+","$h","level",1],["?>=","{level}",9],["&*=","invade",-1],["*=","$h","level",0]],
+		"onmake": [["=items","solar panel"],["&=","sabotage","$t"]],
+		"onturn": [["*+","$h","level",1],["?>=","{level}",9],["&*=","invade",-1],["*=","$h","level",0]],
 	},
 	"spawner init": {
 		"onmake": [["make","spawner","$hp"],["remove","$h"]],
 	},
 	"spawner": {
 		"col": 0,
-		"weight": -1,
 		"upgrade": 0,
 		"level": 1,
 		"turn": 64,
@@ -24,13 +22,11 @@
 	},
 	"late spawner": {
 		"col": 2,
-		"weight": -1,
 		"turn": 512,
 		"onturn": [["make","spawner","$hp"],["remove","$h"]],
 	},
 	"loading": {
 		"col": 2,
-		"weight": -1,
 		"turn": 1,
 		"progress": 0,
 		"onturn": [["*+","$h","progress",8],["textify","$h","{spawn}\n{progress}%"],["?>=","{progress}",100],["make","{spawn}","$hp"],["remove","$h"]],
@@ -49,7 +45,6 @@
 		"img": "tiles/cloner",
 		"mat": "metal",
 		"col": 14,
-		"weight": -1,
 		"turn": 256,
 		"onturn": [["money",-1],["gfx","label","-$1","$hv","#F66"],["onstop","Requires $50 to respawn."],["money",-50],["custom", "respawn", "$h"]],
 		"desc": "Wait over this structure as a ghost to respawn. Costs $50.",
@@ -164,16 +159,16 @@
 		"img": "tiles/i_stock_pot",
 		"mat": "metal",
 		"weight": 3,
-		"desc": "A stock pot full of soup. -1 Agility, +2 Strength",
-		"onuse": [["*+","$p","strength",2],["*+","$p","agility",-1],["remove","$h"]],
+		"desc": "A stock pot full of soup. -1 Agility, +1~2 Strength",
+		"onuse": [["*+","$p","strength","{1~2}"],["*+","$p","agility",-1],["remove","$h"]],
 	},
 	"blob vial": {
 		"img": "gui/vial",
 		"sprite": "overlay/w_vial",
 		"mat": "glass",
 		"weight": 0,
-		"desc": "A vial of blob. -1 Perception, +1 Vitality",
-		"onuse": [["*+","$p","perception",-1],["*+","$p","vitality",1],["remove","$h"]],
+		"desc": "A vial of blob. -1 Perception, +0~4 Vitality",
+		"onuse": [["*+","$p","perception",-1],["*+","$p","vitality","{0~4}"],["remove","$h"]],
 	},
 	"potato chip": {
 		"img": "tiles/i_chips",
@@ -189,19 +184,34 @@
 		"desc": "An energy bar. -1 Vitality, +1 Move Speed",
 		"onuse": [["*+","$p","vitality",-1],["*+","$p","move speed",1],["remove","$h"]]
 	},
-	"canned food": {
-		"img": "tiles/i_can",
-		"mat": "other",
-		"weight": 0,
-		"desc": "A can of sardines. -1 Perception, +1 Agility",
-		"onuse": [["*+","$p","agility",1],["*+","$p","perception",-1],["remove","$h"]]
-	},
 	"tea": {
 		"img": "tiles/i_kettle",
 		"mat": "other",
 		"weight": 1,
 		"desc": "A kettle of tea. +1 Perception",
 		"onuse": [["*+","$p","perception",1],["remove","$h"]]
+	},
+	"canned food": {
+		"img": "tiles/i_can",
+		"mat": "other",
+		"weight": 0,
+		"value": 2,
+		"desc": "A valuable preserved food from before the apocalypse. You cannot eat it without a can opener, but you can sell it.",
+	},
+	"battery": {
+		"img": "tiles/i_can",
+		"mat": "other",
+		"weight": 0,
+		"value": 10,
+		"desc": "A battery that allows you to use many of the powerful pre-apocalypse artifacts. You can sell it.",
+	},
+	"card": {
+		"img": "tiles/i_can",
+		"mat": "other",
+		"weight": 0,
+		"value": 2,
+		"desc": "Use to increase maximum money you can carry by 50. Even after the apocalypse, money charged in this dispensible card continues its role as currency.",
+		"onuse": [["^+", "money_", 50]],
 	},
 
 
@@ -436,9 +446,7 @@
 		"mat": "metal",
 		"vitality": 12,
 		"armor": 1,
-		"weight": -1,
 		"col": 6,
-		"ondie": [["custom", "sabotaged", null]]
 	},
 	"solar panel": {
 		"img": "tiles/solar_panel",
@@ -456,7 +464,6 @@
 		"mat": "metal",
 		"vitality": 20,
 		"armor": 2,
-		"weight": -1,
 		"col": 12,
 		"desc": "Increases the maximum amount of money you can have by 10.",
 		"turn": 128,
@@ -561,7 +568,6 @@
 		"mat": "stone",
 		"col": 0,
 		"armor": 12,
-		"weight": -1,
 		"layer": -1,
 		"_oninteract": [["v","controller","$t"],["tasks", "$t", ["enter", "up", "$hp", 3]]],
 	},
@@ -570,7 +576,6 @@
 		"mat": "stone",
 		"col": 0,
 		"armor": 12,
-		"weight": -1,
 		"layer": -1,
 		"_oninteract": [["v","controller","$t"],["tasks", "$t", ["enter", "down", "$hp", 3]]],
 	},
@@ -579,7 +584,6 @@
 		"mat": "metal",
 		"col": 0,
 		"armor": 12,
-		"weight": -1,
 		"layer": -1,
 		"oninteract": [["v","controller","$t"],["tasks","$t", ["enter","down","$hp",3]]],
 	},
@@ -1053,7 +1057,6 @@
 		"img": "uc/pit_autotile",
 		"autotile": 1,
 		"mat": "other",
-		"weight": -1,
 		"slow": 0.5,
 		"col": 0,
 	},

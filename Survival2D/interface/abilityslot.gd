@@ -33,22 +33,30 @@ func set_mode(p):
 		stylebox.texture = G.data.get_image("gui/skillslot")
 	mode = p
 
-func assign(p):
+func assign(p, type):
 	skill = p
-	if p is String:
+	if type == "skill":
 		skill_data = G.data.skill_data.get(p)
 		if skill_data == null:
 			return false
 		skill_type = skill_data.get("target")
 		skill_description = skill_data.get("desc")
 		$Sprite.texture = G.data.get_image(skill_data.img)
-	else:
+	elif type == "item":
 		skill_data = G.data.item_data.get(p)
 		skill_type = "item"
 		skill_description = skill.dat.g("desc")
 		$Sprite.texture = skill.texture
-		$Sprite.set_region(true)
-		$Sprite.set_region_rect(Rect2(0, 0, 32, 32))
+	elif type == "object":
+		skill_data = G.data.item_data.get(p)
+		skill_type = "object"
+		skill_description = skill.dat.g("desc")
+		if skill.item_type == "unit":
+			$Sprite.texture = skill.n_sprite.texture
+		else:
+			$Sprite.texture = skill.texture
+			$Sprite.set_region(true)
+			$Sprite.set_region_rect(Rect2(0, 0, 32, 32))
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
@@ -67,6 +75,8 @@ func activate():
 				G.you.on_point = [skill.dat.g("onuse"), skill]
 			else:
 				G.you.tasks = [["command", skill.dat.g("onuse"), skill, G.you.unit.position]]
+		elif skill_type == "object":
+			G.you.tasks.append(["interact", skill])
 		else:
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)

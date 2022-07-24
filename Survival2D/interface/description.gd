@@ -34,7 +34,9 @@ func display_item(header, item):
 	var value = item.get("value", 0)
 	if value != 0:
 		desc += "[color=#FB0]$"+ str(value) +"[/color]\n"
-	desc += "[color=#888]Weight: "+ str(item.get("weight", 0)) +"[/color]\n"
+	var weight = item.get("weight", -1)
+	if weight != -1:
+		desc += "[color=#888]Weight: "+ str(weight) +"[/color]\n"
 	if "part" in item:
 		if item.part != "item":
 			desc += "[color=#229]Armor ("+ str(item.part) +")[/color]\n"
@@ -54,10 +56,11 @@ func display_item(header, item):
 		var abilities = item.get("abilities", [])
 		if !abilities.empty():
 			desc += "[color=#84A]Abilities: "+ array_to_string(abilities) +"[/color]\n"
-	for i in G.STATS:
-		var stat = item.get(i)
+	for i in G.data.vars.stats:
+		var s = G.data.vars.stats[i].name
+		var stat = item.get(s)
 		if stat != null:
-			desc += "[color=#CA6]"+ i.capitalize() +": " + str(stat) + "[/color]\n"
+			desc += "[color=#CA6]"+ s.capitalize() +": " + str(stat) + "[/color]\n"
 	var uses = item.get("uses", 0)
 	if uses > 0:
 		desc += "[color=#1B9]"+ str(uses) +" Uses[/color]\n"

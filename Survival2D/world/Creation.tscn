@@ -14,28 +14,39 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -200.0
-margin_top = -150.0
-margin_right = 200.0
-margin_bottom = 150.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+margin_left = -240.0
+margin_top = -180.0
+margin_right = 240.0
+margin_bottom = 180.0
 
-[node name="Character Creation" type="ScrollContainer" parent="Dialog"]
+[node name="Character Creation" type="HSplitContainer" parent="Dialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 6.0
-margin_top = 38.0
+margin_top = 42.0
 margin_right = -6.0
 margin_bottom = -8.0
+dragger_visibility = 1
+
+[node name="Text1" type="RichTextLabel" parent="Dialog/Character Creation"]
+margin_right = 230.0
+margin_bottom = 310.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-scroll_horizontal_enabled = false
+bbcode_enabled = true
+meta_underlined = false
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Dialog/Character Creation"]
-margin_right = 388.0
-margin_bottom = 254.0
+[node name="Rightside" type="VSplitContainer" parent="Dialog/Character Creation"]
+margin_left = 238.0
+margin_right = 468.0
+margin_bottom = 310.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+dragger_visibility = 1
+
+[node name="Text2" type="RichTextLabel" parent="Dialog/Character Creation/Rightside"]
+margin_right = 230.0
+margin_bottom = 151.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
@@ -48,6 +59,7 @@ bbcode_text = "Player
 
 [url=ms]Move Speed[/url]
 "
+meta_underlined = false
 text = "Player
 
 Vitality
@@ -58,4 +70,39 @@ Perception
 Move Speed
 "
 
-[connection signal="meta_clicked" from="Dialog/Character Creation/RichTextLabel" to="." method="_on_meta_clicked"]
+[node name="Text3" type="RichTextLabel" parent="Dialog/Character Creation/Rightside"]
+margin_top = 159.0
+margin_right = 230.0
+margin_bottom = 310.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+bbcode_text = "Player
+
+[url=vit]Vitality[/url]
+[url=str]Strength[/url]
+[url=agi]Agility[/url]
+[url=per]Perception[/url]
+
+[url=ms]Move Speed[/url]
+"
+meta_underlined = false
+text = "Player
+
+Vitality
+Strength
+Agility
+Perception
+
+Move Speed
+"
+
+[connection signal="meta_clicked" from="Dialog/Character Creation/Text1" to="." method="_on_meta_clicked"]
+[connection signal="meta_hover_ended" from="Dialog/Character Creation/Text1" to="." method="_on_meta_hover_ended"]
+[connection signal="meta_hover_started" from="Dialog/Character Creation/Text1" to="." method="_on_meta_hover_started"]
+[connection signal="meta_clicked" from="Dialog/Character Creation/Rightside/Text2" to="." method="_on_meta_clicked"]
+[connection signal="meta_hover_ended" from="Dialog/Character Creation/Rightside/Text2" to="." method="_on_meta_hover_ended"]
+[connection signal="meta_hover_started" from="Dialog/Character Creation/Rightside/Text2" to="." method="_on_meta_hover_started"]
+[connection signal="meta_clicked" from="Dialog/Character Creation/Rightside/Text3" to="." method="_on_meta_clicked"]
+[connection signal="meta_hover_ended" from="Dialog/Character Creation/Rightside/Text3" to="." method="_on_meta_hover_ended"]
+[connection signal="meta_hover_started" from="Dialog/Character Creation/Rightside/Text3" to="." method="_on_meta_hover_started"]

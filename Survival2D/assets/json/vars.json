@@ -3,4 +3,56 @@
 			"male_9","male_10","male_11","male_12","male_13","male_14","male_15","male_16",],
 	"female": ["female_1","female_2","female_3","female_4","female_5","female_6","female_7","female_8",
 			"female_9","female_10","female_11","female_12","female_13","female_14","female_15","female_16",],
+	"species": ["human","human","human","human","human", "human","human","human","human","human", "human","human","human","human","human", "human","human","human","human","human",
+		"manzard", "mantle", "manfly", "mansect", "manbird"],
+	"stats": {
+		"vit": {
+			"name": "vitality",
+			"default": 40,
+			"variance": 20,
+			"desc": "Vitality is the maximum health points."
+		},
+		"str": {
+			"name": "strength",
+			"default": 4,
+			"variance": 2,
+			"desc": "Strength determines bash damage.",
+		},
+		"agi": {
+			"name": "agility",
+			"default": 4,
+			"variance": 2,
+			"desc": "Agility determines dodge and stealth."
+		},
+		"itl": {
+			"name": "intelligence",
+			"default": 4,
+			"variance": 2,
+			"desc": "Intelligence determines amount of skills you can have."
+		},
+		"per": {
+			"name": "perception",
+			"default": 8,
+			"variance": 1,
+			"desc": "Perception determines sight range."
+		},
+		"ms": {
+			"name": "move speed",
+			"default": 40,
+			"variance": 8,
+			"desc": "This is your move speed."
+		},
+	},
+	"skills": {
+		"bad": ["bash", "headbutt", "bite", "strike", null, null, null, null],
+		"good": ["quick strike", "venomous bite", "kick", "tackle", null, null, null],
+		"great": ["swipe", "leech", "somersault", "parry", "dodge", null, null]
+	},
+	"loadouts": {
+		"accessory": ["blob vial","canned food","medikit","builder (turret)",null,null,null],
+		"equipment": ["backpack","hood",null,null,null],
+		"armor": ["suit","suspenders","gi","casual","leather armor","looter coat"],
+		"bad_weapon": ["bat","pipe","knife","torch",null,null,null],
+		"good_weapon": ["knuckles","spear","bow","crossbow","pistol","laser rifle"],
+	}
 }

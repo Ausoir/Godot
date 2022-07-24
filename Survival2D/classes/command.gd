@@ -283,7 +283,7 @@ func run_unit(command, args, subject):
 		subject.remove()
 		return newunit
 	elif command == "give":
-		if subject.dat.g("type", "") == "man":
+		if subject.dat.g("type", "other") != "other":
 			var item = G.factory.make_item(args[2])
 			if item != null:
 				subject.store(item, true)

@@ -2,7 +2,7 @@ var json_cache = {}
 var images_cache = {}
 var sounds_cache = {}
 var particles_cache = {}
-var vars_data
+var vars
 var terrain_data
 var palette_data
 var item_data
@@ -13,7 +13,7 @@ var dialog_data
 var group_data
 
 func _init():
-	vars_data = get_json_from_dir("res://assets/json/vars.json")
+	vars = get_json_from_dir("res://assets/json/vars.json")
 	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
 	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
 	item_data = get_json_from_dir("res://assets/json/items.json")

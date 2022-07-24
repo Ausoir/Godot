@@ -8,7 +8,6 @@ const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
 	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
 const CARDINALS = [[0,-1],[1,0],[0,1],[-1,0]]
 const DIRS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
-const STATS = ["vitality", "strength", "agility", "perception", "move speed", "armor"]
 const UP = 0
 const UPRIGHT = 1
 const RIGHT = 2
@@ -36,9 +35,6 @@ var you
 
 
 func _ready():
-	set_process(false)
-
-func start():
 	sfx = preload("res://fx/Sfx.tscn").instance()
 	influence = preload("res://classes/influence.gd").new()
 	data = preload("res://classes/json.gd").new()
@@ -48,8 +44,8 @@ func start():
 	ui = preload("res://interface/Interface.tscn").instance()
 	custom = preload("res://classes/custom.gd").new()
 	command = load("res://classes/command.gd").new()
-	get_tree().get_root().add_child(G.ui)
-	set_process(true)
+	get_tree().get_root().call_deferred("add_child", ui)
+	set_process(false)
 
 func _process(delta):
 	time.on_process(delta)

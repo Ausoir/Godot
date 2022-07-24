@@ -58,9 +58,10 @@ __meta__ = {
 
 [node name="Abilities" type="GridContainer" parent="Control"]
 margin_left = 20.0
-margin_top = 440.0
+margin_top = 420.0
 margin_right = 60.0
-margin_bottom = 480.0
+margin_bottom = 460.0
+rect_scale = Vector2( 1.5, 1.5 )
 mouse_filter = 0
 mouse_default_cursor_shape = 2
 columns = 12

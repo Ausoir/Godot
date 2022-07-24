@@ -25,4 +25,4 @@ func get_active_slots():
 	return slots
 
 func can_learn(p):
-	return g("agility", 1) >= get_active_slots() + p
+	return g("intelligence", 1) >= get_active_slots() + p

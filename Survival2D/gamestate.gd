@@ -12,7 +12,7 @@ func end_game():
 func start_local():
 	var Player = load("res://view/Player.tscn")
 	G.you = Player.instance()
-	G.start()
+	G.set_process(true)
 	load_game()
 
 func create_game(_player_units):

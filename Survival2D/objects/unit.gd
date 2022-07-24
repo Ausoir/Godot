@@ -2,7 +2,6 @@ extends "res://objects/item.gd"
 
 const Ai = preload("res://objects/ai.gd")
 const Buffs = preload("res://objects/buffs.gd")
-const SPEED = 5
 
 onready var n_sprites = $Sprites
 onready var n_animation = $Animation
@@ -97,7 +96,7 @@ func slide(tox, toy):
 	if ms > 0:
 		if !("float" in flags):
 			ms = max(.2, ms * pos.slow)
-		n_animation.play("walk", -1, ms / 4)
+		n_animation.play("walk", -1, ms / 20)
 		var deg = atan2(toy-position.y, tox-position.x)
 		var vx = cos(deg)
 		var vy = sin(deg)
@@ -105,7 +104,6 @@ func slide(tox, toy):
 			face(1)
 		elif vx < -.1:
 			face(-1)
-		ms *= SPEED
 		n_collider.vel.x += vx * ms
 		n_collider.vel.y += vy * ms
 	return on_slide()

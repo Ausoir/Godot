@@ -84,7 +84,7 @@ func take_from():
 			G.ui.menu.set_drag_item(r)
 
 func place_to(pitem):
-	pitem.item.host.on_item_remove(pitem.item)
+	G.you.unit.on_item_remove(pitem.item)
 	var swap = false
 	if item != null:
 		G.ui.menu.set_drag_item(null)

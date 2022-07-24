@@ -56,3 +56,15 @@ func r_dice(times, dice):
 	for _i in range(times):
 		r += ir(1, dice)
 	return r
+
+func r_pie(slices):
+	var distribution = []
+	var avg: float = 0
+	for i in range(slices):
+		var t = R.fr(0, 1)
+		avg += t
+		distribution.append(t)
+	for i in range(slices):
+		distribution[i] /= avg
+		distribution[i] /= 1.0/slices
+	return distribution

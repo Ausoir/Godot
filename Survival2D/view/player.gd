@@ -10,6 +10,8 @@ var view_dirty = false
 var interactables = []
 var unhandled_input = false
 var on_point
+var events = {}
+var last_drag_dist = 0
 
 func on_change(p):
 	.on_change(p)
@@ -32,15 +34,13 @@ func on_assign():
 	.on_assign()
 	last_pos = unit.pos
 	n_camera.update(last_pos, unit.pos)
+	G.ui.update_hud()
 
 func on_kill(_victim):
 	var money = R.ir(0, _victim.dat.g("value", 0))
 	if money > 0:
 		G.vars.money += money
 		G.display_damage("+$"+str(money), unit.position, Color.gold, 1, 250)
-		for i in _victim.dat.g("actives", []):
-			if R.b() and !(i in G.vars.learnable):
-				G.vars.learnable.append(i)
 
 func get_mouse_tile():
 	var screen_mouse = G.ui.mouse_pos
@@ -50,7 +50,18 @@ func get_mouse_tile():
 	return G.pixel_to_pos(mouse_pos)
 
 func _on_input(event: InputEvent):
-	if event is InputEventMouseButton:
+	if event is InputEventScreenDrag:
+		events[event.index] = event
+		if events.size() == 2:
+			var drag_distance = events[0].position.distance_to(events[1].position)
+			if abs(drag_distance - last_drag_dist) > 10:
+				var new_zoom = 1.05
+				if drag_distance < last_drag_dist:
+					new_zoom = .95
+				new_zoom = clamp(n_camera.zoom.x * new_zoom, .5, 2)
+				n_camera.zoom = Vector2.ONE * new_zoom
+				last_drag_dist = drag_distance
+	elif event is InputEventMouseButton:
 		if event.is_pressed():
 			unhandled_input = true
 			if event.button_index == BUTTON_WHEEL_UP:
@@ -69,6 +80,11 @@ func _on_input(event: InputEvent):
 				else:
 					tasks = [["ability", aiming, tile.position]]
 					stop_aim()
+			else:
+				var mtile = get_mouse_tile()
+				var tile = G.world.get_tile(mtile.x, mtile.y)
+				if tile.distance_to(unit.pos) <= 1 and !tile.items.empty():
+					tasks = [["smash", tile]]
 		else:
 			unhandled_input = false
 
@@ -119,13 +135,16 @@ func on_turn():
 		G.ui._update_cooldowns(unit.cooldowns)
 
 func check_nearby_interactibles():
-	if unit.dat.g("type") == "man":
+	if unit.dat.g("type") != "other":
 		var vicinity = unit.pos.get_area(1)
 		var ninteractables = []
 		for tile in vicinity:
 			var item = tile.get_item_by_type("item")
-			if item != null:
+			if item != null and (item.dat.g("oninteract") != null or unit.can_carry(item.dat.g("weight",-1))):
 				ninteractables.append(item)
+			var npc = tile.get_item_by_type("unit", unit)
+			if npc != null and npc.dat.g("oninteract") != null:
+				ninteractables.append(npc)
 		if interactables != ninteractables:
 			interactables = ninteractables
 			G.ui.update_hud()
@@ -133,12 +152,6 @@ func check_nearby_interactibles():
 func make_money(p):
 	G.vars.money = min(G.vars.money_, G.vars.money+p)
 	G.ui.n_money.display(p)
-
-func on_item_click(item): #runs after _unhandled_input
-	if tasks.empty():
-		tasks.append(["interact", item])
-	elif tasks.size() == 1 and tasks[0][0] == "interact":
-		tasks[0][1] = item
 
 func on_hit(_hitter):
 	if _hitter != null and target == null:
