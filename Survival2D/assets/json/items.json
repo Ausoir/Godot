@@ -961,7 +961,6 @@
 		"mat": "wood",
 		"vitality": 20,
 		"armor": 4,
-		"weight": 10,
 		"col": 7,
 	},
 	"fence": {
@@ -970,14 +969,12 @@
 		"mat": "wood",
 		"vitality": 20,
 		"slow": 0.8,
-		"weight": 8,
 		"col": 2,
 	},
 	"chainfence": {
 		"img": "tiles/chainfence_autotile",
 		"autotile": 1,
 		"mat": "metal",
-		"weight": 16,
 		"col": 4,
 		"vitality": 14,
 		"armor": 2,
@@ -1002,7 +999,6 @@
 		"mat": "wood",
 		"vitality": 6,
 		"slow": 0.5,
-		"weight": 3,
 		"col": 0,
 	},
 	"old tree": {
@@ -1010,7 +1006,6 @@
 		"mat": "wood",
 		"vitality": 120,
 		"armor": 16,
-		"weight": 24,
 		"col": 7,
 	},
 	"tree": {
@@ -1018,7 +1013,6 @@
 		"mat": "wood",
 		"vitality": 120,
 		"armor": 16,
-		"weight": 20,
 		"col": 7,
 	},
 	"young tree": {
@@ -1026,7 +1020,6 @@
 		"mat": "wood",
 		"vitality": 20,
 		"armor": 16,
-		"weight": 12,
 		"col": 7,
 	},
 	"stump": {
@@ -1035,7 +1028,6 @@
 		"slow": 0.5,
 		"vitality": 200,
 		"armor": 16,
-		"weight": 20,
 		"col": 2,
 	},
 	"boulder": {
@@ -1051,6 +1043,7 @@
 		"slow": 0.5,
 		"vitality": 20,
 		"armor": 12,
+		"weight": 10,
 		"col": 2,
 	},
 	"pit": {

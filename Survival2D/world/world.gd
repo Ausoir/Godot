@@ -17,8 +17,6 @@ onready var players = $Players
 onready var others = $Others
 onready var canvas = $Canvas
 var connections = {"exit":"city"}
-var lights = []
-var daytime = true
 var map_name: String
 var team = [[], [], []]
 var onloads = []
@@ -26,10 +24,21 @@ var onloads = []
 func create(_type):
 	var generator
 	map_name = _type
-	daytime = int(G.vars.time) % 2 == 0
-	if map_name == "city":
-		generator = load("res://world/generator_vault.gd").new()
-		generator.generate("map_city")
+	if map_name == "caverns":
+		generator = load("res://world/generator_wild.gd").new()
+		generator.generate("caves")
+	elif map_name == "woods":
+		generator = load("res://world/generator_wild.gd").new()
+		generator.generate("woods")
+	elif map_name == "fields":
+		generator = load("res://world/generator_wild.gd").new()
+		generator.generate("fields")
+	elif map_name == "town":
+		generator = load("res://world/generator_street.gd").new()
+		generator.generate()
+	elif map_name == "lab":
+		generator = load("res://world/generator_maze.gd").new()
+		generator.generate_lab()
 	apply_shades(Vector2(), size)
 	tilemap.update_bitmask_region(Vector2(), size)
 	for y in range(size.y):
@@ -152,3 +161,26 @@ func set_sound(pos, radius):
 			if tx >= 0 and tx < len(sound[0]):
 				if ty >= 0 and ty < len(sound):
 					sound[pos.y + y][pos.x + x] = 1
+
+func paint_spawn(dir, edge):
+	if G.world.spawn_points.empty():
+		if dir == 0:
+			for x in range(1, size.x-1):
+				for y in range(3):
+					G.world.tiles[y][x].set_terrain(edge)
+				G.world.spawn_points.append(G.world.tiles[0][x])
+		elif dir == 1:
+			for y in range(1, size.y-1):
+				for x in range(3):
+					G.world.tiles[y][x].set_terrain(edge)
+				G.world.spawn_points.append(G.world.tiles[y][size.x-1])
+		elif dir == 2:
+			for x in range(1, size.x-1):
+				for y in range(3):
+					G.world.tiles[y][x].set_terrain(edge)
+				G.world.spawn_points.append(G.world.tiles[size.y-1][x])
+		elif dir == 3:
+			for y in range(1, size.y-1):
+				for x in range(3):
+					G.world.tiles[y][x].set_terrain(edge)
+				G.world.spawn_points.append(G.world.tiles[y][0])

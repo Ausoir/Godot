@@ -36,7 +36,6 @@ func save_game(_map="city"):
 	if G.you.unit.item_name == "ghost":
 		save_game.store_line("")
 	else:
-		G.vars["map"] = _map
 		G.vars["seed"] = R.init_seed
 		save_game.store_line(to_json(G.vars))
 		var node_data = G.you.save_data()
@@ -44,6 +43,7 @@ func save_game(_map="city"):
 	save_game.close()
 
 func load_game():
+	var r = true
 	var save_game = File.new()
 	var line
 	var save_exists = save_game.file_exists("user://savegame.save")
@@ -55,16 +55,11 @@ func load_game():
 		save_game = File.new()
 		save_game.open("res://assets/template.save", File.READ)
 		line = save_game.get_line()
-	var node_data = parse_json(line)
-	G.vars = node_data
-	R.set_seed(G.vars.seed)
-	G.travel(node_data.map)
-	G.ui.menu.display_time()
-	while save_game.get_position() < save_game.get_len():
-		node_data = parse_json(save_game.get_line())
-		G.you.load_data(node_data)
+		r = false
+	G.vars = parse_json(line)
+	G.vars.load_data = parse_json(save_game.get_line())
 	save_game.close()
-	return true
+	return r
 
 func _notification(what):
 	if what == Node.NOTIFICATION_WM_QUIT_REQUEST:

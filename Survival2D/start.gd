@@ -29,4 +29,7 @@ func on_fadein():
 	state = 1
 
 func on_fadeout():
-	get_tree().change_scene_to(load("res://world/Creation.tscn"))
+	if !gamestate.load_game():
+		get_tree().change_scene_to(load("res://world/Creation.tscn"))
+	else:
+		get_tree().change_scene_to(load("res://world/Levels.tscn"))

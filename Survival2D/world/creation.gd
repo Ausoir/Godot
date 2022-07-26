@@ -9,6 +9,22 @@ func _ready():
 	randomize_unit()
 	update()
 
+func start():
+	var cmds = [["make", specie, "$pp"]]
+	for i in items:
+		cmds.append(["make", i, "$pp"])
+		cmds.append(["give", "$p", "$t"])
+	if skill != null:
+		cmds.append(["*","$p","skills",[]])
+		cmds.append(["^=","t","$t"])
+		cmds.append(["^^","t",skill])
+		cmds.append(["*=","$p","skills","$t"])
+		cmds.append(["^d","t"])
+	for i in stats:
+		cmds.append(["*=", "$p", G.data.vars.stats[i].name, stats[i]])
+	G.events.append([0,null,cmds])
+	get_tree().change_scene_to(load("res://world/Levels.tscn"))
+
 func update():
 	var txt = "[i]" + specie.capitalize() + "[/i]\n"
 	for i in G.data.vars.stats:
@@ -25,18 +41,20 @@ func update():
 		var txt3 = "[url=#"+skill+"][color=#56A]"+skill.capitalize()+"[/color][/url]"
 		$"Dialog/Character Creation/Rightside/Text3".set_bbcode(txt3)
 
-func start():
-	G.get_tree().get_root().remove_child(self)
-	gamestate.start_local()
-
 func _on_meta_clicked(_meta):
+	G.ui.description.hide()
 	if _meta == "start":
 		start()
 	elif _meta == "reroll":
 		randomize_unit()
 		update()
+	else:
+		on_describe(_meta)
 
 func _on_meta_hover_started(meta):
+	on_describe(meta)
+
+func on_describe(meta):
 	if meta[0] == "_":
 		for key in G.data.vars.stats:
 			if meta == "_" + key:
@@ -57,7 +75,6 @@ func randomize_unit():
 	var distribution = R.r_pie(G.data.vars.stats.size()+1)
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i]
-		print(i, " ", distribution[count])
 		var maxvariance = s.variance * (distribution[count] - 1)
 		stats[i] = round(s.default + maxvariance)
 		count += 1

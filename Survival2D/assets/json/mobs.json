@@ -10,7 +10,7 @@
 		"dat": {"faction": 1},
 	},
 	"resident": {
-		"unit": "bum",
+		"unit": "human",
 		"equip": [["casual", 90, "/", ["gi", 100]]],
 		"dat": {"goal": "wander", "faction": 1}
 	},

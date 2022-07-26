@@ -3,18 +3,21 @@ extends "res://world/generator.gd"
 var _stack = []
 var size
 
-func generate():
-	.create(61, 61)
-	base = make_base(width, height, FLOOR_TILE)
-	_stack = [
-		[1, 1, width-2, height-2]
-	]
-	_process()
-	make_border(WALL_TILE)
+func generate_lab():
+	generate_maze(24, 24)
 	place_output()
 	place_buildings()
 	paint_map()
 	paint_spawn(R.ir(0, 3))
+	return base
+
+func generate_maze(sx, sy):
+	.create(sx, sy)
+	base = make_base(width, height, 0)
+	_stack = [
+		[1, 1, width-2, height-2]
+	]
+	_process()
 	return base
 
 func place_buildings():
@@ -82,35 +85,35 @@ func partition(x1, y1, x2, y2):
 	var rx = R.r_arr(availX)
 	var ry = R.r_arr(availY)
 
-	base[rx][ry] = WALL_TILE
+	base[ry][rx] = WALL_TILE
 
 	var walls = []
 
 	var left = []
 	walls.append(left)
 	for i in range(x1, rx):
-		base[i][ry] = WALL_TILE
+		base[ry][i] = WALL_TILE
 		if (i % 2):
 			left.append([i, ry])
 
 	var right = []
-	walls.append(right) #Right
-	for i in range(rx+1, x2+1):
-		base[i][ry] = WALL_TILE
+	walls.append(right)
+	for i in range(rx, x2):
+		base[ry][i] = WALL_TILE
 		if (i % 2):
 			right.append([i, ry])
 
 	var top = []
-	walls.append(top) #Top
+	walls.append(top)
 	for j in range(y1, ry):
-		base[rx][j] = WALL_TILE
+		base[j][rx] = WALL_TILE
 		if (j % 2):
 			top.append([rx, j])
 
 	var bottom = []
 	walls.append(bottom)
-	for j in range(ry+1, y2+1):
-		base[rx][j] = WALL_TILE
+	for j in range(ry, y2):
+		base[j][rx] = WALL_TILE
 		if (j % 2):
 			bottom.append([rx, j])
 
@@ -121,7 +124,7 @@ func partition(x1, y1, x2, y2):
 			continue
 		elif !w.empty():
 			var hole = R.r_arr(w)
-			base[hole[0]][hole[1]] = 'D'
+			base[hole[1]][hole[0]] = 2
 
 	_stack.append([x1, y1, rx-1, ry-1]) #left top
 	_stack.append([rx+1, y1, x2, ry-1]) #right top

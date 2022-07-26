@@ -72,7 +72,7 @@ func _on_input(event: InputEvent):
 					n_camera.zoom *= 1.2
 			elif aiming != -1:
 				var mtile = get_mouse_tile()
-				var tile = G.world.get_tile(mtile.x, mtile.y)
+				var tile = G.world.fit_bound(mtile.x, mtile.y)
 				if aiming == -2 and on_point != null:
 					tasks = [["command", on_point[0], on_point[1], tile]]
 					on_point = null
@@ -83,7 +83,7 @@ func _on_input(event: InputEvent):
 			else:
 				var mtile = get_mouse_tile()
 				var tile = G.world.get_tile(mtile.x, mtile.y)
-				if tile.distance_to(unit.pos) <= 1 and !tile.items.empty():
+				if tile != null and tile.distance_to(unit.pos) <= 1 and !tile.items.empty():
 					tasks = [["smash", tile]]
 		else:
 			unhandled_input = false
@@ -150,8 +150,8 @@ func check_nearby_interactibles():
 			G.ui.update_hud()
 
 func make_money(p):
-	G.vars.money = min(G.vars.money_, G.vars.money+p)
-	G.ui.n_money.display(p)
+	G.vars.money = G.vars.money+p
+	G.ui.menu.n_money.display(p)
 
 func on_hit(_hitter):
 	if _hitter != null and target == null:
@@ -206,8 +206,6 @@ func save_data(remove_buffs=true):
 
 func load_data(_data):
 	var player_pos = G.world.get_spawn_point()
-	if "position" in _data:
-		player_pos = G.world.tiles[_data.position[1]][_data.position[0]]
 	var player_unit = G.cmds([["make", _data.unit, player_pos]])
 	player_unit.possess(self)
 	player_unit.dat.load_data(_data.unit_data)

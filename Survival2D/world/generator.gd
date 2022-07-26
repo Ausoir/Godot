@@ -1,6 +1,6 @@
 var vaults = preload("res://world/vaults.gd").new()
-var FLOOR_TILE = '.'
-var WALL_TILE = '#'
+var FLOOR_TILE = 0
+var WALL_TILE = 1
 var width
 var height
 var base
@@ -53,29 +53,6 @@ func palette_fill(_bounds, _val):
 			else:
 				push_error("Invalid palette value: "+str(_val))
 
-func paint_spawn(dir):
-	for i in spawn_points:
-		G.world.spawn_points.append(G.world.tiles[i[1]][i[0]])
-	if G.world.spawn_points.empty():
-		if dir == 0:
-			for x in range(1, width-1):
-				if !G.world.tiles[0][x].is_col(4) and !G.world.tiles[1][x].is_col(4):
-					G.world.spawn_points.append(G.world.tiles[0][x])
-		elif dir == 1:
-			for y in range(1, height-1):
-				if !G.world.tiles[y][width-1].is_col(4) and !G.world.tiles[y][width-2].is_col(4):
-					G.world.spawn_points.append(G.world.tiles[y][width-1])
-		elif dir == 2:
-			for x in range(1, width-1):
-				if !G.world.tiles[height-1][x].is_col(4) and !G.world.tiles[height-2][x].is_col(4):
-					G.world.spawn_points.append(G.world.tiles[height-1][x])
-		elif dir == 3:
-			for y in range(1, height-1):
-				if !G.world.tiles[y][0].is_col(4) and !G.world.tiles[y][1].is_col(4):
-					G.world.spawn_points.append(G.world.tiles[y][0])
-	if G.world.spawn_points.empty():
-		push_error("No spawn points found")
-
 func make_base(sx, sy, val):
 	var r = []
 	for _y in range(sy):
@@ -123,9 +100,9 @@ func make_perlin(sx, sy, levels=5, start=1):
 	var r = make_random(sx, sy)
 	var map = make_base(sx, sy, 0)
 	var max_value = 0
-	for i in range(start, levels):
+	for i in range(start, levels+1):
 		max_value += float(1)/i
-	for level in range(start, levels):
+	for level in range(start, levels+1):
 		var graph = make_smooth(r, level)
 		for y in range(sy):
 			for x in range(sx):

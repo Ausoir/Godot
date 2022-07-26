@@ -49,7 +49,7 @@ func b():
 	return ir(0, 1) == 1
 
 func r_percent(p):
-	return ir(0, 99) < p
+	return f() < p
 
 func r_dice(times, dice):
 	var r = 0
@@ -60,7 +60,7 @@ func r_dice(times, dice):
 func r_pie(slices):
 	var distribution = []
 	var avg: float = 0
-	for i in range(slices):
+	for _i in range(slices):
 		var t = R.fr(0, 1)
 		avg += t
 		distribution.append(t)

@@ -15,6 +15,5 @@ func run(p, _params):
 			old_unit.die()
 
 func on_time():
-	G.vars.money = min(G.vars.money, G.vars.money_)
 	G.vars.time += 1
 	G.ui.menu.display_time()

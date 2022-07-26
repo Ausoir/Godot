@@ -7,12 +7,6 @@ func _ready():
 
 func display(p):
 	set_text("$" + str(G.vars.money))
-	if G.vars.money >= G.vars.money_:
-		modulate.g = 0
-		modulate.b = 0
-	else:
-		modulate.g = 1
-		modulate.b = 1
 	if p != 0:
 		set_process(true)
 		var label = Label.new()

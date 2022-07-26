@@ -115,7 +115,7 @@ func auto_equip(item):
 
 func equip(part, item):
 	if !has_part(part) and is_equipment_valid(part, item):
-		item.host = self
+		item.take(self)
 		equipments[part] = item
 		accomodate_stats(item)
 		if part == "body" and item.dat.g("gender") != null:
@@ -202,8 +202,7 @@ func store_at(item, index):
 		store(item)
 	else:
 		inventory[index] = item
-		item.host = self
-		item.pos = pos
+		item.take(self)
 		if controller != null:
 			controller.on_change("ui")
 	return true
@@ -212,8 +211,7 @@ func store(item, drop=false):
 	for i in range(inventory.size()):
 		if inventory[i] == null:
 			inventory[i] = item
-			item.host = self
-			item.pos = pos
+			item.take(self)
 			if controller != null:
 				controller.on_change("ui")
 			return true

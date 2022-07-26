@@ -94,7 +94,9 @@ func run_operation(command, args, dict, _tgt):
 			dict[args[1]].append(args[2])
 		elif command[1] == "v":
 			dict[args[1]].erase(args[2])
-		elif command[1] == "*" and command[2] == "=":
+		elif command[1] == "d":
+			dict.erase(args[1])
+		elif command[1] == "x":
 			dict[args[1]] *= args[2]
 	return _tgt
 
@@ -284,9 +286,10 @@ func run_unit(command, args, subject):
 		return newunit
 	elif command == "give":
 		if subject.dat.g("type", "other") != "other":
-			var item = G.factory.make_item(args[2])
+			var item = args[2]
 			if item != null:
-				subject.store(item, true)
+				if !subject.auto_equip(item):
+					subject.store(item, true)
 				return item
 
 func get_arg(args, idx, default=null):

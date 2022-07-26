@@ -3,7 +3,6 @@ extends CanvasLayer
 const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
 const BuffSlot = preload("res://interface/BuffSlot.tscn")
 onready var menu = $Control/Menu
-onready var n_money = $Money
 onready var dialog = $Control/Dialog
 onready var message = $Control/Message
 onready var tint = $Control/Tint
@@ -16,7 +15,6 @@ var on = false
 
 func _ready():
 	screen_size = get_viewport().get_size_override()
-	n_money.rect_position.x = screen_size.x - 80
 	fadein()
 	tint.get_stylebox("panel", "").set_bg_color(Color(0,0,0, .7))
 

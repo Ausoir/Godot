@@ -41,7 +41,7 @@ func assign(p, type):
 			return false
 		skill_type = skill_data.get("target")
 		skill_description = skill_data.get("desc")
-		$Sprite.texture = G.data.get_image(skill_data.img)
+		$Sprite.texture = G.data.get_image(skill_data.get("img", "gui/sk_hand"))
 	elif type == "item":
 		skill_data = G.data.item_data.get(p)
 		skill_type = "item"

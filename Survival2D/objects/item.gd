@@ -58,6 +58,12 @@ func die():
 		G.cmds(ondie, self)
 	remove()
 
+func take(owner):
+	if pos != null:
+		pos.remove_item(self)
+	host = owner
+	pos = owner.pos
+
 func get_defense(_p):
 	return dat.g("armor", 0)
 

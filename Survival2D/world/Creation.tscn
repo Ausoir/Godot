@@ -60,15 +60,6 @@ bbcode_text = "Player
 [url=ms]Move Speed[/url]
 "
 meta_underlined = false
-text = "Player
-
-Vitality
-Strength
-Agility
-Perception
-
-Move Speed
-"
 
 [node name="Text3" type="RichTextLabel" parent="Dialog/Character Creation/Rightside"]
 margin_top = 159.0
@@ -87,15 +78,6 @@ bbcode_text = "Player
 [url=ms]Move Speed[/url]
 "
 meta_underlined = false
-text = "Player
-
-Vitality
-Strength
-Agility
-Perception
-
-Move Speed
-"
 
 [connection signal="meta_clicked" from="Dialog/Character Creation/Text1" to="." method="_on_meta_clicked"]
 [connection signal="meta_hover_ended" from="Dialog/Character Creation/Text1" to="." method="_on_meta_hover_ended"]

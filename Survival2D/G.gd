@@ -42,6 +42,7 @@ func _ready():
 	factory = preload("res://classes/factory.gd").new()
 	world = preload("res://world/World.tscn").instance()
 	ui = preload("res://interface/Interface.tscn").instance()
+	you = preload("res://view/Player.tscn").instance()
 	custom = preload("res://classes/custom.gd").new()
 	command = load("res://classes/command.gd").new()
 	get_tree().get_root().call_deferred("add_child", ui)
@@ -58,7 +59,10 @@ func _process(delta):
 		var ev = events[i]
 		ev[0] -= delta
 		if ev[0] <= 0:
-			ev[1].call_funcv(ev[2])
+			if ev[1] == null:
+				cmds(ev[2])
+			else:
+				ev[1].call_funcv(ev[2])
 			events.remove(i)
 			i -= 1
 

@@ -9,6 +9,7 @@ onready var tab_inventory = $Tabs/INV/VSplit/Inventory
 onready var tab_cha_stats = $Tabs/CHA/VSplit/Stats
 onready var tab_cha_skills = $Tabs/CHA/VSplit/Skills
 onready var n_drag = $Drag
+onready var n_money = $Money
 onready var container = $Container
 onready var container_grid = $Container/Container
 onready var n_time = $Time
@@ -32,6 +33,7 @@ func _background_input(event):
 
 func display(_arg):
 	show()
+	display_time()
 	if _arg != -1:
 		tabs.set_current_tab(_arg)
 	_on_tab_change(tabs.current_tab)
