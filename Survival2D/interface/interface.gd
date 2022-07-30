@@ -42,6 +42,15 @@ func _unhandled_input(event):
 		elif Input.is_action_just_pressed("quick_1"):
 			if abilities.get_child_count() > 0:
 				abilities.get_children()[0].activate()
+		elif Input.is_action_just_pressed("quick_2"):
+			if abilities.get_child_count() > 1:
+				abilities.get_children()[1].activate()
+		elif Input.is_action_just_pressed("quick_3"):
+			if abilities.get_child_count() > 2:
+				abilities.get_children()[2].activate()
+		elif Input.is_action_just_pressed("quick_4"):
+			if abilities.get_child_count() > 3:
+				abilities.get_children()[3].activate()
 		elif Input.is_action_just_pressed("menu"):
 			if on:
 				clear()

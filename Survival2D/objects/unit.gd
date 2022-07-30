@@ -173,8 +173,8 @@ func hit(_type, dmg, _hitter):
 					G.make_particle("Hit", pos.position)
 					if _hitter != null:
 						G.cmd(["*dmg",_hitter,-dmg])
-		if current_action == "knockout":
-			dmg *= 2
+			else:
+				G.make_particle("Glance", pos.position)
 		dat.add("damage", dmg, 0)
 		buffs.disrupt_hit = true
 		show_healthbar()

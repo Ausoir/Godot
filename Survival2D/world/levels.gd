@@ -40,18 +40,8 @@ func _ready():
 			else:
 				var lvl = Level.instance()
 				blueprint[y][x] = lvl
-				if biomemap[y][x] < .3:
-					lvl.area = "caverns"
-				elif biomemap[y][x] < .45:
-					lvl.area = "woods"
-				elif biomemap[y][x] < .6:
-					lvl.area = "fields"
-				elif biomemap[y][x] < .8:
-					lvl.area = "town"
-				else:
-					lvl.area = "lab"
-				lvl.mission = R.ir(0, 3)
 				lvl.difficulty = max(x/float(sx), y/float(sy*1.4)) + R.fr(-.4, 0)
+				lvl.set_area(biomemap[y][x])
 				lvl.map = self
 				lvl.refresh(x, y, y*sy+x)
 				if position == -1 and x == 0:

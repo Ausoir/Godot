@@ -1,5 +1,6 @@
 extends Node
 
+onready var stat_panel = $"Dialog/Character Creation/Control"
 var specie = "Human"
 var stats = {}
 var skill
@@ -8,9 +9,10 @@ var items = []
 func _ready():
 	randomize_unit()
 	update()
+	stat_panel.connect("meta_clicked", self, "_on_meta_clicked")
 
 func start():
-	var cmds = [["make", specie, "$pp"]]
+	var cmds = [["morph", "$p", specie]]
 	for i in items:
 		cmds.append(["make", i, "$pp"])
 		cmds.append(["give", "$p", "$t"])
@@ -21,17 +23,15 @@ func start():
 		cmds.append(["*=","$p","skills","$t"])
 		cmds.append(["^d","t"])
 	for i in stats:
-		cmds.append(["*=", "$p", G.data.vars.stats[i].name, stats[i]])
+		cmds.append(["*=", "$p", i, stats[i]])
 	G.events.append([0,null,cmds])
 	get_tree().change_scene_to(load("res://world/Levels.tscn"))
 
 func update():
 	var txt = "[i]" + specie.capitalize() + "[/i]\n"
-	for i in G.data.vars.stats:
-		var s = G.data.vars.stats[i].name
-		txt += "[url=_"+i+"][color=#A64]"+s.capitalize()+":[/color][/url] "+str(stats[i])+"\n"
+	txt += stat_panel.get_stats_text(stats)
 	txt += "\n\n[url=reroll][u]REROLL[/u][/url]\n[url=start][u]START[/u][/url]"
-	$"Dialog/Character Creation/Text1".set_bbcode(txt)
+	stat_panel.set_bbcode(txt)
 	var txt2 = ""
 	for i in items:
 		if i != null:
@@ -55,12 +55,7 @@ func _on_meta_hover_started(meta):
 	on_describe(meta)
 
 func on_describe(meta):
-	if meta[0] == "_":
-		for key in G.data.vars.stats:
-			if meta == "_" + key:
-				var v = G.data.vars.stats[key]
-				G.ui.describe("text", v.name, v.desc)
-	elif meta[0] == "#":
+	if meta[0] == "#":
 		var skillname = meta.substr(1)
 		G.ui.describe("skill", skillname.capitalize(), G.data.skill_data.get(skillname))
 	else:
@@ -76,7 +71,7 @@ func randomize_unit():
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i]
 		var maxvariance = s.variance * (distribution[count] - 1)
-		stats[i] = round(s.default + maxvariance)
+		stats[s.name] = round(s.default + maxvariance)
 		count += 1
 	if distribution[count] < .7:
 		skill = R.r_arr(G.data.vars.skills.bad)

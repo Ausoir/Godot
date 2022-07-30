@@ -1,9 +1,7 @@
 #Hardcoded events
 
 func run(p, _params):
-	if p == "sleep":
-		G.cmds([["menu","msg","Sleeping..."],["fade"],["vars","+","time",1]])
-	elif p == "start menu":
+	if p == "start menu":
 		gamestate.restart()
 	elif p == "respawn":
 		var pos = _params.pos

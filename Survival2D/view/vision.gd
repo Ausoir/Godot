@@ -5,8 +5,9 @@ const QUADRANT_ALL = [1, 1, 1, 1]
 
 var processing_frame: int
 var sight_range = 7
+var sight_range_y = 5
+var sight_ratio = .7
 var sight_frame = 0
-var sight_ratio = .75
 var sight_bits = 1
 var param_last_pos
 var param_pos
@@ -28,8 +29,7 @@ func _process(_delta):
 		processing_frame += 1
 
 func darken():
-	var sry = sight_range * sight_ratio
-	for y in range(-sry, sry+1):
+	for y in range(-sight_range_y, sight_range_y+1):
 		for x in range(-sight_range, sight_range+1):
 			var xx = param_pos.x+x
 			var yy = param_pos.y+y
@@ -38,8 +38,7 @@ func darken():
 				G.world.set_dark(tile)
 
 func process_vision(center, quad):
-	var sry = sight_range * sight_ratio
-	for y in range(-sry * quad[0], sry * quad[1] + 1):
+	for y in range(-sight_range_y * quad[0], sight_range_y * quad[1] + 1):
 		for x in range(-sight_range * quad[2], sight_range * quad[3] + 1):
 			var xx = center.x+x
 			var yy = center.y+y
@@ -56,6 +55,7 @@ func stop_process():
 
 func set_sight(p, p_col=1):
 	sight_range = min(12, p)
+	sight_range_y = sight_range * sight_ratio
 	sight_bits = p_col
 
 func update(last_pos, pos):
@@ -82,24 +82,25 @@ func cast_sight(camera, row, start, end, flips, depth):
 			else:
 				var tile_x = dx * flips[0] + dy * flips[1]
 				var tile_y = dx * flips[2] + dy * flips[3]
-				var map_x = camera.x + tile_x
-				var map_y = camera.y + tile_y
-				var tile = G.world.get_tile(map_x, map_y)
-				if tile:
-					tile.sight_frame = sight_frame
-					if blocked:
-						if tile.is_col(sight_bits):
-							new_start = end_slope
+				if abs(tile_y) < sight_range_y:
+					var map_x = camera.x + tile_x
+					var map_y = camera.y + tile_y
+					var tile = G.world.get_tile(map_x, map_y)
+					if tile:
+						tile.sight_frame = sight_frame
+						if blocked:
+							if tile.is_col(sight_bits):
+								new_start = end_slope
+							else:
+								blocked = false
+								start = new_start
 						else:
-							blocked = false
-							start = new_start
-					else:
-						if tile.is_col(sight_bits) and cell < sight_range:
-							blocked = true
-							cast_sight(camera, cell + 1, start, start_slope, flips, depth + 1)
-							new_start = end_slope
+							if tile.is_col(sight_bits) and cell < sight_range:
+								blocked = true
+								cast_sight(camera, cell + 1, start, start_slope, flips, depth + 1)
+								new_start = end_slope
 		if blocked:
 			break
 
 func is_in_range(pos):
-	return pos.distance_to(param_pos) <= sight_range
+	return abs(pos.y-param_pos.y) <= sight_range_y and abs(pos.x-param_pos.x) <= sight_range

@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://interface/skill_box.gd" type="Script" id=2]
 [ext_resource path="res://interface/money.gd" type="Script" id=3]
+[ext_resource path="res://interface/StatPanel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://interface/menu.gd" type="Script" id=5]
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=18]
 
@@ -63,7 +64,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label1" type="Label" parent="Tabs/INV/VSplit/Equipment"]
-margin_right = 232.0
+margin_right = 170.0
 margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -81,7 +82,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label2" type="Label" parent="Tabs/INV/VSplit/Inventory"]
-margin_right = 232.0
+margin_right = 170.0
 margin_bottom = 20.0
 grow_horizontal = 0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -126,11 +127,12 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Tabs/CHA/VSplit/Stats"]
+[node name="Control" parent="Tabs/CHA/VSplit/Stats" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
 margin_top = 32.0
 margin_right = 170.0
 margin_bottom = 444.0
-bbcode_enabled = true
 
 [node name="Skills" type="VBoxContainer" parent="Tabs/CHA/VSplit"]
 margin_left = 182.0
@@ -154,10 +156,10 @@ __meta__ = {
 
 [node name="Container" type="TabContainer" parent="."]
 visible = false
-margin_left = 460.0
-margin_top = 240.0
-margin_right = 580.0
-margin_bottom = 304.0
+margin_left = 420.0
+margin_top = 40.0
+margin_right = 600.0
+margin_bottom = 104.0
 custom_icons/increment = ExtResource( 18 )
 custom_icons/decrement = ExtResource( 18 )
 tab_align = 0

@@ -55,9 +55,9 @@ func _on_input(event: InputEvent):
 		if events.size() == 2:
 			var drag_distance = events[0].position.distance_to(events[1].position)
 			if abs(drag_distance - last_drag_dist) > 10:
-				var new_zoom = 1.05
+				var new_zoom = .95
 				if drag_distance < last_drag_dist:
-					new_zoom = .95
+					new_zoom = 1.05
 				new_zoom = clamp(n_camera.zoom.x * new_zoom, .5, 2)
 				n_camera.zoom = Vector2.ONE * new_zoom
 				last_drag_dist = drag_distance
@@ -84,9 +84,13 @@ func _on_input(event: InputEvent):
 				var mtile = get_mouse_tile()
 				var tile = G.world.get_tile(mtile.x, mtile.y)
 				if tile != null and tile.distance_to(unit.pos) <= 1 and !tile.items.empty():
-					tasks = [["smash", tile]]
+					if tile == unit.pos:
+						G.cmds([["menu", "menu", -1]], unit)
+					else:
+						tasks = [["smash", tile]]
 		else:
 			unhandled_input = false
+			events.clear()
 
 func _physics_process(_delta):
 	n_camera.position = unit.n_collider.global_position
@@ -159,19 +163,16 @@ func on_hit(_hitter):
 
 func interact(item):
 	if !G.ui.on:
-		if item == unit:
-			G.cmds([["menu", "menu", -1]], unit)
-		else:
-			var oninteract = item.dat.g("oninteract")
-			if oninteract != null:
-				G.cmds(oninteract, item, unit)
-			elif item.item_type == "item":
-				G.ui.menu.search_inventory(item.pos)
-			elif item.item_type == "unit":
-				if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
-					tasks.append(["attack", item])
-				elif item.controller != null:
-					item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
+		var oninteract = item.dat.g("oninteract")
+		if oninteract != null:
+			G.cmds(oninteract, item, unit)
+		elif item.item_type == "item":
+			G.ui.menu.search_inventory(item.pos)
+		elif item.item_type == "unit":
+			if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
+				tasks.append(["attack", item])
+			elif item.controller != null:
+				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
 
 func aim_ability(idx):
 	n_cursor.show()

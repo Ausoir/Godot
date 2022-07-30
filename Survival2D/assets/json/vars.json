@@ -1,10 +1,11 @@
 {
+	"item files": ["items", "items_objects", "items_equips"],
 	"male": ["male_1","male_2","male_3","male_4","male_5","male_6","male_7","male_8",
 			"male_9","male_10","male_11","male_12","male_13","male_14","male_15","male_16",],
 	"female": ["female_1","female_2","female_3","female_4","female_5","female_6","female_7","female_8",
 			"female_9","female_10","female_11","female_12","female_13","female_14","female_15","female_16",],
 	"species": ["human","human","human","human","human", "human","human","human","human","human", "human","human","human","human","human", "human","human","human","human","human",
-		"manzard", "mantle", "manfly", "mansect", "manbird"],
+			"manzard", "mantle", "manfly", "mansect", "manbird"],
 	"stats": {
 		"vit": {
 			"name": "vitality",
@@ -30,10 +31,16 @@
 			"variance": 2,
 			"desc": "Intelligence determines amount of skills you can have."
 		},
+		"cha": {
+			"name": "charisma",
+			"default": 3,
+			"variance": 3,
+			"desc": "Charisma determines maximum number of followers you can have."
+		},
 		"per": {
 			"name": "perception",
 			"default": 8,
-			"variance": 1,
+			"variance": 2,
 			"desc": "Perception determines sight range."
 		},
 		"ms": {
@@ -54,5 +61,31 @@
 		"armor": ["suit","suspenders","gi","casual","leather armor","looter coat"],
 		"bad_weapon": ["bat","pipe","knife","torch",null,null,null],
 		"good_weapon": ["knuckles","spear","bow","crossbow","pistol","laser rifle"],
+	},
+	"area": {
+		"ruins": {
+			"biome": 0.3, 
+			"modes": ["scavenge", "survive", "escape", "assault"]
+		},
+		"caverns": {
+			"biome": 0.4, 
+			"modes": ["scavenge", "escape", "assault"]
+		},
+		"woods": {
+			"biome": 0.5,
+			"modes": ["survive", "escape", "assault"]
+		},
+		"fields": {
+			"biome": 0.6,
+			"modes": ["survive", "escape", "assault"]
+		},
+		"town": {
+			"biome": 0.8,
+			"modes": ["scavenge", "survive", "escape", "assault"]
+		},
+		"lab": {
+			"biome": 99,
+			"modes": ["scavenge", "survive", "escape", "assault"]
+		},
 	}
 }

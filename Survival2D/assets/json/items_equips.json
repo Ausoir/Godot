@@ -1,0 +1,225 @@
+{
+	"torch": {
+		"img": "loot",
+		"sprite": "overlay/w_torch",
+		"skills": ["burn"],
+		"light": 3,
+		"mat": "wood",
+		"weight": 1,
+		"desc": "A torch."
+	},
+	"automatic rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_full_auto_rifle",
+		"abilities": ["burst fire","spray bullets"],
+		"weight": 3,
+		"size": 2,
+		"mat": "metal",
+		"weight": 4,
+		"desc": "An artifact of the past."
+	},
+	"assault rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_assault_rifle",
+		"abilities": ["burst fire"],
+		"weight": 3,
+		"size": 2,
+		"mat": "metal",
+		"weight": 4,
+		"desc": "An artifact of the past."
+	},
+	"laser rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_laser_gun",
+		"abilities": ["burst laser"],
+		"mat": "metal",
+		"weight": 1,
+		"desc": "An artifact of the past."
+	},
+	"pistol": {
+		"img": "loot",
+		"sprite": "overlay/w_pistol",
+		"abilities": ["shoot"],
+		"mat": "metal",
+		"weight": 1,
+		"desc": "An artifact of the past."
+	},
+	"bow": {
+		"img": "loot",
+		"sprite": "overlay/w_bow",
+		"abilities": ["shoot arrow"],
+		"mat": "wood",
+		"weight": 1,
+	},
+	"crossbow": {
+		"img": "loot",
+		"sprite": "overlay/w_crossbow",
+		"abilities": ["shoot bolt"],
+		"mat": "wood",
+		"weight": 1,
+	},
+	"spear": {
+		"img": "loot",
+		"sprite": "overlay/w_spear",
+		"abilities": ["reach attack"],
+		"skills": ["stab"],
+		"mat": "wood",
+		"weight": 3,
+		"cut": 2,
+		"size": 2,
+		"desc": "A spear capable of attacking from afar."
+	},
+	"cutlass": {
+		"img": "loot",
+		"sprite": "overlay/w_cutlass",
+		"abilities": [],
+		"skills": ["quick strike", "slice"],
+		"mat": "wood",
+		"weight": 2,
+		"bash": 1,
+		"cut": 2,
+		"strength": 1,
+		"size": 2,
+	},
+	"bat": {
+		"img": "loot",
+		"sprite": "overlay/w_bat",
+		"abilities": [],
+		"skills": ["bash", "quick strike"],
+		"mat": "wood",
+		"weight": 1,
+		"bash": 2,
+		"size": 2,
+		"desc": "A wooden bat. It's very light."
+	},
+	"pipe": {
+		"img": "loot",
+		"sprite": "overlay/w_pipe",
+		"abilities": [],
+		"skills": ["bash"],
+		"mat": "metal",
+		"weight": 1,
+		"bash": 2,
+		"size": 2,
+		"desc": "A metal pipe. It's hollow and light, and a bit unwieldy."
+	},
+	"knife": {
+		"img": "loot",
+		"sprite": "overlay/w_knife",
+		"abilities": [],
+		"skills": ["quick stab"],
+		"mat": "metal",
+		"weight": 0,
+		"cut": 1,
+		"desc": "A rusty metal knife. Still pretty sharp."
+	},
+	"knuckles": {
+		"img": "loot",
+		"sprite": "overlay/w_knuckles",
+		"abilities": [],
+		"skills": ["quick strike","quick strike"],
+		"mat": "metal",
+		"weight": 0,
+		"bash": 1,
+		"cut": 1,
+		"desc": "Knuckles used for street fights."
+	},
+	"rucksack": {
+		"img": "loot",
+		"sprite": "overlay/back_rucksack",
+		"part": "back",
+		"mat": "cotton",
+		"weight": 5,
+		"space": 5,
+		"desc": "A rucksack."
+	},
+	"backpack": {
+		"img": "loot",
+		"sprite": "overlay/back_backpack",
+		"part": "back",
+		"mat": "cotton",
+		"weight": 3,
+		"space": 3,
+		"desc": "A backpack."
+	},
+	"looter coat": {
+		"img": "loot",
+		"sprite": "overlay/body_scavenger",
+		"part": "body",
+		"mat": "leather",
+		"weight": 2,
+		"armor": 1,
+		"perception": 1,
+		"space": 3,
+		"desc": "A tattered coat favored by looters. Provides some storage and armor."
+	},
+	"leather armor": {
+		"img": "loot",
+		"sprite": "overlay/body_leather",
+		"part": "body",
+		"mat": "leather",
+		"space": 1,
+		"armor": 2,
+		"weight": 1,
+		"desc": "A leather armor. Tough but lacks storage."
+	},
+	"suit": {
+		"img": "loot",
+		"sprite": "overlay/body_suit",
+		"part": "body",
+		"mat": "cotton",
+		"space": 4,
+		"weight": 0,
+		"desc": "A fancy suit with many pockets."
+	},
+	"suspenders": {
+		"img": "loot",
+		"sprite": "overlay/body_suspenders",
+		"part": "body",
+		"mat": "cotton",
+		"space": 3,
+		"strength": 2,
+		"agility": -1,
+		"weight": 1,
+		"desc": "Suspenders for the productive."
+	},
+	"casual": {
+		"img": "loot",
+		"sprite": "overlay/body_casual",
+		"part": "body",
+		"gender": true,
+		"skills": ["headbutt"],
+		"mat": "cotton",
+		"space": 2,
+		"weight": 0,
+		"desc": "A casual wear."
+	},
+	"gi": {
+		"img": "loot",
+		"sprite": "overlay/body_gi",
+		"part": "body",
+		"skills": ["quick strike"],
+		"mat": "cotton",
+		"space": 1,
+		"weight": 0,
+		"desc": "Clothing worn by the martially adept."
+	},
+	"scalemail": {
+		"img": "loot",
+		"sprite": "overlay/body_scale",
+		"part": "body",
+		"mat": "metal",
+		"armor": 1,
+		"space": 2,
+		"weight": 3,
+		"desc": "A tough armor layered with thin metallic scales."
+	},
+	"hood": {
+		"img": "loot",
+		"sprite": "overlay/head_hood",
+		"part": "head",
+		"mat": "cotton",
+		"weight": 1,
+		"desc": "A gi."
+	},
+}

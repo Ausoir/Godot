@@ -8,7 +8,6 @@ func generate_lab():
 	place_output()
 	place_buildings()
 	paint_map()
-	paint_spawn(R.ir(0, 3))
 	return base
 
 func generate_maze(sx, sy):

@@ -16,7 +16,11 @@ func _init():
 	vars = get_json_from_dir("res://assets/json/vars.json")
 	terrain_data = get_json_from_dir("res://assets/json/terrains.json")
 	palette_data = get_json_from_dir("res://assets/json/map_palette.json")
-	item_data = get_json_from_dir("res://assets/json/items.json")
+	item_data = {}
+	for file in vars["item files"]:
+		var t = get_json_from_dir("res://assets/json/"+file+".json")
+		for key in t:
+			item_data[key] = t[key]
 	unit_data = get_json_from_dir("res://assets/json/units.json")
 	mob_data = get_json_from_dir("res://assets/json/mobs.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")

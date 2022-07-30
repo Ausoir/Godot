@@ -154,11 +154,8 @@ func update_skills():
 
 func update_status():
 	tab_cha_stats.get_node("Label").set_text(G.you.unit.item_name.capitalize())
-	var textbox = tab_cha_stats.get_node("RichTextLabel")
-	var txt = ""
-	for i in G.data.vars.stats:
-		var stat = G.data.vars.stats[i].name
-		txt += "[color=#A64]"+stat.capitalize()+"[/color]: "+str(G.you.unit.dat.g(stat, 0)) + "\n"
+	var textbox = tab_cha_stats.get_node("Control")
+	var txt = textbox.get_stats_text(G.you.unit.dat.v)
 	textbox.set_bbcode(txt)
 
 func display_time():
