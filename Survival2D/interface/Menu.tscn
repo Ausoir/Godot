@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://assets/Baumans-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://interface/skill_box.gd" type="Script" id=2]
 [ext_resource path="res://interface/money.gd" type="Script" id=3]
 [ext_resource path="res://interface/StatPanel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://interface/menu.gd" type="Script" id=5]
+[ext_resource path="res://interface/Settings.tscn" type="PackedScene" id=6]
 [ext_resource path="res://assets/images/blank.png" type="Texture" id=18]
 
 [sub_resource type="DynamicFont" id=6]
@@ -153,6 +154,38 @@ text = "Skills:"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="MAP" type="ScrollContainer" parent="Tabs"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Text" type="RichTextLabel" parent="Tabs/MAP"]
+bbcode_enabled = true
+meta_underlined = false
+
+[node name="OPT" type="ScrollContainer" parent="Tabs"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="Tabs/OPT" instance=ExtResource( 6 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 352.0
+margin_bottom = 444.0
 
 [node name="Container" type="TabContainer" parent="."]
 visible = false

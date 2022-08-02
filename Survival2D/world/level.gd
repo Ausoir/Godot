@@ -4,7 +4,7 @@ onready var Loading = preload("res://interface/Loading.tscn")
 var loading_page
 var area
 var position
-var difficulty: float
+var rating
 var objective
 var map
 var side = 0
@@ -24,17 +24,15 @@ func refresh(px, py, pp):
 	elif diffy > 0:
 		side = 2
 	position = pp
-	var rating = "[color=#AA4]mild[/color]"
-	if difficulty > .8:
-		rating = "[color=#F20]brutal[/color]"
-	elif difficulty > .6:
-		rating = "[color=#C60]savage[/color]"
-	elif difficulty > .4:
-		rating = "[color=#EE4]wild[/color]"
-	elif difficulty > .2:
-		rating = "[color=#AAA]normal[/color]"
+	var rating_txt = "[color=#C60]savage[/color]"
+	if rating == 3:
+		rating_txt = "[color=#EE4]wild[/color]"
+	elif rating == 2:
+		rating_txt = "[color=#AAA]normal[/color]"
+	elif rating == 1:
+		rating_txt = "[color=#AA4]mild[/color]"
 	var obj = "[color=#BA6]"+objective.capitalize()+"[/color]"
-	$Control.set_bbcode(area.capitalize() + "\n" + obj + "\n" + rating)
+	$Control.set_bbcode(area.capitalize() + "\n" + obj + "\n" + rating_txt)
 
 func set_area(p):
 	for i in G.data.vars.area:
@@ -58,14 +56,16 @@ func set_mode(p):
 			modulate.b = .4
 
 func _on_pressed():
-	var root = G.get_tree().get_root()
-	root.remove_child(map)
-	map.queue_free()
 	loading_page = Loading.instance()
-	loading_page.connect("ready",self,"on_loading")
 	G.ui.add_child(loading_page)
+	G.temp.clear()
+	G.events.append([0.1, funcref(self, "on_loading"), []])
+	G.set_process(true)
 
 func on_loading():
+	G.get_tree().set_pause(true)
+	G.get_tree().get_root().remove_child(map)
+	map.queue_free()
 	R.set_seed(G.vars.seed)
 	G.travel(area)
 	if G.world.paint_spawn(side) != null:
@@ -73,8 +73,12 @@ func on_loading():
 		if load_data: #From char creation
 			G.you.load_data(load_data)
 		G.vars.erase("load_data")
-		G.set_process(true)
 	else:
 		push_error("No spawn points found")
-	G.cmds([["make","mode "+objective,G.world.tiles[0][0]]])
+	G.temp.enterside = G.get_dir_to_cardinal_string(side)
+	G.temp.area = area
+	G.temp.rating = rating
+	G.temp.objective = objective
+	G.cmds([["make","mode "+objective,G.world.tiles[0][0]],["*=","$t","area",area],["*=","$t","rating",rating]])
 	G.ui.remove_child(loading_page)
+	G.get_tree().set_pause(false)

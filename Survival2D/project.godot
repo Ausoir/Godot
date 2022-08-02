@@ -11,8 +11,10 @@ config_version=4
 [application]
 
 config/name="Cataclysmic Defense"
-config/description="A tower defense game."
+config/description="A game."
 run/main_scene="res://Start.tscn"
+boot_splash/image="res://Icon.png"
+boot_splash/fullsize=false
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://Icon.png"
 

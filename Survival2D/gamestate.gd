@@ -30,10 +30,10 @@ func restart():
 	root.add_child(load("res://G.gd").new())
 	root.add_child(load("res://Start.tscn").instance())
 
-func save_game(_map="city"):
+func save_game():
 	var save_game = File.new()
 	save_game.open("user://savegame.save", File.WRITE)
-	if G.you.unit.item_name == "ghost":
+	if "dead" in G.vars:
 		save_game.store_line("")
 	else:
 		G.vars["seed"] = R.init_seed

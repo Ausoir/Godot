@@ -69,7 +69,6 @@ func make_unit(arg, pos):
 		r.place(pos)
 		r.set_seed()
 		G.world.turn.add(r)
-		r.dat.run(r, "onmake")
 		return r
 
 func make_item(arg, pos=null):
@@ -92,7 +91,8 @@ func make_item(arg, pos=null):
 			r.place(pos)
 		if r.dat.g("onturn") != null:
 			G.world.turn.add(r)
-		r.dat.run(r, "onmake")
+		if r.dat.g("onmake") != null:
+			G.world.turn.add(r)
 		return r
 
 func make_projectile(host, arg, pos, dest, time, spd, variation, onattack, onmiss):

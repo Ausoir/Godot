@@ -1,13 +1,16 @@
 {
 	"mode scavenge": {
+		"onmake": [["&=","objective","Scavenge for resources, then leave map when ready."],["time", 15, [["&=","complete",true]]],["make", "g_{area}{rating}", "$R15"],["repeat", 120]],
 	},
 	"mode survive": {
-		"turn": 32,
-		"onturn": [["make","g_zombie","$pp"]],
+		"turn": 16,
+		"onmake": [["&=","objective","Survive for 2 minutes."],["time", 120, [["&=","complete",true]]]],
+		"onturn": [["make", "g_{area}{rating}", "$L15"],["hunt", "$t", "$p"]],
 	},
 	"mode escape": {
-	},
-	"mode assault": {
+		"turn": 24,
+		"onmake": [["&","farside"],["&=","objective","Escape through the $t side of the map."],["make", "g_{area}{rating}", "$R15"],["repeat", 120]],
+		"onturn": [["make", "g_{area}{rating}", "$L15"],["hunt", "$t", "$p"]],
 	},
 	"init spawners": {
 		"onmake": [["&=","spawner1","{g_zombie,g_mutant,g_hive}"],["&=","invade",1]],
@@ -112,7 +115,7 @@
 		"uses": 3,
 		"weight": 0,
 		"aimable": true,
-		"onuse": [["onstop","This construct must be placed on flat surface."],["terrain","$t",["asphalt","wood floor"]],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","turret"]],
+		"onuse": [["onstop","Invalid position."],["col","$t",15],["*use","$h"],["make","loading","$t"],["*=","$t","spawn","turret"]],
 	},
 	"radio (resident)": {
 		"img": "tiles/radio",

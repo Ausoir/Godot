@@ -30,6 +30,12 @@ func on_fadein():
 
 func on_fadeout():
 	if !gamestate.load_game():
-		get_tree().change_scene_to(load("res://world/Creation.tscn"))
+		G.get_tree().change_scene_to(load("res://world/Creation.tscn"))
 	else:
-		get_tree().change_scene_to(load("res://world/Levels.tscn"))
+		G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
+
+
+func _on_gui_input(event):
+	if event is InputEventMouseButton:
+		if !event.is_pressed():
+			start()

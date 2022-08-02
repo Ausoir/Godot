@@ -31,7 +31,7 @@
 		"img": "units/turret",
 		"type": "other",
 		"move speed": 0,
-		"vitality": 8,
+		"vitality": 20,
 		"strength": 0,
 		"agility": 4,
 		"intelligence": 0,

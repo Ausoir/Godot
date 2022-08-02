@@ -66,16 +66,17 @@ func _on_mouse_exited():
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
 		if !event.is_pressed():
+			G.ui.description.hide()
 			if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "item":
 				place_to(G.ui.menu.drag_item)
-				G.ui.description.hide()
 				G.ui.menu.update_equipment()
 				G.ui.menu.update_inventory()
 			else:
 				if item != null:
-					G.ui.describe("item", item.get_display_name(), item.dat.v)
 					take_from()
 					modulate.a = .3
+		elif item != null:
+			G.ui.describe("item", item.get_display_name(), item.dat.v)
 
 func take_from():
 	if item != null and check_weight(item):

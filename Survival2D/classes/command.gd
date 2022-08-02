@@ -2,6 +2,7 @@ var tgt
 var ignore = false
 var stop = false
 var onstop = null
+var prev
 
 func replace_dats(host, arg):
 	var last = arg.find("}")
@@ -55,6 +56,12 @@ func replace_vars(host, _args):
 						continue
 					elif arg[1] == "p":
 						unit = G.you.unit
+					elif arg[1] == "R":
+						r.append(get_rand_pos(int(arg.substr(2))))
+						continue
+					elif arg[1] == "L":
+						r.append(get_los(int(arg.substr(2))))
+						continue
 					if unit == null:
 						r.append(null)
 						continue
@@ -110,6 +117,8 @@ func run(p, host):
 			host = args[1]
 		elif command[1] == "+":
 			return args[1] + args[2]
+		elif command[1] == "g":
+			return G.data.get_group(args[1])
 		elif command == "=items":
 			return G.world.get_items_by_name(args[1])
 	elif command[0] == "?":
@@ -132,6 +141,9 @@ func run(p, host):
 		return G.cmds(args[1], host, tgt)
 	elif command == "onstop":
 		onstop = args[1]
+	elif command == "repeat":
+		for _i in range(args[1]):
+			G.cmd(prev, host)
 	elif command == "make":
 		tgt = G.factory.make_group(args[1], args[2])
 		if tgt == null:
@@ -142,7 +154,7 @@ func run(p, host):
 					tgt = G.factory.make_item(args[1], args[2])
 	elif command == "menu":
 		if args[1] == "msg":
-			G.msg(args[2])
+			G.msg(replace_vars(host, [args[2]])[0])
 		elif args[1] == "menu":
 			G.ui.display(args[2])
 		elif args[1] == "dialog":
@@ -176,7 +188,7 @@ func run(p, host):
 	elif command == "fade":
 		G.ui.fadein()
 	elif command == "custom":
-		G.script(args[1], args[2])
+		G.script(args[1], args.slice(2, args.size()))
 	elif command == "point":
 		G.you.on_point = [args[1], args[2]]
 		G.you.aim_ability(-2)
@@ -186,6 +198,9 @@ func run(p, host):
 		G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4], args[5], args[6])
 	elif command == "loot":
 		G.ui.menu.search_inventory(args[1])
+	elif command == "time":
+		G.vars.time = args[1]
+		G.vars.ontime = args[2]
 	else:
 		var subject = args[1]
 		if typeof(subject) == 17 and is_instance_valid(subject):
@@ -291,8 +306,30 @@ func run_unit(command, args, subject):
 				if !subject.auto_equip(item):
 					subject.store(item, true)
 				return item
+	elif command == "hunt":
+		subject.controller.target = args[2]
 
 func get_arg(args, idx, default=null):
 	if args.size() > idx:
 		return args[idx]
 	return default
+
+func get_los(p):
+	var tile
+	while tile == null or tile.is_col(p):
+		var x = R.ir(-G.you.n_camera.sight_range, G.you.n_camera.sight_range)
+		var y = R.ir(-G.you.n_camera.sight_range_y, G.you.n_camera.sight_range_y)
+		if R.b():
+			x = G.you.n_camera.sight_range + 1
+		else:
+			y = G.you.n_camera.sight_range_y + 1
+		if R.b():
+			x *= -1
+			y *= -1
+		tile = G.world.tiles[G.you.unit.pos.y + y][G.you.unit.pos.x + x]
+
+func get_rand_pos(p):
+	var tile
+	while tile == null or tile.is_col(p):
+		tile = G.world.tiles[R.ir(0, G.world.size.y-1)][R.ir(0, G.world.size.x-1)]
+	return tile

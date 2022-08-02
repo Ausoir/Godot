@@ -2,13 +2,13 @@
 	"wait": {
 		"target": "onattack",
 		"delay": 4,
-		"chance": 100,
+		"chance": 1,
 		"onstart": [["action","$h", "wait"]],
 	},
 	"burn": {
 		"target": "onattack",
 		"delay": 4,
-		"chance": 20,
+		"chance": 0.2,
 		"cost": 3,
 		"desc_dmg": "2 True, Burn",
 		"onstart": [["action","$h", "attack"],["attack","$h","$t","true", 2],["cast","burning","$t","$t"]],
@@ -17,7 +17,7 @@
 	"quick strike": {
 		"target": "onattack",
 		"delay": 1,
-		"chance": 15,
+		"chance": 0.15,
 		"cost": 2,
 		"desc_dmg": "25% Bash",
 		"onstart": [["action","$h","strike"],["attack","$h","$t","bash", 25]],
@@ -26,7 +26,7 @@
 	"quick stab": {
 		"target": "onattack",
 		"delay": 1,
-		"chance": 20,
+		"chance": 0.2,
 		"cost": 1,
 		"desc_dmg": "1 cut",
 		"onstart": [["action","$h", "attack"],["attack","$h","$t","cut", 1]],
@@ -35,7 +35,7 @@
 	"strike": {
 		"target": "onattack",
 		"delay": 6,
-		"chance": 20,
+		"chance": 0.2,
 		"cost": 2,
 		"desc_dmg": "25% Bash, 2 Cut",
 		"onstart": [["action","$h","strike"],["push","$t","$hv",160],["attack","$h","$t","bash", 25],["attack","$h","$t","cut", 2]],
@@ -44,7 +44,7 @@
 	"swipe": {
 		"target": "onattack",
 		"delay": 1,
-		"chance": 20,
+		"chance": 0.2,
 		"cost": 3,
 		"duration": 12,
 		"turns": 1,
@@ -57,7 +57,7 @@
 	"slice": {
 		"target": "onattack",
 		"delay": 5,
-		"chance": 25,
+		"chance": 0.25,
 		"cost": 3,
 		"desc_dmg": "3 Cut",
 		"onstart": [["action","$h","strike"],["attack","$h","$t","cut", 3]],
@@ -66,7 +66,7 @@
 	"stab": {
 		"target": "onattack",
 		"delay": 5,
-		"chance": 15,
+		"chance": 0.15,
 		"cost": 3,
 		"desc_dmg": "4 Cut",
 		"onstart": [["action","$h","attack"],["attack","$h","$t","cut", 4]],
@@ -75,7 +75,7 @@
 	"bash": {
 		"target": "onattack",
 		"delay": 6,
-		"chance": 50,
+		"chance": 0.5,
 		"cost": 1,
 		"onstart": [["action","$h","attack"],["attack","$h","$t","bash", 35]],
 		"desc_dmg": "35% Bash",
@@ -84,7 +84,7 @@
 	"headbutt": {
 		"target": "onattack",
 		"delay": 6,
-		"chance": 25,
+		"chance": 0.25,
 		"duration": 5,
 		"cost": 2,
 		"desc_dmg": "60% Bash",
@@ -96,7 +96,7 @@
 	"venomous bite": {
 		"target": "onattack",
 		"delay": 6,
-		"chance": 25,
+		"chance": 0.25,
 		"duration": 5,
 		"cost": 3,
 		"desc_dmg": "1 Cut, Poison",
@@ -108,7 +108,7 @@
 	"bite": {
 		"target": "onattack",
 		"delay": 6,
-		"chance": 25,
+		"chance": 0.25,
 		"duration": 5,
 		"cost": 1,
 		"desc_dmg": "3 Cut",
@@ -120,7 +120,7 @@
 	"leech": {
 		"target": "onattack",
 		"delay": 6,
-		"chance": 50,
+		"chance": 0.5,
 		"cost": 1,
 		"onstart": [["action","$h","headbutt"],["attack","$h","$t","steal",2]],
 		"desc_dmg": "2 Lifesteal",
@@ -129,7 +129,7 @@
 	"kick": {
 		"target": "onattack",
 		"delay": 8,
-		"chance": 20,
+		"chance": 0.2,
 		"duration": 6,
 		"cost": 3,
 		"desc_dmg": "150% Bash",
@@ -141,7 +141,7 @@
 	"somersault": {
 		"target": "onattack",
 		"delay": 10,
-		"chance": 12,
+		"chance": 0.12,
 		"duration": 4,
 		"cost": 4,
 		"desc_dmg": "50% Bash over 3x3 area",
@@ -152,7 +152,7 @@
 	"parry": {
 		"target": "onhit",
 		"delay": 4,
-		"chance": 25,
+		"chance": 0.25,
 		"cost": 3,
 		"desc_dmg": "25% Bash",
 		"reqs": ["adjacent"],
@@ -164,7 +164,7 @@
 	"dodge": {
 		"target": "onhit",
 		"delay": 4,
-		"chance": 25,
+		"chance": 0.25,
 		"cost": 2,
 		"block": 80,
 		"compensate": [["gfx", "label", "DODGE", "$hv", "#AA9"],["action","$h", "hit"],["gfx","particle","Dodge","$hv"]],
@@ -344,7 +344,7 @@
 	},
 	"explode": {
 		"target": "tile",
-		"chance": 100,
+		"chance": 0.100,
 		"onstart": [["smash","$t",4],["gfx","particle","Explode","$tv"]],
 	},
 

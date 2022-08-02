@@ -54,4 +54,22 @@
 		"equip": [["suit", 100],["pistol",100]],
 		"dat": {"move speed": 0, "faction": 1}
 	},
+	"lab turret": {
+		"unit": "turret",
+		"dat": {"faction": 2}
+	},
+	"lab rat": {
+		"unit": "rat",
+		"dat": {"move speed": 80}
+	},
+	"lab guard": {
+		"unit": "human",
+		"equip": [["suit", 100],["assault rifle",100]],
+		"dat": {"faction": 2}
+	},
+	"lab agent": {
+		"unit": "human",
+		"equip": [["suit", 100],["pistol",100]],
+		"dat": {"faction": 2, "vitality": 50, "move speed": 70, "skills": ["dodge", "somersault", "quick strike", "quick strike", "parry"]}
+	},
 }

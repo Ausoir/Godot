@@ -8,6 +8,13 @@ var half_second
 var quarter_second
 var eighth_second
 
+func reset():
+	second = false
+	half_second = false
+	quarter_second = false
+	eighth_second = false
+	frame = 0
+	seconds = 0
 
 func on_process(delta):
 	frame += delta

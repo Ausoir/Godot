@@ -2,11 +2,13 @@ extends Node
 
 
 const Pathing = preload("res://objects/pathing.gd")
+const Firm = ["attack", "ability", "command"]
 var unit
 var sight_range = 8
 var target
 var tasks = []
 var pathing
+var interruptible = false
 
 func on_change(p):
 	if p == "dat":
@@ -37,8 +39,11 @@ func unassign(_dead=false):
 func on_turn():
 	if !tasks.empty():
 		var task = tasks[0]
+		interruptible = !(task in Firm)
 		if perform(task):
 			tasks.pop_front()
+	else:
+		interruptible = true
 
 func perform(task):
 	if task[0] == "path":
@@ -50,7 +55,7 @@ func perform(task):
 		unit.slide(task[1].position.x, task[1].position.y)
 		if unit.n_collider.get_slide_count() > 0:
 			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
-				if interact(task[1]):
+				if interact_tile(task[1]):
 					return false
 				return perform(["smash", task[1]])
 			else:
@@ -58,6 +63,9 @@ func perform(task):
 		return (task[1].position - unit.position).length_squared() < 64
 	elif task[0] == "move":
 		unit.slide(unit.position.x+task[1], unit.position.y+task[2])
+	elif task[0] == "moveto":
+		unit.slide(task[1].x, task[1].y)
+		return (task[1] - unit.position).length_squared() < task[2]
 	elif task[0] == "attack":
 		if validate_target(task[1]):
 			unit.slide(task[1].position.x, task[1].position.y)
@@ -65,7 +73,10 @@ func perform(task):
 	elif task[0] == "interact":
 		unit.delay = 4
 		unit.set_animation("wait", 4)
-		if unit.pos.distance_to(task[1].pos) <= 1:
+		if task[1].item_type == "tile":
+			if unit.pos.distance_to(task[1]) <= 1:
+				interact_tile(task[1])
+		elif unit.pos.distance_to(task[1].pos) <= 1:
 			interact(task[1])
 	elif task[0] == "ability":
 		unit.ability(task[1], task[2])
@@ -78,22 +89,37 @@ func perform(task):
 			task[1].smash(dmg)
 	elif task[0] == "command":
 		G.cmds(task[1], task[2], task[3])
-	elif task[0] == "enter":
+	elif task[0] == "return":
 		if self == G.you:
-			if task[3] < 1:
-				if task[1] in unit.pos.world.connections:
-					G.you.unit.reposition(task[2].position)
-					G.travel(unit.pos.world.connections[task[1]])
+			if task[1] < 1:
+				G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
+			else:
+				var adjs = unit.pos.get_available_adjacents(1)
+				for tile in adjs:
+					for i in tile.items:
+						if i.item_type == "unit" and i.dat.g("faction", -1) != unit.dat.g("faction", -2):
+							return
+				G.msg("Returning..." + str(task[1]))
+				unit.set_animation("wait")
+				unit.delay = 4
+				tasks.append(["return", task[1]-1])
+		else:
+			unit.pos.remove_item(unit)
+	elif task[0] == "exit":
+		if self == G.you:
+			if task[1] < 1:
+				G.msg("Level Complete!")
+				G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
 			else:
 				var adjs = unit.pos.get_available_adjacents(1)
 				for tile in adjs:
 					for i in tile.items:
 						if i.item_type == "unit" and i.faction != unit.faction:
 							return
-				G.msg("Moving map..." + str(task[3]))
+				G.msg("Leaving map..." + str(task[1]))
 				unit.set_animation("wait")
 				unit.delay = 4
-				tasks.append(["enter", task[1], task[2], task[3]-1])
+				tasks.append(["exit", task[1]-1])
 		else:
 			unit.pos.remove_item(unit)
 	return true
@@ -122,18 +148,23 @@ func path_to(pos, dist=0):
 			for p in path:
 				tasks.append(["path", unit.pos.world.tiles[p.y][p.x], pos.position])
 
-func interact(_tile):
+func interact_tile(_tile):
 	if !_tile.items.empty():
-		var item = _tile.get_item_by_type("item")
-		if item != null:
-			var onuse = item.dat.g("onuse")
-			if onuse != null:
-				if pathing.can_open:
-					if unit == G.you.unit:
-						G.cmds(onuse, item, unit)
-					elif item.dat.g("openable"):
-						G.cmds(onuse, item, unit)
-						return true
+		var items = _tile.get_items_by_type("item")
+		if !items.empty():
+			for item in items:
+				if interact(item):
+					return true
+
+func interact(item):
+	var onuse = item.dat.g("onuse")
+	if onuse != null:
+		if pathing.can_open:
+			if unit == G.you.unit:
+				G.cmds(onuse, item, unit)
+			elif item.dat.g("openable"):
+				G.cmds(onuse, item, unit)
+				return true
 	return false
 
 func remove():

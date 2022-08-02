@@ -1,32 +1,67 @@
 {
-	"g_resident": {
-		"resident": [0.9, "/", 1, 1],
-		"scavenger": [0.5, "/", 1, 1],
+	"g_woods1": {
+		"g_fields1": [1, "/", 1, 1]
 	},
-	"g_urban": {
-		"zombie": [0.5, "/", 1, 3],
-		"zombie": [0.5, "/", 1, 6],
-		"coyote": [0.85, "+", 1, 6],
+	"g_woods2": {
+		"g_fields2": [1, "/", 1, 1]
 	},
-	"g_zombie1": {
-		"prisoner zombie": [0.9, "/", 1, 1],
-		"zombie dog": [0.8, "/", 1, 1],
+	"g_woods3": {
+		"g_fields3": [1, "/", 1, 1]
 	},
-	"g_zombie2": {
-		"rot zombie": [0.25, "/", 1, 1],
-		"burnt zombie": [0.25, "/", 1, 1],
-		"prisoner zombie": [0.5, "/", 1, 1],
-		"zombie dog": [0.8, "/", 1, 1],
-		"zombie hunter": [1, "/", 1, 1],
+	"g_woods4": {
+		"g_fields4": [1, "/", 1, 1]
 	},
-	"g_mutant1": {
+	"g_fields1": {
+		"g_town1": [0.5, "/", 1, 1],
+		"g_ruins1": [0.5, "/", 1, 1],
+		"g_caverns1": [1, "/", 1, 1]
+	},
+	"g_fields2": {
+		"g_town2": [0.5, "/", 1, 1],
+		"g_ruins2": [0.5, "/", 1, 1],
+		"g_caverns2": [1, "/", 1, 1]
+	},
+	"g_fields3": {
+		"g_town3": [0.5, "/", 1, 1],
+		"g_ruins3": [0.5, "/", 1, 1],
+		"g_caverns3": [1, "/", 1, 1]
+	},
+	"g_fields4": {
+		"g_town4": [0.5, "/", 1, 1],
+		"g_ruins4": [0.5, "/", 1, 1],
+		"g_caverns4": [1, "/", 1, 1]
+	},
+	"g_caverns1": {
+		"rat": [0.5, "/", 1, 3],
+	},
+	"g_caverns2": {
+		"ant": [0.75, "/", 1, 1],
+		"ant soldier": [0.4, "/", 1, 1],
+	},
+	"g_caverns3": {
+		"ant princess": [0.05, "/", 1, 1],
+		"ant soldier": [0.4, "/", 1, 1],
+		"ant": [1, "/", 1, 1],
+	},
+	"g_caverns4": {
+		"ant princess": [0.05, "/", 1, 1],
+		"ant soldier": [0.4, "/", 1, 3],
+		"ant": [0.8, "/", 1, 3],
+		"mansect": [0.1, "/", 1, 1],
+	},
+	"g_ruins1": {
 		"infected": [0.5, "/", 1, 1],
 	},
-	"g_mutant2": {
+	"g_ruins2": {
 		"blob": [0.2, "/", 1, 1],
 		"mutant": [0.75, "/", 1, 1],
 	},
-	"g_mutant3": {
+	"g_ruins3": {
+		"infected": [0.15, "/", 1, 1],
+		"mutant": [0.15, "/", 1, 1],
+		"blob": [0.2, "/", 1, 1],
+	},
+	"g_ruins4": {
 		"infected": [0.15, "/", 1, 1],
 		"mutant": [0.15, "/", 1, 1],
 		"blob": [0.2, "/", 1, 1],
@@ -35,17 +70,53 @@
 		"manfly": [0.8, "/", 1, 1],
 		"manbird": [1, "/", 1, 1],
 	},
-	"g_hive1": {
-		"ant": [0.75, "/", 1, 1],
+	"g_town1": {
+		"resident": [0.1, "/", 1, 1],
+		"scavenger": [0.05, "/", 1, 1],
+		"zombie": [0.5, "/", 1, 1],
+		"coyote": [0.1, "/", 1, 3],
+		"infected": [1, "/", 1, 1],
 	},
-	"g_hive2": {
-		"ant": [0.75, "/", 1, 1],
-		"ant soldier": [0.4, "/", 1, 1],
+	"g_town2": {
+		"resident": [0.05, "/", 1, 2],
+		"coyote": [0.8, "/", 1, 3],
+		"scavenger": [0.1, "/", 1, 3],
 	},
-	"g_hive3": {
-		"ant princess": [0.05, "/", 1, 1],
-		"ant soldier": [0.4, "/", 1, 1],
-		"ant": [1, "/", 1, 1],
+	"g_town3": {
+		"zombie": [0.5, "/", 1, 3],
+		"zombie": [0.5, "/", 1, 6],
+		"rot zombie": [0.25, "/", 1, 1],
+		"burnt zombie": [0.25, "/", 1, 1],
+		"coyote": [0.85, "+", 1, 6],
+	},
+	"g_town4": {
+		"rot zombie": [0.25, "/", 1, 1],
+		"burnt zombie": [0.25, "/", 1, 1],
+		"prisoner zombie": [0.4, "/", 1, 1],
+		"zombie dog": [0.8, "/", 1, 1],
+		"zombie hunter": [1, "/", 1, 1],
+	},
+	"g_lab1": {
+		"lab rat": [0.2, "/", 1, 3],
+		"lab turret": [0.1, "/", 1, 1],
+		"lab guard": [0.01, "/", 1, 1],
+		"lab agent": [0.01, "/", 1, 1],
+	},
+	"g_lab2": {
+		"lab rat": [0.1, "/", 1, 3],
+		"lab turret": [0.1, "/", 1, 1],
+		"lab guard": [0.1, "/", 1, 1],
+		"lab agent": [0.02, "/", 1, 1],
+	},
+	"g_lab3": {
+		"lab guard": [0.1, "+", 1, 1],
+		"lab turret": [0.15, "+", 1, 1],
+		"lab agent": [0.02, "+", 1, 1],
+	},
+	"g_lab4": {
+		"lab guard": [0.1, "+", 1, 3],
+		"lab turret": [0.15, "+", 1, 1],
+		"lab agent": [0.1, "+", 1, 1],
 	},
 	"g_conscript": {
 		"scavenger": [0.15, "+", 20, 40],
@@ -68,14 +139,14 @@
 		"rucksack": [0.09, "+", 1, 1],
 	},
 	"g_lathe": {
-		"builder (solar panel)": [0.33, "+", 20, 100],
-		"builder (battery)": [0.33, "+", 10, 20],
-		"builder (lathe)": [0.33, "+", 5, 20],
-		"builder (dispenser)": [0.33, "+", 10, 100],
-		"builder (cloner)": [0.33, "+", 50, 200],
-		"builder (sandbag)": [0.33, "+", 10, 20],
-		"builder (fence)": [0.33, "+", 5, 20],
-		"builder (turret)": [0.33, "+", 10, 50],
+		"builder (solar panel)": [0.15, "+", 20, 100],
+		"builder (battery)": [0.15, "+", 10, 20],
+		"builder (lathe)": [0.15, "+", 5, 20],
+		"builder (dispenser)": [0.15, "+", 10, 100],
+		"builder (cloner)": [0.15, "+", 50, 200],
+		"builder (sandbag)": [0.15, "+", 10, 20],
+		"builder (fence)": [0.15, "+", 5, 20],
+		"builder (turret)": [0.15, "+", 10, 50],
 	},
 	"g_books": {
 		"builder (solar panel)": [0.33, "+", 20, 100],

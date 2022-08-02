@@ -16,9 +16,8 @@ var last_drag_dist = 0
 func on_change(p):
 	.on_change(p)
 	if p == "dat":
-		n_camera.darken()
-		n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1))
-		n_camera.update(unit.pos, last_pos)
+		if n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1)):
+			n_camera.update(unit.pos, last_pos)
 		var bodytype_list = G.data.get_json_data("bodytypes")
 		var bodyparts = bodytype_list.get(unit.dat.g("type"))
 		G.ui.menu.update_equipables(bodyparts)
@@ -42,12 +41,11 @@ func on_kill(_victim):
 		G.vars.money += money
 		G.display_damage("+$"+str(money), unit.position, Color.gold, 1, 250)
 
-func get_mouse_tile():
+func get_mouse():
 	var screen_mouse = G.ui.mouse_pos
 	screen_mouse -= G.ui.screen_size / 2
-	var mouse_pos = Vector2(screen_mouse.x*n_camera.zoom.x + n_camera.position.x,
-					screen_mouse.y*n_camera.zoom.y + n_camera.position.y)
-	return G.pixel_to_pos(mouse_pos)
+	return Vector2(screen_mouse.x*n_camera.zoom.x + n_camera.position.x,
+				screen_mouse.y*n_camera.zoom.y + n_camera.position.y)
 
 func _on_input(event: InputEvent):
 	if event is InputEventScreenDrag:
@@ -61,6 +59,9 @@ func _on_input(event: InputEvent):
 				new_zoom = clamp(n_camera.zoom.x * new_zoom, .5, 2)
 				n_camera.zoom = Vector2.ONE * new_zoom
 				last_drag_dist = drag_distance
+		elif events.size() == 1:
+			if interruptible:
+				tasks = [["moveto", get_mouse(), 64]]
 	elif event is InputEventMouseButton:
 		if event.is_pressed():
 			unhandled_input = true
@@ -71,26 +72,40 @@ func _on_input(event: InputEvent):
 				if n_camera.zoom.x < 2:
 					n_camera.zoom *= 1.2
 			elif aiming != -1:
-				var mtile = get_mouse_tile()
-				var tile = G.world.fit_bound(mtile.x, mtile.y)
-				if aiming == -2 and on_point != null:
-					tasks = [["command", on_point[0], on_point[1], tile]]
-					on_point = null
-					stop_aim()
-				else:
-					tasks = [["ability", aiming, tile.position]]
-					stop_aim()
+				n_cursor.position = get_mouse()
 			else:
-				var mtile = get_mouse_tile()
-				var tile = G.world.get_tile(mtile.x, mtile.y)
-				if tile != null and tile.distance_to(unit.pos) <= 1 and !tile.items.empty():
-					if tile == unit.pos:
-						G.cmds([["menu", "menu", -1]], unit)
-					else:
-						tasks = [["smash", tile]]
+				var screen_mouse = G.ui.mouse_pos
+				screen_mouse -= G.ui.screen_size / 2
+				if screen_mouse.length_squared() < G.HW * G.HH:
+					G.cmds([["menu", "menu", -1]], unit)
+				else:
+					var mtile = G.pixel_to_pos(get_mouse())
+					var tile = G.world.get_tile(mtile.x, mtile.y)
+					if tile != null and !tile.items.empty():
+						if tile.distance_to(unit.pos) <= 1 and tile != unit.pos:
+							if n_camera.zoom.x <= .5:
+								tasks = [["smash", tile]]
+							else:
+								tasks = [["interact", tile]]
+						else:
+							tasks = [["path", tile],["interact",tile]]
+					elif interruptible:
+						tasks = [["moveto", get_mouse(), 64]]
 		else:
 			unhandled_input = false
 			events.clear()
+			if interruptible:
+				if aiming != -1:
+					var mtile = G.pixel_to_pos(get_mouse())
+					var tile = G.world.fit_bound(mtile.x, mtile.y)
+					if aiming == -2 and on_point != null:
+						tasks = [["command", on_point[0], on_point[1], tile]]
+						on_point = null
+					else:
+						tasks = [["ability", aiming, tile.position]]
+					stop_aim()
+				elif !tasks.empty() and tasks[0][0] == "moveto":
+					tasks.clear()
 
 func _physics_process(_delta):
 	n_camera.position = unit.n_collider.global_position
@@ -114,11 +129,8 @@ func _physics_process(_delta):
 			dir = 2
 		elif Input.is_action_pressed("move_left"):
 			dir = 6
-		if tasks.empty():
-			if unhandled_input and Input.is_action_pressed("use"):
-				var mtile = get_mouse_tile()
-				tasks = [["move", mtile.x-unit.pos.x, mtile.y-unit.pos.y]]
-			elif dir != -1:
+		if dir != -1:
+			if interruptible:
 				var to = G.DIRS[dir]
 				tasks = [["move", to[0] * 10, to[1] * 10]]
 
@@ -126,27 +138,53 @@ func on_turn():
 	if tasks.empty():
 		var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
 		if colld != null:
-			if tasks.empty():
-				tasks = [["attack", colld]]
+			tasks = [["attack", colld]]
 	var cds = !unit.cooldowns.empty()
 	.on_turn()
 	if view_dirty or last_pos != unit.pos:
 		n_camera.update(last_pos, unit.pos)
 		view_dirty = false
 		last_pos = unit.pos
+		check_edge()
 	check_nearby_interactibles()
 	if cds:
 		G.ui._update_cooldowns(unit.cooldowns)
+
+func check_edge():
+	var edge = unit.pos.get_edge()
+	if edge != -1:
+		var farside = false
+		if "enterside" in G.temp:
+			if G.temp.enterside == G.get_dir_to_cardinal_string(edge) and G.time.seconds > 3:
+				tasks.append(["return", 3])
+				return
+			if G.temp.enterside == "west" and edge == 3:
+				farside = true
+			elif G.temp.enterside == "east" and edge == 1:
+				farside = true
+			elif G.temp.enterside == "north" and edge == 0:
+				farside = true
+			elif G.temp.enterside == "south" and edge == 2:
+				farside = true
+		else:
+			farside = true
+		var complete = G.temp.get("complete")
+		if farside and complete:
+			tasks.append(["exit", 3])
 
 func check_nearby_interactibles():
 	if unit.dat.g("type") != "other":
 		var vicinity = unit.pos.get_area(1)
 		var ninteractables = []
+		var items = []
+		var npcs = []
 		for tile in vicinity:
-			var item = tile.get_item_by_type("item")
+			items += tile.get_items_by_type("item")
+			npcs += tile.get_items_by_type("unit", unit)
+		for item in items:
 			if item != null and (item.dat.g("oninteract") != null or unit.can_carry(item.dat.g("weight",-1))):
 				ninteractables.append(item)
-			var npc = tile.get_item_by_type("unit", unit)
+		for npc in npcs:
 			if npc != null and npc.dat.g("oninteract") != null:
 				ninteractables.append(npc)
 		if interactables != ninteractables:
@@ -187,6 +225,7 @@ func stop_aim():
 
 func remove():
 	if unit.get_health() <= 0:
+		G.vars["dead"] = 1
 		G.cmds([["menu","dialog","Death"]])
 		var player_unit = G.cmds([["make", "ghost", unit.pos]])
 		player_unit.possess(self)

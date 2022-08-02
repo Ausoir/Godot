@@ -160,17 +160,19 @@ func is_col_adv(cols, opens, strength):
 			tcol = item.col | tcol
 	return tcol & cols > 0
 
-func get_item_by_name(val):
+func get_items_by_name(val):
+	var r = []
 	for item in items:
 		if item.item_name == val:
-			return item
-	return null
+			r.append(item)
+	return r
 
-func get_item_by_type(val, exc=null):
+func get_items_by_type(val, exc=null):
+	var r = []
 	for item in items:
 		if item.item_type == val and item != exc:
-			return item
-	return null
+			r.append(item)
+	return r
 
 func get_adjacent(dir, val=1):
 	if dir == -1:
@@ -195,13 +197,6 @@ func get_area(p):
 func distance_to(tile):
 	return max(abs(x - tile.x), abs(y - tile.y))
 
-func get_items_by_type(p):
-	var r = []
-	for i in items:
-		if i.item_type == p:
-			r.append(i)
-	return r
-
 func get_available_adjacents(cols):
 	var r = []
 	for i in range(8):
@@ -210,8 +205,16 @@ func get_available_adjacents(cols):
 			r.append(adj)
 	return r
 
-func is_edge():
-	return x == 0 or x == world.size.x-1 or y == 0 or y == world.size.y-1
+func get_edge():
+	if y == 0:
+		return 0
+	elif y == 2:
+		return 2
+	elif x == 0:
+		return 3
+	elif x == world.size.x-1:
+		return 1
+	return -1
 
 func get_rand_offset(_x, _y):
 	var rx = R.ir(-_x, _x)

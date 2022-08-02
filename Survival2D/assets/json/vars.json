@@ -65,27 +65,27 @@
 	"area": {
 		"ruins": {
 			"biome": 0.3, 
-			"modes": ["scavenge", "survive", "escape", "assault"]
+			"modes": ["scavenge", "survive", "escape"]
 		},
 		"caverns": {
 			"biome": 0.4, 
-			"modes": ["scavenge", "escape", "assault"]
+			"modes": ["scavenge", "escape"]
 		},
 		"woods": {
 			"biome": 0.5,
-			"modes": ["survive", "escape", "assault"]
+			"modes": ["survive", "escape"]
 		},
 		"fields": {
 			"biome": 0.6,
-			"modes": ["survive", "escape", "assault"]
+			"modes": ["survive", "escape"]
 		},
 		"town": {
 			"biome": 0.8,
-			"modes": ["scavenge", "survive", "escape", "assault"]
+			"modes": ["scavenge", "survive", "escape"]
 		},
 		"lab": {
 			"biome": 99,
-			"modes": ["scavenge", "survive", "escape", "assault"]
+			"modes": ["scavenge", "survive", "escape"]
 		},
 	}
 }

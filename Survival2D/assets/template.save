@@ -1,2 +1,2 @@
-{"money":0,"seed":-1,"time":1,"map":{"seed":-1,"current":-1,"complete":[]}}
+{"money":0,"seed":-1,"time":1,"map":{"seed":-1,"current":-1,"complete":[]},"sound":"normal"}
 {"equip":{},"inv":[],"unit":"human","unit_buff":[],"unit_data":{"abilities":[],"col":4,"faction":1,"flags":["user"],"img":"units/zombie","seed":-1,"sight":1,"sight col":"1000","skills":["somersault","quick strike","kick"],"type":"man"}}

@@ -119,6 +119,16 @@ func get_autotile_coord(dirs):
 			v = Vector2()
 	return v
 
+func get_dir_to_cardinal_string(p):
+	if p == 0:
+		return "north"
+	elif p == 1:
+		return "east"
+	elif p == 2:
+		return "south"
+	elif p == 3:
+		return "west"
+
 func get_direction_between(from, to):
 	var tx = from.x - to.x
 	var ty = from.y - to.y
@@ -192,6 +202,7 @@ func cmds(args, host=null, ptgt=null):
 
 func cmd(arg, host=null):
 	command.tgt = command.run(arg, host)
+	command.prev = arg
 
 func script(p, param):
 	custom.run(p, param)
@@ -201,6 +212,7 @@ func msg(msg):
 
 func travel(_map):
 	get_tree().set_pause(true)
+	G.time.reset()
 	var root = get_tree().get_root()
 	if G.world.get_parent() != null:
 		root.remove_child(G.world)

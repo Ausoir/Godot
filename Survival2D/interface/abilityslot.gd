@@ -60,7 +60,10 @@ func assign(p, type):
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
-		if event.pressed:
+		if event.is_pressed():
+			_on_mouse_entered()
+		else:
+			_on_mouse_exited()
 			activate()
 
 func activate():

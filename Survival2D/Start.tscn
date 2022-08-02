@@ -108,3 +108,5 @@ anims/FadeOut = SubResource( 2 )
 anims/RESET = SubResource( 4 )
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]

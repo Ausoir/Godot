@@ -54,9 +54,15 @@ func stop_process():
 	processing_frame = -2
 
 func set_sight(p, p_col=1):
-	sight_range = min(12, p)
-	sight_range_y = sight_range * sight_ratio
-	sight_bits = p_col
+	var new_sight_range = min(12, p)
+	var new_sight_range_y = int(sight_range * sight_ratio)
+	var new_sight_bits = p_col
+	if new_sight_range != sight_range or new_sight_bits != sight_bits:
+		darken()
+		sight_range = new_sight_range
+		sight_range_y = new_sight_range_y
+		sight_bits = new_sight_bits
+		return true
 
 func update(last_pos, pos):
 	param_last_pos = last_pos

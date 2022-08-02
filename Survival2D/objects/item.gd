@@ -121,9 +121,9 @@ func autotilize():
 		var dirs = []
 		for i in range(4):
 			var adj = pos.get_adjacent(i * 2)
-			var item = adj.get_item_by_name(item_name)
-			if item != null:
-				dirs.append(i)
+			var items = adj.get_items_by_name(item_name)
+			if !items.empty():
+				dirs.append_array(items)
 		var v = G.get_autotile_coord(dirs)
 		self.region_rect.position = v * 32
 
@@ -167,6 +167,11 @@ func update_col(p):
 func on_turn():
 	turns += 1
 	if turns > dat.g("turn", 0):
+		if turns == 1 and dat.g("onmake") != null:
+			dat.run(self, "onmake")
+			if dat.g("onturn") == null:
+				G.world.turn.remove(self)
+				return
 		dat.run(self, "onturn")
 		turns = 0
 

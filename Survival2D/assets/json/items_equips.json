@@ -12,7 +12,6 @@
 		"img": "loot",
 		"sprite": "overlay/w_full_auto_rifle",
 		"abilities": ["burst fire","spray bullets"],
-		"weight": 3,
 		"size": 2,
 		"mat": "metal",
 		"weight": 4,
@@ -25,7 +24,6 @@
 		"weight": 3,
 		"size": 2,
 		"mat": "metal",
-		"weight": 4,
 		"desc": "An artifact of the past."
 	},
 	"laser rifle": {

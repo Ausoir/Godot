@@ -8,6 +8,8 @@ onready var tab_equipment = $Tabs/INV/VSplit/Equipment
 onready var tab_inventory = $Tabs/INV/VSplit/Inventory
 onready var tab_cha_stats = $Tabs/CHA/VSplit/Stats
 onready var tab_cha_skills = $Tabs/CHA/VSplit/Skills
+onready var tab_map = $Tabs/MAP/Text
+onready var tab_settings = $Tabs/OPT/Control
 onready var n_drag = $Drag
 onready var n_money = $Money
 onready var container = $Container
@@ -50,6 +52,10 @@ func _on_tab_change(page):
 	elif page == 1:
 		update_status()
 		update_skills()
+	elif page == 2:
+		update_map()
+	elif page == 3:
+		tab_settings.refresh()
 
 func set_drag_item(item):
 	if item == null:
@@ -168,3 +174,10 @@ func display_time():
 	else:
 		minute = str(minute)
 	n_time.set_text(str(hour) + ":" + minute)
+
+func update_map():
+	var txt = ""
+	txt += "[color=#A64]Area[/color]: "+G.temp.area+"\n"
+	txt += "[color=#A64]Rating[/color]: "+G.temp.rating+"\n"
+	txt += "[color=#A64]Objective[/color]: "+G.temp.objective+"\n"
+	tab_map.set_bbcode(txt)
