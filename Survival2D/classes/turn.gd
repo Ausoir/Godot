@@ -1,13 +1,13 @@
 extends Node
 
 
-var takers = [[],[],[],[]]
+var takers = [[],[],[],[],[],[]]
 var add_idx = 0
 var turn_idx = 0
 var process_frames = 0
 
 func clear():
-	takers = [[],[],[],[]]
+	takers = [[],[],[],[],[],[]]
 
 func increment_index(idx):
 	idx += 1

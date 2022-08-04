@@ -16,7 +16,7 @@ func generate():
 	_process()
 	base = fatten(1, 1, 1)
 	biome_map = make_perlin(width, height, 2)
-	magnify(21)
+	magnify(18)
 	paint_map()
 
 func paint_perlin(mx, my, sx, sy):

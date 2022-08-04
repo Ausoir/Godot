@@ -6,12 +6,10 @@ var spawns = []
 var complex
 
 func generate(p):
-	.create(R.ir(60, 120), R.ir(40, 80))
+	.create(R.ir(30, 60), R.ir(30, 60))
 	G.world.create_map(width, height)
 	base = make_perlin(width, height, 5)
 	output = make_base(width, height, 0)
-	make_border(.1)
-	make_border(.1, [], 1)
 	if p == "fields":
 		spawns = [
 			[0, ['dirt', ['boulder', .01, '/', ['small boulder', .02]]]],
@@ -22,23 +20,30 @@ func generate(p):
 		complex = ["shack", 0, 5]
 	elif p == "woods":
 		spawns = [
-			[0, ['water']],
-			[.3, ['dirt', ['boulder', .01, '/', ['small boulder', .02]]]],
+			[0, ['dirt', ['boulder', .01, '/', ['small boulder', .02]]]],
 			[.5, ['grass', ['old tree', .06, '/', ['tree', .1, '/', ['young tree', .03, '/', ['shrub', .2]]]]]],
 			[.7, ["rock wall"]],
+			[.8, ['water']],
 		]
 		complex = ["shack", 0, 3]
 	elif p == "caves":
 		spawns = [
 			[0, ['dirt', ['boulder', .01, '/', ['small boulder', .02]]]],
+			[.5, ["water"]],
 			[.55, ["rock wall"]],
 		]
+		make_border(WALL_TILE)
 	for x in range(width):
 		for y in range(height):
 			var v = base[y][x]
 			for i in spawns:
 				if v > i[0]:
 					output[y][x] = i[1]
+	for _i in range(16):
+		base[0][R.ir(0, width-1)] = spawns[0][1]
+		base[height-1][R.ir(0, width-1)] = spawns[0][1]
+		base[R.ir(0, height-1)][0] = spawns[0][1]
+		base[R.ir(0, height-1)][width-1] = spawns[0][1]
 	if complex != null:
 		for _i in range(R.ir(complex[1], complex[2])):
 			place_building(complex[0])

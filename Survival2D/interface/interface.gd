@@ -34,7 +34,7 @@ func _input(event):
 func _unhandled_input(event):
 	if event is InputEventKey:
 		if Input.is_action_just_pressed("quit"):
-			get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
+			gamestate.end_game()
 		elif Input.is_action_just_pressed("restart"):
 			G.script("start menu", null)
 		elif Input.is_action_just_pressed("ui_fullscreen"):

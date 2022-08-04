@@ -40,7 +40,7 @@ func _ready():
 			else:
 				var lvl = Level.instance()
 				blueprint[y][x] = lvl
-				lvl.rating = int((max(x/float(sx), y/float(sy*1.4)) + R.fr(-.4, 0))/.25)+1
+				lvl.rating = int(clamp(max(x/float(sx), y/float(sy*1.4)) + R.fr(-.4, 0), 0, 1)/.25)+1
 				lvl.set_area(biomemap[y][x])
 				lvl.map = self
 				lvl.refresh(x, y, y*sy+x)

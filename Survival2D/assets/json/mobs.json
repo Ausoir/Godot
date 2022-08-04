@@ -72,4 +72,24 @@
 		"equip": [["suit", 100],["pistol",100]],
 		"dat": {"faction": 2, "vitality": 50, "move speed": 70, "skills": ["dodge", "somersault", "quick strike", "quick strike", "parry"]}
 	},
+	"traitor": {
+		"unit": "human",
+		"equip": [["gi", 100],["hood",100],["pistol",100]],
+		"dat": {"faction": 2, "perception": 7, "skills": []}
+	},
+	"thief": {
+		"unit": "human",
+		"equip": [["looter coat", 100],["hood",100],["knife",100]],
+		"dat": {"faction": 2, "vitality": 20, "move speed": 70, "perception": 5, "skills": ["dodge", "bash"]}
+	},
+	"scientist": {
+		"unit": "human",
+		"equip": [["suit", 100],["hood",100],["laser rifle",100]],
+		"dat": {"faction": 2, "vitality": 30, "move speed": 40, "perception": 10, "skills": ["headbutt"]}
+	},
+	"experiment A1": {
+		"unit": "manzard",
+		"equip": [["scalemail", 100],["hood",100]],
+		"dat": {"faction": 2, "vitality": 60, "strength": 8, "move speed": 70, "perception": 8, "skills": ["dodge", "somersault", "swipe", "venomous bite", "parry"]}
+	},
 }

@@ -176,8 +176,10 @@ func display_time():
 	n_time.set_text(str(hour) + ":" + minute)
 
 func update_map():
-	var txt = ""
-	txt += "[color=#A64]Area[/color]: "+G.temp.area+"\n"
-	txt += "[color=#A64]Rating[/color]: "+G.temp.rating+"\n"
-	txt += "[color=#A64]Objective[/color]: "+G.temp.objective+"\n"
+	var txt = "[color=#A64]Area[/color]: "+G.temp.area.capitalize()+"\n"
+	txt += "[color=#A64]Difficulty[/color]: "+str(G.temp.rating)+"\n"
+	txt += "[color=#A64]Objective[/color]: "+G.temp.objective.capitalize()
+	if G.temp.get("complete", false) == true:
+		txt += " (Complete)\n"
+		txt += "Leave through the " + G.get_dir_to_cardinal_string(G.temp.enterside+2) + "side."
 	tab_map.set_bbcode(txt)

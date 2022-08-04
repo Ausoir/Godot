@@ -4,6 +4,9 @@ func run(p, _params):
 	if p == "start menu":
 		gamestate.save_game()
 		gamestate.restart()
+	elif p == "level select":
+		gamestate.save_game()
+		gamestate.level_select()
 	elif p == "respawn":
 		var pos = _params[0].pos
 		if G.you.unit.pos == pos:
@@ -12,10 +15,6 @@ func run(p, _params):
 			var player_unit = G.cmds([["make", "player", pos]])
 			player_unit.possess(G.you)
 			old_unit.die()
-	elif p == "assault":
-		if _params[0].size() <= G.temp.assault:
-			G.temp.complete = true
-			G.msg("All targets eliminated. You may leave the map.")
 
 func on_time():
 	if G.vars.time > 0:

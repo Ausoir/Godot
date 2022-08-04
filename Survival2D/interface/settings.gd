@@ -13,7 +13,7 @@ func refresh():
 
 func _on_meta_clicked(meta):
 	if meta == "abandon":
-		G.script("start menu", null)
+		G.script("level select", null)
 	elif meta == "sound":
 		if G.vars.sound == "low":
 			G.vars.sound = "normal"
@@ -28,5 +28,4 @@ func _on_meta_clicked(meta):
 		G.vars["dead"] = 1
 		G.script("start menu", null)
 	elif meta == "exit":
-		gamestate.save_game()
-		get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
+		gamestate.end_game()

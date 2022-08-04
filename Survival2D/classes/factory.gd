@@ -6,6 +6,18 @@ const Properties = preload("res://classes/properties.gd")
 const UnitProperties = preload("res://objects/unit_properties.gd")
 const Projectile = preload("res://objects/Projectile.tscn")
 
+func make_any(arg, pos):
+	var r
+	if arg[0] == "g" and arg[1] == "_":
+		r = make_group(arg, pos)
+	else:
+		r = make_mob(arg, pos)
+		if r == null:
+			r = make_unit(arg, pos)
+			if r == null:
+				r = make_item(arg, pos)
+	return r
+
 func make_group(arg, pos):
 	var groups = G.data.get_group(arg)
 	if !groups.empty():
@@ -15,12 +27,8 @@ func make_group(arg, pos):
 		for group in groups:
 			for _i in range(group[1]):
 				if adj != null:
-					made = G.factory.make_mob(group[0], adj)
-					if made == null:
-						made = G.factory.make_unit(group[0], adj)
-						if made == null:
-							made = G.factory.make_item(group[0], adj)
-					if made.col & 4 > 0:
+					made = make_any(group[0], adj)
+					if made != null and made.col & 4 > 0:
 						adjs = adj.get_available_adjacents(12)
 						adj = R.r_arr(adjs)
 		return made
@@ -89,20 +97,23 @@ func make_item(arg, pos=null):
 		r.dat = Properties.new(item_data)
 		if pos != null:
 			r.place(pos)
-		if r.dat.g("onturn") != null:
-			G.world.turn.add(r)
-		if r.dat.g("onmake") != null:
-			G.world.turn.add(r)
 		return r
 
-func make_projectile(host, arg, pos, dest, time, spd, variation, onattack, onmiss):
+func make_projectile(host, arg, pos, dest):
 	if G.is_vec_visible(pos) or G.is_vec_visible(dest):
-		var r = Projectile.instance()
-		r.item_name = arg
-		r.init(host, G.data.get_image(arg), pos, dest, time, spd, variation)
-		r.onattack = onattack
-		r.onmiss = onmiss
-		return r
+		var item_data = G.data.item_data.get(arg)
+		if item_data != null:
+			var r = Projectile.instance()
+			r.item_name = arg
+			var img = G.data.get_image(item_data.get("img"))
+			r.init(host, img, pos, dest, item_data.get("speed"), item_data.get("variation", [0,0]))
+			r.lifetime = item_data.get("time", 2)
+			r.onattack = item_data.get("onattack")
+			r.onmiss = item_data.get("onmiss")
+			var onshoot = item_data.get("onshoot")
+			if onshoot != null:
+				G.cmds(onshoot, host, dest)
+			return r
 
 func make_corpse(host, pos):
 	var r = G.data.get_particle("Corpse")
@@ -114,5 +125,4 @@ func make_corpse(host, pos):
 		r.dat = G.factory.Properties.new(item_data)
 	if pos != null:
 		r.place(pos)
-	G.world.turn.add(r)
 	return r

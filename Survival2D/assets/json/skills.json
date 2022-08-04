@@ -85,7 +85,7 @@
 		"target": "onattack",
 		"delay": 6,
 		"chance": 0.25,
-		"duration": 5,
+		"duration": 3,
 		"cost": 2,
 		"desc_dmg": "60% Bash",
 		"cancelable": true,
@@ -225,7 +225,7 @@
 		"cooldown": 4,
 		"desc_dmg": "4 Cut",
 		"cancelable": true,
-		"onstart": [["sfx","gun","$hv"],["gfx","particle","Shoot","$hv"],["projectile","textures/bullet",0.1,24,[2,0.1],[["attack","$$h","$$t","cut","{0~4}"],["gfx","particle","Shot","$$tv"]],[["gfx","particle","Shot","$$t"]]]],
+		"onstart": [["projectile","shot bullet"]],
 	},
 	"burst fire": {
 		"img": "gui/sk_shoot",
@@ -235,7 +235,7 @@
 		"duration": 3,
 		"desc_dmg": "2x4 Cut",
 		"cancelable": true,
-		"onturn": [["sfx","gun","$hv"],["gfx","particle","Shoot","$hv"],["projectile","textures/bullet",0.2,24,[2,0.2],[["attack","$$h","$$t","cut","{0~3}"],["gfx","particle","Shot","$$tv"]],[["gfx","particle","Shot","$$t"]]]],
+		"onturn": [["projectile","shot bullet"]],
 		"onend": [["cooldown", "$h", "burst fire", 8]],
 	},
 	"spray bullets": {
@@ -246,7 +246,7 @@
 		"duration": 8,
 		"desc_dmg": "2x12 Cut",
 		"cancelable": true,
-		"onturn": [["sfx","machine_gun","$hv"],["gfx","particle","Shoot","$hv"],["projectile","textures/bullet",0.2,28,[2,0.4],[["attack","$$h","$$t","cut","{0~2}"],["gfx","particle","Shot","$$tv"]],[["gfx","particle","Shot","$$t"]]]],
+		"onturn": [["projectile","shot machine bullet"]],
 		"onend": [["cooldown", "$h", "spray bullets", 12]],
 	},
 	"shoot arrow": {
@@ -256,7 +256,7 @@
 		"range": 6,
 		"cooldown": 6,
 		"desc_dmg": "4 Cut",
-		"onstart": [["action","$h","headbutt"],["sfx","bow","$hv"],["projectile","textures/arrow",0.2,16,[2,0.1],[["attack","$$h","$$t","cut","{0~4}"]],[["gfx","particle","Dodge","$$t"]]],["delay","$t",12]],
+		"onstart": [["action","$h","headbutt"],["projectile","shot arrow"],["delay","$t",12]],
 	},
 	"shoot bolt": {
 		"img": "gui/sk_shoot",
@@ -265,7 +265,7 @@
 		"range": 8,
 		"cooldown": 12,
 		"desc_dmg": "4 Cut",
-		"onstart": [["sfx","bow","$hv"],["projectile","textures/arrow",0.2,24,[2,0.1],[["attack","$$h","$$t","cut","{0~4}"],["gfx","particle","Dodge","$$tv"]],[["gfx","particle","Dodge","$$t"]]]],
+		"onstart": [["projectile","shot bolt"]],
 	},
 	"laser": {
 		"img": "gui/sk_shoot",
@@ -273,7 +273,7 @@
 		"delay": 5,
 		"range": 10,
 		"desc_dmg": "3 True, Burn",
-		"onstart": [["sfx","laser","$hv"],["gfx","particle","Shoot","$hv"],["projectile","textures/laser",0.3,16,[2,0],[["attack","$$h","$$t","true","{0~3}"],["cast","burning","$$t","$$t"],["gfx","particle","Shot","$$tv"]],[["gfx","particle","Explode","$$t"]]]],
+		"onstart": [["projectile","shot laser"]],
 	},
 	"burst laser": {
 		"img": "gui/sk_shoot",
@@ -283,7 +283,7 @@
 		"duration": 2,
 		"desc_dmg": "2x3 True, Burn",
 		"cancelable": true,
-		"onturn": [["sfx","laser","$hv"],["gfx","particle","Shoot","$hv"],["projectile","textures/laser",0.3,16,[2,0],[["attack","$$h","$$t","true","{0~2}"],["cast","burning","$$t","$$t"],["gfx","particle","Shot","$$tv"]],[["gfx","particle","Explode","$$t"]]]],
+		"onturn": [["projectile","shot laser"]],
 		"onend": [["cooldown", "$h", "laser", 8]],
 	},
 

@@ -7,6 +7,7 @@ func generate_lab():
 	generate_maze(24, 24)
 	place_output()
 	place_buildings()
+	make_border(WALL_TILE)
 	paint_map()
 	return base
 

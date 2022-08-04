@@ -217,7 +217,7 @@
 		"sprite": "overlay/head_hood",
 		"part": "head",
 		"mat": "cotton",
-		"weight": 1,
-		"desc": "A gi."
+		"weight": 0,
+		"desc": "A hood to hide your identity."
 	},
 }

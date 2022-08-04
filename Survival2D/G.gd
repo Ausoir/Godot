@@ -28,13 +28,16 @@ var world
 var ui
 var custom
 var command
-var events = []
-var vars = {}
-var temp = {}
+var events
+var vars
+var temp
 var you
 
 
 func _ready():
+	vars = {}
+	temp = {"discover": null}
+	events = []
 	sfx = preload("res://fx/Sfx.tscn").instance()
 	influence = preload("res://classes/influence.gd").new()
 	data = preload("res://classes/json.gd").new()
@@ -120,13 +123,14 @@ func get_autotile_coord(dirs):
 	return v
 
 func get_dir_to_cardinal_string(p):
-	if p == 0:
+	var t = p % 4
+	if t == 0:
 		return "north"
-	elif p == 1:
+	elif t == 1:
 		return "east"
-	elif p == 2:
+	elif t == 2:
 		return "south"
-	elif p == 3:
+	elif t == 3:
 		return "west"
 
 func get_direction_between(from, to):
@@ -190,12 +194,11 @@ func cmds(args, host=null, ptgt=null):
 		if command.stop:
 			if command.onstop != null:
 				G.msg(command.onstop)
-			command.stop = false
 			command.onstop = null
-			return command.tgt
-		elif command.ignore:
-			command.ignore = false
-		else:
+			command.stop = false
+			if arg != null:
+				return command.tgt
+		elif arg != null:
 			cmd(arg, host)
 	command.onstop = null
 	return command.tgt
@@ -209,22 +212,3 @@ func script(p, param):
 
 func msg(msg):
 	ui.message.add(msg)
-
-func travel(_map):
-	get_tree().set_pause(true)
-	G.time.reset()
-	var root = get_tree().get_root()
-	if G.world.get_parent() != null:
-		root.remove_child(G.world)
-		G.world.others.remove_child(G.sfx)
-	var newworld = load('res://world/World.tscn').instance()
-	root.add_child(newworld)
-	G.world = newworld
-	G.world.create(_map)
-	G.world.others.add_child(G.sfx)
-	if G.you.get_parent() != null:
-		G.you.get_parent().remove_child(G.you)
-	G.world.players.add_child(G.you)
-	if G.you.unit != null:
-		G.you.unit.move_world(G.world)
-	get_tree().set_pause(false)

@@ -149,7 +149,7 @@ func is_col(bit):
 	return col & bit > 0
 
 func is_col_adv(cols, opens, strength):
-	if !opens and strength == 0:
+	if items.empty() or (!opens and strength <= 0):
 		return is_col(cols)
 	var tcol = dat.col
 	for item in items:

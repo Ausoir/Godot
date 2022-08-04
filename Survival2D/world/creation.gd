@@ -18,13 +18,13 @@ func start():
 		cmds.append(["give", "$p", "$t"])
 	if skill != null:
 		cmds.append(["*","$p","skills",[]])
-		cmds.append(["^=","t","$t"])
-		cmds.append(["^^","t",skill])
+		cmds.append(["&=","t","$t"])
+		cmds.append(["&^","t",skill])
 		cmds.append(["*=","$p","skills","$t"])
-		cmds.append(["^d","t"])
+		cmds.append(["&d","t"])
 	for i in stats:
 		cmds.append(["*=", "$p", i, stats[i]])
-	G.events.append([0,null,cmds])
+	G.temp.creation = cmds
 	get_tree().change_scene_to(load("res://world/Levels.tscn"))
 
 func update():

@@ -12,22 +12,18 @@
 		"g_fields4": [1, "/", 1, 1]
 	},
 	"g_fields1": {
-		"g_town1": [0.5, "/", 1, 1],
 		"g_ruins1": [0.5, "/", 1, 1],
 		"g_caverns1": [1, "/", 1, 1]
 	},
 	"g_fields2": {
-		"g_town2": [0.5, "/", 1, 1],
 		"g_ruins2": [0.5, "/", 1, 1],
 		"g_caverns2": [1, "/", 1, 1]
 	},
 	"g_fields3": {
-		"g_town3": [0.5, "/", 1, 1],
 		"g_ruins3": [0.5, "/", 1, 1],
 		"g_caverns3": [1, "/", 1, 1]
 	},
 	"g_fields4": {
-		"g_town4": [0.5, "/", 1, 1],
 		"g_ruins4": [0.5, "/", 1, 1],
 		"g_caverns4": [1, "/", 1, 1]
 	},
@@ -35,26 +31,26 @@
 		"rat": [0.5, "/", 1, 3],
 	},
 	"g_caverns2": {
-		"ant": [0.75, "/", 1, 1],
-		"ant soldier": [0.4, "/", 1, 1],
+		"ant": [0.3, "/", 1, 1],
+		"ant soldier": [0.1, "/", 1, 1],
 	},
 	"g_caverns3": {
-		"ant princess": [0.05, "/", 1, 1],
-		"ant soldier": [0.4, "/", 1, 1],
-		"ant": [1, "/", 1, 1],
+		"ant princess": [0.01, "/", 1, 1],
+		"ant soldier": [0.1, "/", 1, 1],
+		"ant": [0.4, "/", 1, 2],
 	},
 	"g_caverns4": {
-		"ant princess": [0.05, "/", 1, 1],
-		"ant soldier": [0.4, "/", 1, 3],
-		"ant": [0.8, "/", 1, 3],
+		"ant princess": [0.01, "/", 1, 1],
+		"ant soldier": [0.1, "/", 1, 3],
+		"ant": [0.4, "/", 1, 3],
 		"mansect": [0.1, "/", 1, 1],
 	},
 	"g_ruins1": {
-		"infected": [0.5, "/", 1, 1],
+		"infected": [0.3, "/", 1, 1],
 	},
 	"g_ruins2": {
 		"blob": [0.2, "/", 1, 1],
-		"mutant": [0.75, "/", 1, 1],
+		"mutant": [0.4, "/", 1, 1],
 	},
 	"g_ruins3": {
 		"infected": [0.15, "/", 1, 1],
@@ -65,36 +61,36 @@
 		"infected": [0.15, "/", 1, 1],
 		"mutant": [0.15, "/", 1, 1],
 		"blob": [0.2, "/", 1, 1],
-		"manzard": [0.5, "/", 1, 1],
-		"mantle": [0.15, "/", 1, 1],
-		"manfly": [0.8, "/", 1, 1],
-		"manbird": [1, "/", 1, 1],
+		"manzard": [0.1, "/", 1, 1],
+		"mantle": [0.1, "/", 1, 1],
+		"manfly": [0.1, "/", 1, 1],
+		"manbird": [0.1, "/", 1, 1],
 	},
 	"g_town1": {
-		"resident": [0.1, "/", 1, 1],
+		"resident": [0.05, "/", 1, 1],
 		"scavenger": [0.05, "/", 1, 1],
-		"zombie": [0.5, "/", 1, 1],
+		"zombie": [0.4, "/", 1, 1],
 		"coyote": [0.1, "/", 1, 3],
-		"infected": [1, "/", 1, 1],
+		"infected": [0.1, "/", 1, 1],
 	},
 	"g_town2": {
 		"resident": [0.05, "/", 1, 2],
-		"coyote": [0.8, "/", 1, 3],
-		"scavenger": [0.1, "/", 1, 3],
+		"coyote": [0.2, "/", 1, 6],
+		"scavenger": [0.05, "/", 1, 3],
 	},
 	"g_town3": {
-		"zombie": [0.5, "/", 1, 3],
-		"zombie": [0.5, "/", 1, 6],
-		"rot zombie": [0.25, "/", 1, 1],
-		"burnt zombie": [0.25, "/", 1, 1],
-		"coyote": [0.85, "+", 1, 6],
+		"zombie": [0.1, "/", 1, 3],
+		"zombie": [0.1, "/", 1, 6],
+		"rot zombie": [0.15, "/", 1, 1],
+		"burnt zombie": [0.15, "/", 1, 1],
+		"coyote": [0.1, "+", 1, 6],
 	},
 	"g_town4": {
-		"rot zombie": [0.25, "/", 1, 1],
-		"burnt zombie": [0.25, "/", 1, 1],
-		"prisoner zombie": [0.4, "/", 1, 1],
-		"zombie dog": [0.8, "/", 1, 1],
-		"zombie hunter": [1, "/", 1, 1],
+		"rot zombie": [0.15, "/", 1, 1],
+		"burnt zombie": [0.15, "/", 1, 1],
+		"prisoner zombie": [0.15, "/", 1, 1],
+		"zombie dog": [0.1, "/", 1, 3],
+		"zombie hunter": [0.1, "/", 1, 1],
 	},
 	"g_lab1": {
 		"lab rat": [0.2, "/", 1, 3],
@@ -105,18 +101,30 @@
 	"g_lab2": {
 		"lab rat": [0.1, "/", 1, 3],
 		"lab turret": [0.1, "/", 1, 1],
-		"lab guard": [0.1, "/", 1, 1],
-		"lab agent": [0.02, "/", 1, 1],
+		"lab guard": [0.05, "/", 1, 1],
+		"lab agent": [0.01, "/", 1, 1],
 	},
 	"g_lab3": {
-		"lab guard": [0.1, "+", 1, 1],
+		"lab guard": [0.05, "+", 1, 1],
+		"lab turret": [0.15, "+", 1, 1],
+		"lab agent": [0.01, "+", 1, 1],
+	},
+	"g_lab4": {
+		"lab guard": [0.04, "+", 1, 3],
 		"lab turret": [0.15, "+", 1, 1],
 		"lab agent": [0.02, "+", 1, 1],
 	},
-	"g_lab4": {
-		"lab guard": [0.1, "+", 1, 3],
-		"lab turret": [0.15, "+", 1, 1],
-		"lab agent": [0.1, "+", 1, 1],
+	"g_as1": {
+		"traitor": [1, "/", 1, 1],
+	},
+	"g_as2": {
+		"thief": [1, "/", 1, 1],
+	},
+	"g_as3": {
+		"scientist": [1, "/", 1, 1],
+	},
+	"g_as4": {
+		"experiment A1": [1, "/", 1, 1],
 	},
 	"g_conscript": {
 		"scavenger": [0.15, "+", 20, 40],

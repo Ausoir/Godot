@@ -9,7 +9,6 @@ func _ready():
 	$Label.rect_position.y = screen_size.y - 40
 	$Sprite.position = screen_size / 2
 #	$AnimationPlayer.play("FadeIn")
-	on_fadeout()
 
 func _input(event):
 	if state == 1:
@@ -29,11 +28,7 @@ func on_fadein():
 	state = 1
 
 func on_fadeout():
-	if !gamestate.load_game():
-		G.get_tree().change_scene_to(load("res://world/Creation.tscn"))
-	else:
-		G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
-
+	gamestate.start_game()
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:

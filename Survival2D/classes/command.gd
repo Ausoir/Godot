@@ -1,5 +1,4 @@
 var tgt
-var ignore = false
 var stop = false
 var onstop = null
 var prev
@@ -13,7 +12,10 @@ func replace_dats(host, arg):
 		var once = last == len(arg) - 1 and arg[0] == "{"
 		for i in arg:
 			if i == "{":
-				on = true
+				if on:
+					return arg.substr(1, arg.length()-1)
+				else:
+					on = true
 			elif i == "}":
 				var t
 				if "~" in v:
@@ -122,21 +124,24 @@ func run(p, host):
 		elif command == "=items":
 			return G.world.get_items_by_name(args[1])
 	elif command[0] == "?":
-		if command == "?=":
+		if command[1] == "=":
 			stop = args[1] != args[2]
-		elif command == "?>":
+		elif command[1] == ">":
 			stop = args[1] <= args[2]
-		elif command == "?>=":
+		elif command[1] == ".":
 			stop = args[1] < args[2]
-	elif command[0] == "!":
-		if command == "!stop":
+		if command.length() > 2 and command[2] == "!":
 			stop = !stop
-		elif command == "!ignore":
-			ignore = !ignore
 	elif command[0] == "^":
 		return run_operation(command, args, G.vars, tgt)
 	elif command[0] == "&":
 		return run_operation(command, args, G.temp, tgt)
+	elif command == "make":
+		if args.size() > 3:
+			if !args[2].is_col(int(args[3])):
+				tgt = G.factory.make_any(args[1], args[2])
+		else:
+			tgt = G.factory.make_any(args[1], args[2])
 	elif command == "run":
 		return G.cmds(args[1], host, tgt)
 	elif command == "onstop":
@@ -144,14 +149,6 @@ func run(p, host):
 	elif command == "repeat":
 		for _i in range(args[1]):
 			G.cmd(prev, host)
-	elif command == "make":
-		tgt = G.factory.make_group(args[1], args[2])
-		if tgt == null:
-			tgt = G.factory.make_mob(args[1], args[2])
-			if tgt == null:
-				tgt = G.factory.make_unit(args[1], args[2])
-				if tgt == null:
-					tgt = G.factory.make_item(args[1], args[2])
 	elif command == "menu":
 		if args[1] == "msg":
 			G.msg(replace_vars(host, [args[2]])[0])
@@ -184,7 +181,7 @@ func run(p, host):
 		else:
 			G.you.make_money(args[1])
 	elif command == "travel":
-		G.travel(args[1])
+		gamestate.travel(args[1])
 	elif command == "fade":
 		G.ui.fadein()
 	elif command == "custom":
@@ -195,7 +192,7 @@ func run(p, host):
 	elif command == "cast":
 		G.influence.do(args[1], args[2], args[3])
 	elif command == "projectile":
-		G.factory.make_projectile(host, args[1], host.position, tgt, args[2], args[3], args[4], args[5], args[6])
+		G.factory.make_projectile(host, args[1], host.position, tgt)
 	elif command == "loot":
 		G.ui.menu.search_inventory(args[1])
 	elif command == "time":
@@ -317,8 +314,8 @@ func get_arg(args, idx, default=null):
 func get_los(p):
 	var tile
 	while tile == null or tile.is_col(p):
-		var x = R.ir(-G.you.n_camera.sight_range, G.you.n_camera.sight_range)
-		var y = R.ir(-G.you.n_camera.sight_range_y, G.you.n_camera.sight_range_y)
+		var x = R.ir(0, G.you.n_camera.sight_range)
+		var y = R.ir(0, G.you.n_camera.sight_range_y)
 		if R.b():
 			x = G.you.n_camera.sight_range + 1
 		else:
@@ -326,10 +323,11 @@ func get_los(p):
 		if R.b():
 			x *= -1
 			y *= -1
-		tile = G.world.tiles[G.you.unit.pos.y + y][G.you.unit.pos.x + x]
+		tile = G.world.get_tile(G.you.unit.pos.x + x, G.you.unit.pos.y + y)
+	return tile
 
 func get_rand_pos(p):
 	var tile
-	while tile == null or tile.is_col(p):
+	while tile == null or tile.is_col(p) or tile.visible:
 		tile = G.world.tiles[R.ir(0, G.world.size.y-1)][R.ir(0, G.world.size.x-1)]
 	return tile

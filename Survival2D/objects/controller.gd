@@ -89,34 +89,22 @@ func perform(task):
 			task[1].smash(dmg)
 	elif task[0] == "command":
 		G.cmds(task[1], task[2], task[3])
-	elif task[0] == "return":
-		if self == G.you:
-			if task[1] < 1:
-				G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
-			else:
-				var adjs = unit.pos.get_available_adjacents(1)
-				for tile in adjs:
-					for i in tile.items:
-						if i.item_type == "unit" and i.dat.g("faction", -1) != unit.dat.g("faction", -2):
-							return
-				G.msg("Returning..." + str(task[1]))
-				unit.set_animation("wait")
-				unit.delay = 4
-				tasks.append(["return", task[1]-1])
-		else:
-			unit.pos.remove_item(unit)
 	elif task[0] == "exit":
 		if self == G.you:
 			if task[1] < 1:
-				G.msg("Level Complete!")
-				G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
+				if task[2]:
+					G.msg("Level Complete!")
+				G.custom.run("level select", null)
 			else:
 				var adjs = unit.pos.get_available_adjacents(1)
 				for tile in adjs:
 					for i in tile.items:
 						if i.item_type == "unit" and i.faction != unit.faction:
 							return
-				G.msg("Leaving map..." + str(task[1]))
+				if task[2]:
+					G.msg("Leaving map..." + str(task[1]))
+				else:
+					G.msg("Returning..." + str(task[1]))
 				unit.set_animation("wait")
 				unit.delay = 4
 				tasks.append(["exit", task[1]-1])

@@ -15,6 +15,7 @@ var controller
 var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
+var has_on_turn = false
 
 func _ready():
 	n_collider = get_node("Body")
@@ -42,6 +43,10 @@ func on_change(p):
 			if !(self in G.world.team[faction]):
 				G.world.team[faction].append(self)
 		flags = dat.g("flags", [])
+		if dat.g("onturn") != null:
+			has_on_turn = true
+		else:
+			has_on_turn = false
 	if controller != null:
 		controller.on_change(p)
 
@@ -219,7 +224,8 @@ func on_turn():
 				cooldowns.erase(i)
 			else:
 				cooldowns[i] -= 1
-		.on_turn()
+		if has_on_turn:
+			.on_turn()
 
 func face(p):
 	if (p > 0) != (n_sprites.scale.x > 0):
@@ -251,7 +257,6 @@ func remove():
 		child.queue_free()
 	.remove()
 	buffs.remove()
-	G.world.turn.remove(self)
 
 func move_world(wld):
 	var faction = dat.g("faction", -1)

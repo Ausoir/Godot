@@ -29,7 +29,6 @@
 		"mat": "metal",
 		"vitality": 4,
 		"armor": 1,
-		"weight": 12,
 		"col": 12,
 		"turn": 64,
 		"onturn": [["=t","{1~4}"],["money","$t"],["gfx","$","{t}","$hv"]],
@@ -72,7 +71,6 @@
 		"mat": "wood",
 		"vitality": 8,
 		"armor": 2,
-		"weight": 8,
 		"col": 6,
 	},
 	"statue": {
@@ -80,7 +78,6 @@
 		"mat": "stone",
 		"vitality": 4,
 		"armor": 6,
-		"weight": 10,
 		"col": 6,
 	},
 	"hanger": {
@@ -88,7 +85,6 @@
 		"mat": "wood",
 		"vitality": 4,
 		"armor": 3,
-		"weight": 6,
 		"col": 6,
 	},
 	"rack": {
@@ -96,7 +92,6 @@
 		"mat": "wood",
 		"vitality": 20,
 		"armor": 3,
-		"weight": 5,
 		"col": 6,
 	},
 	"air conditioner": {
@@ -104,13 +99,11 @@
 		"mat": "metal",
 		"vitality": 20,
 		"armor": 12,
-		"weight": 12,
 		"col": 6,
 	},
 	"anvil": {
 		"img": "tiles/anvil",
 		"mat": "metal",
-		"weight": 16,
 		"col": 6,
 	},
 	"forge": {
@@ -118,7 +111,6 @@
 		"mat": "metal",
 		"vitality": 20,
 		"armor": 12,
-		"weight": 16,
 		"col": 6,
 	},
 	"street light": {
@@ -128,7 +120,6 @@
 		"vitality": 20,
 		"armor": 8,
 		"light": 12,
-		"weight": 15,
 	},
 	"lamp": {
 		"img": "tiles/lamp",
@@ -137,7 +128,6 @@
 		"vitality": 4,
 		"armor": 3,
 		"light": 6,
-		"weight": 2,
 	},
 	"stairup": {
 		"img": "tiles/stairup",
@@ -169,14 +159,12 @@
 		"col": 4,
 		"armor": 3,
 		"light": 5,
-		"weight": 10,
 		"ondie": [["make", "dead campfire", "$hp"]],
 	},
 	"dead campfire": {
 		"img": "tiles/campfire",
 		"mat": "wood",
 		"slow": 0.5,
-		"weight": 10,
 		"col": 0,
 	},
 	"window curtain": {
@@ -337,7 +325,6 @@
 		"col": 7,
 		"vitality": 10,
 		"armor": 2,
-		"weight": 12,
 		"oninteract": [["make", "g_books", "$hp"],["loot", "$hp"],["*-","$h","oninteract"]],
 	},
 	"mirror": {
@@ -345,7 +332,6 @@
 		"mat": "glass",
 		"vitality": 2,
 		"armor": 1,
-		"weight": 12,
 		"col": 7,
 	},
 	"oven": {
@@ -353,7 +339,6 @@
 		"mat": "metal",
 		"vitality": 20,
 		"armor": 6,
-		"weight": 16,
 		"col": 6,
 	},
 	"fridge": {
@@ -361,7 +346,6 @@
 		"mat": "metal",
 		"vitality": 20,
 		"armor": 8,
-		"weight": 12,
 		"col": 7,
 		"oninteract": [["make", "g_foods", "$hp"],["loot", "$hp"],["*-","$h","oninteract"]],
 	},
@@ -411,7 +395,6 @@
 	"crate": {
 		"img": "tiles/crate",
 		"mat": "wood",
-		"weight": 5,
 		"vitality": 10,
 		"armor": 2,
 		"col": 6,
@@ -420,7 +403,6 @@
 		"img": "tiles/chest",
 		"mat": "wood",
 		"slow": 0.5,
-		"weight": 5,
 		"vitality": 20,
 		"armor": 6,
 		"col": 2,
@@ -429,7 +411,6 @@
 	"dresser": {
 		"img": "tiles/dresser",
 		"mat": "wood",
-		"weight": 5,
 		"vitality": 20,
 		"armor": 2,
 		"col": 6,
@@ -438,7 +419,6 @@
 	"wardrobe": {
 		"img": "tiles/wardrobe",
 		"mat": "wood",
-		"weight": 5,
 		"vitality": 20,
 		"armor": 2,
 		"col": 7,
@@ -492,7 +472,6 @@
 		"mat": "cloth",
 		"slow": 0.5,
 		"vitality": 30,
-		"weight": 8,
 		"col": 2,
 	},
 	"table": {
@@ -509,7 +488,6 @@
 		"mat": "wood",
 		"slow": 0.5,
 		"vitality": 20,
-		"weight": 10,
 		"col": 2,
 	},
 	"counter": {
@@ -518,7 +496,6 @@
 		"mat": "wood",
 		"slow": 0.5,
 		"vitality": 40,
-		"weight": 12,
 		"col": 2,
 	},
 	"sandbag": {
@@ -528,7 +505,6 @@
 		"vitality": 100,
 		"armor": 8,
 		"slow": 0.8,
-		"weight": 12,
 		"col": 0,
 	},
 	"privacy_fence": {
@@ -619,7 +595,6 @@
 		"slow": 0.5,
 		"vitality": 20,
 		"armor": 12,
-		"weight": 10,
 		"col": 2,
 	},
 	"pit": {
@@ -628,13 +603,5 @@
 		"mat": "other",
 		"slow": 0.5,
 		"col": 0,
-	},
-	"corpse": {
-		"weight": 5,
-		"vitality": 1,
-		"mat": "flesh",
-		"turn": 256,
-		"onturn": [["remove","$h"]],
-		"desc": "A corpse."
 	},
 }

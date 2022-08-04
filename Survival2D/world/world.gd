@@ -54,9 +54,9 @@ func create(_type):
 	process_onload()
 	$Borders.position = Vector2(size.x * G.HW, size.y * G.HH)
 	$Borders/Left.position = Vector2(size.x * -G.HW - G.W, 0)
-	$Borders/Right.position = Vector2(size.x * G.HW, 0)
+	$Borders/Right.position = Vector2(size.x * G.HW + G.W, 0)
 	$Borders/Top.position = Vector2(0, size.y * -G.HH - G.H)
-	$Borders/Bottom.position = Vector2(0, size.y * G.HH)
+	$Borders/Bottom.position = Vector2(0, size.y * G.HH + G.H)
 
 func get_items_by_name(p):
 	var r = []
@@ -92,8 +92,12 @@ func set_dark(tile):
 		shademap.set_cell(tile.x, tile.y, 1)
 
 func set_light(tile):
-	tile.set_visible(true)
-	shademap.set_cell(tile.x, tile.y, -1)
+	if !tile.visible:
+		tile.set_visible(true)
+		if shademap.get_cell(tile.x, tile.y) == 2:
+			if G.temp.discover != null:
+				G.cmds(G.temp.discover, G.you.unit, tile)
+		shademap.set_cell(tile.x, tile.y, -1)
 
 func create_map(sx, sy):
 	size = Vector2(sx, sy)

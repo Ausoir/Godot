@@ -4,8 +4,8 @@ const QUADRANT_FLIP = [[1, 0, 1, 0],[0, 1, 1, 0],[1, 0, 0, 1],[0, 1, 0, 1]]
 const QUADRANT_ALL = [1, 1, 1, 1]
 
 var processing_frame: int
-var sight_range = 7
-var sight_range_y = 5
+var sight_range = -1
+var sight_range_y = -1
 var sight_ratio = .7
 var sight_frame = 0
 var sight_bits = 1
@@ -55,7 +55,7 @@ func stop_process():
 
 func set_sight(p, p_col=1):
 	var new_sight_range = min(12, p)
-	var new_sight_range_y = int(sight_range * sight_ratio)
+	var new_sight_range_y = int(new_sight_range * sight_ratio)
 	var new_sight_bits = p_col
 	if new_sight_range != sight_range or new_sight_bits != sight_bits:
 		darken()
@@ -65,6 +65,9 @@ func set_sight(p, p_col=1):
 		return true
 
 func update(last_pos, pos):
+	if processing_frame != -2:
+		for _i in range(processing_frame - 3):
+			_process(0)
 	param_last_pos = last_pos
 	param_pos = pos
 	processing_frame = -1

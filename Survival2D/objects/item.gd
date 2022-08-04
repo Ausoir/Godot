@@ -123,7 +123,7 @@ func autotilize():
 			var adj = pos.get_adjacent(i * 2)
 			var items = adj.get_items_by_name(item_name)
 			if !items.empty():
-				dirs.append_array(items)
+				dirs.append(i)
 		var v = G.get_autotile_coord(dirs)
 		self.region_rect.position = v * 32
 
@@ -155,6 +155,16 @@ func on_change(p):
 		if col != oldcol:
 			update_col(col)
 		flags = dat.g("flags", [])
+		if dat.g("onmake") != null:
+			if !G.world.turn.has(self):
+				G.world.turn.add(self)
+				turns = -1
+		elif dat.g("onturn") != null:
+			if !G.world.turn.has(self):
+				G.world.turn.add(self)
+		else:
+			if G.world.turn.has(self):
+				G.world.turn.remove(self)
 
 func update_col(p):
 	if n_collider != null:
@@ -165,13 +175,16 @@ func update_col(p):
 		n_collider.collision_layer = p
 
 func on_turn():
-	turns += 1
-	if turns > dat.g("turn", 0):
-		if turns == 1 and dat.g("onmake") != null:
+	if turns == -1:
+		if dat.g("onmake") != null:
 			dat.run(self, "onmake")
 			if dat.g("onturn") == null:
 				G.world.turn.remove(self)
 				return
+			else:
+				turns = 0
+	turns += 1
+	if turns > dat.g("turn", 0):
 		dat.run(self, "onturn")
 		turns = 0
 

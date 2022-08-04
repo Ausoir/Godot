@@ -1,8 +1,11 @@
 extends "res://objects/controller.gd"
 
+const Step = preload("res://view/Step.tscn")
+
 onready var control = preload("res://objects/controller.gd")
 onready var n_camera = $Camera
 onready var n_cursor = $Cursor
+onready var n_steps = $Steps
 
 var last_pos
 var aiming = -1
@@ -24,7 +27,7 @@ func on_change(p):
 		G.ui.menu.update_equipment()
 		G.ui.menu.update_inventory()
 		pathing.can_open = false
-		pathing.smash_to = 0
+		pathing.smash_to = -1
 		pathing.iterations = 32
 		pathing.pathing_times = 0
 	G.ui.update_hud()
@@ -49,21 +52,21 @@ func get_mouse():
 
 func _on_input(event: InputEvent):
 	if event is InputEventScreenDrag:
-		events[event.index] = event
-		if events.size() == 2:
-			var drag_distance = events[0].position.distance_to(events[1].position)
-			if abs(drag_distance - last_drag_dist) > 10:
-				var new_zoom = .95
-				if drag_distance < last_drag_dist:
-					new_zoom = 1.05
-				new_zoom = clamp(n_camera.zoom.x * new_zoom, .5, 2)
-				n_camera.zoom = Vector2.ONE * new_zoom
-				last_drag_dist = drag_distance
-		elif events.size() == 1:
-			if interruptible:
-				tasks = [["moveto", get_mouse(), 64]]
+		if unhandled_input:
+			events[event.index] = event
+			if events.size() == 2:
+				var drag_distance = events[0].position.distance_to(events[1].position)
+				if abs(drag_distance - last_drag_dist) > 10:
+					var new_zoom = .95
+					if drag_distance < last_drag_dist:
+						new_zoom = 1.05
+					new_zoom = clamp(n_camera.zoom.x * new_zoom, .5, 2)
+					n_camera.zoom = Vector2.ONE * new_zoom
+					last_drag_dist = drag_distance
+			elif aiming != -1:
+				n_cursor.position = get_mouse()
 	elif event is InputEventMouseButton:
-		if event.is_pressed():
+		if event.is_pressed() and !G.ui.on:
 			unhandled_input = true
 			if event.button_index == BUTTON_WHEEL_UP:
 				if n_camera.zoom.x > .5:
@@ -71,30 +74,17 @@ func _on_input(event: InputEvent):
 			elif event.button_index == BUTTON_WHEEL_DOWN:
 				if n_camera.zoom.x < 2:
 					n_camera.zoom *= 1.2
-			elif aiming != -1:
-				n_cursor.position = get_mouse()
-			else:
+			elif aiming == -1:
 				var screen_mouse = G.ui.mouse_pos
 				screen_mouse -= G.ui.screen_size / 2
-				if screen_mouse.length_squared() < G.HW * G.HH:
+				if screen_mouse.length_squared() < G.W * G.H:
 					G.cmds([["menu", "menu", -1]], unit)
-				else:
-					var mtile = G.pixel_to_pos(get_mouse())
-					var tile = G.world.get_tile(mtile.x, mtile.y)
-					if tile != null and !tile.items.empty():
-						if tile.distance_to(unit.pos) <= 1 and tile != unit.pos:
-							if n_camera.zoom.x <= .5:
-								tasks = [["smash", tile]]
-							else:
-								tasks = [["interact", tile]]
-						else:
-							tasks = [["path", tile],["interact",tile]]
-					elif interruptible:
-						tasks = [["moveto", get_mouse(), 64]]
+			else:
+				n_cursor.show()
+				n_cursor.position = get_mouse()
 		else:
-			unhandled_input = false
 			events.clear()
-			if interruptible:
+			if interruptible and unhandled_input:
 				if aiming != -1:
 					var mtile = G.pixel_to_pos(get_mouse())
 					var tile = G.world.fit_bound(mtile.x, mtile.y)
@@ -104,8 +94,20 @@ func _on_input(event: InputEvent):
 					else:
 						tasks = [["ability", aiming, tile.position]]
 					stop_aim()
-				elif !tasks.empty() and tasks[0][0] == "moveto":
-					tasks.clear()
+				else:
+					var mtile = G.pixel_to_pos(get_mouse())
+					var tile = G.world.get_tile(mtile.x, mtile.y)
+					if tile != null and !tile.items.empty():
+						if tile.distance_to(unit.pos) <= 1 and tile != unit.pos:
+							if n_camera.zoom.x <= .5:
+								tasks = [["smash", tile]]
+							else:
+								tasks = [["interact", tile]]
+						elif tile.visible:
+							move_and_interact(tile)
+					elif !tasks.empty() and tasks[0][0] == "moveto":
+						tasks.clear()
+			unhandled_input = false
 
 func _physics_process(_delta):
 	n_camera.position = unit.n_collider.global_position
@@ -129,8 +131,10 @@ func _physics_process(_delta):
 			dir = 2
 		elif Input.is_action_pressed("move_left"):
 			dir = 6
-		if dir != -1:
-			if interruptible:
+		if interruptible and aiming == -1:
+			if unhandled_input and Input.is_action_pressed("use"):
+				tasks = [["moveto", get_mouse(), 64]]
+			elif dir != -1:
 				var to = G.DIRS[dir]
 				tasks = [["move", to[0] * 10, to[1] * 10]]
 
@@ -141,6 +145,8 @@ func on_turn():
 			tasks = [["attack", colld]]
 	var cds = !unit.cooldowns.empty()
 	.on_turn()
+	remove_steps()
+	show_steps()
 	if view_dirty or last_pos != unit.pos:
 		n_camera.update(last_pos, unit.pos)
 		view_dirty = false
@@ -154,23 +160,18 @@ func check_edge():
 	var edge = unit.pos.get_edge()
 	if edge != -1:
 		var farside = false
+		var complete = G.temp.get("complete")
 		if "enterside" in G.temp:
-			if G.temp.enterside == G.get_dir_to_cardinal_string(edge) and G.time.seconds > 3:
-				tasks.append(["return", 3])
-				return
-			if G.temp.enterside == "west" and edge == 3:
-				farside = true
-			elif G.temp.enterside == "east" and edge == 1:
-				farside = true
-			elif G.temp.enterside == "north" and edge == 0:
-				farside = true
-			elif G.temp.enterside == "south" and edge == 2:
+			if G.temp.enterside == G.get_dir_to_cardinal_string(edge):
+				if G.time.seconds > 3:
+					tasks.append(["exit", 3, false])
+					return
+			elif G.temp.enterside == G.get_dir_to_cardinal_string(edge+2):
 				farside = true
 		else:
 			farside = true
-		var complete = G.temp.get("complete")
 		if farside and complete:
-			tasks.append(["exit", 3])
+			tasks.append(["exit", 3, complete])
 
 func check_nearby_interactibles():
 	if unit.dat.g("type") != "other":
@@ -212,8 +213,13 @@ func interact(item):
 			elif item.controller != null:
 				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
 
+func move_and_interact(tile):
+	path_to(tile, 1)
+	remove_steps()
+	show_steps()
+	tasks.append(["interact", tile])
+
 func aim_ability(idx):
-	n_cursor.show()
 	Input.set_default_cursor_shape(Input.CURSOR_CROSS)
 	aiming = idx
 
@@ -222,6 +228,23 @@ func stop_aim():
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	aiming = -1
 	G.ui.update_hud()
+
+func remove_steps():
+	for child in n_steps.get_children():
+		n_steps.remove_child(child)
+		child.queue_free()
+
+func show_steps():
+	var last_step = unit.pos.to_vector()
+	for task in tasks:
+		if task[0] == "path":
+			var step = Step.instance()
+			step.position = G.pos_to_pixel(task[1])
+			var new_step = task[1].to_vector()
+			var p = (new_step - last_step).angle()
+			step.rotate(p)
+			n_steps.add_child(step)
+			last_step = new_step
 
 func remove():
 	if unit.get_health() <= 0:
