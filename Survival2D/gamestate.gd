@@ -26,7 +26,6 @@ func level_select():
 	start_game()
 
 func end_game():
-	save_game()
 	get_tree().notification(MainLoop.NOTIFICATION_WM_QUIT_REQUEST)
 
 func restart():
@@ -58,7 +57,7 @@ func save_game():
 	save_game.open("user://savegame.save", File.WRITE)
 	if "dead" in G.vars:
 		save_game.store_line("")
-	else:
+	elif G.you.unit != null:
 		G.vars["seed"] = R.init_seed
 		save_game.store_line(to_json(G.vars))
 		var node_data = G.you.save_data()

@@ -166,8 +166,6 @@ func update_status():
 
 func display_time():
 	var hour = int(G.vars.time / 60) % 24
-	n_time.rect_position.x = G.ui.screen_size.x / 2
-	n_time.rect_position.y = G.ui.screen_size.y - 64
 	var minute = int(G.vars.time) % 60
 	if minute < 10:
 		minute = "0" + str(minute)

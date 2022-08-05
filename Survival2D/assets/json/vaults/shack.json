@@ -14,7 +14,7 @@
 		{
 			"_": ["wood floor"],
 			"#": ["log wall"],
-			"B": ["wood floor", ["bookcase", 50]],
+			"B": ["wood floor", ["bookcase", 0.5]],
 		}
 	],
 	[
@@ -29,8 +29,8 @@
 		{
 			"_": ["wood floor"],
 			"#": ["log wall"],
-			"b": ["wood floor", ["straw bed", 66]],
-			"c": ["wood floor", ["crate", 50]],
+			"b": ["wood floor", ["straw bed", 0.66]],
+			"c": ["wood floor", ["crate", 0.5]],
 		}
 	],
 	[
@@ -48,11 +48,11 @@
 		{
 			"_": ["wood floor"],
 			"#": ["log wall"],
-			"s": ["wood floor", ["logstool", 100]],
-			"O": ["wood floor", ["oven", 100]],
-			"C": ["wood floor", ["counter", 100]],
-			"X": ["wood floor", ["trashcan", 50]],
-			"T": ["wood floor", ["table", 100]],
+			"s": ["wood floor", ["logstool", 1]],
+			"O": ["wood floor", ["oven", 1]],
+			"C": ["wood floor", ["counter", 1]],
+			"X": ["wood floor", ["trashcan", 0.5]],
+			"T": ["wood floor", ["table", 1]],
 		}
 	],
 	[
@@ -69,14 +69,14 @@
 		{
 			"_": ["wood floor"],
 			"#": ["log wall"],
-			"s": ["wood floor", ["logstool", 100]],
-			"T": ["wood floor", ["table", 100]],
-			"b": ["wood floor", ["straw bed", 66]],
-			"B": ["wood floor", ["bookcase", 50]],
-			"W": ["wood floor", ["wardrobe", 100]],
-			"C": ["wood floor", ["counter", 100]],
-			"X": ["wood floor", ["trashcan", 50]],
-			"c": ["wood floor", ["chest", 100]],
+			"s": ["wood floor", ["logstool", 1]],
+			"T": ["wood floor", ["table", 1]],
+			"b": ["wood floor", ["straw bed", 0.66]],
+			"B": ["wood floor", ["bookcase", 0.5]],
+			"W": ["wood floor", ["wardrobe", 1]],
+			"C": ["wood floor", ["counter", 1]],
+			"X": ["wood floor", ["trashcan", 0.5]],
+			"c": ["wood floor", ["chest", 1]],
 		}
 	],
 	[
@@ -91,8 +91,8 @@
 			"--------",
 		],
 		{
-			"*": ["dirt", ["crop", 95]],
-			"-": ["dirt", ["wire", 100]],
+			"*": ["dirt", ["crop", 0.95]],
+			"-": ["dirt", ["wire", 1]],
 		}
 	],
 	[
@@ -107,8 +107,8 @@
 			"---------",
 		],
 		{
-			"*": ["dirt", ["crop", 95]],
-			"-": ["dirt", ["wire", 100]],
+			"*": ["dirt", ["crop", 0.95]],
+			"-": ["dirt", ["wire", 1]],
 		}
 	],
 	[
@@ -125,17 +125,17 @@
 		{
 			"#": ["log wall"],
 			".": ["wood floor"],
-			"T": ["wood floor", ["table", 100]],
-			"c": ["wood floor", ["logstool", 100]],
-			"/": ["wood floor", ["window", 100]],
-			"C": ["wood floor", ["counter", 100]],
-			"F": ["wood floor", ["campfire", 100]],
-			"0": ["wood floor", ["crate", 80]],
-			"B": ["wood floor", ["straw bed", 100]],
-			"t": ["dirt", ["tank", 100]],
-			"s": ["dirt", ["logstool", 100]],
-			"=": ["wood floor", ["bead door", 50]],
-			"L": ["wood floor", ["chest", 50]],
+			"T": ["wood floor", ["table", 1]],
+			"c": ["wood floor", ["logstool", 1]],
+			"/": ["wood floor", ["window", 1]],
+			"C": ["wood floor", ["counter", 1]],
+			"F": ["wood floor", ["campfire", 1]],
+			"0": ["wood floor", ["crate", 0.8]],
+			"B": ["wood floor", ["straw bed", 1]],
+			"t": ["dirt", ["tank", 1]],
+			"s": ["dirt", ["logstool", 1]],
+			"=": ["wood floor", ["bead door", 0.5]],
+			"L": ["wood floor", ["chest", 0.5]],
 		}
 	],
 	[
@@ -152,17 +152,17 @@
 		{
 			"#": ["log wall"],
 			".": ["wood floor"],
-			"T": ["wood floor", ["table", 100]],
-			"c": ["wood floor", ["chair", 50]],
-			"/": ["wood floor", ["window", 100]],
-			"C": ["wood floor", ["crate", 80]],
-			"B": ["wood floor", ["bed", 100]],
-			"A": ["dirt", ["anvil", 100]],
-			"F": ["dirt", ["forge", 100]],
-			"t": ["dirt", ["tank", 100]],
-			"s": ["dirt", ["logstool", 100]],
-			"=": ["wood floor", ["bead door", 50]],
-			"L": ["wood floor", ["chest", 50]],
+			"T": ["wood floor", ["table", 1]],
+			"c": ["wood floor", ["chair", 0.5]],
+			"/": ["wood floor", ["window", 1]],
+			"C": ["wood floor", ["crate", 0.8]],
+			"B": ["wood floor", ["bed", 1]],
+			"A": ["dirt", ["anvil", 1]],
+			"F": ["dirt", ["forge", 1]],
+			"t": ["dirt", ["tank", 1]],
+			"s": ["dirt", ["logstool", 1]],
+			"=": ["wood floor", ["bead door", 0.5]],
+			"L": ["wood floor", ["chest", 0.5]],
 		}
 	],
 	[
@@ -180,19 +180,19 @@
 		{
 			"#": ["log wall"],
 			".": ["wood floor"],
-			"T": ["wood floor", ["table", 100]],
-			"c": ["wood floor", ["logstool", 50]],
-			"b": ["wood floor", ["bulletin", 100]],
-			"k": ["wood floor", ["logstool", 100]],
-			"/": ["wood floor", ["window", 100]],
-			"C": ["wood floor", ["counter", 100]],
-			"F": ["wood floor", ["campfire", 100]],
-			"0": ["wood floor", ["crate", 80]],
-			"B": ["wood floor", ["bed", 100]],
-			"t": ["dirt", ["tank", 100]],
-			"s": ["dirt", ["logstool", 100]],
-			"=": ["wood floor", ["bead door", 50]],
-			"L": ["wood floor", ["crate", 50]],
+			"T": ["wood floor", ["table", 1]],
+			"c": ["wood floor", ["logstool", 0.5]],
+			"b": ["wood floor", ["bulletin", 1]],
+			"k": ["wood floor", ["logstool", 1]],
+			"/": ["wood floor", ["window", 1]],
+			"C": ["wood floor", ["counter", 1]],
+			"F": ["wood floor", ["campfire", 1]],
+			"0": ["wood floor", ["crate", 0.8]],
+			"B": ["wood floor", ["bed", 1]],
+			"t": ["dirt", ["tank", 1]],
+			"s": ["dirt", ["logstool", 1]],
+			"=": ["wood floor", ["bead door", 0.5]],
+			"L": ["wood floor", ["crate", 0.5]],
 		}
 	],
 	[
@@ -209,18 +209,18 @@
 		{
 			"#": ["log wall"],
 			".": ["wood floor"],
-			"T": ["wood floor", ["table", 100]],
-			"c": ["wood floor", ["logstool", 100]],
-			"/": ["wood floor", ["window", 100]],
-			"C": ["wood floor", ["counter", 100]],
-			"F": ["wood floor", ["campfire", 100]],
-			"0": ["wood floor", ["crate", 80]],
-			"B": ["wood floor", ["straw bed", 100]],
-			"t": ["dirt", ["tank", 100]],
-			"s": ["dirt", ["logstool", 100]],
-			"=": ["wood floor", ["bead door", 50]],
-			"l": ["wood floor", ["crate", 50]],
-			"L": ["wood floor", ["chest", 50]],
+			"T": ["wood floor", ["table", 1]],
+			"c": ["wood floor", ["logstool", 1]],
+			"/": ["wood floor", ["window", 1]],
+			"C": ["wood floor", ["counter", 1]],
+			"F": ["wood floor", ["campfire", 1]],
+			"0": ["wood floor", ["crate", 0.8]],
+			"B": ["wood floor", ["straw bed", 1]],
+			"t": ["dirt", ["tank", 1]],
+			"s": ["dirt", ["logstool", 1]],
+			"=": ["wood floor", ["bead door", 0.5]],
+			"l": ["wood floor", ["crate", 0.5]],
+			"L": ["wood floor", ["chest", 0.5]],
 		}
 	],
 ]

@@ -78,6 +78,7 @@ func on_loading():
 		G.vars.erase("load_data")
 	else:
 		push_error("No spawn points found")
+	G.vars.map.prev = G.vars.map.current
 	G.vars.map.current = position
 	G.temp.enterside = G.get_dir_to_cardinal_string(side)
 	G.temp.area = area

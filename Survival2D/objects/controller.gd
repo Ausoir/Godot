@@ -91,9 +91,15 @@ func perform(task):
 		G.cmds(task[1], task[2], task[3])
 	elif task[0] == "exit":
 		if self == G.you:
+			var complete = G.temp.complete
+			if task.size() > 2:
+				complete = task[2]
 			if task[1] < 1:
-				if task[2]:
-					G.msg("Level Complete!")
+				if complete:
+					G.vars.map.complete.append(G.vars.map.current)
+					G.custom.run("save", null)
+				else:
+					G.vars.map.current = G.vars.map.prev
 				G.custom.run("level select", null)
 			else:
 				var adjs = unit.pos.get_available_adjacents(1)
@@ -101,7 +107,7 @@ func perform(task):
 					for i in tile.items:
 						if i.item_type == "unit" and i.faction != unit.faction:
 							return
-				if task[2]:
+				if complete:
 					G.msg("Leaving map..." + str(task[1]))
 				else:
 					G.msg("Returning..." + str(task[1]))
@@ -145,7 +151,7 @@ func interact_tile(_tile):
 					return true
 
 func interact(item):
-	var onuse = item.dat.g("onuse")
+	var onuse = item.dat.g("oninteract")
 	if onuse != null:
 		if pathing.can_open:
 			if unit == G.you.unit:

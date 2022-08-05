@@ -13,8 +13,8 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
-			"l": ["gray tile", ["chest", 20, "+", ["g_loot", 95]]],
+			"=": ["gray tile", ["bead door", 1]],
+			"l": ["gray tile", ["chest", 0.2, "+", ["g_loot", 0.95]]],
 		}
 	],
 	[
@@ -31,8 +31,8 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
-			"l": ["gray tile", ["chest", 30, "+", ["g_loot", 95]]],
+			"=": ["gray tile", ["bead door", 1]],
+			"l": ["gray tile", ["chest", 0.3, "+", ["g_loot", 0.95]]],
 		}
 	],
 	[
@@ -49,7 +49,7 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
+			"=": ["gray tile", ["bead door", 1]],
 		}
 	],
 	[
@@ -66,7 +66,7 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
+			"=": ["gray tile", ["bead door", 1]],
 		}
 	],
 	[
@@ -83,7 +83,7 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
+			"=": ["gray tile", ["bead door", 1]],
 		}
 	],
 	[
@@ -100,8 +100,8 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
-			"D": ["gray tile", ["door", 100]],
+			"=": ["gray tile", ["bead door", 1]],
+			"D": ["gray tile", ["door", 1]],
 		}
 	],
 	[
@@ -134,7 +134,7 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"l": ["gray tile", ["chest", 25, "+", ["g_loot", 95]]],
+			"l": ["gray tile", ["chest", 0.25, "+", ["g_loot", 0.95]]],
 		}
 	],
 	[
@@ -167,8 +167,8 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
-			"l": ["gray tile", ["chest", 30, "+", ["g_loot", 95]]],
+			"=": ["gray tile", ["bead door", 1]],
+			"l": ["gray tile", ["chest", 0.3, "+", ["g_loot", 0.95]]],
 		}
 	],
 	[
@@ -185,8 +185,8 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
-			"l": ["gray tile", ["chest", 40, "+", ["g_loot", 95]]],
+			"=": ["gray tile", ["bead door", 1]],
+			"l": ["gray tile", ["chest", 0.4, "+", ["g_loot", 0.95]]],
 		}
 	],
 	[
@@ -203,8 +203,8 @@
 		{
 			" ": ["gray tile"],
 			"#": ["soil"],
-			"=": ["gray tile", ["bead door", 100]],
-			"l": ["gray tile", ["chest", 50, "+", ["g_loot", 95]]],
+			"=": ["gray tile", ["bead door", 1]],
+			"l": ["gray tile", ["chest", 0.5, "+", ["g_loot", 0.95]]],
 		}
 	],
 	[
@@ -221,11 +221,11 @@
 		{
 			" ": ["gray tile"],
 			".": ["wood floor", ["potlight", 3]],
-			"b": ["wood floor", ["straw bed", 90, "+", ["trader", 10, "/", ["scav", 95, "/", ["storagekeep", 5, "/", ["dormkeep", 3]]]]]],
-			"c": ["wood floor", ["crate", 90]],
-			"C": ["wood floor", ["campfire", 100]],
-			"B": ["wood floor", ["sandbag", 97]],
-			"D": ["wood floor", ["door", 100]],
+			"b": ["wood floor", ["straw bed", 0.9, "+", ["trader", 0.1, "/", ["scav", 0.95, "/", ["storagekeep", 0.05, "/", ["dormkeep", 0.03]]]]]],
+			"c": ["wood floor", ["crate", 0.9]],
+			"C": ["wood floor", ["campfire", 1]],
+			"B": ["wood floor", ["sandbag", 0.97]],
+			"D": ["wood floor", ["door", 1]],
 		}
 	],
 	[

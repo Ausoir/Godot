@@ -168,6 +168,7 @@
 		"mat": "cotton",
 		"space": 4,
 		"weight": 0,
+		"charisma": 1,
 		"desc": "A fancy suit with many pockets."
 	},
 	"suspenders": {
@@ -186,7 +187,6 @@
 		"sprite": "overlay/body_casual",
 		"part": "body",
 		"gender": true,
-		"skills": ["headbutt"],
 		"mat": "cotton",
 		"space": 2,
 		"weight": 0,
@@ -196,7 +196,7 @@
 		"img": "loot",
 		"sprite": "overlay/body_gi",
 		"part": "body",
-		"skills": ["quick strike"],
+		"skills": ["dodge"],
 		"mat": "cotton",
 		"space": 1,
 		"weight": 0,

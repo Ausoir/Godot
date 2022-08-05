@@ -3,6 +3,7 @@ extends Control
 var state = 0
 
 func _ready():
+	R.set_seed()
 	state = 0
 	var screen_size = get_viewport().get_size_override()
 	$Label.rect_position.x = screen_size.x / 2 - $Label.rect_size.x / 2

@@ -156,6 +156,8 @@ func run(p, host):
 			G.ui.display(args[2])
 		elif args[1] == "dialog":
 			G.ui.display_dialog(args[2], host)
+		elif args[1] == "confirm":
+			G.ui.popup(args[2], args[3])
 		else:
 			G.ui.clear()
 	elif command == "gfx":

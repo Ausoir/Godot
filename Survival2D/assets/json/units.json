@@ -70,7 +70,7 @@
 		"perception": 6,
 		"value": 3,
 		"abilities": ["tackle"],
-		"skills": ["quick strike", "bash", "parry"],
+		"skills": ["quick strike", "bash"],
 		"flags": [],
 		"faction": 2,
 	},

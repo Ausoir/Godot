@@ -6,6 +6,7 @@ var height
 var base
 var output
 var spawn_points = []
+var post_process_cmd
 
 func create(x, y):
 	G.world.spawn_points = []
@@ -29,6 +30,7 @@ func paint_map():
 					var list = G.data.get_combo(value[i])
 					for item in list:
 						G.cmds([["make", item, G.world.tiles[y][x]]])
+	G.cmds(post_process_cmd)
 
 func palette_assign(fromx, fromy, tox, toy):
 	for y in range(fromy, toy+1):

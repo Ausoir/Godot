@@ -69,7 +69,7 @@ func _on_gui_input(event):
 func activate():
 	if mode == MODE_NORMAL:
 		G.ui.unselect_skills()
-		if skill_type == "self":
+		if skill_type == "self" or skill_type == "near":
 			G.you.tasks = [["ability", skill_index, G.you.unit.position]]
 		elif skill_type == "item":
 			if skill.dat.g("aimable") != null:
@@ -84,7 +84,7 @@ func activate():
 			set_mode(MODE_SELECTED)
 			G.you.aim_ability(skill_index)
 	elif mode == MODE_SELECTED:
-		if skill_type != "self":
+		if skill_type != "self" and skill_type != "near":
 			set_mode(MODE_NORMAL)
 			G.you.stop_aim()
 	elif mode == MODE_ACTIVE:

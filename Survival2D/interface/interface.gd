@@ -2,6 +2,7 @@ extends CanvasLayer
 
 const AbilitySlot = preload("res://interface/AbilitySlot.tscn")
 const BuffSlot = preload("res://interface/BuffSlot.tscn")
+const Confirm = preload("res://interface/Popup.tscn")
 onready var menu = $Control/Menu
 onready var dialog = $Control/Dialog
 onready var message = $Control/Message
@@ -136,3 +137,8 @@ func _update_cooldowns(cds):
 		if ability.skill in cds:
 			ability._update_cooldown(cds[ability.skill])
 			menu.update_inventory()
+
+func popup(text, onconfirm):
+	var t = Confirm.instance()
+	add_child(t)
+	t.make(text, onconfirm)

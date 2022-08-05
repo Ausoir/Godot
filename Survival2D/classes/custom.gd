@@ -1,12 +1,14 @@
 #Hardcoded events
 
 func run(p, _params):
-	if p == "start menu":
+	if p == "save":
 		gamestate.save_game()
+	elif p == "start menu":
 		gamestate.restart()
 	elif p == "level select":
-		gamestate.save_game()
 		gamestate.level_select()
+	elif p == "end game":
+		gamestate.end_game()
 	elif p == "respawn":
 		var pos = _params[0].pos
 		if G.you.unit.pos == pos:

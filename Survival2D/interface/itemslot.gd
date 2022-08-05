@@ -24,7 +24,7 @@ func make_mode(ppart, p):
 		set_bbcode(txt)
 
 func check_weight(_item):
-	if part != "none" or G.you.unit.can_carry(item.dat.g("weight", 0)):
+	if part != "none" or G.you.unit.can_carry(item.dat.g("weight", -1)):
 		return true
 	else:
 		G.msg("Too heavy!")

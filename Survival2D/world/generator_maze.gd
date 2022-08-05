@@ -4,6 +4,7 @@ var _stack = []
 var size
 
 func generate_lab():
+	post_process_cmd = [["make","stairdown","$R15"], ["make","stairup","$R15"]]
 	generate_maze(24, 24)
 	place_output()
 	place_buildings()

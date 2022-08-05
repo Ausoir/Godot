@@ -68,7 +68,7 @@ func display_item(header, item):
 	on_display(header, desc)
 
 func display_skill(header, skill):
-	var desc = "[color=#FB3]"+ str(skill.get("chance", 100)) +"% Chance[/color]\n"
+	var desc = "[color=#FB3]"+ str(skill.get("chance", 1)*100) +"% Chance[/color]\n"
 	if "block" in skill:
 		desc += "[color=#CC3]"+ str(skill.block) +" Block[/color]\n"
 	desc += "[color=#1B9]"+ str(skill.get("delay", 0)) +" Turns[/color]\n"

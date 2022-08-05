@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=1507 format=2]
+[gd_resource type="Theme" load_steps=1506 format=2]
 
 [ext_resource path="res://assets/font2.tres" type="DynamicFont" id=1]
 
@@ -11347,21 +11347,6 @@ content_margin_top = 0.0
 content_margin_bottom = 0.0
 bg_color = Color( 0.1, 0.115, 0.155, 1 )
 
-[sub_resource type="StyleBoxFlat" id=1500]
-content_margin_left = 8.0
-content_margin_right = 8.0
-content_margin_top = 8.0
-content_margin_bottom = 8.0
-bg_color = Color( 0.2, 0.23, 0.31, 1 )
-border_width_left = 1
-border_width_top = 24
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color( 0.2, 0.23, 0.31, 1 )
-expand_margin_top = 24.0
-shadow_color = Color( 0, 0, 0, 0.3 )
-shadow_size = 4
-
 [resource]
 default_font = ExtResource( 1 )
 BoxContainer/constants/separation = 4
@@ -12607,4 +12592,4 @@ WindowDialog/constants/title_height = 24
 WindowDialog/fonts/title_font = null
 WindowDialog/icons/close = SubResource( 592 )
 WindowDialog/icons/close_highlight = SubResource( 592 )
-WindowDialog/styles/panel = SubResource( 1500 )
+WindowDialog/styles/panel = SubResource( 9075 )

@@ -6,52 +6,52 @@
 	},
 	"captain": {
 		"unit": "human",
-		"equip": [["scalemail", 100], ["cutlass", 100]],
+		"equip": [["scalemail", 1], ["cutlass", 1]],
 		"dat": {"faction": 1},
 	},
 	"resident": {
 		"unit": "human",
-		"equip": [["casual", 90, "/", ["gi", 100]]],
-		"dat": {"goal": "wander", "faction": 1}
+		"equip": [["casual", 0.9, "/", ["gi", 1]]],
+		"dat": {"goal": "wander", "faction": 1, "oninteract": [["menu","confirm","Hire this unit for $50?", [[]]]]}
 	},
 	"librarian": {
 		"unit": "human",
-		"equip": [["gi", 100]],
+		"equip": [["gi", 1]],
 		"dat": {"onuse": [["menu", "dialog", "Librarian"]], "faction": 1}
 	},
 	"dormkeep": {
 		"unit": "human",
-		"equip": [["suit", 100]],
+		"equip": [["suit", 1]],
 		"dat": {"onuse": [["menu", "dialog", "Dormkeep"]], "faction": 1}
 	},
 	"trader": {
 		"unit": "human",
-		"equip": [["suit", 100], ["backpack", 50]],
+		"equip": [["suit", 1], ["backpack", 0.5]],
 		"dat": {"onuse": [["menu", "dialog", "Trader"]], "faction": 1}
 	},
 	"tavernkeep": {
 		"unit": "human",
-		"equip": [["suspenders", 100]],
+		"equip": [["suspenders", 1]],
 		"dat": {"faction": 1},
 	},
 	"scavenger": {
 		"unit": "human",
-		"equip": [["leather armor", 90, "/", ["scalemail", 100]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["cutlass",100]]]]]],
-		"dat": {"faction": 1},
+		"equip": [["leather armor", 0.9, "/", ["scalemail", 1]], ["backpack",0.1,"/",["rucksack", 0.05]], ["spear",0.25,"/",["bat",0.25,"/",["pipe",0.5,"/",["knife",0.5,"/",["cutlass",1]]]]]],
+		"dat": {"onuse": [["menu", "dialog", "Trader"]], "faction": 1, "oninteract": [["menu","confirm","Hire this unit for $50?", [[]]]]}
 	},
 	"looter": {
 		"unit": "human",
-		"equip": [["looter coat",20,"/",["gi", 100]], ["backpack",10,"/",["rucksack", 5]], ["spear",25,"/",["bat",25,"/",["pipe",50,"/",["knife",50,"/",["cutlass",100]]]]]],
+		"equip": [["looter coat",0.2,"/",["gi", 0.01]], ["backpack",0.1,"/",["rucksack", 0.05]], ["spear",0.25,"/",["bat",0.25,"/",["pipe",0.5,"/",["knife",0.5,"/",["cutlass",1]]]]]],
 		"dat": {"faction": 1},
 	},
 	"guard": {
 		"unit": "human",
-		"equip": [["scalemail",100],["assault rifle",100]],
+		"equip": [["scalemail",1],["assault rifle",1]],
 		"dat": {"perception": 6, "move speed": 0, "faction": 1}
 	},
 	"agent": {
 		"unit": "human",
-		"equip": [["suit", 100],["pistol",100]],
+		"equip": [["suit", 1],["pistol",1]],
 		"dat": {"move speed": 0, "faction": 1}
 	},
 	"lab turret": {
@@ -64,32 +64,32 @@
 	},
 	"lab guard": {
 		"unit": "human",
-		"equip": [["suit", 100],["assault rifle",100]],
+		"equip": [["suit", 1],["assault rifle",1]],
 		"dat": {"faction": 2}
 	},
 	"lab agent": {
 		"unit": "human",
-		"equip": [["suit", 100],["pistol",100]],
+		"equip": [["suit", 1],["pistol",1]],
 		"dat": {"faction": 2, "vitality": 50, "move speed": 70, "skills": ["dodge", "somersault", "quick strike", "quick strike", "parry"]}
 	},
 	"traitor": {
 		"unit": "human",
-		"equip": [["gi", 100],["hood",100],["pistol",100]],
-		"dat": {"faction": 2, "perception": 7, "skills": []}
+		"equip": [["gi", 1],["hood",1],["pistol",1]],
+		"dat": {"faction": 2, "perception": 7, "skills": [], "ondie": [["&=","complete",true]]}
 	},
 	"thief": {
 		"unit": "human",
-		"equip": [["looter coat", 100],["hood",100],["knife",100]],
-		"dat": {"faction": 2, "vitality": 20, "move speed": 70, "perception": 5, "skills": ["dodge", "bash"]}
+		"equip": [["looter coat", 1],["hood",1],["knife",1]],
+		"dat": {"faction": 2, "vitality": 20, "move speed": 70, "perception": 5, "skills": ["dodge", "bash"], "ondie": [["&=","complete",true]]}
 	},
 	"scientist": {
 		"unit": "human",
-		"equip": [["suit", 100],["hood",100],["laser rifle",100]],
-		"dat": {"faction": 2, "vitality": 30, "move speed": 40, "perception": 10, "skills": ["headbutt"]}
+		"equip": [["suit", 1],["hood",1],["laser rifle",1]],
+		"dat": {"faction": 2, "vitality": 30, "move speed": 40, "perception": 10, "skills": ["headbutt"], "ondie": [["&=","complete",true]]}
 	},
 	"experiment A1": {
 		"unit": "manzard",
-		"equip": [["scalemail", 100],["hood",100]],
-		"dat": {"faction": 2, "vitality": 60, "strength": 8, "move speed": 70, "perception": 8, "skills": ["dodge", "somersault", "swipe", "venomous bite", "parry"]}
+		"equip": [["scalemail", 1],["hood",1]],
+		"dat": {"faction": 2, "vitality": 60, "strength": 8, "move speed": 70, "perception": 8, "skills": ["dodge", "somersault", "swipe", "venomous bite", "parry"], "ondie": [["&=","complete",true]]}
 	},
 }

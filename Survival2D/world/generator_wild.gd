@@ -28,11 +28,12 @@ func generate(p):
 		complex = ["shack", 0, 3]
 	elif p == "caves":
 		spawns = [
-			[0, ['dirt', ['boulder', .01, '/', ['small boulder', .02]]]],
-			[.5, ["water"]],
-			[.55, ["rock wall"]],
+			[0, ["water"]],
+			[.2, ['dirt', ['boulder', .01, '/', ['small boulder', .02]]]],
+			[.65, ["rock wall"]],
 		]
 		make_border(WALL_TILE)
+		post_process_cmd = [["make","stairdown","$R15"], ["make","stairup","$R15"]]
 	for x in range(width):
 		for y in range(height):
 			var v = base[y][x]

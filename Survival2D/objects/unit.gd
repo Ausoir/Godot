@@ -222,6 +222,8 @@ func on_turn():
 		for i in cooldowns:
 			if cooldowns[i] <= 0:
 				cooldowns.erase(i)
+				if cooldowns.empty():
+					update_cooldowns()
 			else:
 				cooldowns[i] -= 1
 		if has_on_turn:
@@ -240,9 +242,9 @@ func face_toward(p):
 			face(-1)
 
 func die():
-	if self in pos.world.team:
-		var faction = dat.g("faction", -1)
-		if faction != -1:
+	var faction = dat.g("faction", -1)
+	if faction != -1:
+		if self in pos.world.team[faction]:
 			pos.world.team[faction].erase(self)
 	G.factory.make_corpse(self, pos)
 	remove()
@@ -258,16 +260,5 @@ func remove():
 	.remove()
 	buffs.remove()
 
-func move_world(wld):
-	var faction = dat.g("faction", -1)
-	if faction != -1:
-		pos.world.team[faction].erase(self)
-	.move_world(wld)
-	if faction != -1:
-		G.world.team[faction].append(self)
-	controller.tasks.clear()
-	if !G.world.turn.has(self):
-		G.world.turn.add(self)
-	if !buffs.states.empty():
-		if !G.world.turn.has(buffs):
-			G.world.turn.add(buffs)
+func update_cooldowns():
+	pass

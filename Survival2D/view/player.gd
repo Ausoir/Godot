@@ -41,8 +41,12 @@ func on_assign():
 func on_kill(_victim):
 	var money = R.ir(0, _victim.dat.g("value", 0))
 	if money > 0:
-		G.vars.money += money
-		G.display_damage("+$"+str(money), unit.position, Color.gold, 1, 250)
+		make_money(money)
+
+func make_money(p):
+	G.vars.money = G.vars.money+p
+	G.ui.menu.n_money.display(p)
+	G.display_damage("+$"+str(p), unit.position, Color.gold, 1, 250)
 
 func get_mouse():
 	var screen_mouse = G.ui.mouse_pos
@@ -143,7 +147,6 @@ func on_turn():
 		var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
 		if colld != null:
 			tasks = [["attack", colld]]
-	var cds = !unit.cooldowns.empty()
 	.on_turn()
 	remove_steps()
 	show_steps()
@@ -153,8 +156,9 @@ func on_turn():
 		last_pos = unit.pos
 		check_edge()
 	check_nearby_interactibles()
-	if cds:
-		G.ui._update_cooldowns(unit.cooldowns)
+
+func update_cooldowns():
+	G.ui._update_cooldowns(unit.cooldowns)
 
 func check_edge():
 	var edge = unit.pos.get_edge()
@@ -192,10 +196,6 @@ func check_nearby_interactibles():
 			interactables = ninteractables
 			G.ui.update_hud()
 
-func make_money(p):
-	G.vars.money = G.vars.money+p
-	G.ui.menu.n_money.display(p)
-
 func on_hit(_hitter):
 	if _hitter != null and target == null:
 		target = _hitter
@@ -205,13 +205,13 @@ func interact(item):
 		var oninteract = item.dat.g("oninteract")
 		if oninteract != null:
 			G.cmds(oninteract, item, unit)
-		elif item.item_type == "item":
-			G.ui.menu.search_inventory(item.pos)
 		elif item.item_type == "unit":
 			if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
 				tasks.append(["attack", item])
 			elif item.controller != null:
 				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
+		elif item.item_type == "item" and unit.can_carry(item.dat.g("weight",-1)):
+			G.ui.menu.search_inventory(item.pos)
 
 func move_and_interact(tile):
 	path_to(tile, 1)

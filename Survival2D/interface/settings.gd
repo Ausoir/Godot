@@ -6,14 +6,14 @@ func refresh():
 	$Top.set_bbcode(txt)
 
 	var txt2 = ""
-	txt2 += "[color=#942]Sound[/color]: [url=sound]"+G.vars.sound+"[/url]\n"
+	txt2 += "[color=#942]Sound[/color]: [url=sound]"+G.vars.sound.capitalize()+"[/url]\n"
 	txt2 += "[color=#942][url=retire]Retire[/url][/color]\n"
 	txt2 += "[color=#942][url=exit]Exit Game[/url][/color]\n"
 	$Bottom.set_bbcode(txt2)
 
 func _on_meta_clicked(meta):
 	if meta == "abandon":
-		G.script("level select", null)
+		G.cmds([["menu","confirm","Abandon current level?",[["custom","level select",null]]]])
 	elif meta == "sound":
 		if G.vars.sound == "low":
 			G.vars.sound = "normal"
@@ -25,7 +25,6 @@ func _on_meta_clicked(meta):
 			G.vars.sound = "low"
 		refresh()
 	elif meta == "retire":
-		G.vars["dead"] = 1
-		G.script("start menu", null)
+		G.cmds([["menu","confirm","Abandon character and start over?",[["^=","dead",1],["custom","start menu",null]]]])
 	elif meta == "exit":
-		gamestate.end_game()
+		G.cmds([["menu","confirm","Exit game?",[["custom","end game",null]]]])

@@ -4,6 +4,7 @@ onready var stat_panel = $"Dialog/Character Creation/Control"
 var specie = "Human"
 var stats = {}
 var skill
+var ability
 var items = []
 
 func _ready():
@@ -12,15 +13,22 @@ func _ready():
 	stat_panel.connect("meta_clicked", self, "_on_meta_clicked")
 
 func start():
-	var cmds = [["morph", "$p", specie]]
+	var cmds = [["morph", "$p", specie],["*=","$p","faction",1]]
 	for i in items:
-		cmds.append(["make", i, "$pp"])
-		cmds.append(["give", "$p", "$t"])
+		if i != null:
+			cmds.append(["make", i, "$pp"])
+			cmds.append(["give", "$p", "$t"])
 	if skill != null:
 		cmds.append(["*","$p","skills",[]])
 		cmds.append(["&=","t","$t"])
 		cmds.append(["&^","t",skill])
 		cmds.append(["*=","$p","skills","$t"])
+		cmds.append(["&d","t"])
+	if ability != null:
+		cmds.append(["*","$p","abilities",[]])
+		cmds.append(["&=","t","$t"])
+		cmds.append(["&^","t",ability])
+		cmds.append(["*=","$p","abilities","$t"])
 		cmds.append(["&d","t"])
 	for i in stats:
 		cmds.append(["*=", "$p", i, stats[i]])
@@ -37,8 +45,10 @@ func update():
 		if i != null:
 			txt2 += "[url="+i+"][color=#874]"+i.capitalize()+"[/color][/url]\n"
 	$"Dialog/Character Creation/Rightside/Text2".set_bbcode(txt2)
-	if skill != null:
-		var txt3 = "[url=#"+skill+"][color=#56A]"+skill.capitalize()+"[/color][/url]"
+	if ability != null:
+		var txt3 = "[url=#"+ability+"][color=#2A9]"+ability.capitalize()+"[/color][/url]"
+		if skill != null:
+			txt3 += "[url=#"+skill+"][color=#56A]"+skill.capitalize()+"[/color][/url]"
 		$"Dialog/Character Creation/Rightside/Text3".set_bbcode(txt3)
 
 func _on_meta_clicked(_meta):
@@ -77,14 +87,17 @@ func randomize_unit():
 		skill = R.r_arr(G.data.vars.skills.bad)
 	elif distribution[count] < 1.4:
 		skill = R.r_arr(G.data.vars.skills.good)
-	else:
+	elif R.b():
 		skill = R.r_arr(G.data.vars.skills.great)
+	else:
+		skill = R.r_arr(G.data.vars.skills.bad)
+		ability = R.r_arr(G.data.vars.skills.active)
 
 	items = [R.r_arr(G.data.vars.loadouts.armor)]
 	var loadout_heavy = R.b()
 	if loadout_heavy:
 		items.append(R.r_arr(G.data.vars.loadouts.good_weapon))
 	else:
-		items.append(R.r_arr(G.data.vars.loadouts.bad_weapon))
 		items.append(R.r_arr(G.data.vars.loadouts.equipment))
+		items.append(R.r_arr(G.data.vars.loadouts.bad_weapon))
 		items.append(R.r_arr(G.data.vars.loadouts.accessory))

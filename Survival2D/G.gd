@@ -195,12 +195,12 @@ func cmds(args, host=null, ptgt=null):
 			if command.onstop != null:
 				G.msg(command.onstop)
 			command.onstop = null
-			command.stop = false
-			if arg != null:
-				return command.tgt
+			if arg == null:
+				command.stop = false
 		elif arg != null:
 			cmd(arg, host)
 	command.onstop = null
+	command.stop = false
 	return command.tgt
 
 func cmd(arg, host=null):

@@ -1,11 +1,11 @@
 {
 	"mode scavenge": {
 		"turn": 24,
-		"onturn": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore the map."],["time", 180, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15],null,["&","complete"],["?=",null],["&+","explore",1],["&","explore"],["?>",120,"$$t"],["menu","msg","Objective complete! Leave map when ready."],["&=","complete",true]]],["remove","$h"],["&","objective"],["menu","msg","$t"]],
+		"onturn": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore and scavenge. Leave through the {t} when ready."],["time", 3, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["remove","$h"],["&","objective"],["menu","msg","$t"]],
 	},
 	"mode survive": {
-		"turn": 16,
-		"onmake": [["&=","objective","OBJECTIVE: Survive for 2 minutes."],["time", 120, [["&=","complete",true],["&","enterside"],["menu","msg","Objective complete! Leave map through the {t} when ready."]]],["&","objective"],["menu","msg","$t"]],
+		"turn": 32,
+		"onmake": [["&=","objective","OBJECTIVE: Survive for 2 minutes."],["time", 120, [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["&","objective"],["menu","msg","$t"]],
 		"onturn": [["make", "g_{area}{rating}", "$L15"],["hunt", "$t", "$p"]],
 	},
 	"mode assault": {

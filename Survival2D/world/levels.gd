@@ -47,7 +47,10 @@ func _ready():
 				if position == -1 and x == 0:
 					lvl.set_mode(1)
 				elif lvl.position == position:
-					lvl.set_mode(2)
+					if position in G.vars.map.complete:
+						lvl.set_mode(2)
+					else:
+						lvl.set_mode(1)
 				$Grid.add_child(lvl)
 	if position != -1:
 		var poi = []

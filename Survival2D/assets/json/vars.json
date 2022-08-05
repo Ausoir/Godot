@@ -9,26 +9,26 @@
 	"stats": {
 		"vit": {
 			"name": "vitality",
-			"default": 40,
-			"variance": 20,
+			"default": 20,
+			"variance": 15,
 			"desc": "Vitality is the maximum health points."
 		},
 		"str": {
 			"name": "strength",
 			"default": 4,
-			"variance": 2,
+			"variance": 3,
 			"desc": "Strength determines bash damage.",
 		},
 		"agi": {
 			"name": "agility",
 			"default": 4,
-			"variance": 2,
+			"variance": 3,
 			"desc": "Agility determines dodge and stealth."
 		},
 		"itl": {
 			"name": "intelligence",
 			"default": 4,
-			"variance": 2,
+			"variance": 3,
 			"desc": "Intelligence determines amount of skills you can have."
 		},
 		"cha": {
@@ -40,7 +40,7 @@
 		"per": {
 			"name": "perception",
 			"default": 8,
-			"variance": 2,
+			"variance": 3,
 			"desc": "Perception determines sight range."
 		},
 		"ms": {
@@ -52,31 +52,32 @@
 	},
 	"skills": {
 		"bad": ["bash", "headbutt", "bite", "strike", null, null, null, null],
-		"good": ["quick strike", "venomous bite", "kick", "tackle", null, null, null],
-		"great": ["swipe", "leech", "somersault", "parry", "dodge", null, null]
+		"good": ["quick strike", "burn", "kick", "tackle", null, null, null],
+		"great": ["swipe", "leech", "somersault", "parry", "dodge", null, null],
+		"active": ["tackle", "latch", "passwall", "coyote form", null, null]
 	},
 	"loadouts": {
 		"accessory": ["blob vial","canned food","medikit","builder (turret)",null,null,null],
 		"equipment": ["backpack","hood",null,null,null],
 		"armor": ["suit","suspenders","gi","casual","leather armor","looter coat"],
 		"bad_weapon": ["bat","pipe","knife","torch",null,null,null],
-		"good_weapon": ["knuckles","spear","bow","crossbow","pistol","laser rifle"],
+		"good_weapon": ["knuckles","spear","bow","crossbow","pistol"],
 	},
 	"area": {
 		"ruins": {
-			"biome": 0.3, 
-			"modes": ["scavenge", "survive", "assault"]
+			"biome": 0.3,
+			"modes": ["scavenge", "survive"]
 		},
 		"caverns": {
-			"biome": 0.4, 
-			"modes": ["scavenge", "assault"]
+			"biome": 0.4,
+			"modes": ["scavenge", "survive"]
 		},
 		"woods": {
-			"biome": 0.5,
+			"biome": 0.45,
 			"modes": ["survive", "assault"]
 		},
 		"fields": {
-			"biome": 0.6,
+			"biome": 0.5,
 			"modes": ["survive", "assault"]
 		},
 		"town": {
