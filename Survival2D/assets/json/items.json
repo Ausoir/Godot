@@ -4,13 +4,13 @@
 		"onturn": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore and scavenge. Leave through the {t} when ready."],["time", 3, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["remove","$h"],["&","objective"],["menu","msg","$t"]],
 	},
 	"mode survive": {
-		"turn": 32,
-		"onmake": [["&=","objective","OBJECTIVE: Survive for 2 minutes."],["time", 120, [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["&","objective"],["menu","msg","$t"]],
-		"onturn": [["make", "g_{area}{rating}", "$L15"],["hunt", "$t", "$p"]],
+		"turn": 24,
+		"onmake": [["move","$p","$R14"],["&=","objective","OBJECTIVE: Survive for 2 minutes."],["time", 120, [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["&","objective"],["menu","msg","$t"]],
+		"onturn": [["make", "g_{area}{rating}", "$L14"],["hunt", "$t", "$p"]],
 	},
 	"mode assault": {
 		"turn": 24,
-		"onturn": [["&=","objective","OBJECTIVE: Kill the hooded target."],["make","g_as{rating}","$R15"],["&=","discover",[["?>!","{{-2~200}","{rating}"],["make","g_{area}{rating}","$$t",15]]],
+		"onturn": [["&=","objective","OBJECTIVE: Kill the hooded target."],["make","g_as{rating}","$R14"],["&=","discover",[["?>!","{{-2~200}","{rating}"],["make","g_{area}{rating}","$$t",15]]],
 			["&","objective"],["menu","msg","$t"],["remove","$h"]],
 	},
 	"init spawners": {

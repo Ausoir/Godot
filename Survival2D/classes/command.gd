@@ -263,10 +263,7 @@ func run_item(command, args, subject):
 	elif command == "textify":
 		subject.textify(args[2])
 	elif command == "move":
-		subject.position.x = args[2].x
-		subject.position.y = args[2].y
-		if subject.item_type == "unit":
-			subject.on_slide()
+		subject.relocate(args[2])
 	elif command == "+flag":
 		subject.flags.append(args[2])
 		subject.dirty_dat = true
@@ -298,6 +295,10 @@ func run_unit(command, args, subject):
 		newunit.possess(subject.controller)
 		subject.remove()
 		return newunit
+	elif command == "move":
+		subject.position.x = args[2].x
+		subject.position.y = args[2].y
+		subject.on_slide()
 	elif command == "give":
 		if subject.dat.g("type", "other") != "other":
 			var item = args[2]
@@ -330,6 +331,6 @@ func get_los(p):
 
 func get_rand_pos(p):
 	var tile
-	while tile == null or tile.is_col(p) or tile.visible:
+	while tile == null or tile.is_col(p):
 		tile = G.world.tiles[R.ir(0, G.world.size.y-1)][R.ir(0, G.world.size.x-1)]
 	return tile

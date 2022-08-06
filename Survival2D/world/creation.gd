@@ -46,7 +46,7 @@ func update():
 			txt2 += "[url="+i+"][color=#874]"+i.capitalize()+"[/color][/url]\n"
 	$"Dialog/Character Creation/Rightside/Text2".set_bbcode(txt2)
 	if ability != null:
-		var txt3 = "[url=#"+ability+"][color=#2A9]"+ability.capitalize()+"[/color][/url]"
+		var txt3 = "[url=#"+ability+"][color=#2A9]"+ability.capitalize()+"[/color][/url]\n"
 		if skill != null:
 			txt3 += "[url=#"+skill+"][color=#56A]"+skill.capitalize()+"[/color][/url]"
 		$"Dialog/Character Creation/Rightside/Text3".set_bbcode(txt3)

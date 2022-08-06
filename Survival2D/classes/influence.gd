@@ -58,22 +58,6 @@ func find_victim(p, host, data):
 			var rng = data.get("range", 16)
 			tgt = host.pos.get_beam_to(get_tile(p), data.get("col", 0), rng)[0]
 			return is_req_met(tgt, host, data)
-		elif data.target == "nearbody":
-			var raycast = host.n_collider.cast_col_ray(p, [host], data.get("col", 0))
-			if !raycast.empty() and raycast.collider is KinematicBody2D and raycast.collider.item_type == "unit":
-				var tgt_point = raycast.position
-				if host.pos.world.from_vec(tgt_point).distance_to(host.pos) <= data.get("range", 16):
-					tgt = raycast.collider.get_parent()
-					return is_req_met(tgt, host, data)
-		elif data.target == "near":
-			var enemy_team = 1 if host.dat.g("faction", -1) == 2 else 2
-			var closest_rng = data.get("range", 16)
-			for i in G.world.team[enemy_team]:
-				var t = i.pos.distance_to(host.pos)
-				if t < closest_rng and i != null and is_instance_valid(i) and is_req_met(i, host, data):
-					tgt = i
-					closest_rng = t
-			return tgt != null
 		else:
 			tgt = p
 			if tgt != null and is_instance_valid(tgt):

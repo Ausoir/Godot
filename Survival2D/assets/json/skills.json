@@ -289,7 +289,7 @@
 
 	"tackle": {
 		"img": "gui/sk_kick",
-		"target": "near",
+		"target": "body",
 		"col": 15,
 		"delay": 4,
 		"range": 2,
@@ -301,7 +301,7 @@
 	},
 	"latch": {
 		"img": "gui/sk_kick",
-		"target": "near",
+		"target": "body",
 		"col": 15,
 		"delay": 4,
 		"range": 1,

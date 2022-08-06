@@ -30,7 +30,8 @@ func paint_map():
 					var list = G.data.get_combo(value[i])
 					for item in list:
 						G.cmds([["make", item, G.world.tiles[y][x]]])
-	G.cmds(post_process_cmd)
+	if post_process_cmd != null:
+		G.cmds(post_process_cmd)
 
 func palette_assign(fromx, fromy, tox, toy):
 	for y in range(fromy, toy+1):

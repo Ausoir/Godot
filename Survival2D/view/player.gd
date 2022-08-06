@@ -144,9 +144,10 @@ func _physics_process(_delta):
 
 func on_turn():
 	if tasks.empty():
-		var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
-		if colld != null:
-			tasks = [["attack", colld]]
+		if G.vars.setting.autofight:
+			var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
+			if colld != null:
+				tasks = [["attack", colld]]
 	.on_turn()
 	remove_steps()
 	show_steps()
@@ -249,7 +250,7 @@ func show_steps():
 func remove():
 	if unit.get_health() <= 0:
 		G.vars["dead"] = 1
-		G.cmds([["menu","dialog","Death"]])
+		G.cmds([["menu","dialog","death"]])
 		var player_unit = G.cmds([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
 

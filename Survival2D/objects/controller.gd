@@ -91,7 +91,7 @@ func perform(task):
 		G.cmds(task[1], task[2], task[3])
 	elif task[0] == "exit":
 		if self == G.you:
-			var complete = G.temp.complete
+			var complete = G.temp.get("complete")
 			if task.size() > 2:
 				complete = task[2]
 			if task[1] < 1:

@@ -68,7 +68,7 @@
 		"agility": 8,
 		"intelligence": 6,
 		"perception": 6,
-		"value": 3,
+		"value": 5,
 		"abilities": ["tackle"],
 		"skills": ["quick strike", "bash"],
 		"flags": [],

@@ -1,51 +1,41 @@
 {
-	"Librarian": {
-		"title": "Talk with Librarian",
-		"true": "Do you have any questions on how to [url=0]use your inventory[/url] or how to [url=1]fight[/url], ask away.\"",
-		"opt": [
-			{
-				"cmd": [["menu", "dialog", "Librarian_items"]],
-			},
-			{
-				"cmd": [["menu", "dialog", "Librarian_combat"]],
-			},
-		]
-	},
-	"Librarian_items": {
-		"title": "Tutorial - Items",
-		"true": "\"To equip your weapon, first press TAB to access the menu.\nUnder Inventory menu, click on the weapon slot and move it to the corresponding equipment slot above.\n\nOnce outside the menu, you can swap between the 4 weapon slots using the number keys for fast weapon swapping.\"\n\n[i][url=0]> Ok[/url][/i]",
-		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
-	},
-	"Librarian_combat": {
-		"title": "Tutorial - Combat",
-		"true": "\"Press TAB and go to your Skills menu.\nThe icons at the top part of the menu are your currently equipped skills. Moving a skill from the bottom part to the top equips them.\nWhen in combat, you will use the equipped skills in their respective order.\"\n\n[i][url=0]> Alrighty[/url][/i]",
-		"opt": [{"cmd": [["menu", "dialog", "Librarian3"]]}]
-	},
-	"Trader": {
+	"trader": {
 		"title": "Trade",
-		"true": "\"Do you need something?\"\n\n",
+		"true": "\"Let's trade.\"\n\n",
 		"type": "g_trade",
 		"script": ["trade"],
 	},
-	"Dispenser": {
+	"dispenser": {
 		"title": "Use lathe",
 		"true": "You can produce various useful items using this machine.\n\n",
 		"type": "g_trade",
 		"script": ["trade"],
 	},
-	"Lathe": {
+	"lathe": {
 		"title": "Use lathe",
 		"true": "You can create builders and radio using this machine.\n\n",
 		"type": "g_lathe",
 		"script": ["trade"],
 	},
-	"Bulletin": {
+	"bulletin": {
 		"title": "Bulletin Board",
 		"true": "",
 		"script": ["bulletin"]
 	},
-	"Death": {
+	"death": {
 		"title": "Death",
 		"true": "You die...\n\nYou may choose to spectate or respawn if you have the right item.",
+	},
+	"scavenger": {
+		"title": "Talk with a scavenger",
+		"true": "Do you have business with me?\n\n\n\n[url=0]Trade[/url]\n[url=1]Invite to party[/url]",
+		"opt": [
+			{
+				"cmd": [["menu", "confirm", "Hire this unit?", [["menu", "dialog", "trader"]]]],
+			},
+			{
+				"cmd": [["menu", "dialog", "scavenger "]],
+			},
+		]
 	},
 }

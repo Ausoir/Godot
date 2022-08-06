@@ -42,6 +42,9 @@ func on_change(p):
 		if faction != -1:
 			if !(self in G.world.team[faction]):
 				G.world.team[faction].append(self)
+				for i in range(G.world.team.size()):
+					if i != faction:
+						G.world.team[i].erase(self)
 		flags = dat.g("flags", [])
 		if dat.g("onturn") != null:
 			has_on_turn = true
@@ -244,8 +247,7 @@ func face_toward(p):
 func die():
 	var faction = dat.g("faction", -1)
 	if faction != -1:
-		if self in pos.world.team[faction]:
-			pos.world.team[faction].erase(self)
+		pos.world.team[faction].erase(self)
 	G.factory.make_corpse(self, pos)
 	remove()
 

@@ -3,26 +3,37 @@ extends Node
 func refresh():
 	var txt = ""
 	txt += "[color=#A64][url=abandon]Abandon Map[/url][/color]\n"
+	txt += "[color=#A64][url=shop]Test Shop[/url][/color]\n"
 	$Top.set_bbcode(txt)
 
 	var txt2 = ""
-	txt2 += "[color=#942]Sound[/color]: [url=sound]"+G.vars.sound.capitalize()+"[/url]\n"
-	txt2 += "[color=#942][url=retire]Retire[/url][/color]\n"
+	txt2 += "[color=#A64][url=autofight]Autofight "+str(G.vars.setting.autofight)+"[/url][/color]\n"
+	txt2 += "[color=#A64][url=autoaim]Autoaim "+str(G.vars.setting.autoaim)+"[/url][/color]\n"
+	txt2 += "[color=#A64]Sound[/color]: [url=sound]"+G.vars.setting.sound.capitalize()+"[/url]\n"
+	txt2 += "[color=#A64][url=retire]Retire[/url][/color]\n"
 	txt2 += "[color=#942][url=exit]Exit Game[/url][/color]\n"
 	$Bottom.set_bbcode(txt2)
 
 func _on_meta_clicked(meta):
 	if meta == "abandon":
 		G.cmds([["menu","confirm","Abandon current level?",[["custom","level select",null]]]])
+	elif meta == "shop":
+		G.cmds([["menu","dialog","trader"]])
+	elif meta == "autofight":
+		G.vars.setting.autofight = !G.vars.setting.autofight
+		refresh()
+	elif meta == "autoaim":
+		G.vars.setting.autoaim = !G.vars.setting.autoaim
+		refresh()
 	elif meta == "sound":
-		if G.vars.sound == "low":
-			G.vars.sound = "normal"
-		elif G.vars.sound == "normal":
-			G.vars.sound = "high"
-		elif G.vars.sound == "high":
-			G.vars.sound = "off"
-		elif G.vars.sound == "off":
-			G.vars.sound = "low"
+		if G.vars.setting.sound == "low":
+			G.vars.setting.sound = "normal"
+		elif G.vars.setting.sound == "normal":
+			G.vars.setting.sound = "high"
+		elif G.vars.setting.sound == "high":
+			G.vars.setting.sound = "off"
+		elif G.vars.setting.sound == "off":
+			G.vars.setting.sound = "low"
 		refresh()
 	elif meta == "retire":
 		G.cmds([["menu","confirm","Abandon character and start over?",[["^=","dead",1],["custom","start menu",null]]]])

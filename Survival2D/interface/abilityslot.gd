@@ -69,8 +69,13 @@ func _on_gui_input(event):
 func activate():
 	if mode == MODE_NORMAL:
 		G.ui.unselect_skills()
-		if skill_type == "self" or skill_type == "near":
+		if skill_type == "self":
 			G.you.tasks = [["ability", skill_index, G.you.unit.position]]
+		elif G.vars.setting.autoaim and (skill_type == "auto" or skill_type == "body"):
+			var ab = G.you.unit.dat.g("abilities", [])[skill_index]
+			var tgt = auto_aim(ab)
+			if tgt != null:
+				G.you.tasks = [["ability", skill_index, tgt]]
 		elif skill_type == "item":
 			if skill.dat.g("aimable") != null:
 				set_mode(MODE_SELECTED)
@@ -108,3 +113,24 @@ func _on_mouse_entered():
 
 func _on_mouse_exited():
 	G.ui.description.hide()
+
+func auto_aim(ability):
+	var r
+	var data = G.data.skill_data.get(ability)
+	var enemy_team = 1 if G.you.unit.dat.g("faction", -1) == 2 else 2
+	var max_dist = data.get("range", 1)
+	var closest_rng = max_dist
+	for i in G.world.team[enemy_team]:
+		if i != null and is_instance_valid(i):
+			var t = i.pos.distance_to(G.you.unit.pos)
+			if t < closest_rng:
+				var raycast = G.you.unit.n_collider.cast_col_ray(i.position, [G.you.unit], data.get("col", 15))
+				if raycast.empty():
+					r = i.position
+					closest_rng = t
+				elif raycast.collider is KinematicBody2D and raycast.collider.item_type == "unit":
+					var coltgt = raycast.collider.get_parent()
+					if coltgt == i:
+						r = i.position
+						closest_rng = t
+	return r
