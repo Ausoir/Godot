@@ -11,7 +11,7 @@
 	"automatic rifle": {
 		"img": "loot",
 		"sprite": "overlay/w_full_auto_rifle",
-		"abilities": ["burst fire","spray bullets"],
+		"skills": ["burst fire","spray bullets"],
 		"size": 2,
 		"mat": "metal",
 		"weight": 4,
@@ -20,7 +20,7 @@
 	"assault rifle": {
 		"img": "loot",
 		"sprite": "overlay/w_assault_rifle",
-		"abilities": ["burst fire"],
+		"skills": ["burst fire"],
 		"weight": 3,
 		"size": 2,
 		"mat": "metal",
@@ -29,7 +29,7 @@
 	"laser rifle": {
 		"img": "loot",
 		"sprite": "overlay/w_laser_gun",
-		"abilities": ["burst laser"],
+		"skills": ["burst laser"],
 		"mat": "metal",
 		"weight": 1,
 		"desc": "An artifact of the past."
@@ -37,7 +37,7 @@
 	"pistol": {
 		"img": "loot",
 		"sprite": "overlay/w_pistol",
-		"abilities": ["shoot"],
+		"skills": ["shoot"],
 		"mat": "metal",
 		"weight": 1,
 		"desc": "An artifact of the past."
@@ -45,22 +45,21 @@
 	"bow": {
 		"img": "loot",
 		"sprite": "overlay/w_bow",
-		"abilities": ["shoot arrow"],
+		"skills": ["shoot arrow"],
 		"mat": "wood",
 		"weight": 1,
 	},
 	"crossbow": {
 		"img": "loot",
 		"sprite": "overlay/w_crossbow",
-		"abilities": ["shoot bolt"],
+		"skills": ["shoot bolt"],
 		"mat": "wood",
 		"weight": 1,
 	},
 	"spear": {
 		"img": "loot",
 		"sprite": "overlay/w_spear",
-		"abilities": ["reach attack"],
-		"skills": ["stab"],
+		"skills": ["reach attack", "stab"],
 		"mat": "wood",
 		"weight": 3,
 		"cut": 2,
@@ -70,7 +69,6 @@
 	"cutlass": {
 		"img": "loot",
 		"sprite": "overlay/w_cutlass",
-		"abilities": [],
 		"skills": ["quick strike", "slice"],
 		"mat": "wood",
 		"weight": 2,
@@ -82,7 +80,6 @@
 	"bat": {
 		"img": "loot",
 		"sprite": "overlay/w_bat",
-		"abilities": [],
 		"skills": ["bash", "quick strike"],
 		"mat": "wood",
 		"weight": 1,
@@ -93,7 +90,6 @@
 	"pipe": {
 		"img": "loot",
 		"sprite": "overlay/w_pipe",
-		"abilities": [],
 		"skills": ["bash"],
 		"mat": "metal",
 		"weight": 1,
@@ -104,7 +100,6 @@
 	"knife": {
 		"img": "loot",
 		"sprite": "overlay/w_knife",
-		"abilities": [],
 		"skills": ["quick stab"],
 		"mat": "metal",
 		"weight": 0,
@@ -114,7 +109,6 @@
 	"knuckles": {
 		"img": "loot",
 		"sprite": "overlay/w_knuckles",
-		"abilities": [],
 		"skills": ["quick strike","quick strike"],
 		"mat": "metal",
 		"weight": 0,

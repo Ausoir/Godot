@@ -10,6 +10,7 @@ onready var n_skeleton = $Skeleton2D
 
 var delay = 0
 
+var skills = []
 var is_dead = false
 var controller
 var cooldowns = {}
@@ -50,6 +51,10 @@ func on_change(p):
 			has_on_turn = true
 		else:
 			has_on_turn = false
+		skills.clear()
+		for skill in dat.g("skills", []):
+			var data = G.data.skill_data.get(skill)
+			skills.append(data)
 	if controller != null:
 		controller.on_change(p)
 
@@ -77,19 +82,17 @@ func can_carry(_w):
 	return false
 
 func ability(idx, at):
-	var abilities = dat.g("abilities", [])
-	if idx < abilities.size():
+	if idx < skills.size():
 		face_toward(at)
-		var ability = abilities[idx]
-		return G.influence.do(ability, self, at)
+		return G.influence.do(skills[idx], self, at)
 
 func get_damage(ptype, p):
-	if ptype == "true":
-		return p
-	elif ptype == "bash":
+	if ptype == "bash":
 		return round(R.f() * dat.g("strength", 1) * p * .01)
-	elif ptype == "cut":
+	elif ptype == "cut" or ptype == "steal":
 		return round(R.f() * p)
+	else:
+		return p
 
 func reposition(p):
 	position = p
@@ -123,8 +126,13 @@ func on_slide():
 		newpos.add_item(self)
 		on_relocate()
 		newpos.play_step_sound()
-		if !newpos.visible and G.you.n_camera.is_in_range(newpos):
-			G.make_particle("Sound", newpos.position, null, true)
+		if !newpos.visible:
+			if prev_pos != null and prev_pos.visible:
+				G.you.on_enemy_sighted(self, false)
+			if G.you.n_camera.is_in_range(newpos):
+				G.make_particle("Sound", newpos.position, null, true)
+		elif prev_pos == null or !prev_pos.visible:
+			G.you.on_enemy_sighted(self, true)
 	if delay == 0:
 		var col = n_collider.get_collider(dat.g("faction", -1))
 		if col != null:
@@ -141,13 +149,11 @@ func set_animation(p, spd=0):
 		n_animation.play(p)
 
 func roll_skill(type, mode=0):
-	var data
-	for skill in dat.g("skills", []) + ["wait"]:
-		data = G.data.skill_data.get(skill)
-		if data != null and data.target == type:
-			if R.r_percent(data.chance):
-				G.influence.do(skill, self, controller.target, mode, data)
-				return [skill, data]
+	for skill in skills:
+		if skill.get("trigger", 0) == 0 and skill.target == type:
+			if R.r_percent(skill.chance):
+				G.influence.do(skill, self, controller.target, mode)
+				return skill
 	return null
 
 func on_kill(killed):
@@ -178,7 +184,7 @@ func hit(_type, dmg, _hitter):
 					G.make_particle("Hit", pos.position)
 				elif _type == "steal":
 					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
-					G.make_particle("Hit", pos.position)
+					G.make_particle("Cut", pos.position)
 					if _hitter != null:
 						G.cmd(["*dmg",_hitter,-dmg])
 			else:

@@ -216,8 +216,10 @@ func run(p, host):
 					subject.dirty_dat = true
 				elif command[1] == "-":
 					subject.dat.d(args[2])
+					subject.dirty_dat = true
 				elif command[1] == "a":
 					subject.dat.g(args[2]).append(args[3])
+					subject.dirty_dat = true
 				elif command == "*dmg":
 					var hp = subject.dat.add("damage", args[2])
 					subject.dat.a("damage", max(0, hp))
@@ -235,7 +237,11 @@ func run(p, host):
 				if type == "tile":
 					run_tile(command, args, host, subject)
 				elif is_instance_valid(subject):
-					if type == "unit":
+					if command == "relocate":
+						subject.relocate(args[2])
+						if type == "unit":
+							subject.on_slide()
+					elif type == "unit":
 						run_unit(command, args, subject)
 					else:
 						run_item(command, args, subject)
@@ -262,8 +268,6 @@ func run_item(command, args, subject):
 		subject.possess(get_arg(args, 2))
 	elif command == "textify":
 		subject.textify(args[2])
-	elif command == "move":
-		subject.relocate(args[2])
 	elif command == "+flag":
 		subject.flags.append(args[2])
 		subject.dirty_dat = true

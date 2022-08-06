@@ -52,10 +52,17 @@ func display_item(header, item):
 			desc += "[color=#C48]Cut Damage: "+ str(cut) +"[/color]\n"
 		var skills = item.get("skills", [])
 		if !skills.empty():
-			desc += "[color=#56A]Skills: "+ array_to_string(skills) +"[/color]\n"
-		var abilities = item.get("abilities", [])
-		if !abilities.empty():
-			desc += "[color=#84A]Abilities: "+ array_to_string(abilities) +"[/color]\n"
+			var skill_types = [[],[],[]]
+			for skill in skills:
+				var data = G.data.skill_data.get(skill)
+				var trigger = data.get("trigger", 0)
+				skill_types[trigger].append(skill)
+			if !skill_types[0].empty():
+				desc += "[color=#56A]Skills: "+ array_to_string(skill_types[0]) +"[/color]\n"
+			if !skill_types[1].empty():
+				desc += "[color=#84A]Abilities: "+ array_to_string(skill_types[1]) +"[/color]\n"
+			if !skill_types[2].empty():
+				desc += "[color=#996]Specials: "+ array_to_string(skill_types[2]) +"[/color]\n"
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i].name
 		var stat = item.get(s)

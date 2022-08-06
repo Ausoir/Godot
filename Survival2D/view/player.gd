@@ -15,6 +15,9 @@ var unhandled_input = false
 var on_point
 var events = {}
 var last_drag_dist = 0
+var noise = 0
+var visible_enemies = []
+var closest_enemy
 
 func on_change(p):
 	.on_change(p)
@@ -144,7 +147,13 @@ func _physics_process(_delta):
 
 func on_turn():
 	if tasks.empty():
-		if G.vars.setting.autofight:
+		find_closest_enemy()
+		if closest_enemy != null:
+			G.msg(closest_enemy.position.distance_to(unit.position))
+		var autoed = false
+		if G.vars.setting.autofire:
+			autoed = autofire()
+		if !autoed and G.vars.setting.autofight:
 			var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
 			if colld != null:
 				tasks = [["attack", colld]]
@@ -156,6 +165,9 @@ func on_turn():
 		view_dirty = false
 		last_pos = unit.pos
 		check_edge()
+	if noise > 0:
+		make_sound(noise)
+		noise = 0
 	check_nearby_interactibles()
 
 func update_cooldowns():
@@ -254,14 +266,10 @@ func remove():
 		var player_unit = G.cmds([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
 
-func save_data(remove_buffs=true):
-	var buff_data = unit.buffs.to_data()
-	if remove_buffs:
-		unit.buffs.clear()
+func save_data():
 	var save_dict = {
 		"unit": unit.item_name,
 		"unit_data": unit.dat.v,
-		"unit_buff": buff_data,
 		"position": unit.pos.to_array()
 	}
 	if unit.dat.g("type") != "other":
@@ -276,6 +284,80 @@ func load_data(_data):
 	if player_unit.dat.g("type") != "other":
 		player_unit.load_item_data(_data)
 		player_unit.set_seed()
-	player_unit.buffs.from_data(_data.unit_buff)
 	make_money(0)
 	G.ui.update_hud()
+
+func perform(task):
+	var r = .perform(task)
+	if r:
+		if task[0] == "exit":
+			var complete = G.temp.get("complete")
+			if task.size() > 2:
+				complete = task[2]
+			if task[1] < 1:
+				if complete:
+					G.vars.map.complete.append(G.vars.map.current)
+					G.custom.run("save", null)
+				else:
+					G.vars.map.current = G.vars.map.prev
+				G.custom.run("level select", null)
+			else:
+				var adjs = unit.pos.get_available_adjacents(1)
+				for tile in adjs:
+					for i in tile.items:
+						if i.item_type == "unit" and i.faction != unit.faction:
+							return
+				if complete:
+					G.msg("Leaving map..." + str(task[1]))
+				else:
+					G.msg("Returning..." + str(task[1]))
+				unit.set_animation("wait")
+				unit.delay = 4
+				tasks.append(["exit", task[1]-1])
+	return r
+
+func make_sound(max_dist):
+	if max_dist > 0:
+		var enemy_team = 1 if G.you.unit.dat.g("faction", -1) == 2 else 2
+		for i in G.world.team[enemy_team]:
+			if i != null and is_instance_valid(i):
+				var t = i.pos.distance_to(G.you.unit.pos)
+				if t <= max_dist:
+					i.controller.target = G.you.unit
+
+func on_enemy_sighted(foe, enter):
+	if foe != unit and foe.dat.g("faction", -1) != unit.dat.g("faction", -2):
+		if enter:
+			visible_enemies.append(foe)
+		else:
+			visible_enemies.erase(foe)
+
+func find_closest_enemy():
+	var r
+	var max_dist = 99
+	var closest_rng = max_dist
+	for i in visible_enemies:
+		if i != null and is_instance_valid(i):
+			var t = i.pos.distance_to(G.you.unit.pos)
+			if t < closest_rng:
+				var raycast = G.you.unit.n_collider.cast_ray(i.position, [G.you.unit], 15)
+				if raycast.empty():
+					r = i
+					closest_rng = t
+				elif raycast.collider is KinematicBody2D and raycast.collider.item_type == "unit":
+					var coltgt = raycast.collider.get_parent()
+					if coltgt == i:
+						r = i
+						closest_rng = t
+	closest_enemy = r
+
+func autofire():
+	if closest_enemy != null:
+		var dist = unit.position.distance_to(closest_enemy.position)
+		for i in range(unit.skills.size()):
+			var ability = unit.skills[i]
+			if ability.get("trigger", 0) == 2:
+				var rng = ability.get("range", 1) * G.W
+				if dist <= rng:
+					tasks = [["ability", i, closest_enemy.position]]
+					return true

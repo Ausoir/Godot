@@ -49,7 +49,7 @@ func perform(task):
 	if task[0] == "path":
 		if task.size() > 2 and validate_target(target):
 			var exc = [unit.n_collider, target.n_collider]
-			if unit.n_collider.cast_col_ray(task[2], exc, unit.col).empty():
+			if unit.n_collider.cast_ray(task[2], exc, unit.col).empty():
 				unit.slide(task[2].x, task[2].y)
 				return false
 		unit.slide(task[1].position.x, task[1].position.y)
@@ -89,33 +89,6 @@ func perform(task):
 			task[1].smash(dmg)
 	elif task[0] == "command":
 		G.cmds(task[1], task[2], task[3])
-	elif task[0] == "exit":
-		if self == G.you:
-			var complete = G.temp.get("complete")
-			if task.size() > 2:
-				complete = task[2]
-			if task[1] < 1:
-				if complete:
-					G.vars.map.complete.append(G.vars.map.current)
-					G.custom.run("save", null)
-				else:
-					G.vars.map.current = G.vars.map.prev
-				G.custom.run("level select", null)
-			else:
-				var adjs = unit.pos.get_available_adjacents(1)
-				for tile in adjs:
-					for i in tile.items:
-						if i.item_type == "unit" and i.faction != unit.faction:
-							return
-				if complete:
-					G.msg("Leaving map..." + str(task[1]))
-				else:
-					G.msg("Returning..." + str(task[1]))
-				unit.set_animation("wait")
-				unit.delay = 4
-				tasks.append(["exit", task[1]-1])
-		else:
-			unit.pos.remove_item(unit)
 	return true
 
 func validate_target(p):

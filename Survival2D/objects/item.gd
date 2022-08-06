@@ -140,13 +140,6 @@ func on_relocate():
 	else:
 		hide()
 
-func move_world(wld):
-	var x = pos.x
-	var y = pos.y
-	pos.remove_item(self)
-	prev_pos = pos
-	wld.tiles[y][x].add_item(self)
-
 func on_change(p):
 	if p == "dat":
 		layer = dat.g("layer", 0)

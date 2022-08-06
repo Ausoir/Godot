@@ -3,8 +3,7 @@ extends Node
 onready var stat_panel = $"Dialog/Character Creation/Control"
 var specie = "Human"
 var stats = {}
-var skill
-var ability
+var skills = [null, null]
 var items = []
 
 func _ready():
@@ -18,18 +17,13 @@ func start():
 		if i != null:
 			cmds.append(["make", i, "$pp"])
 			cmds.append(["give", "$p", "$t"])
-	if skill != null:
-		cmds.append(["*","$p","skills",[]])
-		cmds.append(["&=","t","$t"])
-		cmds.append(["&^","t",skill])
-		cmds.append(["*=","$p","skills","$t"])
-		cmds.append(["&d","t"])
-	if ability != null:
-		cmds.append(["*","$p","abilities",[]])
-		cmds.append(["&=","t","$t"])
-		cmds.append(["&^","t",ability])
-		cmds.append(["*=","$p","abilities","$t"])
-		cmds.append(["&d","t"])
+	for i in skills:
+		if i != null:
+			cmds.append(["*","$p","skills",[]])
+			cmds.append(["&=","t","$t"])
+			cmds.append(["&^","t",i])
+			cmds.append(["*=","$p","skills","$t"])
+			cmds.append(["&d","t"])
 	for i in stats:
 		cmds.append(["*=", "$p", i, stats[i]])
 	G.temp.creation = cmds
@@ -41,15 +35,16 @@ func update():
 	txt += "\n\n[url=reroll][u]REROLL[/u][/url]\n[url=start][u]START[/u][/url]"
 	stat_panel.set_bbcode(txt)
 	var txt2 = ""
+	var txt3 = ""
 	for i in items:
 		if i != null:
 			txt2 += "[url="+i+"][color=#874]"+i.capitalize()+"[/color][/url]\n"
 	$"Dialog/Character Creation/Rightside/Text2".set_bbcode(txt2)
-	if ability != null:
-		var txt3 = "[url=#"+ability+"][color=#2A9]"+ability.capitalize()+"[/color][/url]\n"
-		if skill != null:
-			txt3 += "[url=#"+skill+"][color=#56A]"+skill.capitalize()+"[/color][/url]"
-		$"Dialog/Character Creation/Rightside/Text3".set_bbcode(txt3)
+	if skills[0] != null:
+		txt3 = "[url=#"+skills[0]+"][color=#2A9]"+skills[0].capitalize()+"[/color][/url]\n"
+		if skills[1] != null:
+			txt3 += "[url=#"+skills[1]+"][color=#56A]"+skills[1].capitalize()+"[/color][/url]"
+	$"Dialog/Character Creation/Rightside/Text3".set_bbcode(txt3)
 
 func _on_meta_clicked(_meta):
 	G.ui.description.hide()
@@ -84,14 +79,14 @@ func randomize_unit():
 		stats[s.name] = round(s.default + maxvariance)
 		count += 1
 	if distribution[count] < .7:
-		skill = R.r_arr(G.data.vars.skills.bad)
+		skills[0] = R.r_arr(G.data.vars.skills.bad)
 	elif distribution[count] < 1.4:
-		skill = R.r_arr(G.data.vars.skills.good)
+		skills[0] = R.r_arr(G.data.vars.skills.good)
 	elif R.b():
-		skill = R.r_arr(G.data.vars.skills.great)
+		skills[0] = R.r_arr(G.data.vars.skills.great)
 	else:
-		skill = R.r_arr(G.data.vars.skills.bad)
-		ability = R.r_arr(G.data.vars.skills.active)
+		skills[0] = R.r_arr(G.data.vars.skills.bad)
+		skills[1] = R.r_arr(G.data.vars.skills.active)
 
 	items = [R.r_arr(G.data.vars.loadouts.armor)]
 	var loadout_heavy = R.b()

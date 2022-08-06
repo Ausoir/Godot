@@ -99,8 +99,10 @@ func update_hud():
 		buffs.remove_child(i)
 	var count = 0
 	var ab = []
-	for i in G.you.unit.dat.g("abilities", []):
-		ab.append([i, "skill"])
+	for i in G.you.unit.skills:
+		var trigger = i.get("trigger", 0)
+		if trigger == 1 or (trigger == 2 and !G.vars.setting.autofire):
+			ab.append([i.name, "skill", i])
 	if G.you.unit.dat.g("type") != "other":
 		ab += G.you.unit.get_usable_items()
 	for i in G.you.interactables:
@@ -108,7 +110,7 @@ func update_hud():
 			ab.append([i, "object"])
 	for i in ab:
 		var newslot = AbilitySlot.instance()
-		newslot.assign(i[0], i[1])
+		newslot.assign(i)
 		newslot.set_index(count)
 		abilities.add_child(newslot)
 		if newslot.skill_type == "self" and G.you.unit.buffs.has(i[0]):

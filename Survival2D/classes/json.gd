@@ -24,6 +24,7 @@ func _init():
 	unit_data = get_json_from_dir("res://assets/json/units.json")
 	mob_data = get_json_from_dir("res://assets/json/mobs.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
+	attach_names(skill_data)
 	dialog_data = get_json_from_dir("res://assets/json/dialog.json")
 	group_data = get_json_from_dir("res://assets/json/groups.json")
 	var cache = get_json_from_dir("res://assets/json/cache.json")
@@ -139,3 +140,7 @@ func get_json_from_dir(dir):
 			push_error("Could not parse JSON file " + dir)
 	else:
 		push_error("Could not load JSON file " + dir)
+
+func attach_names(p):
+	for i in p:
+		p[i].name = i

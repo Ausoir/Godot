@@ -5,7 +5,7 @@ var disrupt_hit = false
 
 class buff:
 	var parent
-	var name
+	var skill
 	var fx
 	var duration
 	var dest
@@ -13,35 +13,34 @@ class buff:
 	var turns
 	var turn = 0
 
-	func _init(pparent,p1,p2,p3,p4):
+	func _init(pparent,p1,p2,p3):
 		parent = pparent
-		name = p1
-		fx = p2
-		duration = p3
-		dest = p4
+		skill = p1
+		duration = p2
+		dest = p3
 		cancelable = fx.get("cancelable", false)
 		turns = fx.get("turns", 0)
 
 	func on_turn(host):
 		if duration == 0:
-			parent.cancel(name)
+			parent.cancel(skill)
 			return
 		elif duration > 0:
 			duration -= 1
 		turn += 1
-		if "onturn" in fx:
+		if "onturn" in skill:
 			if turn > turns:
 				turn = 0
-				G.influence.do(name, host, dest, 1, fx)
+				G.influence.do(skill, host, dest, 1)
 
 func _init(phost):
 	host = phost
 
-func add(p, effect, duration, dest=null):
-	if p in states:
-		states[p].duration = duration
+func add(skill, duration, dest=null):
+	if skill.name in states:
+		states[skill.name].duration = duration
 	else:
-		states[p] = buff.new(self, p, effect, duration, dest)
+		states[skill.name] = buff.new(self, skill, duration, dest)
 		if !G.world.turn.has(self):
 			G.world.turn.add(self)
 
@@ -49,11 +48,11 @@ func has(p):
 	return p in states
 
 func cancel(p):
-	var state = states.get(p)
+	var state = states.get(p.name)
 	if state != null:
-		if "onend" in state.fx:
-			G.influence.do(p, host, state.dest, 2, state.fx)
-		states.erase(p)
+		if "onend" in p:
+			G.influence.do(p, host, state.dest, 2)
+		states.erase(p.name)
 		if states.empty():
 			G.world.turn.remove(self)
 
@@ -68,18 +67,12 @@ func on_turn():
 	disrupt_hit = false
 
 func end(p):
-	if p in states:
-		states[p].duration = 0
+	if p.name in states:
+		states[p.name].duration = 0
 
 func extend(p, dur):
-	if p in states:
-		states[p].duration = dur
-
-func expend(p):
-	if p in states:
-		states[p].duration = 0
-		return states[p].fx
-	return null
+	if p.name in states:
+		states[p.name].duration = dur
 
 func remove():
 	states.clear()
@@ -91,18 +84,3 @@ func clear():
 		states[i].on_turn(host)
 	states.clear()
 	G.world.turn.remove(self)
-
-func to_data():
-	var r = []
-	for i in states:
-		r.append([i, states[i].duration])
-	return r
-
-func from_data(_data):
-	for i in _data:
-		var skill_data = G.data.skill_data.get(i[0])
-		if skill_data != null:
-			if "onstart" in skill_data:
-				G.influence.do(i[0], host, null, 0, skill_data)
-			else:
-				add(i[0], skill_data, i[1])

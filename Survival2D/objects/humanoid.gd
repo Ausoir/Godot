@@ -7,18 +7,15 @@ var gender = "m"
 var item_skills = []
 
 func ability(idx, at):
-	var abilities = dat.g("abilities", [])
-	var s_abilities = abilities.size()
-	if idx < s_abilities:
+	var size = skills.size()
+	if idx < size:
 		face_toward(at)
-		var ability = abilities[idx]
-		return G.influence.do(ability, self, at, 0, null)
+		return G.influence.do(skills[idx], self, at)
 	else:
 		var items = get_usable_items()
-		var s_items = items.size()
-		if idx < s_abilities + s_items:
+		if idx < size + items.size():
 			face_toward(at)
-			G.cmds(items[idx - s_abilities].dat.g("onuse"), self, at)
+			G.cmds(items[idx - size].dat.g("onuse"), self, at)
 
 func get_usable_items():
 	var r = []
@@ -145,21 +142,14 @@ func on_item_remove(item):
 			unequip(part)
 	controller.on_change("ui")
 
-func roll_skill(type, mode=0):
-	var data
-	for skill in item_skills + dat.g("skills", []) + ["wait"]:
-		data = G.data.skill_data.get(skill)
-		if data != null and data.target == type:
-			if R.r_percent(data.chance):
-				G.influence.do(skill, self, controller.target, mode, data)
-				return [skill, data]
-	return null
-
 func accomodate_stats(item):
-	var abilities = dat.g("abilities", [])
-	abilities += item.dat.g("abilities", [])
-	dat.a("abilities", abilities)
-	item_skills += item.dat.g("skills", [])
+	var sks = []
+	sks += dat.g("skills", [])
+	var itemsks = item.dat.g("skills", [])
+	for i in range(itemsks.size()):
+		sks.append(itemsks[i])
+		item_skills.append(i)
+	dat.a("skills", sks)
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
 	for i in G.data.vars.stats:
@@ -170,12 +160,10 @@ func accomodate_stats(item):
 	dirty_dat = true
 
 func unaccomodate_stats(item):
-	var abilities = dat.g("abilities", [])
-	for i in item.dat.g("abilities", []):
-		abilities.erase(i)
-	dat.a("abilities", abilities)
+	var tskills = dat.g("skills", [])
 	for i in item.dat.g("skills", []):
-		item_skills.erase(i)
+		tskills.erase(i)
+	dat.a("skills", tskills)
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i].name
 		var stat = item.dat.g(s)

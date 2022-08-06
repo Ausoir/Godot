@@ -9,6 +9,7 @@ func refresh():
 	var txt2 = ""
 	txt2 += "[color=#A64][url=autofight]Autofight "+str(G.vars.setting.autofight)+"[/url][/color]\n"
 	txt2 += "[color=#A64][url=autoaim]Autoaim "+str(G.vars.setting.autoaim)+"[/url][/color]\n"
+	txt2 += "[color=#A64][url=autofire]Autofire "+str(G.vars.setting.autofire)+"[/url][/color]\n"
 	txt2 += "[color=#A64]Sound[/color]: [url=sound]"+G.vars.setting.sound.capitalize()+"[/url]\n"
 	txt2 += "[color=#A64][url=retire]Retire[/url][/color]\n"
 	txt2 += "[color=#942][url=exit]Exit Game[/url][/color]\n"
@@ -25,6 +26,10 @@ func _on_meta_clicked(meta):
 	elif meta == "autoaim":
 		G.vars.setting.autoaim = !G.vars.setting.autoaim
 		refresh()
+	elif meta == "autofire":
+		G.vars.setting.autofire = !G.vars.setting.autofire
+		refresh()
+		G.ui.update_hud()
 	elif meta == "sound":
 		if G.vars.setting.sound == "low":
 			G.vars.setting.sound = "normal"

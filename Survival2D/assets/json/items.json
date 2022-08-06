@@ -5,7 +5,7 @@
 	},
 	"mode survive": {
 		"turn": 24,
-		"onmake": [["move","$p","$R14"],["&=","objective","OBJECTIVE: Survive for 2 minutes."],["time", 120, [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["&","objective"],["menu","msg","$t"]],
+		"onmake": [["relocate","$p","$R14"],["time", "{100~180}", [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["^","time"],["&=","objective","OBJECTIVE: Survive for {t} seconds."],["&","objective"],["menu","msg","$t"]],
 		"onturn": [["make", "g_{area}{rating}", "$L14"],["hunt", "$t", "$p"]],
 	},
 	"mode assault": {

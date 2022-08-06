@@ -1,68 +1,66 @@
 var tgt
 
-func do(name, host=null, p=null, mode=0, pdata=null):
-	var data = pdata
-	if data == null:
-		data = G.data.skill_data.get(name)
-		if data == null:
-			return false
-	if !find_victim(p, host, data):
+func do(skill, host=null, dest=null, mode=0):
+	if !find_victim(skill, host, dest):
 		return false
 	else:
-		if "cooldown" in data:
-			if name in host.cooldowns:
+		if "cooldown" in skill:
+			if skill.name in host.cooldowns:
 				return false
-			host.cooldowns[name] = data.cooldown
-		if "delay" in data:
-			host.delay = data.delay
+			host.cooldowns[skill.name] = skill.cooldown
+		if "delay" in skill:
+			host.delay = skill.delay
 		if mode == 0:
-			if "duration" in data and host.item_type == "unit":
-				if host.buffs.has(name):
-					G.cmds(data.get("onstack", []), host, tgt)
+			if "duration" in skill and host.item_type == "unit":
+				if host.buffs.has(skill.name):
+					G.cmds(skill.get("onstack", []), host, tgt)
 					return true
 				else:
-					host.buffs.add(name, data, data.duration, tgt)
-			G.cmds(data.get("onstart", []), host, tgt)
+					host.buffs.add(skill, skill.duration, tgt)
+			G.cmds(skill.get("onstart", []), host, tgt)
 		elif mode == 1:
-			G.cmds(data.get("onturn", []), host, tgt)
+			G.cmds(skill.get("onturn", []), host, tgt)
 		elif mode == 2:
-			G.cmds(data.get("onend", []), host, tgt)
+			G.cmds(skill.get("onend", []), host, tgt)
 		elif mode == 3:
-			G.cmds(data.get("retaliate", []), host, tgt)
-			G.cmds(data.get("compensate", []), host, host)
+			G.cmds(skill.get("retaliate", []), host, tgt)
+			G.cmds(skill.get("compensate", []), host, host)
+		if host == G.you.unit:
+			if "noise" in skill:
+				G.you.noise = skill.noise
 		if tgt != null:
 			if !is_instance_valid(tgt) or (tgt.item_type == "unit" and tgt.is_dead):
-				G.cmds(data.get("onkill", []), host, tgt)
+				G.cmds(skill.get("onkill", []), host, tgt)
 		return true
 
-func find_victim(p, host, data):
-	if data.target == "auto":
-		tgt = p
+func find_victim(skill, host, to):
+	if skill.target == "auto":
+		tgt = to
 		return true
-	elif p != null:
-		if data.target == "tile":
-			tgt = get_tile(p)
+	elif to != null:
+		if skill.target == "tile":
+			tgt = get_tile(to)
 			return true
-		elif data.target == "self":
-			if is_req_met(host, host, data):
+		elif skill.target == "self":
+			if is_req_met(host, host, skill):
 				tgt = host
 				return true
-		elif data.target == "body":
-			var raycast = host.n_collider.cast_col_ray(p, [host], data.get("col", 0))
+		elif skill.target == "body":
+			var raycast = host.n_collider.cast_ray(to, [host], skill.get("col", 0))
 			if !raycast.empty() and raycast.collider is KinematicBody2D and raycast.collider.item_type == "unit":
 				var tgt_point = raycast.position
-				if host.pos.world.from_vec(tgt_point).distance_to(host.pos) <= data.get("range", 16):
+				if host.pos.world.from_vec(tgt_point).distance_to(host.pos) <= skill.get("range", 16):
 					tgt = raycast.collider.get_parent()
-					return is_req_met(tgt, host, data)
-		elif data.target == "beam":
-			var rng = data.get("range", 16)
-			tgt = host.pos.get_beam_to(get_tile(p), data.get("col", 0), rng)[0]
-			return is_req_met(tgt, host, data)
+					return is_req_met(tgt, host, skill)
+		elif skill.target == "beam":
+			var rng = skill.get("range", 16)
+			tgt = host.pos.get_beam_to(get_tile(to), skill.get("col", 0), rng)[0]
+			return is_req_met(tgt, host, skill)
 		else:
-			tgt = p
+			tgt = to
 			if tgt != null and is_instance_valid(tgt):
-				if data.target == "onattack" or data.target == "oncharge" or data.target == "onhit":
-					if tgt.item_type == "unit" and is_req_met(tgt, host, data):
+				if skill.target == "onattack" or skill.target == "oncharge" or skill.target == "onhit":
+					if tgt.item_type == "unit" and is_req_met(tgt, host, skill):
 						return true
 	return false
 

@@ -186,12 +186,13 @@ func get_adjacent(dir, val=1):
 
 func get_area(p):
 	var r = []
-	for iy in range(-p, p+1):
-		for ix in range(-p, p+1):
-			var rx = x + ix
-			var ry = y + iy
-			if world.is_inbound(rx, ry):
-				r.append(world.tiles[ry][rx])
+	var xmin = max(0, x-p)
+	var xmax = min(world.size.x-1, x+p+1)
+	var ymin = max(0, y-p)
+	var ymax = min(world.size.y-1, y+p+1)
+	for iy in range(ymin, ymax):
+		for ix in range(xmin, xmax):
+			r.append(world.tiles[iy][ix])
 	return r
 
 func distance_to(tile):
@@ -220,43 +221,6 @@ func get_rand_offset(_x, _y):
 	var rx = R.ir(-_x, _x)
 	var ry = R.ir(-_y, _y)
 	return world.fit_bound(x + rx, y + ry)
-
-func cast_sight(camera, row, start, end, flips, sight2, intensity):
-	if start < end:
-		return
-	var new_start
-	for cell in range(row, sight2 + 1):
-		var dx = -cell - 1
-		var dy = -cell
-		var blocked = false
-		while dx <= 0:
-			dx += 1
-			var start_slope = (dx - 0.5) / (dy + 0.5)
-			var end_slope = (dx + 0.5) / (dy - 0.5)
-			if start < end_slope:
-				continue
-			elif end > start_slope:
-				break
-			else:
-				var tile_x = dx * flips[0] + dy * flips[1]
-				var tile_y = dx * flips[2] + dy * flips[3]
-				var map_x = camera.x + tile_x
-				var map_y = camera.y + tile_y
-				var tile = world.get_tile(map_x, map_y)
-				if tile:
-					if blocked:
-						if tile.is_col(1):
-							new_start = end_slope
-						else:
-							blocked = false
-							start = new_start
-					else:
-						if tile.is_col(1) and cell < sight2:
-							blocked = true
-							cast_sight(camera, cell + 1, start, start_slope, flips, sight2, intensity)
-							new_start = end_slope
-		if blocked:
-			break
 
 func get_beam_to(dest, col_mask, distance=-1):
 	var diffx = dest.x - x

@@ -13,6 +13,7 @@
 		"desc_dmg": "2 True, Burn",
 		"onstart": [["action","$h", "attack"],["attack","$h","$t","true", 2],["cast","burning","$t","$t"]],
 		"desc": "A low chance attack that sets fire on the enemy.",
+		"noise": 4,
 	},
 	"quick strike": {
 		"target": "onattack",
@@ -40,6 +41,7 @@
 		"desc_dmg": "25% Bash, 2 Cut",
 		"onstart": [["action","$h","strike"],["push","$t","$hv",160],["attack","$h","$t","bash", 25],["attack","$h","$t","cut", 2]],
 		"desc": "A low chance attack that delivers both cut and brute damage.",
+		"noise": 4,
 	},
 	"swipe": {
 		"target": "onattack",
@@ -53,6 +55,7 @@
 		"onstart": [["action","$h","attack"],["attack","$h","$t","cut", 1]],
 		"onturn": [["delay","$h",1],["action","$h", "attack"],["attack","$h","$t","cut", 1]],
 		"desc": "Swipe thrice for minor cut damage.",
+		"noise": 4,
 	},
 	"slice": {
 		"target": "onattack",
@@ -62,6 +65,7 @@
 		"desc_dmg": "3 Cut",
 		"onstart": [["action","$h","strike"],["attack","$h","$t","cut", 3]],
 		"desc": "An attack that deals cut damage.",
+		"noise": 3,
 	},
 	"stab": {
 		"target": "onattack",
@@ -92,6 +96,7 @@
 		"onstart": [["action","$h","headbutt"]],
 		"onend": [["push","$t","$hv",160],["attack","$h","$t","bash", 60]],
 		"desc": "Heavy attack that deals moderate damage and knockback.",
+		"noise": 6,
 	},
 	"venomous bite": {
 		"target": "onattack",
@@ -136,6 +141,7 @@
 		"onstart": [["action","$h","kick"]],
 		"onend": [["push","$t","$hv",320],["attack","$h","$t","bash",150],["delay","$t",24],["action","$t","knockout"]],
 		"desc": "Very slow attack that delivers extreme damage to push and stun the target.",
+		"noise": 6,
 	},
 	"somersault": {
 		"target": "onattack",
@@ -147,6 +153,7 @@
 		"onstart": [["action","$h","flip"]],
 		"onend": [["aoe","$hp",1,[["push","$$t","$hv",80],["attack","$h","$$t","bash",50],["delay","$$t",24],["action","$$t","knockout"]]]],
 		"desc": "Very slow attack that delivers major damage to anything nearby.",
+		"noise": 6,
 	},
 	"parry": {
 		"target": "onhit",
@@ -218,6 +225,7 @@
 
 	"shoot": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 6,
 		"range": 5,
@@ -225,9 +233,11 @@
 		"desc_dmg": "4 Cut",
 		"cancelable": true,
 		"onstart": [["projectile","shot bullet"]],
+		"noise": 12,
 	},
 	"burst fire": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 9,
 		"range": 10,
@@ -236,9 +246,11 @@
 		"cancelable": true,
 		"onturn": [["projectile","shot bullet"]],
 		"onend": [["cooldown", "$h", "burst fire", 8]],
+		"noise": 16,
 	},
 	"spray bullets": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 18,
 		"range": 10,
@@ -247,35 +259,43 @@
 		"cancelable": true,
 		"onturn": [["projectile","shot machine bullet"]],
 		"onend": [["cooldown", "$h", "spray bullets", 12]],
+		"noise": 16,
 	},
 	"shoot arrow": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 1,
 		"range": 6,
 		"cooldown": 6,
 		"desc_dmg": "4 Cut",
 		"onstart": [["action","$h","headbutt"],["projectile","shot arrow"],["delay","$t",12]],
+		"noise": 5,
 	},
 	"shoot bolt": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 8,
 		"range": 8,
 		"cooldown": 12,
 		"desc_dmg": "4 Cut",
 		"onstart": [["projectile","shot bolt"]],
+		"noise": 5,
 	},
 	"laser": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 5,
 		"range": 10,
 		"desc_dmg": "3 True, Burn",
 		"onstart": [["projectile","shot laser"]],
+		"noise": 10,
 	},
 	"burst laser": {
 		"img": "gui/sk_shoot",
+		"trigger": 2,
 		"target": "auto",
 		"delay": 5,
 		"range": 10,
@@ -284,11 +304,13 @@
 		"cancelable": true,
 		"onturn": [["projectile","shot laser"]],
 		"onend": [["cooldown", "$h", "laser", 8]],
+		"noise": 10,
 	},
 
 
 	"tackle": {
 		"img": "gui/sk_kick",
+		"trigger": 2,
 		"target": "body",
 		"col": 15,
 		"delay": 4,
@@ -298,9 +320,11 @@
 		"reqs": ["foe"],
 		"onstart": [["gfx","particle","Jump","$hv"],["move","$h","$tv"],["gfx","particle","Hit","$tv"],["action","$h", "kick"],["attack","$h","$t","bash", 25],["interrupt", "knockout"],["delay","$t",12],["action","$t","knockout"]],
 		"desc": "Charge attack that deals heavy damage to stun the target.",
+		"noise": 4,
 	},
 	"latch": {
 		"img": "gui/sk_kick",
+		"trigger": 2,
 		"target": "body",
 		"col": 15,
 		"delay": 4,
@@ -312,6 +336,7 @@
 	},
 	"reach attack": {
 		"img": "gui/sk_throw",
+		"trigger": 2,
 		"target": "body",
 		"col": 15,
 		"delay": 8,
@@ -322,6 +347,7 @@
 	},
 	"teleport": {
 		"img": "gui/st_fly",
+		"trigger": 1,
 		"target": "auto",
 		"col": 0,
 		"delay": 1,
@@ -332,6 +358,7 @@
 	},
 	"passwall": {
 		"img": "gui/sk_throw",
+		"trigger": 1,
 		"target": "tile",
 		"col": 0,
 		"delay": 2,
@@ -349,6 +376,7 @@
 
 	"hire militia": {
 		"img": "units/ant",
+		"trigger": 1,
 		"target": "beam",
 		"range": 1,
 		"onstart": [["col","$hp",2],["!stop"],["make", "guard", "$t"],["ally"]],
@@ -356,6 +384,7 @@
 	},
 	"hire guard": {
 		"img": "gui/sk_throw",
+		"trigger": 1,
 		"target": "beam",
 		"range": 1,
 		"onstart": [["onstop","Invalid position."],["col","$t",15],["money",-4],["make", "loading", "$t"],["*=","$t","spawn","guard"]],
@@ -364,6 +393,7 @@
 	},
 	"assign": {
 		"img": "units/ant",
+		"trigger": 1,
 		"target": "self",
 		"delay": 1,
 		"onstart": [["menu","dialog","Assign"]],
@@ -371,18 +401,21 @@
 	},
 	"human form": {
 		"img": "gui/st_death",
+		"trigger": 1,
 		"target": "self",
 		"delay": 2,
 		"onstart": [["morph", "$h", "coyote"],["*a","$t","abilities","coyote form"]],
 	},
 	"coyote form": {
 		"img": "gui/st_death",
+		"trigger": 1,
 		"target": "self",
 		"delay": 2,
 		"onstart": [["morph", "$h", "coyote"],["*a","$t","abilities","human form"]],
 	},
 	"debug": {
 		"img": "gui/st_pain",
+		"trigger": 1,
 		"target": "self",
 		"delay": 4,
 		"duration": -1,
@@ -394,12 +427,14 @@
 	},
 	"respawn": {
 		"img": "gui/st_death",
+		"trigger": 1,
 		"target": "self",
 		"delay": 2,
 		"onstart": [["morph", "$h", "player"]],
 	},
 	"game over": {
 		"img": "gui/st_death",
+		"trigger": 1,
 		"target": "self",
 		"delay": 0,
 		"onstart": [["custom", "start menu", null]],

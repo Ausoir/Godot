@@ -90,6 +90,9 @@ func place_mobs(type, num):
 func set_dark(tile):
 	if tile.set_visible(false):
 		shademap.set_cell(tile.x, tile.y, 1)
+		for i in tile.items:
+			if i.item_type == "unit":
+				G.you.on_enemy_sighted(i, false)
 
 func set_light(tile):
 	if !tile.visible:
@@ -97,6 +100,9 @@ func set_light(tile):
 		if shademap.get_cell(tile.x, tile.y) == 2:
 			if G.temp.discover != null:
 				G.cmds(G.temp.discover, G.you.unit, tile)
+		for i in tile.items:
+			if i.item_type == "unit":
+				G.you.on_enemy_sighted(i, true)
 		shademap.set_cell(tile.x, tile.y, -1)
 
 func create_map(sx, sy):
