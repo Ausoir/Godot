@@ -46,7 +46,7 @@
 		"ms": {
 			"name": "move speed",
 			"default": 40,
-			"variance": 8,
+			"variance": 6,
 			"desc": "This is your move speed."
 		},
 	},
@@ -66,7 +66,7 @@
 	"area": {
 		"ruins": {
 			"biome": 0.3,
-			"modes": ["scavenge", "survive"]
+			"modes": ["scavenge", "survive", "escape"]
 		},
 		"caverns": {
 			"biome": 0.4,
@@ -82,11 +82,11 @@
 		},
 		"town": {
 			"biome": 0.8,
-			"modes": ["scavenge", "survive", "assault"]
+			"modes": ["scavenge", "survive", "assault", "escape"]
 		},
 		"lab": {
 			"biome": 99,
-			"modes": ["scavenge", "survive", "assault"]
+			"modes": ["scavenge", "survive", "assault", "escape"]
 		},
 	}
 }

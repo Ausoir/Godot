@@ -18,8 +18,8 @@ class buff:
 		skill = p1
 		duration = p2
 		dest = p3
-		cancelable = fx.get("cancelable", false)
-		turns = fx.get("turns", 0)
+		cancelable = p1.get("cancelable", false)
+		turns = p1.get("turns", 0)
 
 	func on_turn(host):
 		if duration == 0:
@@ -48,11 +48,11 @@ func has(p):
 	return p in states
 
 func cancel(p):
-	var state = states.get(p.name)
+	var state = states.get(p)
 	if state != null:
-		if "onend" in p:
-			G.influence.do(p, host, state.dest, 2)
-		states.erase(p.name)
+		if "onend" in state.skill:
+			G.influence.do(state.skill, host, state.dest, 2)
+		states.erase(p)
 		if states.empty():
 			G.world.turn.remove(self)
 

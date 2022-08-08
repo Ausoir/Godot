@@ -84,7 +84,7 @@ func _on_input(event: InputEvent):
 			elif aiming == -1:
 				var screen_mouse = G.ui.mouse_pos
 				screen_mouse -= G.ui.screen_size / 2
-				if screen_mouse.length_squared() < G.W * G.H:
+				if screen_mouse.length_squared() < G.V:
 					G.cmds([["menu", "menu", -1]], unit)
 			else:
 				n_cursor.show()
@@ -148,15 +148,21 @@ func _physics_process(_delta):
 func on_turn():
 	if tasks.empty():
 		find_closest_enemy()
-		if closest_enemy != null:
-			G.msg(closest_enemy.position.distance_to(unit.position))
 		var autoed = false
 		if G.vars.setting.autofire:
 			autoed = autofire()
-		if !autoed and G.vars.setting.autofight:
-			var colld = unit.n_collider.get_collider(unit.dat.g("faction", -1))
-			if colld != null:
-				tasks = [["attack", colld]]
+		if !autoed:
+			if G.vars.setting.autofight:
+				if closest_enemy != null:
+					var t = closest_enemy.position.distance_squared_to(unit.position)
+					if t < G.V:
+						tasks = [["attack", closest_enemy]]
+						autoed = true
+		if !autoed:
+			if unit.n_collider.get_slide_count() > 0:
+				var t = unit.n_collider.get_collider(2)
+				if t != null and t.dat.g("faction",-1) == 1:
+					t.controller.path_to(t.pos.get_rand_offset(3, 3), 0)
 	.on_turn()
 	remove_steps()
 	show_steps()
@@ -294,26 +300,19 @@ func perform(task):
 			var complete = G.temp.get("complete")
 			if task.size() > 2:
 				complete = task[2]
-			if task[1] < 1:
-				if complete:
+			if complete:
+				if task[1] < 1:
+					G.vars.map.current = G.vars.map.next
 					G.vars.map.complete.append(G.vars.map.current)
 					G.custom.run("save", null)
+					G.custom.run("level select", null)
 				else:
-					G.vars.map.current = G.vars.map.prev
-				G.custom.run("level select", null)
-			else:
-				var adjs = unit.pos.get_available_adjacents(1)
-				for tile in adjs:
-					for i in tile.items:
-						if i.item_type == "unit" and i.faction != unit.faction:
-							return
-				if complete:
+					if closest_enemy != null and closest_enemy.position.distance_squared_to(unit.position) < G.V:
+						return
 					G.msg("Leaving map..." + str(task[1]))
-				else:
-					G.msg("Returning..." + str(task[1]))
-				unit.set_animation("wait")
-				unit.delay = 4
-				tasks.append(["exit", task[1]-1])
+					unit.set_animation("wait")
+					unit.delay = 4
+					tasks.append(["exit", task[1]-1])
 	return r
 
 func make_sound(max_dist):

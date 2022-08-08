@@ -2,6 +2,7 @@ extends Node
 
 const W = 32
 const H = 32
+const V = 1024
 const HW = 16
 const HH = 16
 const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \

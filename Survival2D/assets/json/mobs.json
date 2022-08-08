@@ -14,15 +14,10 @@
 		"equip": [["casual", 0.9, "/", ["gi", 1]]],
 		"dat": {"oninteract": [["menu", "dialog", "scavenger"]], "goal": "wander", "faction": 1}
 	},
-	"dormkeep": {
-		"unit": "human",
-		"equip": [["suit", 1]],
-		"dat": {"oninteract": [["menu", "dialog", "dormkeep"]], "faction": 1}
-	},
 	"trader": {
 		"unit": "human",
-		"equip": [["suit", 1], ["backpack", 0.5]],
-		"dat": {"oninteract": [["menu", "dialog", "trader"]], "faction": 1}
+		"equip": [["suit", 1], ["backpack", 0.4]],
+		"dat": {"oninteract": [["menu", "dialog", "scavenger"]], "faction": 1}
 	},
 	"tavernkeep": {
 		"unit": "human",
@@ -32,7 +27,7 @@
 	"scavenger": {
 		"unit": "human",
 		"equip": [["leather armor", 0.9, "/", ["scalemail", 1]], ["backpack",0.1,"/",["rucksack", 0.05]], ["spear",0.25,"/",["bat",0.25,"/",["pipe",0.5,"/",["knife",0.5,"/",["cutlass",1]]]]]],
-		"dat": {"faction": 1, "oninteract": [["menu","confirm","Hire this unit for $50?", [[]]]]}
+		"dat": {"faction": 1, "oninteract": [["menu", "dialog", "scavenger"]]}
 	},
 	"looter": {
 		"unit": "human",

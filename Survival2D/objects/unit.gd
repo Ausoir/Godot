@@ -107,7 +107,11 @@ func slide(tox, toy):
 	if ms > 0:
 		if !("float" in flags):
 			ms = max(.2, ms * pos.slow)
-		n_animation.play("walk", -1, ms / 20)
+		var moved_vel = n_collider.moved_vel.length() / 18
+		if moved_vel > .1:
+			n_animation.play("walk", -1, moved_vel)
+		else:
+			n_animation.play("idle", -1, .01)
 		var deg = atan2(toy-position.y, tox-position.x)
 		var vx = cos(deg)
 		var vy = sin(deg)
@@ -161,6 +165,15 @@ func on_kill(killed):
 		hit("true", -2, self)
 	controller.on_kill(killed)
 
+func get_defense(_type):
+	var def = .get_defense(_type)
+	if _type == "true":
+		return 0
+	elif _type == "bash":
+		return int(def/2)
+	else:
+		return def
+
 func hit(_type, dmg, _hitter):
 	if dmg > 0:
 		if _hitter != null and controller != null:
@@ -168,10 +181,14 @@ func hit(_type, dmg, _hitter):
 		if _type != "true":
 			var block = get_defense(_type)
 			var used = roll_skill("onhit", 3)
+			var skillblock = 0
 			if used != null:
-				block += used[1].get("block", 0)
+				skillblock = used.get("block", 0)
 			if block >= dmg:
-				G.display_damage("MISS", pos.position, Color.darkgray)
+				G.display_damage("BLOCK", pos.position, Color.darkgray)
+				return
+			elif block + skillblock >= dmg:
+				G.display_damage(used.get("block quote"), pos.position, Color.darkgray)
 				return
 			else:
 				dmg -= block
@@ -211,7 +228,7 @@ func on_health_change():
 		is_dead = true
 	elif health_percent <= .5:
 		if !buffs.has("injury"):
-			G.influence.do("injury", self)
+			G.influence.do(G.data.skill_data.get("injury"), self)
 
 func on_turn():
 	if is_dead:

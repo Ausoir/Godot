@@ -123,10 +123,10 @@ func update_hud():
 	buffs.rect_position.x = screen_size.x - 48
 	for i in G.you.unit.buffs.states:
 		var buff = G.you.unit.buffs.states[i]
-		var img = buff.fx.get("img")
+		var img = buff.skill.get("img")
 		if img != null:
 			var slot = BuffSlot.instance()
-			slot.assign(i, img, buff.fx.get("desc"))
+			slot.assign(i, img, buff.skill.get("desc"))
 			buffs.add_child(slot)
 
 func describe(type, header, subject):

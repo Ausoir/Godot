@@ -6,7 +6,7 @@ const QUADRANT_ALL = [1, 1, 1, 1]
 var processing_frame: int
 var sight_range = -1
 var sight_range_y = -1
-var sight_ratio = .7
+var sight_ratio = .75
 var sight_frame = 0
 var sight_bits = 1
 var param_last_pos

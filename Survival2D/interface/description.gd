@@ -43,6 +43,12 @@ func display_item(header, item):
 			var space = item.get("space", 0)
 			if space != 0:
 				desc += "[color=#86A]Storage: "+ str(space) +" items[/color]\n"
+			var armor = item.get("armor", 0)
+			if armor != 0:
+				desc += "[color=#8A4]Defense: "+ str(armor) +"[/color]\n"
+			var coverage = item.get("coverage", 0)
+			if coverage != 0:
+				desc += "[color=#AAA]Coverage: "+ str(coverage*100) +"%[/color]\n"
 	else:
 		var bash = item.get("bash", 0)
 		if bash != 0:

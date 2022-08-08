@@ -11,4 +11,4 @@ func make(text, p):
 func _on_confirmed():
 	queue_free()
 	get_parent().remove_child(self)
-	G.cmds(onconfirm)
+	G.cmds(onconfirm, G.command.prev_host)

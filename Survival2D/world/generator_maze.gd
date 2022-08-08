@@ -4,11 +4,11 @@ var _stack = []
 var size
 
 func generate_lab():
-	post_process_cmd = [["make","stairdown","$R15"], ["make","stairup","$R15"]]
+	post_process_cmd = [["make","stairdown","$R"],["make","stairdown","$R"]]
 	generate_maze(24, 24)
 	place_output()
 	place_buildings()
-	make_border(WALL_TILE)
+	make_border(['concrete'])
 	paint_map()
 	return base
 

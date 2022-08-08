@@ -54,12 +54,13 @@ func perform(task):
 				return false
 		unit.slide(task[1].position.x, task[1].position.y)
 		if unit.n_collider.get_slide_count() > 0:
-			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
-				if interact_tile(task[1]):
-					return false
-				return perform(["smash", task[1]])
-			else:
-				return true
+			if !unit.n_collider.cast_ray(task[1].position, [unit.n_collider], unit.col).empty():
+				if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
+					if interact_tile(task[1]):
+						return false
+					return perform(["smash", task[1]])
+				else:
+					return true
 		return (task[1].position - unit.position).length_squared() < 64
 	elif task[0] == "move":
 		unit.slide(unit.position.x+task[1], unit.position.y+task[2])

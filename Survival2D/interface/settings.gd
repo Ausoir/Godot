@@ -3,7 +3,7 @@ extends Node
 func refresh():
 	var txt = ""
 	txt += "[color=#A64][url=abandon]Abandon Map[/url][/color]\n"
-	txt += "[color=#A64][url=shop]Test Shop[/url][/color]\n"
+	txt += "[color=#A64][url=test]Test[/url][/color]\n"
 	$Top.set_bbcode(txt)
 
 	var txt2 = ""
@@ -18,8 +18,8 @@ func refresh():
 func _on_meta_clicked(meta):
 	if meta == "abandon":
 		G.cmds([["menu","confirm","Abandon current level?",[["custom","level select",null]]]])
-	elif meta == "shop":
-		G.cmds([["menu","dialog","trader"]])
+	elif meta == "test":
+		G.cmds([["custom","save",null]])
 	elif meta == "autofight":
 		G.vars.setting.autofight = !G.vars.setting.autofight
 		refresh()

@@ -173,7 +173,7 @@ func fill(from, to, val):
 		for x in range(from.x, to.x+1):
 			base[y][x] = val
 
-func make_border(val, exc=[], reach=0):
+func make_border(val, reach=0):
 	var list = []
 	for i in range(height):
 		list.append([i, reach])
@@ -182,9 +182,8 @@ func make_border(val, exc=[], reach=0):
 		list.append([reach, i])
 		list.append([height-1-reach, i])
 	for i in list:
-		if not base[i[0]][i[1]] in exc:
-			base[i[0]][i[1]] = val
-	return base
+		output[i[0]][i[1]] = val
+	return output
 
 func check_adjacent(x, y, tile):
 	if base[y][x] == tile or\

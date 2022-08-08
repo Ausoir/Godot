@@ -94,14 +94,33 @@ func add_trade(type):
 	G.ui.display(0)
 	var items = ""
 	var count = 0
-	var groups = G.data.get_group(type)
+	var groups = []
+	if type == null:
+		for i in host.inventory:
+			if i != null:
+				groups.append([i.name, 1, i])
+		for i in host.equipments:
+			if i != null:
+				groups.append([host.equipments[i].item_name, 1, host.equipments[i]])
+	else:
+		groups = G.data.get_group(type)
 	for group in groups:
 		var item_name = group[0]
 		var price = group[1]
 		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
 		count += 1
 		var option = {"hover": ["item", item_name]}
-		option["cmd"] = [["money",-price,true],["remove","$h"],["give", "$p", item_name],["menu","msg","Bought "+item_name+" for $" + str(price)+"."]]
+		var cmd = []
+		cmd.append(["money",-price,true])
+		var item
+		if group.size() > 2:
+			item = group[2]
+		else:
+			item = G.cmd(["make", item_name, "$pp"])
+		cmd.append(["take", "$h", item])
+		cmd.append(["give", "$p", item])
+		cmd.append(["menu","msg","Bought "+item_name+" for $" + str(price)+"."])
+		option["cmd"] = cmd
 		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)
 

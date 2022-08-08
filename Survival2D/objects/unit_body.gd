@@ -4,9 +4,10 @@ var item_type = "unit"
 var parent
 var vel = Vector2()
 var last_col
+var moved_vel = Vector2()
 
 func _physics_process(_delta):
-	move_and_slide(vel)
+	moved_vel = move_and_slide(vel)
 	parent.position = global_position
 	position.x = 0
 	position.y = 0

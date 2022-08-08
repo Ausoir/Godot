@@ -135,7 +135,7 @@
 		"col": 0,
 		"armor": 12,
 		"layer": -1,
-		"oninteract": [["v","controller","$t"],["tasks", "$t", ["exit", 3, false]]],
+		"oninteract": [["tasks", "$t", ["exit", 3, false]]],
 	},
 	"stairdown": {
 		"img": "tiles/stairdown",
@@ -143,7 +143,7 @@
 		"col": 0,
 		"armor": 12,
 		"layer": -1,
-		"oninteract": [["v","controller","$t"],["tasks", "$t", ["exit", 3]]],
+		"oninteract": [["tasks", "$t", ["exit", 3]]],
 	},
 	"manhole": {
 		"img": "tiles/manhole",

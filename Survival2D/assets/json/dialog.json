@@ -1,8 +1,7 @@
 {
-	"trader": {
+	"trade": {
 		"title": "Trade",
-		"true": "\"Let's trade.\"\n\n",
-		"type": "g_trade",
+		"true": "\"Let's trade then.\"\n\n",
 		"script": ["trade"],
 	},
 	"dispenser": {
@@ -31,10 +30,22 @@
 		"true": "Do you have business with me?\n\n\n\n[url=0]Trade[/url]\n[url=1]Invite to party[/url]",
 		"opt": [
 			{
-				"cmd": [["menu", "confirm", "Hire this unit?", [["menu", "dialog", "trader"]]]],
+				"cmd": [["menu", "dialog", "trade"]],
 			},
 			{
-				"cmd": [["menu", "dialog", "scavenger "]],
+				"cmd": [["menu", "confirm", "Hire this unit?", [["*=","$h","follow","$p"], ["*=","$h","goal","follow"], ["*=","$h","oninteract",[["menu", "dialog", "follower"]]]]]],
+			},
+		]
+	},
+	"follower": {
+		"title": "Talk with your follower",
+		"true": "What do you need?\n\n\n\n[url=0]Trade[/url]\n[url=1]Give item[/url]",
+		"opt": [
+			{
+				"cmd": [["menu", "dialog", "trade"]],
+			},
+			{
+				"cmd": [["menu", "confirm", "Give?", [["make","medikit","$pp"],["give","$h","$t"]]]],
 			},
 		]
 	},

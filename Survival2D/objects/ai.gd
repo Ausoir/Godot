@@ -24,6 +24,9 @@ func think():
 			path_to(unit.pos.get_rand_offset(12, 12), 0)
 		elif goal == "kill":
 			target = G.you.unit
+		elif goal == "follow":
+			if target == null:
+				target = unit.dat.g("follow")
 		elif goal == "sabotage":
 			var sabo = G.temp.get("sabotage")
 			if sabo != null and !sabo.empty():

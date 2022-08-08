@@ -1,17 +1,22 @@
 {
 	"mode scavenge": {
 		"turn": 24,
-		"onturn": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore and scavenge. Leave through the {t} when ready."],["time", 3, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["remove","$h"],["&","objective"],["menu","msg","$t"]],
+		"onmake": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore and scavenge. Leave through the {t} when ready."],["time", 3, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["&","objective"],["menu","msg","$t"]],
+		"onturn": [["make", "g_{area}{rating}", "$R"],["?=","{1~4}",1],["*=","$t","goal","wander"]],
 	},
 	"mode survive": {
-		"turn": 24,
-		"onmake": [["relocate","$p","$R14"],["time", "{100~180}", [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["^","time"],["&=","objective","OBJECTIVE: Survive for {t} seconds."],["&","objective"],["menu","msg","$t"]],
-		"onturn": [["make", "g_{area}{rating}", "$L14"],["hunt", "$t", "$p"]],
+		"turn": 36,
+		"onmake": [["relocate","$p","$R"],["time", "{80~160}", [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["^","time"],["&=","objective","OBJECTIVE: Survive for {t} seconds."],["&","objective"],["menu","msg","$t"]],
+		"onturn": [["make", "g_{area}{rating}", "$L"],["hunt", "$t", "$p"]],
 	},
 	"mode assault": {
-		"turn": 24,
-		"onturn": [["&=","objective","OBJECTIVE: Kill the hooded target."],["make","g_as{rating}","$R14"],["&=","discover",[["?>!","{{-2~200}","{rating}"],["make","g_{area}{rating}","$$t",15]]],
-			["&","objective"],["menu","msg","$t"],["remove","$h"]],
+		"onmake": [["&=","objective","OBJECTIVE: Kill the hooded target."],["make","g_as{rating}","$R"],["*=","$h","target","$t"],["&=","discover",[["?>!","{{-2~180}","{rating}"],["make","g_{area}{rating}","$$t",15]]],
+			["&","objective"],["menu","msg","$t"],["time", "{60~120}", [["*","$h","target",null],["move","$t","$Lv"],["hunt","$t","$p"],["time", 30]]],["remove","$h"]],
+	},
+	"mode escape": {
+		"turn": 16,
+ 		"onmake": [["make", "g_{area}{rating}", "$L"],["repeat",16],["relocate","$p","$R"],["&=","complete",true],["&=","objective","OBJECTIVE: Escape!"],["&","objective"],["menu","msg","$t"]],
+		"onturn": [["make", "g_{area}{rating}", "$R"],["?=","{1~4}",1],["*=","$t","goal","wander"]],
 	},
 	"init spawners": {
 		"onmake": [["&=","spawner1","{g_zombie,g_mutant,g_hive}"],["&=","invade",1]],
@@ -20,7 +25,7 @@
 		"turn": 64,
 		"level": 0,
 		"onmake": [["=items","solar panel"],["&=","sabotage","$t"]],
-		"onturn": [["*+","$h","level",1],["?>=","{level}",9],["&*=","invade",-1],["*=","$h","level",0]],
+		"onturn": [["*+","$h","level",1],["?.","{level}",9],["&*=","invade",-1],["*=","$h","level",0]],
 	},
 	"spawner init": {
 		"onmake": [["make","spawner","$hp"],["remove","$h"]],
@@ -61,16 +66,25 @@
 		"onattack": [["attack","$h","$t","cut","{1~4}"]],
 		"onmiss": [["gfx","particle","Dodge","$t"]]
 	},
+	"shot strong arrow": {
+		"img": "textures/arrow",
+		"lifetime": 0.3,
+		"speed": 20,
+		"variation": [2, 0.1],
+		"onshoot": [["sfx","bow","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{2d6}"]],
+		"onmiss": [["gfx","particle","Dodge","$t"]]
+	},
 	"shot bolt": {
 		"img": "textures/arrow",
 		"lifetime": 0.2,
 		"speed": 24,
 		"variation": [2, 0.1],
 		"onshoot": [["sfx","bow","$hv"],["gfx","particle","Shoot","$hv"]],
-		"onattack": [["attack","$h","$t","cut","{1~4}"]],
+		"onattack": [["attack","$h","$t","cut","{2d4}"]],
 		"onmiss": [["gfx","particle","Dodge","$t"]]
 	},
-	"shot bullet": {
+	"shot .22": {
 		"img": "textures/bullet",
 		"lifetime": 0.2,
 		"speed": 28,
@@ -79,7 +93,61 @@
 		"onattack": [["attack","$h","$t","cut","{1~4}"],["gfx","particle","Shot","$tv"]],
 		"onmiss": [["gfx","particle","Shot","$t"]]
 	},
-	"shot machine bullet": {
+	"shot 9mm": {
+		"img": "textures/bullet",
+		"lifetime": 0.2,
+		"speed": 28,
+		"variation": [2, 0.4],
+		"onshoot": [["sfx","gun","$hv"],["gfx","particle","Shoot","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{1~4}"],["gfx","particle","Shot","$tv"]],
+		"onmiss": [["gfx","particle","Shot","$t"]]
+	},
+	"shot 10mm": {
+		"img": "textures/bullet",
+		"lifetime": 0.2,
+		"speed": 28,
+		"variation": [2, 0.4],
+		"onshoot": [["sfx","gun","$hv"],["gfx","particle","Shoot","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{1~4}"],["gfx","particle","Shot","$tv"]],
+		"onmiss": [["gfx","particle","Shot","$t"]]
+	},
+	"shot .38": {
+		"img": "textures/bullet",
+		"lifetime": 0.2,
+		"speed": 28,
+		"variation": [2, 0.4],
+		"onshoot": [["sfx","gun","$hv"],["gfx","particle","Shoot","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{1~4}"],["gfx","particle","Shot","$tv"]],
+		"onmiss": [["gfx","particle","Shot","$t"]]
+	},
+	"shot .45": {
+		"img": "textures/bullet",
+		"lifetime": 0.2,
+		"speed": 28,
+		"variation": [2, 0.4],
+		"onshoot": [["sfx","gun","$hv"],["gfx","particle","Shoot","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{1~4}"],["gfx","particle","Shot","$tv"]],
+		"onmiss": [["gfx","particle","Shot","$t"]]
+	},
+	"shot .223": {
+		"img": "textures/bullet",
+		"lifetime": 0.2,
+		"speed": 28,
+		"variation": [2, 0.4],
+		"onshoot": [["sfx","machine_gun","$hv"],["gfx","particle","Shoot","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{0~3}"],["gfx","particle","Shot","$tv"]],
+		"onmiss": [["gfx","particle","Shot","$t"]]
+	},
+	"shot .30-06": {
+		"img": "textures/bullet",
+		"lifetime": 0.2,
+		"speed": 28,
+		"variation": [2, 0.4],
+		"onshoot": [["sfx","machine_gun","$hv"],["gfx","particle","Shoot","$hv"]],
+		"onattack": [["attack","$h","$t","cut","{0~3}"],["gfx","particle","Shot","$tv"]],
+		"onmiss": [["gfx","particle","Shot","$t"]]
+	},
+	"shot 00": {
 		"img": "textures/bullet",
 		"lifetime": 0.2,
 		"speed": 28,

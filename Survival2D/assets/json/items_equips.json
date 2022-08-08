@@ -6,46 +6,27 @@
 		"light": 3,
 		"mat": "wood",
 		"weight": 1,
+		"perception": 3,
 		"desc": "A torch."
-	},
-	"automatic rifle": {
-		"img": "loot",
-		"sprite": "overlay/w_full_auto_rifle",
-		"skills": ["burst fire","spray bullets"],
-		"size": 2,
-		"mat": "metal",
-		"weight": 4,
-		"desc": "An artifact of the past."
-	},
-	"assault rifle": {
-		"img": "loot",
-		"sprite": "overlay/w_assault_rifle",
-		"skills": ["burst fire"],
-		"weight": 3,
-		"size": 2,
-		"mat": "metal",
-		"desc": "An artifact of the past."
-	},
-	"laser rifle": {
-		"img": "loot",
-		"sprite": "overlay/w_laser_gun",
-		"skills": ["burst laser"],
-		"mat": "metal",
-		"weight": 1,
-		"desc": "An artifact of the past."
-	},
-	"pistol": {
-		"img": "loot",
-		"sprite": "overlay/w_pistol",
-		"skills": ["shoot"],
-		"mat": "metal",
-		"weight": 1,
-		"desc": "An artifact of the past."
 	},
 	"bow": {
 		"img": "loot",
 		"sprite": "overlay/w_bow",
-		"skills": ["shoot arrow"],
+		"skills": ["shoot arrow I"],
+		"mat": "wood",
+		"weight": 1,
+	},
+	"composite bow": {
+		"img": "loot",
+		"sprite": "overlay/w_bow",
+		"skills": ["shoot arrow II"],
+		"mat": "wood",
+		"weight": 1,
+	},
+	"recurve bow": {
+		"img": "loot",
+		"sprite": "overlay/w_bow",
+		"skills": ["shoot arrow III"],
 		"mat": "wood",
 		"weight": 1,
 	},
@@ -55,6 +36,40 @@
 		"skills": ["shoot bolt"],
 		"mat": "wood",
 		"weight": 1,
+	},
+	"pistol": {
+		"img": "loot",
+		"sprite": "overlay/w_pistol",
+		"skills": ["shoot .22"],
+		"mat": "metal",
+		"weight": 1,
+		"desc": "An artifact of the past."
+	},
+	"assault rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_assault_rifle",
+		"skills": ["3 burst .223"],
+		"weight": 3,
+		"size": 2,
+		"mat": "metal",
+		"desc": "An artifact of the past."
+	},
+	"automatic rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_full_auto_rifle",
+		"skills": ["full auto .223"],
+		"size": 2,
+		"mat": "metal",
+		"weight": 4,
+		"desc": "An artifact of the past."
+	},
+	"laser rifle": {
+		"img": "loot",
+		"sprite": "overlay/w_laser_gun",
+		"skills": ["burst laser"],
+		"mat": "metal",
+		"weight": 1,
+		"desc": "An artifact of the past."
 	},
 	"spear": {
 		"img": "loot",
@@ -141,6 +156,7 @@
 		"mat": "leather",
 		"weight": 2,
 		"armor": 1,
+		"coverage": 1,
 		"perception": 1,
 		"space": 3,
 		"desc": "A tattered coat favored by looters. Provides some storage and armor."
@@ -152,6 +168,7 @@
 		"mat": "leather",
 		"space": 1,
 		"armor": 2,
+		"coverage": 0.75,
 		"weight": 1,
 		"desc": "A leather armor. Tough but lacks storage."
 	},
@@ -170,6 +187,8 @@
 		"sprite": "overlay/body_suspenders",
 		"part": "body",
 		"mat": "cotton",
+		"armor": 1,
+		"coverage": 0.5,
 		"space": 3,
 		"strength": 2,
 		"agility": -1,
@@ -201,7 +220,8 @@
 		"sprite": "overlay/body_scale",
 		"part": "body",
 		"mat": "metal",
-		"armor": 1,
+		"armor": 3,
+		"coverage": 0.85,
 		"space": 2,
 		"weight": 3,
 		"desc": "A tough armor layered with thin metallic scales."

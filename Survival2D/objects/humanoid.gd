@@ -181,7 +181,7 @@ func unaccomodate_stats(item):
 
 func has_part(p):
 	for eq in equipments:
-		if equipments[eq].dat.g("part") == p:
+		if equipments[eq] != null and eq == p:
 			return true
 	return false
 
@@ -218,14 +218,20 @@ func unstore(item):
 	return false
 
 func drop(item):
-	pos.add_item(item)
+	if item.pos == pos:
+		item.relocate(pos)
 
 func get_defense(_type):
 	var def = .get_defense(_type)
-	if _type == "bash":
-		return def + dat.g("abash", 0)
-	elif _type == "cut":
-		return def + dat.g("acut", 0)
+	for i in equipments:
+		var cov = equipments[i].dat.g("coverage", 1)
+		var ar = equipments[i].dat.g("armor", 0)
+		if R.r_percent(cov):
+			if _type == "bash":
+				def += int(ar / 2)
+			elif _type != "true":
+				def += ar
+	return def
 
 func update_save_data(_data):
 	var save_eq = {}

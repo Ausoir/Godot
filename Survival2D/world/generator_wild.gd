@@ -33,7 +33,7 @@ func generate(p):
 			[.65, ["rock wall"]],
 		]
 		make_border(WALL_TILE)
-		post_process_cmd = [["make","stairdown","$R15"], ["make","stairup","$R15"]]
+		post_process_cmd = [["make","stairdown","$R"], ["make","stairup","$R"]]
 	for x in range(width):
 		for y in range(height):
 			var v = base[y][x]

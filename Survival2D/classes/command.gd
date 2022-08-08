@@ -2,6 +2,7 @@ var tgt
 var stop = false
 var onstop = null
 var prev
+var prev_host
 
 func replace_dats(host, arg):
 	var last = arg.find("}")
@@ -23,6 +24,12 @@ func replace_dats(host, arg):
 					t = R.ir(int(split[0]), int(split[1]))
 				elif "," in v:
 					t = R.r_arr(v.split(","))
+				elif "d" in v:
+					var total = 0
+					t = v.split("d")
+					for _i in range(int(t[0])):
+						total += R.ir(1, int(t[1]))
+					t = total
 				elif v == "t":
 					t = tgt
 				else:
@@ -59,11 +66,9 @@ func replace_vars(host, _args):
 					elif arg[1] == "p":
 						unit = G.you.unit
 					elif arg[1] == "R":
-						r.append(get_rand_pos(int(arg.substr(2))))
-						continue
+						unit = get_rand_pos(14)
 					elif arg[1] == "L":
-						r.append(get_los(int(arg.substr(2))))
-						continue
+						unit = get_los(14)
 					if unit == null:
 						r.append(null)
 						continue
@@ -110,6 +115,7 @@ func run_operation(command, args, dict, _tgt):
 	return _tgt
 
 func run(p, host):
+	prev_host = host
 	var args = replace_vars(host, p)
 	var command = args[0]
 	if command[0] == "=":
@@ -132,6 +138,8 @@ func run(p, host):
 			stop = args[1] < args[2]
 		if command.length() > 2 and command[2] == "!":
 			stop = !stop
+	elif command[0] == "!":
+		stop = !stop
 	elif command[0] == "^":
 		return run_operation(command, args, G.vars, tgt)
 	elif command[0] == "&":
@@ -192,52 +200,53 @@ func run(p, host):
 		G.you.on_point = [args[1], args[2]]
 		G.you.aim_ability(-2)
 	elif command == "cast":
-		G.influence.do(args[1], args[2], args[3])
+		G.influence.do(G.data.skill_data.get(args[1]), args[2], args[3])
 	elif command == "projectile":
 		G.factory.make_projectile(host, args[1], host.position, tgt)
 	elif command == "loot":
 		G.ui.menu.search_inventory(args[1])
 	elif command == "time":
 		G.vars.time = args[1]
-		G.vars.ontime = args[2]
+		if args.size() > 2:
+			G.vars.ontime = args[2]
 	else:
 		var subject = args[1]
 		if typeof(subject) == 17 and is_instance_valid(subject):
 			if command == "remove":
 				subject.remove()
-			elif command[0] == "*":
-				if command == "*":
-					return subject.dat.g(args[2], args[3])
-				elif command[1] == "=":
-					subject.dat.a(args[2], args[3])
-					subject.dirty_dat = true
-				elif command[1] == "+":
-					subject.dat.add(args[2], args[3])
-					subject.dirty_dat = true
-				elif command[1] == "-":
-					subject.dat.d(args[2])
-					subject.dirty_dat = true
-				elif command[1] == "a":
-					subject.dat.g(args[2]).append(args[3])
-					subject.dirty_dat = true
-				elif command == "*dmg":
-					var hp = subject.dat.add("damage", args[2])
-					subject.dat.a("damage", max(0, hp))
-					subject.on_health_change()
-				elif command == "*use":
-					var use = subject.dat.add("uses", -1)
-					if use == 0:
-						subject.remove()
-						G.msg(subject.item_name + " was used up.")
-					elif use < 0:
-						subject.dat.add("uses", 1)
-						stop = true
 			else:
 				var type = subject.get("item_type")
 				if type == "tile":
 					run_tile(command, args, host, subject)
 				elif is_instance_valid(subject):
-					if command == "relocate":
+					if command[0] == "*":
+						if command == "*":
+							return subject.dat.g(args[2], args[3])
+						elif command[1] == "=":
+							subject.dat.a(args[2], args[3])
+							subject.dirty_dat = true
+						elif command[1] == "+":
+							subject.dat.add(args[2], args[3])
+							subject.dirty_dat = true
+						elif command[1] == "-":
+							subject.dat.d(args[2])
+							subject.dirty_dat = true
+						elif command[1] == "a":
+							subject.dat.g(args[2]).append(args[3])
+							subject.dirty_dat = true
+						elif command == "*dmg":
+							var hp = subject.dat.add("damage", args[2])
+							subject.dat.a("damage", max(0, hp))
+							subject.on_health_change()
+						elif command == "*use":
+							var use = subject.dat.add("uses", -1)
+							if use == 0:
+								subject.remove()
+								G.msg(subject.item_name + " was used up.")
+							elif use < 0:
+								subject.dat.add("uses", 1)
+								stop = true
+					elif command == "relocate":
 						subject.relocate(args[2])
 						if type == "unit":
 							subject.on_slide()
@@ -248,7 +257,9 @@ func run(p, host):
 	return tgt
 
 func run_tile(command, args, host, subject):
-	if command == "col":
+	if command[0] == "*":
+		return run_operation(command, args, subject.dat, tgt)
+	elif command == "col":
 		stop = subject.is_col(int(args[2]))
 	elif command == "terrain":
 		stop = !(subject.terrain in args[2])
@@ -262,11 +273,7 @@ func run_tile(command, args, host, subject):
 					G.cmds(args[3], host, item)
 
 func run_item(command, args, subject):
-	if command == "tasks":
-		subject.tasks.append(args[2])
-	elif command == "possess":
-		subject.possess(get_arg(args, 2))
-	elif command == "textify":
+	if command == "textify":
 		subject.textify(args[2])
 	elif command == "+flag":
 		subject.flags.append(args[2])
@@ -310,8 +317,18 @@ func run_unit(command, args, subject):
 				if !subject.auto_equip(item):
 					subject.store(item, true)
 				return item
+	elif command == "take":
+		if subject.dat.g("type", "other") != "other":
+			var item = args[2]
+			if item != null:
+				subject.on_item_remove(item)
+				return item
 	elif command == "hunt":
 		subject.controller.target = args[2]
+	elif command == "tasks":
+		subject.controller.tasks.append(args[2])
+	elif command == "possess":
+		subject.possess(get_arg(args, 2))
 
 func get_arg(args, idx, default=null):
 	if args.size() > idx:
