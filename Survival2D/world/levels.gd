@@ -66,6 +66,10 @@ func _ready():
 		for i in poi:
 			blueprint[i[1]][i[0]].set_mode(1)
 
+func _input(event):
+	if event is InputEventKey:
+		G.get_tree().set_input_as_handled()
+
 func find_adjacent_poi(dir, x, y):
 	if x < 0 or y < 0 or x > sx or y > sy or blueprint[y][x] == null:
 		return null
@@ -94,6 +98,7 @@ func get_routes(map, x, y, sx, sy):
 	return 0
 
 func _on_gui_input(event):
+	G.get_tree().set_input_as_handled()
 	if event is InputEventMouseMotion:
 		if pressed:
 			$Grid.rect_position += event.position - mouse_vec

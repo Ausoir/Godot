@@ -22,7 +22,7 @@ func on_time():
 	if G.vars.time > 0:
 		G.vars.time -= 1
 		G.ui.menu.display_time()
-		if G.vars.time == 0 and "ontime" in G.vars:
-			G.cmds(G.vars.ontime)
+		if G.vars.time == 0 and "ontime" in G.temp:
+			G.cmds(G.temp.ontime)
 			if G.vars.time == 0:
-				G.vars.erase("ontime")
+				G.temp.erase("ontime")

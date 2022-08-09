@@ -71,12 +71,13 @@ func _on_meta_hover_ended(_meta):
 
 func randomize_unit():
 	specie = R.r_arr(G.data.vars.species)
+	var specie_data = G.data.unit_data.get(specie)
 	var count = 0
 	var distribution = R.r_pie(G.data.vars.stats.size()+1)
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i]
 		var maxvariance = s.variance * (distribution[count] - 1)
-		stats[s.name] = round(s.default + maxvariance)
+		stats[s.name] = round(specie_data.get(s.name, 0) + maxvariance)
 		count += 1
 	if distribution[count] < .7:
 		skills[0] = R.r_arr(G.data.vars.skills.bad)

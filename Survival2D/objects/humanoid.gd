@@ -4,7 +4,6 @@ var overlay_sprites = {}
 var equipments = {}
 var inventory = [null]
 var gender = "m"
-var item_skills = []
 
 func ability(idx, at):
 	var size = skills.size()
@@ -144,11 +143,10 @@ func on_item_remove(item):
 
 func accomodate_stats(item):
 	var sks = []
-	sks += dat.g("skills", [])
 	var itemsks = item.dat.g("skills", [])
 	for i in range(itemsks.size()):
 		sks.append(itemsks[i])
-		item_skills.append(i)
+	sks += dat.g("skills", [])
 	dat.a("skills", sks)
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
@@ -161,8 +159,10 @@ func accomodate_stats(item):
 
 func unaccomodate_stats(item):
 	var tskills = dat.g("skills", [])
-	for i in item.dat.g("skills", []):
-		tskills.erase(i)
+	var iskills = item.dat.g("skills", [])
+	for i in iskills:
+		var idx = tskills.find(i)
+		tskills.remove(idx)
 	dat.a("skills", tskills)
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i].name
@@ -255,3 +255,12 @@ func load_item_data(_data):
 	for i in load_inv:
 		var item = G.factory.make_item(i, null)
 		store(item, true)
+
+func get_item_skills():
+	var sks = []
+	for i in equipments:
+		sks += equipments[i].dat.g("skills", [])
+	for i in inventory:
+		if i != null:
+			sks += i.dat.g("skills", [])
+	return sks

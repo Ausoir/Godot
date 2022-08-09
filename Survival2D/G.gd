@@ -54,7 +54,7 @@ func _ready():
 
 func _process(delta):
 	time.on_process(delta)
-	if time.eighth_second:
+	if time.quarter_second:
 		world.turn.process_frames += 1
 		if time.second:
 			custom.on_time()

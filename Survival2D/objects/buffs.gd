@@ -23,7 +23,7 @@ class buff:
 
 	func on_turn(host):
 		if duration == 0:
-			parent.cancel(skill)
+			parent.cancel(skill.name)
 			return
 		elif duration > 0:
 			duration -= 1
@@ -60,9 +60,9 @@ func on_turn():
 	var keys = states.keys()
 	for i in keys:
 		var state = states[i]
-		if disrupt_hit and state.cancelable:
-			cancel(i)
-			continue
+#		if disrupt_hit and state.cancelable:
+#			cancel(i)
+#		else:
 		state.on_turn(host)
 	disrupt_hit = false
 

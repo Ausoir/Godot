@@ -1,11 +1,11 @@
 {
 	"mode scavenge": {
-		"turn": 24,
+		"turn": 12,
 		"onmake": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore and scavenge. Leave through the {t} when ready."],["time", 3, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["&","objective"],["menu","msg","$t"]],
 		"onturn": [["make", "g_{area}{rating}", "$R"],["?=","{1~4}",1],["*=","$t","goal","wander"]],
 	},
 	"mode survive": {
-		"turn": 36,
+		"turn": 18,
 		"onmake": [["relocate","$p","$R"],["time", "{80~160}", [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["^","time"],["&=","objective","OBJECTIVE: Survive for {t} seconds."],["&","objective"],["menu","msg","$t"]],
 		"onturn": [["make", "g_{area}{rating}", "$L"],["hunt", "$t", "$p"]],
 	},
@@ -14,7 +14,7 @@
 			["&","objective"],["menu","msg","$t"],["time", "{60~120}", [["*","$h","target",null],["move","$t","$Lv"],["hunt","$t","$p"],["time", 30]]],["remove","$h"]],
 	},
 	"mode escape": {
-		"turn": 16,
+		"turn": 8,
  		"onmake": [["make", "g_{area}{rating}", "$L"],["repeat",16],["relocate","$p","$R"],["&=","complete",true],["&=","objective","OBJECTIVE: Escape!"],["&","objective"],["menu","msg","$t"]],
 		"onturn": [["make", "g_{area}{rating}", "$R"],["?=","{1~4}",1],["*=","$t","goal","wander"]],
 	},

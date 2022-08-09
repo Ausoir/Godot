@@ -88,6 +88,8 @@ func replace_vars(host, _args):
 							r.append(unit.controller)
 						elif arg[2] == "h":
 							r.append(unit.host)
+						elif arg[2] == "d":
+							r.append(unit.dat.v)
 					else:
 						r.append(unit)
 					continue
@@ -208,7 +210,7 @@ func run(p, host):
 	elif command == "time":
 		G.vars.time = args[1]
 		if args.size() > 2:
-			G.vars.ontime = args[2]
+			G.temp["ontime"] = args[2]
 	else:
 		var subject = args[1]
 		if typeof(subject) == 17 and is_instance_valid(subject):
@@ -238,6 +240,7 @@ func run(p, host):
 							var hp = subject.dat.add("damage", args[2])
 							subject.dat.a("damage", max(0, hp))
 							subject.on_health_change()
+							subject.show_healthbar()
 						elif command == "*use":
 							var use = subject.dat.add("uses", -1)
 							if use == 0:

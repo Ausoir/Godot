@@ -80,8 +80,7 @@ func _on_meta_hover_ended(_meta):
 	G.ui.description.hide()
 
 func run_script(script):
-	if !("opt" in page_data):
-		page_data["opt"] = []
+	page_data["opt"] = []
 	R.set_seed(G.vars.seed + int(G.vars.time/60))
 	if script[0] == "bulletin":
 		add_bulletin()

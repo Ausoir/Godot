@@ -33,7 +33,7 @@
 				"cmd": [["menu", "dialog", "trade"]],
 			},
 			{
-				"cmd": [["menu", "confirm", "Hire this unit?", [["*=","$h","follow","$p"], ["*=","$h","goal","follow"], ["*=","$h","oninteract",[["menu", "dialog", "follower"]]]]]],
+				"cmd": [["menu", "confirm", "Hire this unit?", [["*=","$h","follow","$p"], ["*=","$h","goal","follow"], ["^^","followers","$hd"], ["*=","$h","oninteract",[["menu", "dialog", "follower"]]]]]],
 			},
 		]
 	},

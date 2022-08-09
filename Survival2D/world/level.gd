@@ -79,7 +79,7 @@ func on_loading():
 	else:
 		push_error("No spawn points found")
 	G.vars.map.next = position
-	G.temp.enterside = G.get_dir_to_cardinal_string(side)
+	G.temp.enterside = side
 	G.temp.area = area
 	G.temp.rating = rating
 	G.temp.objective = objective

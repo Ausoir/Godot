@@ -15,6 +15,7 @@
 		"skills": ["shoot arrow I"],
 		"mat": "wood",
 		"weight": 1,
+		"desc": "A bow crafted by a previous survivor."
 	},
 	"composite bow": {
 		"img": "loot",
@@ -22,6 +23,7 @@
 		"skills": ["shoot arrow II"],
 		"mat": "wood",
 		"weight": 1,
+		"desc": "A composite bow manufactured for sport before the fall."
 	},
 	"recurve bow": {
 		"img": "loot",
@@ -29,6 +31,7 @@
 		"skills": ["shoot arrow III"],
 		"mat": "wood",
 		"weight": 1,
+		"desc": "A recurve bow designed and created for professional use before the fall."
 	},
 	"crossbow": {
 		"img": "loot",
@@ -36,40 +39,41 @@
 		"skills": ["shoot bolt"],
 		"mat": "wood",
 		"weight": 1,
+		"desc": "A crossbow crafted by a survivor like you."
 	},
-	"pistol": {
+	"MGH22 Casual": {
 		"img": "loot",
 		"sprite": "overlay/w_pistol",
 		"skills": ["shoot .22"],
 		"mat": "metal",
 		"weight": 1,
-		"desc": "An artifact of the past."
+		"desc": "A handgun designed and manufactured by the Machining Guild back in 2022. As the name suggests, it is used for casual purposes, whatever that is."
 	},
-	"assault rifle": {
+	"MGR30 Special": {
 		"img": "loot",
 		"sprite": "overlay/w_assault_rifle",
 		"skills": ["3 burst .223"],
 		"weight": 3,
 		"size": 2,
 		"mat": "metal",
-		"desc": "An artifact of the past."
+		"desc": "An assault rifle designed and manufactured by the Machining Guild back in 2030. It had widespread popularity across many police units and the military."
 	},
-	"automatic rifle": {
+	"MGR31 Monster": {
 		"img": "loot",
 		"sprite": "overlay/w_full_auto_rifle",
 		"skills": ["full auto .223"],
 		"size": 2,
 		"mat": "metal",
 		"weight": 4,
-		"desc": "An artifact of the past."
+		"desc": "A full auto machine gun designed and manufactured by the Machining Guild back in 2031. Very unwieldy, but it's firepower is undeniable."
 	},
-	"laser rifle": {
+	"USLR MK7": {
 		"img": "loot",
 		"sprite": "overlay/w_laser_gun",
 		"skills": ["burst laser"],
 		"mat": "metal",
 		"weight": 1,
-		"desc": "An artifact of the past."
+		"desc": "A laser rifle developed by the US military. It's the most common archetype deployed in almost every military base."
 	},
 	"spear": {
 		"img": "loot",
@@ -91,6 +95,7 @@
 		"cut": 2,
 		"strength": 1,
 		"size": 2,
+		"desc": "A cutlass made of real steel. Weapons like these are invaluable nowadays."
 	},
 	"bat": {
 		"img": "loot",
@@ -138,7 +143,7 @@
 		"mat": "cotton",
 		"weight": 5,
 		"space": 5,
-		"desc": "A rucksack."
+		"desc": "A rucksack. Heavy, but can carry a lot inside."
 	},
 	"backpack": {
 		"img": "loot",
@@ -147,7 +152,7 @@
 		"mat": "cotton",
 		"weight": 3,
 		"space": 3,
-		"desc": "A backpack."
+		"desc": "A backpack. Allows you to carry more items."
 	},
 	"looter coat": {
 		"img": "loot",

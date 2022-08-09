@@ -13,8 +13,8 @@ func set_is_item(p):
 		modulate = Color.white
 
 func assign(p, idx):
-	skill = p
-	skill_data = G.data.skill_data.get(p)
+	skill = p.name
+	skill_data = p
 	index = idx
 	set_bbcode("[" + str(skill_data.get("cost", 0)) + "] " + skill.capitalize())
 	set_is_item(false)
@@ -35,11 +35,12 @@ func _on_mouse_exited():
 
 func _on_gui_input(event):
 	if event is InputEventMouseButton:
-		if event.pressed and !is_item:
-			if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
-				place_to(G.ui.menu.drag_item)
-			else:
-				take_from()
+		if event.is_pressed() and !is_item:
+			if get_global_rect().has_point(G.ui.mouse_pos):
+				if G.ui.menu.drag_item != null and G.ui.menu.drag_item.type == "skill":
+					place_to(G.ui.menu.drag_item)
+				else:
+					take_from()
 		G.ui.description.hide()
 
 func take_from():
@@ -49,6 +50,17 @@ func take_from():
 			G.ui.menu.set_drag_item(r)
 
 func place_to(item):
-	G.you.unit.dat.swap_skills("skills", item.index, index)
+	swap_skills(item.index, index)
 	G.ui.menu.set_drag_item(null)
 	G.ui.menu.update_skills()
+
+func swap_skills(idx1, idx2):
+	var skills = G.you.unit.skills
+	if idx2 >= skills.size():
+		var prim = skills[idx1]
+		skills.remove(idx1)
+		skills.append(prim)
+	else:
+		var prim = skills[idx1]
+		skills[idx1] = skills[idx2]
+		skills[idx2] = prim

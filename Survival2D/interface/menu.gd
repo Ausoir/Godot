@@ -25,13 +25,13 @@ func _on_mouse_move():
 
 func _background_input(event):
 	if event is InputEventMouseButton:
-		if event.pressed:
+		if event.is_pressed():
 			if drag_item != null and drag_item.type == "item":
 				drag_item.item.place(G.you.unit.pos)
 				G.you.unit.on_item_remove(drag_item.item)
 				set_drag_item(null)
-		else:
-			G.ui.clear()
+			else:
+				G.ui.clear()
 
 func display(_arg):
 	show()
@@ -144,21 +144,20 @@ func update_skills():
 			var slots = G.you.unit.dat.get_active_slots()
 			var max_slots = G.you.unit.dat.g("intelligence", 1)
 			child.set_text("Skills [" + str(slots) + "/" + str(max_slots) + "]: ")
-	var unit_skills = G.you.unit.dat.g("skills", [])
+	var unit_skills = G.you.unit.skills
 	var item_skills = []
 	if G.you.unit.dat.g("type") != "other":
-		item_skills = G.you.unit.item_skills
-		for i in range(item_skills.size()):
-			var actives = unit_skills[item_skills[i]]
-			var newslot = SkillSlot.instance()
-			newslot.assign(actives, -1)
-			newslot.set_is_item(true)
-			tab_cha_skills.add_child(newslot)
+		item_skills = G.you.unit.get_item_skills()
 	for i in range(unit_skills.size()):
-		if !(i in item_skills):
-			var actives = unit_skills[i]
+		var active = unit_skills[i]
+		if !("trigger" in active):
 			var newslot = SkillSlot.instance()
-			newslot.assign(actives, i)
+			if active.name in item_skills:
+				item_skills.erase(active.name)
+				newslot.assign(active, -1)
+				newslot.set_is_item(true)
+			else:
+				newslot.assign(active, i)
 			tab_cha_skills.add_child(newslot)
 
 func update_status():

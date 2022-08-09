@@ -3,18 +3,6 @@ extends "res://classes/properties.gd"
 func _init(p).(p):
 	pass
 
-func swap_skills(type, idx1, idx2):
-	var skills = g(type, [])
-	if idx2 >= skills.size():
-		var prim = skills[idx1]
-		skills.remove(idx1)
-		skills.append(prim)
-	else:
-		var prim = skills[idx1]
-		skills[idx1] = skills[idx2]
-		skills[idx2] = prim
-	a(type, skills)
-
 func get_active_slots():
 	var slots = 0
 	var actives = g("skills", [])

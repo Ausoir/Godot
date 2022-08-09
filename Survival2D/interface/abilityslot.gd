@@ -63,7 +63,8 @@ func _on_gui_input(event):
 			_on_mouse_entered()
 		else:
 			_on_mouse_exited()
-			activate()
+			if get_global_rect().has_point(G.ui.mouse_pos):
+				activate()
 
 func activate():
 	if mode == MODE_NORMAL:

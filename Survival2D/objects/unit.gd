@@ -83,6 +83,12 @@ func can_carry(_w):
 
 func ability(idx, at):
 	if idx < skills.size():
+		var skill = skills[idx]
+		var cooldown = skill.get("cooldown")
+		if cooldown != null:
+			if skill.name in cooldowns:
+				return false
+			cooldowns[skill.name] = G.time.s + cooldown
 		face_toward(at)
 		return G.influence.do(skills[idx], self, at)
 
@@ -106,7 +112,7 @@ func slide(tox, toy):
 	var ms = dat.g("move speed", 0)
 	if ms > 0:
 		if !("float" in flags):
-			ms = max(.2, ms * pos.slow)
+			ms = max(.3, ms * pos.slow)
 		var moved_vel = n_collider.moved_vel.length() / 18
 		if moved_vel > .1:
 			n_animation.play("walk", -1, moved_vel)
@@ -246,12 +252,10 @@ func on_turn():
 			if delay == 0:
 				set_animation("idle")
 		for i in cooldowns:
-			if cooldowns[i] <= 0:
+			if G.time.s >= cooldowns[i]:
 				cooldowns.erase(i)
 				if cooldowns.empty():
 					update_cooldowns()
-			else:
-				cooldowns[i] -= 1
 		if has_on_turn:
 			.on_turn()
 

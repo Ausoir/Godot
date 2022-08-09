@@ -9,43 +9,36 @@
 	"stats": {
 		"vit": {
 			"name": "vitality",
-			"default": 20,
 			"variance": 15,
 			"desc": "Vitality is the maximum health points."
 		},
 		"str": {
 			"name": "strength",
-			"default": 4,
 			"variance": 3,
 			"desc": "Strength determines bash damage.",
 		},
 		"agi": {
 			"name": "agility",
-			"default": 4,
 			"variance": 3,
 			"desc": "Agility determines dodge and stealth."
 		},
 		"itl": {
 			"name": "intelligence",
-			"default": 4,
 			"variance": 3,
 			"desc": "Intelligence determines amount of skills you can have."
 		},
 		"cha": {
 			"name": "charisma",
-			"default": 3,
 			"variance": 3,
 			"desc": "Charisma determines maximum number of followers you can have."
 		},
 		"per": {
 			"name": "perception",
-			"default": 8,
 			"variance": 3,
 			"desc": "Perception determines sight range."
 		},
 		"ms": {
 			"name": "move speed",
-			"default": 40,
 			"variance": 6,
 			"desc": "This is your move speed."
 		},

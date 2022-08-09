@@ -207,7 +207,7 @@
 		"mat": "glass",
 		"col": 0,
 		"height": 1,
-		"slow": 0.5,
+		"slow": 0.4,
 		"armor": 3,
 		"vitality": 2,
 		"desc": "A broken window."
@@ -216,7 +216,7 @@
 		"img": "tiles/bead_door",
 		"mat": "other",
 		"col": 1,
-		"slow": 0.1,
+		"slow": 0.2,
 		"openable": true,
 		"height": 1,
 		"vitality": 1,

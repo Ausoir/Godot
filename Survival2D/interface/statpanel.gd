@@ -5,7 +5,9 @@ func get_stats_text(dict):
 	var txt = ""
 	for i in G.data.vars.stats:
 		var stat = G.data.vars.stats[i].name
-		txt += "[color=#A64][url="+i+"]"+stat.capitalize()+"[/url][/color]: "+str(dict[stat])+"\n"
+		var val = dict.get(stat)
+		if val != null:
+			txt += "[color=#A64][url="+i+"]"+stat.capitalize()+"[/url][/color]: "+str(val)+"\n"
 	return txt
 
 func _on_meta_hover_started(meta):

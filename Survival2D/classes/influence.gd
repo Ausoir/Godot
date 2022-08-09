@@ -4,10 +4,6 @@ func do(skill, host=null, dest=null, mode=0):
 	if !find_victim(skill, host, dest):
 		return false
 	else:
-		if "cooldown" in skill:
-			if skill.name in host.cooldowns:
-				return false
-			host.cooldowns[skill.name] = skill.cooldown
 		if "delay" in skill:
 			host.delay = skill.delay
 		if mode == 0:

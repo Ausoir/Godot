@@ -162,7 +162,7 @@ func on_turn():
 			if unit.n_collider.get_slide_count() > 0:
 				var t = unit.n_collider.get_collider(2)
 				if t != null and t.dat.g("faction",-1) == 1:
-					t.controller.path_to(t.pos.get_rand_offset(3, 3), 0)
+					t.controller.path_to(t.pos.get_rand_offset(2, 2), 0)
 	.on_turn()
 	remove_steps()
 	show_steps()
@@ -185,11 +185,11 @@ func check_edge():
 		var farside = false
 		var complete = G.temp.get("complete")
 		if "enterside" in G.temp:
-			if G.temp.enterside == G.get_dir_to_cardinal_string(edge):
+			if G.temp.enterside == edge:
 				if G.time.seconds > 3:
 					tasks.append(["exit", 3, false])
 					return
-			elif G.temp.enterside == G.get_dir_to_cardinal_string(edge+2):
+			elif G.temp.enterside == edge+2:
 				farside = true
 		else:
 			farside = true
@@ -358,5 +358,7 @@ func autofire():
 			if ability.get("trigger", 0) == 2:
 				var rng = ability.get("range", 1) * G.W
 				if dist <= rng:
-					tasks = [["ability", i, closest_enemy.position]]
-					return true
+					var cd = unit.cooldowns.get(ability.get("name",""), -1)
+					if cd == -1:
+						tasks = [["ability", i, closest_enemy.position]]
+						return true

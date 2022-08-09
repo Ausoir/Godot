@@ -148,6 +148,9 @@ func on_change(p):
 		if col != oldcol:
 			update_col(col)
 		flags = dat.g("flags", [])
+		var color = dat.g("modulate")
+		if color != null:
+			set_modulate(Color(color))
 		if dat.g("onmake") != null:
 			if !G.world.turn.has(self):
 				G.world.turn.add(self)
