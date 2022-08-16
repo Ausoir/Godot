@@ -60,15 +60,15 @@ func on_turn():
 	var keys = states.keys()
 	for i in keys:
 		var state = states[i]
-#		if disrupt_hit and state.cancelable:
-#			cancel(i)
-#		else:
-		state.on_turn(host)
+		if disrupt_hit and state.cancelable:
+			cancel(i)
+		else:
+			state.on_turn(host)
 	disrupt_hit = false
 
 func end(p):
-	if p.name in states:
-		states[p.name].duration = 0
+	if p in states:
+		states[p].duration = 0
 
 func extend(p, dur):
 	if p.name in states:

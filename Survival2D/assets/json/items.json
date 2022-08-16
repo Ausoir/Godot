@@ -1,21 +1,20 @@
 {
 	"mode scavenge": {
 		"turn": 12,
-		"onmake": [["&=","explore",0],["&","enterside"],["&=","objective","OBJECTIVE: Explore and scavenge. Leave through the {t} when ready."],["time", 3, [["&=","complete",true]]],["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["&","objective"],["menu","msg","$t"]],
+		"onmake": [["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]]],
 		"onturn": [["make", "g_{area}{rating}", "$R"],["?=","{1~4}",1],["*=","$t","goal","wander"]],
 	},
 	"mode survive": {
 		"turn": 18,
-		"onmake": [["relocate","$p","$R"],["time", "{80~160}", [["&=","complete",true],["menu","msg","Objective complete!"],["make","stairdown","$pp"]]],["^","time"],["&=","objective","OBJECTIVE: Survive for {t} seconds."],["&","objective"],["menu","msg","$t"]],
-		"onturn": [["make", "g_{area}{rating}", "$L"],["hunt", "$t", "$p"]],
+		"onmake": [["relocate","$p","$R"],["custom","recall",null]],
+		"onturn": [["run",[["?=","{1~4}",1],["make", "g_{area}{rating}", "$L"],["hunt", "$t", "$p"]]],["repeat",8]],
 	},
 	"mode assault": {
-		"onmake": [["&=","objective","OBJECTIVE: Kill the hooded target."],["make","g_as{rating}","$R"],["*=","$h","target","$t"],["&=","discover",[["?>!","{{-2~180}","{rating}"],["make","g_{area}{rating}","$$t",15]]],
-			["&","objective"],["menu","msg","$t"],["time", "{60~120}", [["*","$h","target",null],["move","$t","$Lv"],["hunt","$t","$p"],["time", 30]]],["remove","$h"]],
+		"onmake": [["make","g_as{rating}","$R"],["*=","$h","target","$t"],["&=","discover",[["?>!","{{-2~180}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["remove","$h"]],
 	},
 	"mode escape": {
 		"turn": 8,
- 		"onmake": [["make", "g_{area}{rating}", "$L"],["repeat",16],["relocate","$p","$R"],["&=","complete",true],["&=","objective","OBJECTIVE: Escape!"],["&","objective"],["menu","msg","$t"]],
+ 		"onmake": [["make", "g_{area}{rating}", "$L"],["repeat",16],["relocate","$p","$R"]],
 		"onturn": [["make", "g_{area}{rating}", "$R"],["?=","{1~4}",1],["*=","$t","goal","wander"]],
 	},
 	"init spawners": {
@@ -275,8 +274,8 @@
 		"img": "tiles/i_stock_pot",
 		"mat": "metal",
 		"weight": 3,
-		"desc": "A stock pot full of soup. -1 Agility, +1~2 Strength",
-		"onuse": [["*+","$p","strength","{1~2}"],["*+","$p","agility",-1],["remove","$h"]],
+		"desc": "A stock pot full of soup. -4~0 Vitality, +1~2 Strength",
+		"onuse": [["*+","$p","strength","{1~2}"],["*+","$p","vitality","{-4,0}"],["remove","$h"]],
 	},
 	"blob vial": {
 		"img": "gui/vial",
@@ -290,22 +289,22 @@
 		"img": "tiles/i_chips",
 		"mat": "other",
 		"weight": 0,
-		"desc": "A bag of potato chips. -1 Perception, +1 Agility",
-		"onuse": [["*+","$p","agility",1],["*+","$p","perception",-1],["remove","$h"]],
+		"desc": "A bag of potato chips. -4~0 Vitality, +1 Agility",
+		"onuse": [["*+","$p","agility",1],["*+","$p","vitality","{-4,0}"],["remove","$h"]],
 	},
 	"energy bar": {
 		"img": "tiles/i_candy",
 		"mat": "other",
 		"weight": 0,
-		"desc": "An energy bar. -1 Vitality, +1 Move Speed",
-		"onuse": [["*+","$p","vitality",-1],["*+","$p","move speed",1],["remove","$h"]]
+		"desc": "An energy bar. -4~-1 Vitality, +1 Move Speed",
+		"onuse": [["*+","$p","vitality","{-4,-1}"],["*+","$p","move speed",1],["remove","$h"]]
 	},
 	"tea": {
 		"img": "tiles/i_kettle",
 		"mat": "other",
 		"weight": 1,
-		"desc": "A kettle of tea. +1 Perception",
-		"onuse": [["*+","$p","perception",1],["remove","$h"]]
+		"desc": "A kettle of tea. +0~1 Perception, -1 Vitality",
+		"onuse": [["*+","$p","vitality",-1],["*+","$p","perception",1],["remove","$h"]]
 	},
 	"canned food": {
 		"img": "tiles/i_can",
@@ -320,5 +319,13 @@
 		"weight": 0,
 		"value": 10,
 		"desc": "A battery that allows you to use many of the powerful pre-apocalypse artifacts. You can sell it.",
+	},
+	"frying pan": {
+		"img": "tiles/i_can",
+		"mat": "other",
+		"weight": 0,
+		"value": 10,
+		"desc": "A frying pan that lets you cook eggs and meat.",
+		"onuse": [["menu", "dialog", "frying pan"]]
 	},
 }

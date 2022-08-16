@@ -2,7 +2,7 @@ extends Node
 
 
 const Pathing = preload("res://objects/pathing.gd")
-const Firm = ["attack", "ability", "command"]
+const Firm = ["ability", "command"]
 var unit
 var sight_range = 8
 var target
@@ -18,6 +18,10 @@ func on_change(p):
 			pathing.pathing_times = 5
 		elif "float" in unit.flags:
 			pathing.hinderance = 0
+		elif "brute" in unit.flags:
+			pathing.brute = true
+			pathing.pathing_times = 1
+			pathing.iterations = 14
 		pathing.smash_to = unit.dat.g("strength", 0)
 
 func on_assign():
@@ -49,36 +53,32 @@ func perform(task):
 	if task[0] == "path":
 		if task.size() > 2 and validate_target(target):
 			var exc = [unit.n_collider, target.n_collider]
-			if unit.n_collider.cast_ray(task[2], exc, unit.col).empty():
-				unit.slide(task[2].x, task[2].y)
+			if unit.n_collider.cast_ray(target.position, exc, unit.col).empty():
+				perform(["moveto", target.position, 16])
 				return false
-		unit.slide(task[1].position.x, task[1].position.y)
-		if unit.n_collider.get_slide_count() > 0:
-			if !unit.n_collider.cast_ray(task[1].position, [unit.n_collider], unit.col).empty():
-				if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
-					if interact_tile(task[1]):
-						return false
-					return perform(["smash", task[1]])
-				else:
-					return true
+		if !unit.n_collider.cast_ray(task[1].position, [unit.n_collider], unit.col).empty():
+			if !task[1].is_col_adv(unit.col, pathing.can_open, pathing.smash_to):
+				if interact_tile(task[1]):
+					return false
+				return perform(["smash", task[1]])
+			else:
+				return true
+		else:
+			perform(["moveto", task[1].position, 64])
 		return (task[1].position - unit.position).length_squared() < 64
-	elif task[0] == "move":
-		unit.slide(unit.position.x+task[1], unit.position.y+task[2])
 	elif task[0] == "moveto":
-		unit.slide(task[1].x, task[1].y)
-		return (task[1] - unit.position).length_squared() < task[2]
-	elif task[0] == "attack":
-		if validate_target(task[1]):
-			unit.slide(task[1].position.x, task[1].position.y)
-			return false
+		var diff = task[1]-unit.position
+		unit.slide(diff)
+		return diff.length_squared() < task[2]
 	elif task[0] == "interact":
 		unit.delay = 4
 		unit.set_animation("wait", 4)
-		if task[1].item_type == "tile":
-			if unit.pos.distance_to(task[1]) <= 1:
-				interact_tile(task[1])
-		elif unit.pos.distance_to(task[1].pos) <= 1:
-			interact(task[1])
+		if validate_target(task[1]):
+			if task[1].item_type == "tile":
+				if unit.pos.distance_to(task[1]) <= 1:
+					interact_tile(task[1])
+			elif unit.pos.distance_to(task[1].pos) <= 1:
+				interact(task[1])
 	elif task[0] == "ability":
 		unit.ability(task[1], task[2])
 	elif task[0] == "smash":

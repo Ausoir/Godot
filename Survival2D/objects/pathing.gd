@@ -14,6 +14,7 @@ var heuristics_threshold = 0
 var reach = 0
 var can_open = false
 var smash_to = 0
+var brute = false
 
 
 class pathnode:

@@ -9,33 +9,41 @@ var sight_range_y = -1
 var sight_ratio = .75
 var sight_frame = 0
 var sight_bits = 1
-var param_last_pos
-var param_pos
+var last_pos = G.void_tile
+var pos = G.void_tile
 
 func _process(_delta):
 	if processing_frame == -1:
-		param_pos.sight_frame = sight_frame
+		pos.sight_frame = sight_frame
 		for i in range(8):
-			cast_sight(param_pos, 1, 1.0, 0.0, G.OCTANT_FLIP[i], 0)
+			cast_sight(pos, 1, 1.0, 0.0, G.OCTANT_FLIP[i], 0)
 		processing_frame += 1
 	elif processing_frame == 4:
-		var diffx = abs(param_last_pos.x - param_pos.x)
-		var diffy = abs(param_last_pos.y - param_pos.y)
+		var diffx = abs(last_pos.x - pos.x)
+		var diffy = abs(last_pos.y - pos.y)
 		if diffx > 1 or diffy > 1:
-			process_vision(param_pos, QUADRANT_ALL)
+			process_vision(pos, QUADRANT_ALL)
 		stop_process()
 	elif processing_frame >= 0:
-		process_vision(param_last_pos, QUADRANT_FLIP[processing_frame])
+		process_vision(last_pos, QUADRANT_FLIP[processing_frame])
 		processing_frame += 1
 
 func darken():
 	for y in range(-sight_range_y, sight_range_y+1):
 		for x in range(-sight_range, sight_range+1):
-			var xx = param_pos.x+x
-			var yy = param_pos.y+y
+			var xx = pos.x+x
+			var yy = pos.y+y
 			var tile = G.world.get_tile(xx, yy)
 			if tile:
 				G.world.set_dark(tile)
+
+func update_z():
+	for y in range(max(0, pos.y-sight_range_y), min(G.world.size.y-1, pos.y+sight_range_y+1)):
+		for x in range(max(0, pos.x-sight_range), min(G.world.size.x-1, pos.x+sight_range+1)):
+			var tile = G.world.tiles[y][x]
+			if tile.visible:
+				for item in tile.items:
+					item.update_z()
 
 func process_vision(center, quad):
 	for y in range(-sight_range_y * quad[0], sight_range_y * quad[1] + 1):
@@ -64,12 +72,12 @@ func set_sight(p, p_col=1):
 		sight_bits = new_sight_bits
 		return true
 
-func update(last_pos, pos):
+func update(p_last_pos, p_pos):
 	if processing_frame != -2:
 		for _i in range(processing_frame - 3):
 			_process(0)
-	param_last_pos = last_pos
-	param_pos = pos
+	last_pos = p_last_pos
+	pos = p_pos
 	processing_frame = -1
 
 func cast_sight(camera, row, start, end, flips, depth):
@@ -111,5 +119,5 @@ func cast_sight(camera, row, start, end, flips, depth):
 		if blocked:
 			break
 
-func is_in_range(pos):
-	return abs(pos.y-param_pos.y) <= sight_range_y and abs(pos.x-param_pos.x) <= sight_range
+func is_in_range(p_pos):
+	return abs(p_pos.y-pos.y) <= sight_range_y and abs(p_pos.x-pos.x) <= sight_range

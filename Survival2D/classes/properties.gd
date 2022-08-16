@@ -9,7 +9,7 @@ func _init(_dict):
 		else:
 			v[key] = value
 
-func load_data(_data):
+func unserialize(_data):
 	for key in _data:
 		v[key] = _data[key]
 

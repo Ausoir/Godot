@@ -63,7 +63,7 @@ func _on_pressed():
 	loading_page = Loading.instance()
 	G.ui.add_child(loading_page)
 	G.events.append([0.1, funcref(self, "on_loading"), []])
-	G.set_process(true)
+	G.time.set_process(true)
 
 func on_loading():
 	G.get_tree().set_pause(true)
@@ -74,7 +74,7 @@ func on_loading():
 	if G.world.paint_spawn(side) != null:
 		var load_data = G.vars.get("load_data")
 		if load_data != null: #From char creation
-			G.you.load_data(load_data)
+			G.you.unserialize(load_data)
 		G.vars.erase("load_data")
 	else:
 		push_error("No spawn points found")

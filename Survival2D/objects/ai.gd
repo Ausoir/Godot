@@ -2,31 +2,41 @@ extends "res://objects/controller.gd"
 
 var reach = 1
 var turn_delay = 0
+var behavior_name
+var behavior
+var other
+
+func on_assign():
+	.on_assign()
+	var goal = unit.dat.g("goal", "hunt")
+	if goal == "follow":
+		behavior_name = "follow"
+	else:
+		behavior_name = "hunt"
+	behavior = funcref(self, behavior_name)
 
 func on_hit(_hitter):
-	if _hitter != null and _hitter.dat.g("faction", -1) != unit.dat.g("faction", -1):
+	if _hitter != null:
 		target = _hitter
 
 func on_turn():
 	turn_delay += 1
 	if turn_delay > 3:
 		turn_delay = 0
-		if target == null:
-			perceive()
-		if !hunt():
+		if !behavior.call_func():
 			think()
 	.on_turn()
 
 func think():
 	if tasks.empty():
-		var goal = unit.dat.g("goal", "")
+		var goal = unit.dat.g("goal", "hunt")
 		if goal == "wander":
 			path_to(unit.pos.get_rand_offset(12, 12), 0)
 		elif goal == "kill":
 			target = G.you.unit
 		elif goal == "follow":
-			if target == null:
-				target = unit.dat.g("follow")
+			if other == null:
+				other = G.world.get_item_by_seed(unit.dat.g("follow", -1))
 		elif goal == "sabotage":
 			var sabo = G.temp.get("sabotage")
 			if sabo != null and !sabo.empty():
@@ -38,7 +48,7 @@ func think():
 					path_to(to, 0)
 
 func perceive():
-	var min_dist = unit.dat.g("perception", 4)
+	var min_dist = unit.dat.g("perception", 1)
 	var other_team
 	if unit.dat.g("faction", -1) == 1:
 		other_team = 2
@@ -62,17 +72,25 @@ func search(faction, _dist):
 
 func hunt():
 	if target != null and is_instance_valid(target):
-		path_to(target.pos, reach)
 		if !perform_ability():
-			tasks.append(["attack", target])
+			path_to(target.pos)
+			tasks.append(["moveto", target.position, 0])
 		return true
 	else:
 		target = null
-		return false
+		perceive()
+	return false
+
+func follow():
+	if !hunt() and other != null:
+		path_to(other.pos, 1)
 
 func perform_ability():
-	if R.b():
-		var exc = [unit.n_collider, target.n_collider]
-		if unit.n_collider.cast_ray(target.position, exc, 4).empty():
-			var ability_idx = R.ir(0, unit.skills.size()-1)
-			tasks = [["ability", ability_idx, target.position]]
+	if unit.position.distance_squared_to(target.position) <= unit.dat.g("perception", 8)*G.V:
+		var ssize = unit.skills.size()
+		if R.ir(1, 8+ssize) <= ssize:
+			var exc = [unit.n_collider, target.n_collider]
+			if unit.n_collider.cast_ray(target.position, exc, 4).empty():
+				var ability_idx = R.ir(0, ssize-1)
+				tasks = [["ability", ability_idx, target.position]]
+				return true

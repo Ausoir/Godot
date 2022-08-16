@@ -22,6 +22,7 @@ func _init():
 		for key in t:
 			item_data[key] = t[key]
 	unit_data = get_json_from_dir("res://assets/json/units.json")
+	attach_names(unit_data)
 	mob_data = get_json_from_dir("res://assets/json/mobs.json")
 	skill_data = get_json_from_dir("res://assets/json/skills.json")
 	attach_names(skill_data)

@@ -1,6 +1,5 @@
 extends Node
 
-const Tile = preload("res://world/tile.gd")
 const Turn = preload("res://classes/turn.gd")
 var tileset = preload("res://assets/tileset.tres")
 var turn = Turn.new()
@@ -58,6 +57,15 @@ func create(_type):
 	$Borders/Top.position = Vector2(0, size.y * -G.HH - G.H)
 	$Borders/Bottom.position = Vector2(0, size.y * G.HH + G.H)
 
+func get_item_by_seed(p):
+	if p == -1:
+		return G.you.unit
+	elif p > 0:
+		for i in team:
+			for unit in i:
+				if unit.dat.g("seed", 0) == p:
+					return unit
+
 func get_items_by_name(p):
 	var r = []
 	for y in range(size.y):
@@ -111,7 +119,7 @@ func create_map(sx, sy):
 	for y in range(sy):
 		var row = []
 		for x in range(sx):
-			row.append(Tile.new(self, x, y))
+			row.append(G.Tile.new(self, x, y))
 		r.append(row)
 	tiles = r
 
@@ -162,8 +170,8 @@ func get_spawn_point():
 func get_routes(pos, cols, opens=false, strength=0):
 	var r = []
 	for i in G.CARDINALS:
-		var ty = pos.y + i[1]
-		var tx = pos.x + i[0]
+		var ty = pos.y + i.y
+		var tx = pos.x + i.x
 		if is_inbound(tx, ty) and !tiles[ty][tx].is_col_adv(cols, opens, strength):
 			r.append(i)
 	return r

@@ -4,10 +4,6 @@ var state = 1
 
 func _ready():
 	R.set_seed()
-	var screen_size = get_viewport().get_size_override()
-	$Label.rect_position.x = screen_size.x / 2 - $Label.rect_size.x / 2
-	$Label.rect_position.y = screen_size.y - 40
-	$Sprite.position = screen_size / 2
 
 func _input(event):
 	G.get_tree().set_input_as_handled()

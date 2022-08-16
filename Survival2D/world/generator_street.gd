@@ -61,7 +61,7 @@ func magnify(mag):
 					var rots = []
 					for i in range(4):
 						var dir = G.CARDINALS[i]
-						if get_tile(minimap, x+dir[0], y+dir[1], 1) != 1:
+						if get_tile(minimap, x+dir.x, y+dir.y, 1) != 1:
 							rots.append(i)
 					if rots.empty():
 						make_vault(estate, "map_house", R.ir(0, 3))

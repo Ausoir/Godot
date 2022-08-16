@@ -89,7 +89,7 @@ func replace_vars(host, _args):
 						elif arg[2] == "h":
 							r.append(unit.host)
 						elif arg[2] == "d":
-							r.append(unit.dat.v)
+							r.append(unit.serialize())
 					else:
 						r.append(unit)
 					continue
@@ -207,7 +207,9 @@ func run(p, host):
 		G.factory.make_projectile(host, args[1], host.position, tgt)
 	elif command == "loot":
 		G.ui.menu.search_inventory(args[1])
-	elif command == "time":
+	elif command == "timed":
+		G.events.append([args[1], null, args[2]])
+	elif command == "objective":
 		G.vars.time = args[1]
 		if args.size() > 2:
 			G.temp["ontime"] = args[2]
@@ -233,7 +235,7 @@ func run(p, host):
 						elif command[1] == "-":
 							subject.dat.d(args[2])
 							subject.dirty_dat = true
-						elif command[1] == "a":
+						elif command[1] == "^":
 							subject.dat.g(args[2]).append(args[3])
 							subject.dirty_dat = true
 						elif command == "*dmg":
@@ -251,8 +253,6 @@ func run(p, host):
 								stop = true
 					elif command == "relocate":
 						subject.relocate(args[2])
-						if type == "unit":
-							subject.on_slide()
 					elif type == "unit":
 						run_unit(command, args, subject)
 					else:
@@ -341,12 +341,12 @@ func get_arg(args, idx, default=null):
 func get_los(p):
 	var tile
 	while tile == null or tile.is_col(p):
-		var x = R.ir(0, G.you.n_camera.sight_range)
-		var y = R.ir(0, G.you.n_camera.sight_range_y)
+		var x = R.ir(0, G.camera.sight_range)
+		var y = R.ir(0, G.camera.sight_range_y)
 		if R.b():
-			x = G.you.n_camera.sight_range + 1
+			x = G.camera.sight_range + 1
 		else:
-			y = G.you.n_camera.sight_range_y + 1
+			y = G.camera.sight_range_y + 1
 		if R.b():
 			x *= -1
 			y *= -1

@@ -101,8 +101,6 @@ margin_bottom = 250.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
-bbcode_text = "[url=<stuf>]Stuff[/url]"
-text = "Stuff"
 
 [node name="Description" parent="Control" instance=ExtResource( 3 )]
 visible = false

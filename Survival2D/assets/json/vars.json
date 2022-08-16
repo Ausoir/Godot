@@ -39,7 +39,7 @@
 		},
 		"ms": {
 			"name": "move speed",
-			"variance": 6,
+			"variance": 0.6,
 			"desc": "This is your move speed."
 		},
 	},

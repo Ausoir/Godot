@@ -17,6 +17,7 @@ var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
 var has_on_turn = false
+var move_speed
 
 func _ready():
 	n_collider = get_node("Body")
@@ -31,6 +32,7 @@ func set_seed():
 
 func on_change(p):
 	if p == "dat":
+		move_speed = dat.g("move speed", 0)
 		layer = dat.g("layer", 0)
 		var oldcol = col
 		col = dat.g("col", 12)
@@ -100,33 +102,30 @@ func get_damage(ptype, p):
 	else:
 		return p
 
-func reposition(p):
-	position = p
-	on_slide()
+func on_relocate():
+	.on_relocate()
+	n_collider.position = Vector2()
+	n_collider.global_position = position
 
-func place(p):
-	.place(p)
-	n_collider.check_overlap()
-
-func slide(tox, toy):
-	var ms = dat.g("move speed", 0)
-	if ms > 0:
+func slide(p):
+	n_collider.stop = false
+	var deg = atan2(p.y, p.x)
+	var vx = cos(deg)
+	var vy = sin(deg)
+	if move_speed > 0:
+		var ms = move_speed
 		if !("float" in flags):
 			ms = max(.3, ms * pos.slow)
-		var moved_vel = n_collider.moved_vel.length() / 18
-		if moved_vel > .1:
-			n_animation.play("walk", -1, moved_vel)
+		if n_collider.last_col == null:
+			n_animation.play("walk", -1, ms / 20)
 		else:
-			n_animation.play("idle", -1, .01)
-		var deg = atan2(toy-position.y, tox-position.x)
-		var vx = cos(deg)
-		var vy = sin(deg)
+			n_animation.play("idle", -1)
 		if vx > .1:
 			face(1)
 		elif vx < -.1:
 			face(-1)
-		n_collider.vel.x += vx * ms
-		n_collider.vel.y += vy * ms
+		n_collider.vel.x = vx * ms
+		n_collider.vel.y = vy * ms
 	return on_slide()
 
 func on_slide():
@@ -134,21 +133,24 @@ func on_slide():
 	if newpos != pos:
 		pos.remove_item(self)
 		newpos.add_item(self)
-		on_relocate()
+		.on_relocate()
 		newpos.play_step_sound()
 		if !newpos.visible:
 			if prev_pos != null and prev_pos.visible:
 				G.you.on_enemy_sighted(self, false)
-			if G.you.n_camera.is_in_range(newpos):
+			if G.camera.is_in_range(newpos):
 				G.make_particle("Sound", newpos.position, null, true)
 		elif prev_pos == null or !prev_pos.visible:
 			G.you.on_enemy_sighted(self, true)
 	if delay == 0:
-		var col = n_collider.get_collider(dat.g("faction", -1))
-		if col != null:
+		var col = n_collider.last_col
+		if col != null and col.dat.g("faction", -1) != dat.g("faction", -2):
 			controller.target = col
 			face_toward(col.position)
-			roll_skill("onattack")
+			if col.item_type == "item" and controller.pathing.brute:
+				controller.tasks = [["smash", col.pos]]
+			else:
+				roll_skill("onattack")
 			return col
 
 func set_animation(p, spd=0):
@@ -249,6 +251,7 @@ func on_turn():
 		else:
 			if delay > 0:
 				delay -= 1
+				n_collider.stop = true
 			if delay == 0:
 				set_animation("idle")
 		for i in cooldowns:

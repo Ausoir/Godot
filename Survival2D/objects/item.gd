@@ -5,7 +5,6 @@ const ColBox = preload("res://objects/CollisionBox.tscn")
 const Healthbar = preload("res://interface/Health.tscn")
 var n_healthbar
 var n_collider
-var id = 0
 var item_type
 var item_name = 'item'
 var display_name
@@ -26,16 +25,8 @@ func get_display_name():
 		return item_name
 	return display_name
 
-func place(p):
-	on_change("dat")
-	position = p.position
-	pos = p
-	if pos.visible:
-		if col & 1 == 0 and pos.is_col(1):
-			G.you.view_dirty = true
-		elif col & 1 > 0 and !pos.is_col(1):
-			G.you.view_dirty = true
-	p.add_item(self)
+func update_z():
+	set_z_index(pos.y-G.camera.pos.y * 10)
 
 func remove():
 	if host != null and is_instance_valid(host):
@@ -129,13 +120,19 @@ func autotilize():
 
 func relocate(to):
 	pos.remove_item(self)
-	position = to.position
+	position.x = to.position.x
+	position.y = to.position.y
 	prev_pos = pos
 	to.add_item(self)
+	if to.visible:
+		if col & 1 == 0 and to.is_col(1):
+			G.you.view_dirty = true
+		elif col & 1 > 0 and !to.is_col(1):
+			G.you.view_dirty = true
 	on_relocate()
 
 func on_relocate():
-	if pos.sight_frame >= G.you.n_camera.sight_frame - 1:
+	if pos.visible:
 		show()
 	else:
 		hide()
@@ -215,3 +212,6 @@ func flash(c, dur):
 	flash_state = [dur, dur, 0, 0]
 	flash_state[2 + c] = 1
 	set_process(true)
+
+func serialize():
+	return dat.v

@@ -77,7 +77,7 @@ func is_req_met(p, host, data):
 					continue
 				elif law == "open" and !p.is_col(14):
 					continue
-				elif law == "seen" and p.sight_frame == G.you.n_camera.sight_frame - 1:
+				elif law == "seen" and p.visible:
 					continue
 				elif law == "adjacent" and p.distance_to(host.pos) <= 1:
 					continue

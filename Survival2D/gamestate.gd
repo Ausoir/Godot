@@ -33,7 +33,7 @@ func restart():
 	get_tree().change_scene_to(load("res://Start.tscn").instance())
 
 func clean_up():
-	G.set_process(false)
+	G.time.set_process(false)
 	var root = G.get_tree().get_root()
 	for i in root.get_children():
 		if i != self and i != G and i != R:
@@ -60,8 +60,8 @@ func save_game():
 	elif G.you.unit != null:
 		G.vars["seed"] = R.init_seed
 		save_game.store_line(to_json(G.vars))
-		var node_data = G.you.save_data()
-		save_game.store_line(to_json(node_data))
+		var player_data = G.you.unit.serialize()
+		save_game.store_line(to_json(player_data))
 	save_game.close()
 
 func load_game():

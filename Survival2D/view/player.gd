@@ -3,7 +3,6 @@ extends "res://objects/controller.gd"
 const Step = preload("res://view/Step.tscn")
 
 onready var control = preload("res://objects/controller.gd")
-onready var n_camera = $Camera
 onready var n_cursor = $Cursor
 onready var n_steps = $Steps
 
@@ -22,8 +21,8 @@ var closest_enemy
 func on_change(p):
 	.on_change(p)
 	if p == "dat":
-		if n_camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1)):
-			n_camera.update(unit.pos, last_pos)
+		if G.camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1)):
+			G.camera.update(unit.pos, last_pos)
 		var bodytype_list = G.data.get_json_data("bodytypes")
 		var bodyparts = bodytype_list.get(unit.dat.g("type"))
 		G.ui.menu.update_equipables(bodyparts)
@@ -38,7 +37,7 @@ func on_change(p):
 func on_assign():
 	.on_assign()
 	last_pos = unit.pos
-	n_camera.update(last_pos, unit.pos)
+	G.camera.update(last_pos, unit.pos)
 	G.ui.update_hud()
 
 func on_kill(_victim):
@@ -54,8 +53,8 @@ func make_money(p):
 func get_mouse():
 	var screen_mouse = G.ui.mouse_pos
 	screen_mouse -= G.ui.screen_size / 2
-	return Vector2(screen_mouse.x*n_camera.zoom.x + n_camera.position.x,
-				screen_mouse.y*n_camera.zoom.y + n_camera.position.y)
+	return Vector2(screen_mouse.x*G.camera.zoom.x + G.camera.position.x,
+				screen_mouse.y*G.camera.zoom.y + G.camera.position.y)
 
 func _on_input(event: InputEvent):
 	if event is InputEventScreenDrag:
@@ -67,8 +66,8 @@ func _on_input(event: InputEvent):
 					var new_zoom = .95
 					if drag_distance < last_drag_dist:
 						new_zoom = 1.05
-					new_zoom = clamp(n_camera.zoom.x * new_zoom, .5, 2)
-					n_camera.zoom = Vector2.ONE * new_zoom
+					new_zoom = clamp(G.camera.zoom.x * new_zoom, .5, 2)
+					G.camera.zoom = Vector2.ONE * new_zoom
 					last_drag_dist = drag_distance
 			elif aiming != -1:
 				n_cursor.position = get_mouse()
@@ -76,11 +75,11 @@ func _on_input(event: InputEvent):
 		if event.is_pressed() and !G.ui.on:
 			unhandled_input = true
 			if event.button_index == BUTTON_WHEEL_UP:
-				if n_camera.zoom.x > .5:
-					n_camera.zoom *= .8
+				if G.camera.zoom.x > .5:
+					G.camera.zoom *= .8
 			elif event.button_index == BUTTON_WHEEL_DOWN:
-				if n_camera.zoom.x < 2:
-					n_camera.zoom *= 1.2
+				if G.camera.zoom.x < 2:
+					G.camera.zoom *= 1.2
 			elif aiming == -1:
 				var screen_mouse = G.ui.mouse_pos
 				screen_mouse -= G.ui.screen_size / 2
@@ -106,7 +105,7 @@ func _on_input(event: InputEvent):
 					var tile = G.world.get_tile(mtile.x, mtile.y)
 					if tile != null and !tile.items.empty():
 						if tile.distance_to(unit.pos) <= 1 and tile != unit.pos:
-							if n_camera.zoom.x <= .5:
+							if G.camera.zoom.x <= .5:
 								tasks = [["smash", tile]]
 							else:
 								tasks = [["interact", tile]]
@@ -117,7 +116,7 @@ func _on_input(event: InputEvent):
 			unhandled_input = false
 
 func _physics_process(_delta):
-	n_camera.position = unit.n_collider.global_position
+	G.camera.position = unit.position
 	if unit.delay == 0:
 		var dir = -1
 		if Input.is_action_pressed("move_up"):
@@ -138,12 +137,18 @@ func _physics_process(_delta):
 			dir = 2
 		elif Input.is_action_pressed("move_left"):
 			dir = 6
+		if dir == -1:
+			unit.n_collider.stop = true
 		if interruptible and aiming == -1:
 			if unhandled_input and Input.is_action_pressed("use"):
-				tasks = [["moveto", get_mouse(), 64]]
+				tasks = []
+				target = null
+				unit.slide(get_mouse() - unit.position)
 			elif dir != -1:
+				tasks = []
+				target = null
 				var to = G.DIRS[dir]
-				tasks = [["move", to[0] * 10, to[1] * 10]]
+				unit.slide(to)
 
 func on_turn():
 	if tasks.empty():
@@ -156,21 +161,20 @@ func on_turn():
 				if closest_enemy != null:
 					var t = closest_enemy.position.distance_squared_to(unit.position)
 					if t < G.V:
-						tasks = [["attack", closest_enemy]]
+						tasks = [["moveto", closest_enemy.position, 0]]
 						autoed = true
 		if !autoed:
-			if unit.n_collider.get_slide_count() > 0:
-				var t = unit.n_collider.get_collider(2)
-				if t != null and t.dat.g("faction",-1) == 1:
-					t.controller.path_to(t.pos.get_rand_offset(2, 2), 0)
+			var t = unit.n_collider.last_col
+			if t != null and t.dat.g("faction",-1) == 1:
+				t.controller.path_to(t.pos.get_rand_offset(2, 2), 0)
 	.on_turn()
-	remove_steps()
-	show_steps()
 	if view_dirty or last_pos != unit.pos:
-		n_camera.update(last_pos, unit.pos)
+		G.camera.update(last_pos, unit.pos)
 		view_dirty = false
 		last_pos = unit.pos
 		check_edge()
+		G.camera.update_z()
+		remove_steps()
 	if noise > 0:
 		make_sound(noise)
 		noise = 0
@@ -183,7 +187,6 @@ func check_edge():
 	var edge = unit.pos.get_edge()
 	if edge != -1:
 		var farside = false
-		var complete = G.temp.get("complete")
 		if "enterside" in G.temp:
 			if G.temp.enterside == edge:
 				if G.time.seconds > 3:
@@ -193,8 +196,8 @@ func check_edge():
 				farside = true
 		else:
 			farside = true
-		if farside and complete:
-			tasks.append(["exit", 3, complete])
+		if farside:
+			tasks.append(["exit", 3, true])
 
 func check_nearby_interactibles():
 	if unit.dat.g("type") != "other":
@@ -226,7 +229,7 @@ func interact(item):
 			G.cmds(oninteract, item, unit)
 		elif item.item_type == "unit":
 			if item.dat.g("faction", -1) != unit.dat.g("faction", -1):
-				tasks.append(["attack", item])
+				tasks.append(["moveto", item.position, G.W])
 			elif item.controller != null:
 				item.controller.path_to(item.pos.get_rand_offset(2, 2), 0)
 		elif item.item_type == "item" and unit.can_carry(item.dat.g("weight",-1)):
@@ -272,23 +275,13 @@ func remove():
 		var player_unit = G.cmds([["make", "ghost", unit.pos]])
 		player_unit.possess(self)
 
-func save_data():
-	var save_dict = {
-		"unit": unit.item_name,
-		"unit_data": unit.dat.v,
-		"position": unit.pos.to_array()
-	}
-	if unit.dat.g("type") != "other":
-		save_dict = unit.update_save_data(save_dict)
-	return save_dict
-
-func load_data(_data):
+func unserialize(_data):
 	var player_pos = G.world.get_spawn_point()
-	var player_unit = G.cmds([["make", _data.unit, player_pos]])
+	var player_unit = G.factory.make_unit_from_data(_data, player_pos)
 	player_unit.possess(self)
-	player_unit.dat.load_data(_data.unit_data)
 	if player_unit.dat.g("type") != "other":
-		player_unit.load_item_data(_data)
+		player_unit.unserialize_equipment(_data.get("equip"))
+		player_unit.unserialize_inventory(_data.get("inventory"))
 		player_unit.set_seed()
 	make_money(0)
 	G.ui.update_hud()
@@ -336,10 +329,10 @@ func find_closest_enemy():
 	var max_dist = 99
 	var closest_rng = max_dist
 	for i in visible_enemies:
-		if i != null and is_instance_valid(i):
+		if i != null and is_instance_valid(i) and i.pos.visible:
 			var t = i.pos.distance_to(G.you.unit.pos)
 			if t < closest_rng:
-				var raycast = G.you.unit.n_collider.cast_ray(i.position, [G.you.unit], 15)
+				var raycast = G.you.unit.n_collider.cast_ray(i.position, [G.you.unit.n_collider], 13)
 				if raycast.empty():
 					r = i
 					closest_rng = t

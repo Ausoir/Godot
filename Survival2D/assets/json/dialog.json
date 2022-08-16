@@ -25,6 +25,12 @@
 		"title": "Death",
 		"true": "You die...\n\nYou may choose to spectate or respawn if you have the right item.",
 	},
+	"frying pan": {
+		"title": "Use frying pan",
+		"true": "What will you cook?\n\n",
+		"type": "frying pan",
+		"script": ["cook"],
+	},
 	"scavenger": {
 		"title": "Talk with a scavenger",
 		"true": "Do you have business with me?\n\n\n\n[url=0]Trade[/url]\n[url=1]Invite to party[/url]",
@@ -33,7 +39,7 @@
 				"cmd": [["menu", "dialog", "trade"]],
 			},
 			{
-				"cmd": [["menu", "confirm", "Hire this unit?", [["*=","$h","follow","$p"], ["*=","$h","goal","follow"], ["^^","followers","$hd"], ["*=","$h","oninteract",[["menu", "dialog", "follower"]]]]]],
+				"cmd": [["menu", "confirm", "Hire this unit?", [["*=","$h","follow",0],["*=","$h","goal","follow"], ["*^","$p","party","$hd"], ["*=","$h","oninteract",[["menu","dialog","follower"]]]]]],
 			},
 		]
 	},

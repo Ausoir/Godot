@@ -64,7 +64,7 @@ func add_item(item):
 		items.insert(0, item)
 	else:
 		items.append(item)
-	item.set_z_index(y * 2 - 4000)
+	item.update_z()
 	item.pos = self
 	update_tile()
 	if !visible:
@@ -178,8 +178,8 @@ func get_adjacent(dir, val=1):
 	if dir == -1:
 		return self
 	var t = G.DIRS[dir]
-	var ry = y + t[1]*val
-	var rx = x + t[0]*val
+	var ry = y + t.y*val
+	var rx = x + t.x*val
 	if world.is_inbound(rx, ry):
 		return world.tiles[ry][rx]
 	return self

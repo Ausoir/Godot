@@ -33,6 +33,18 @@ func display_data(_data, _host):
 	if script != null:
 		run_script(script)
 
+func run_script(script):
+	page_data["opt"] = []
+	R.set_seed(G.vars.seed + int(G.vars.time/60))
+	if script[0] == "bulletin":
+		add_bulletin()
+	elif script[0] == "trade":
+		add_trade(page_data.get("type"))
+	elif script[0] == "upgrade":
+		add_upgrade(page_data.get("type"))
+	elif script[0] == "cook":
+		add_cook(page_data.get("type"))
+
 func is_req_met(reqs):
 	for req in reqs:
 		if !check_supplies(req[0], req[1]):
@@ -78,16 +90,6 @@ func _on_meta_hover_started(meta):
 
 func _on_meta_hover_ended(_meta):
 	G.ui.description.hide()
-
-func run_script(script):
-	page_data["opt"] = []
-	R.set_seed(G.vars.seed + int(G.vars.time/60))
-	if script[0] == "bulletin":
-		add_bulletin()
-	elif script[0] == "trade":
-		add_trade(page_data.get("type"))
-	elif script[0] == "upgrade":
-		add_upgrade(page_data.get("type"))
 
 func add_trade(type):
 	G.ui.display(0)
@@ -153,6 +155,40 @@ func add_bulletin():
 			count += 1
 			var option = {"hover": ["item", item_name]}
 			var ann = "Hired "+item_name+" for "+str(price)+"."
-			option["cmd"] = [["money",-price,true],["*^","hire",item_name],["menu","msg",ann]]
+			option["cmd"] = [["money",-price,true],["*^","party",item_name],["menu","msg",ann]]
 			page_data.opt.append(option)
+	get_node("Dialog/RichTextLabel").append_bbcode(items)
+
+func add_cook(type):
+	G.ui.display(0)
+	var items = ""
+	var count = 0
+	var groups = []
+	if type == null:
+		for i in host.inventory:
+			if i != null:
+				groups.append([i.name, 1, i])
+		for i in host.equipments:
+			if i != null:
+				groups.append([host.equipments[i].item_name, 1, host.equipments[i]])
+	else:
+		groups = G.data.get_group(type)
+	for group in groups:
+		var item_name = group[0]
+		var price = group[1]
+		items += "[url="+str(count)+"]> [i]Buy " + item_name + " for $" + str(price) + "[/i][/url]\n"
+		count += 1
+		var option = {"hover": ["item", item_name]}
+		var cmd = []
+		cmd.append(["money",-price,true])
+		var item
+		if group.size() > 2:
+			item = group[2]
+		else:
+			item = G.cmd(["make", item_name, "$pp"])
+		cmd.append(["take", "$h", item])
+		cmd.append(["give", "$p", item])
+		cmd.append(["menu","msg","Bought "+item_name+" for $" + str(price)+"."])
+		option["cmd"] = cmd
+		page_data.opt.append(option)
 	get_node("Dialog/RichTextLabel").append_bbcode(items)

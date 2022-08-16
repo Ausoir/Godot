@@ -7,8 +7,8 @@ const HW = 16
 const HH = 16
 const OCTANT_FLIP = [[1, 0, 0, 1], [0, 1, 1, 0], [0, -1, 1, 0], [-1, 0, 0, 1], \
 	[-1, 0, 0, -1], [0, -1, -1, 0], [0, 1, -1, 0], [1, 0, 0, -1]]
-const CARDINALS = [[0,-1],[1,0],[0,1],[-1,0]]
-const DIRS = [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]
+const CARDINALS = [Vector2.UP,Vector2.RIGHT,Vector2.DOWN,Vector2.LEFT]
+const DIRS = [Vector2.UP,Vector2(1,-1),Vector2.RIGHT,Vector2(1,1),Vector2.DOWN,Vector2(-1,1),Vector2.LEFT,Vector2(-1,-1)]
 const UP = 0
 const UPRIGHT = 1
 const RIGHT = 2
@@ -18,8 +18,11 @@ const DOWNLEFT = 5
 const LEFT = 6
 const UPLEFT = 7
 
+const Tile = preload("res://world/tile.gd")
 const Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
 const Gfx = preload("res://fx/Gfx.tscn")
+var void_tile
+var id
 var sfx
 var influence
 var data
@@ -33,12 +36,14 @@ var events
 var vars
 var temp
 var you
-
+var camera
 
 func _ready():
+	id = 10
 	vars = {}
 	temp = {"discover": null}
 	events = []
+	void_tile = Tile.new(null, 0, 0)
 	sfx = preload("res://fx/Sfx.tscn").instance()
 	influence = preload("res://classes/influence.gd").new()
 	data = preload("res://classes/json.gd").new()
@@ -47,28 +52,18 @@ func _ready():
 	world = preload("res://world/World.tscn").instance()
 	ui = preload("res://interface/Interface.tscn").instance()
 	you = preload("res://view/Player.tscn").instance()
+	camera = preload("res://view/Camera.tscn").instance()
 	custom = preload("res://classes/custom.gd").new()
 	command = load("res://classes/command.gd").new()
+	add_child(camera)
 	get_tree().get_root().call_deferred("add_child", ui)
-	set_process(false)
+	time.reset()
+	add_child(time)
+	time.set_process(false)
 
-func _process(delta):
-	time.on_process(delta)
-	if time.quarter_second:
-		world.turn.process_frames += 1
-		if time.second:
-			custom.on_time()
-	world.turn.on_process()
-	for i in range(events.size()):
-		var ev = events[i]
-		ev[0] -= delta
-		if ev[0] <= 0:
-			if ev[1] == null:
-				cmds(ev[2])
-			else:
-				ev[1].call_funcv(ev[2])
-			events.remove(i)
-			i -= 1
+func get_id():
+	id += 1
+	return id
 
 func pixel_to_pos(pos):
 	return Vector2(pos.x / G.W, pos.y / G.H).floor()
@@ -161,9 +156,9 @@ func get_direction_between(from, to):
 	return dir
 
 func is_vec_in_range(pos):
-	var dist = pos - you.n_camera.position
+	var dist = pos - G.camera.position
 	var length = max(abs(dist.x), abs(dist.y))
-	return length/H < you.n_camera.sight_range
+	return length/H < G.camera.sight_range
 
 func is_vec_visible(p):
 	var pos = pixel_to_pos(p)

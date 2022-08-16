@@ -9,6 +9,15 @@ func run(p, _params):
 		gamestate.level_select()
 	elif p == "end game":
 		gamestate.end_game()
+	elif p == "recall":
+		var host = G.you.unit
+		var adjs = host.pos.get_available_adjacents(12)
+		var adj = R.r_arr(adjs)
+		if adj != null:
+			var members = host.dat.g("members", [])
+			for i in members:
+				var member = G.world.get_item_by_seed(i)
+				member.relocate(adj)
 	elif p == "respawn":
 		var pos = _params[0].pos
 		if G.you.unit.pos == pos:

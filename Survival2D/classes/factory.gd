@@ -36,48 +36,60 @@ func make_group(arg, pos):
 func make_mob(arg, pos):
 	var mob_data = G.data.mob_data.get(arg)
 	if mob_data != null:
-		var unit
-		var unit_pos = pos
-		unit = make_unit(mob_data.unit, unit_pos)
-		if unit != null:
-			unit.item_name = arg
-			unit.dat.combine(mob_data.get("dat", {}))
-			var equips = mob_data.get("equip")
-			if equips != null:
-				for equip in equips:
-					var list = G.data.get_combo(equip)
-					for list_item in list:
-						var equip_item = G.factory.make_item(list_item)
-						if equip_item != null:
-							unit.auto_equip(equip_item)
-			return unit
-		else:
-			push_error("Invalid unit "+str(mob_data[1]))
+		return make_mob_from_data(mob_data, pos)
+
+func make_mob_from_data(mob_data, pos):
+	var unit
+	var unit_pos = pos
+	unit = make_unit(mob_data.unit, unit_pos)
+	if unit != null:
+		unit.dat.combine(mob_data.get("dat", {}))
+		var equips = mob_data.get("equip")
+		if equips != null:
+			for equip in equips:
+				var list = G.data.get_combo(equip)
+				for list_item in list:
+					var equip_item = G.factory.make_item(list_item)
+					if equip_item != null:
+						unit.auto_equip(equip_item)
+		return unit
+	else:
+		push_error("Invalid unit "+str(mob_data[1]))
 
 func make_unit(arg, pos):
 	var unit_data = G.data.unit_data.get(arg)
 	if unit_data != null:
-		var r = Unit.instance()
-		var sprite
-		if unit_data.get("type") != "other":
-			r.set_script(Script_Humanoid)
-		else:
-			r.set_script(Script_Unit)
+		return make_unit_from_data(unit_data, pos)
+
+func make_unit_from_data(unit_data, pos):
+	var r = Unit.instance()
+	var sprite
+	if unit_data.get("type") != "other":
+		r.set_script(Script_Humanoid)
+	else:
+		r.set_script(Script_Unit)
+	r.item_name = unit_data.get("name")
+	r.item_type = "unit"
+	r.dat = UnitProperties.new(unit_data)
+	if r.dat.g("type") != "man":
 		sprite = G.data.get_image(unit_data.img)
-		if !sprite:
-			return
 		r.get_node("Sprites/Sprite").texture = sprite
 		var img_size = sprite.get_size()
 		if img_size.y > 32:
 			r.get_node("Sprites/Sprite").offset.y = -int((img_size.y - 32) / 2)
-		r.item_name = arg
-		r.item_type = "unit"
-		r.dat = UnitProperties.new(unit_data)
-		r.col = -1
-		r.place(pos)
-		r.set_seed()
-		G.world.turn.add(r)
-		return r
+	r.col = -1
+	r.pos = pos
+	r.relocate(pos)
+	r.set_seed()
+	G.world.turn.add(r)
+	if r.get_script() == Script_Humanoid:
+		r.unserialize_equipment(unit_data.get("equip", {}))
+		r.unserialize_inventory(unit_data.get("inventory", []))
+	var party = r.dat.g("party", [])
+	if !party.empty():
+		for member in party:
+			G.factory.make_unit_from_data(member, pos.get_rand_offset(1, 1))
+	return r
 
 func make_item(arg, pos=null):
 	var item_data = G.data.item_data.get(arg)
@@ -95,8 +107,10 @@ func make_item(arg, pos=null):
 		r.item_name = arg
 		r.item_type = "item"
 		r.dat = Properties.new(item_data)
+		r.on_change("dat")
 		if pos != null:
-			r.place(pos)
+			r.pos = pos
+			r.relocate(pos)
 		return r
 
 func make_projectile(host, arg, pos, dest):
@@ -124,5 +138,6 @@ func make_corpse(host, pos):
 	if item_data != null:
 		r.dat = G.factory.Properties.new(item_data)
 	if pos != null:
-		r.place(pos)
+		r.pos = pos
+		r.relocate(pos)
 	return r

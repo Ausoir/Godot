@@ -5,17 +5,6 @@ var equipments = {}
 var inventory = [null]
 var gender = "m"
 
-func ability(idx, at):
-	var size = skills.size()
-	if idx < size:
-		face_toward(at)
-		return G.influence.do(skills[idx], self, at)
-	else:
-		var items = get_usable_items()
-		if idx < size + items.size():
-			face_toward(at)
-			G.cmds(items[idx - size].dat.g("onuse"), self, at)
-
 func get_usable_items():
 	var r = []
 	for i in inventory:
@@ -148,6 +137,9 @@ func accomodate_stats(item):
 		sks.append(itemsks[i])
 	sks += dat.g("skills", [])
 	dat.a("skills", sks)
+	var ms = dat.g("move speed")
+	ms -= item.dat.g("weight", 0)
+	dat.a("move speed", ms)
 	for _i in range(item.dat.g("space", 0)):
 		inventory.append(null)
 	for i in G.data.vars.stats:
@@ -164,6 +156,9 @@ func unaccomodate_stats(item):
 		var idx = tskills.find(i)
 		tskills.remove(idx)
 	dat.a("skills", tskills)
+	var ms = dat.g("move speed")
+	ms += item.dat.g("weight", 0)
+	dat.a("move speed", ms)
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i].name
 		var stat = item.dat.g(s)
@@ -233,29 +228,6 @@ func get_defense(_type):
 				def += ar
 	return def
 
-func update_save_data(_data):
-	var save_eq = {}
-	var save_inv = []
-	for i in equipments:
-		save_eq[i] = equipments[i].item_name
-		unaccomodate_stats(equipments[i])
-	for i in inventory:
-		if i != null:
-			save_inv.append(i.item_name)
-	_data["equip"] = save_eq
-	_data["inv"] = save_inv
-	return _data
-
-func load_item_data(_data):
-	var load_eq = _data.get("equip")
-	var load_inv = _data.get("inv")
-	for i in load_eq:
-		var item = G.factory.make_item(load_eq[i], null)
-		equip(i, item)
-	for i in load_inv:
-		var item = G.factory.make_item(i, null)
-		store(item, true)
-
 func get_item_skills():
 	var sks = []
 	for i in equipments:
@@ -264,3 +236,27 @@ func get_item_skills():
 		if i != null:
 			sks += i.dat.g("skills", [])
 	return sks
+
+func serialize():
+	var data = .serialize()
+	var save_eq = {}
+	var save_inv = []
+	for i in equipments:
+		save_eq[i] = equipments[i].item_name
+		unaccomodate_stats(equipments[i])
+	for i in inventory:
+		if i != null:
+			save_inv.append(i.item_name)
+	data["equip"] = save_eq
+	data["inventory"] = save_inv
+	return data
+
+func unserialize_equipment(data):
+	for i in data:
+		var item = G.factory.make_item(data[i], null)
+		equip(i, item)
+
+func unserialize_inventory(data):
+	for i in data:
+		var item = G.factory.make_item(i, null)
+		store(item, true)

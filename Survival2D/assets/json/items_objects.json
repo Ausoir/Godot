@@ -172,7 +172,6 @@
 		"mat": "glass",
 		"col": 15,
 		"openable": true,
-		"armor": 1,
 		"vitality": 4,
 		"slow": 0.5,
 		"height": 1,
@@ -207,7 +206,7 @@
 		"mat": "glass",
 		"col": 0,
 		"height": 1,
-		"slow": 0.4,
+		"slow": 0.5,
 		"armor": 3,
 		"vitality": 2,
 		"desc": "A broken window."

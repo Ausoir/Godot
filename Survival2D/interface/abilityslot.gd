@@ -14,8 +14,7 @@ var skill_data
 var skill_type
 var skill_description
 
-func set_index(p):
-	skill_index = p
+func set_index_text(p):
 	$Label.text = str(p + 1)
 
 func set_mode(p):
