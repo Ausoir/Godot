@@ -6,7 +6,7 @@ var spawns = []
 var complex
 
 func generate(p):
-	.create(R.ir(30, 60), R.ir(30, 60))
+	.create(G.rng.ir(30, 60), G.rng.ir(30, 60))
 	G.world.create_map(width, height)
 	base = make_perlin(width, height, 5)
 	output = make_base(width, height, 0)
@@ -41,22 +41,22 @@ func generate(p):
 				if v > i[0]:
 					output[y][x] = i[1]
 	for _i in range(16):
-		base[0][R.ir(0, width-1)] = spawns[0][1]
-		base[height-1][R.ir(0, width-1)] = spawns[0][1]
-		base[R.ir(0, height-1)][0] = spawns[0][1]
-		base[R.ir(0, height-1)][width-1] = spawns[0][1]
+		base[0][G.rng.ir(0, width-1)] = spawns[0][1]
+		base[height-1][G.rng.ir(0, width-1)] = spawns[0][1]
+		base[G.rng.ir(0, height-1)][0] = spawns[0][1]
+		base[G.rng.ir(0, height-1)][width-1] = spawns[0][1]
 	if complex != null:
-		for _i in range(R.ir(complex[1], complex[2])):
+		for _i in range(G.rng.ir(complex[1], complex[2])):
 			place_building(complex[0])
 	paint_map()
 
 func place_complex(p):
 	var padding = 4
-	for _i in range(R.ir(p[1], p[2])):
-		var fromx = R.ir(12 + padding, int(width*2/5) - padding)
-		var fromy = R.ir(8 + padding, height-1-8 - padding)
+	for _i in range(G.rng.ir(p[1], p[2])):
+		var fromx = G.rng.ir(12 + padding, int(width*2/5) - padding)
+		var fromy = G.rng.ir(8 + padding, height-1-8 - padding)
 		var estate = [fromx-padding, fromy-padding, fromx+padding, fromy+padding]
-		make_vault(estate, p[0], R.ir(0, 3))
+		make_vault(estate, p[0], G.rng.ir(0, 3))
 
 func is_estate_vacant(px, py):
 	for i in estates:
@@ -79,6 +79,6 @@ func place_building(_building):
 				var x1 = cx*8 + 8
 				var y1 = cy*8 + 8+midgap
 				var estate = [x1-4, y1-4, x1+4, y1+4]
-				make_vault(estate, _building, R.ir(0, 3))
+				make_vault(estate, _building, G.rng.ir(0, 3))
 				return true
 	return false

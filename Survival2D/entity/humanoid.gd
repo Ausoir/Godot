@@ -1,0 +1,272 @@
+extends "res://entity/unit.gd"
+
+var overlay_sprites = {}
+var equipments = {}
+var inventory = [null]
+var gender = "m"
+
+func get_usable_items():
+	var r = []
+	for i in inventory:
+		if i != null:
+			var onuse = i.dat.g("onuse")
+			if onuse != null:
+				r.append([i, "item"])
+	return r
+
+func set_seed():
+	var sd = dat.g("seed", -1)
+	if sd == -1:
+		sd = G.rng.i()
+		dat.a("seed", sd)
+	else:
+		sd = int(sd)
+	if dat.g("type") == "man":
+		var list
+		if sd % 2 == 0:
+			sd /= 2
+			list = G.data.vars.male
+		else:
+			list = G.data.vars.female
+		var sprite_name = list[sd % list.size()]
+		n_sprite.texture = G.data.get_image("units/human/"+sprite_name)
+
+func remove():
+	for i in overlay_sprites:
+		overlay_sprites[i].queue_free()
+	for i in equipments:
+		equipments[i].queue_free()
+	.remove()
+
+func get_damage(ptype, p):
+	var r = .get_damage(ptype, p)
+	var wpn = equipments.get("weapon")
+	if wpn:
+		if ptype == "bash":
+			r += round(G.rng.f() * wpn.dat.g("bash", 0))
+		elif ptype == "cut":
+			r += round(G.rng.f() * wpn.dat.g("cut", 0))
+	return r
+
+func can_carry(w):
+	if w < 0:
+		return false
+	elif w == 0:
+		return true
+	var r = 0
+	for i in equipments:
+		var item = equipments[i]
+		r += item.dat.g("weight", 0)
+	for i in inventory:
+		if i != null:
+			r += i.dat.g("weight", 0)
+	return dat.g("strength", 1) >= r + w
+
+func remove_overlay(_part):
+	var wpn = overlay_sprites.get(_part)
+	if wpn != null:
+		wpn.queue_free()
+		n_sprites.remove_child(wpn)
+		overlay_sprites.erase(_part)
+
+func create_overlay(_part, _texturename):
+	if _texturename != null:
+		var newsprite = n_sprite.duplicate()
+		newsprite.set_name(_part)
+		newsprite.set_texture(G.data.get_image(_texturename))
+		overlay_sprites[_part] = newsprite
+		n_sprites.add_child(newsprite)
+		if _part != "weapon":
+			var wpn = overlay_sprites.get("weapon")
+			if wpn != null:
+				n_sprites.remove_child(wpn)
+				n_sprites.add_child(wpn)
+
+func is_equipment_valid(part, item):
+	if item != null:
+		var item_part = item.dat.g("part", "")
+		if item_part == part or (item_part == "" and part == "weapon"):
+			var bodytype_list = G.data.get_json_data("bodytypes")
+			var parts = bodytype_list.get(dat.g("type"))
+			if part in parts:
+				var item_size = item.dat.g("size", 1)
+				var valid_size = item_size <= parts[part]
+				return valid_size
+	return false
+
+func auto_equip(item):
+	var part = item.dat.g("part", "weapon")
+	return equip(part, item)
+
+func equip(part, item):
+	if !has_part(part) and is_equipment_valid(part, item):
+		item.take(self)
+		equipments[part] = item
+		accomodate_stats(item)
+		if part == "body" and item.dat.g("gender") != null:
+			create_overlay(part, item.dat.g("sprite")+"_"+gender)
+		else:
+			create_overlay(part, item.dat.g("sprite"))
+		G.sfx.play("equip_metal", pos.position)
+		return true
+	return false
+
+func unequip(part):
+	for eq in equipments:
+		if eq == part:
+			var r = equipments[eq]
+			unaccomodate_stats(r)
+			remove_overlay(part)
+			equipments.erase(eq)
+			r.host = null
+			return r
+
+func on_item_remove(item):
+	if item in inventory:
+		unstore(item)
+	else:
+		var part = item.dat.g("part", "weapon")
+		if part in equipments and equipments[part] == item:
+			unequip(part)
+	controller.on_change("ui")
+
+func accomodate_stats(item):
+	var sks = []
+	var itemsks = item.dat.g("skills", [])
+	for i in range(itemsks.size()):
+		sks.append(itemsks[i])
+	sks += dat.g("skills", [])
+	dat.a("skills", sks)
+	var ms = dat.g("move speed")
+	ms -= item.dat.g("weight", 0)
+	dat.a("move speed", ms)
+	for _i in range(item.dat.g("space", 0)):
+		inventory.append(null)
+	for i in G.data.vars.stats:
+		var s = G.data.vars.stats[i].name
+		var stat = item.dat.g(s)
+		if stat != null:
+			dat.add(s, stat)
+	dirty_dat = true
+
+func unaccomodate_stats(item):
+	var tskills = dat.g("skills", [])
+	var iskills = item.dat.g("skills", [])
+	for i in iskills:
+		var idx = tskills.find(i)
+		tskills.remove(idx)
+	dat.a("skills", tskills)
+	var ms = dat.g("move speed")
+	ms += item.dat.g("weight", 0)
+	dat.a("move speed", ms)
+	for i in G.data.vars.stats:
+		var s = G.data.vars.stats[i].name
+		var stat = item.dat.g(s)
+		if stat != null:
+			dat.add(s, -stat)
+	var remove_spaces = item.dat.g("space", 0)
+	var old_inventory = inventory
+	inventory = inventory.slice(0, inventory.size()-remove_spaces-1)
+	if remove_spaces > 0:
+		for i in range(old_inventory.size()):
+			if i >= old_inventory.size() - remove_spaces:
+				if old_inventory[i] != null:
+					store(old_inventory[i], true)
+	dirty_dat = true
+
+func has_part(p):
+	for eq in equipments:
+		if equipments[eq] != null and eq == p:
+			return true
+	return false
+
+func store_at(item, index):
+	if index >= inventory.size():
+		store(item)
+	else:
+		inventory[index] = item
+		item.take(self)
+		if controller != null:
+			controller.on_change("ui")
+	return true
+
+func store(item, drop=false):
+	for i in range(inventory.size()):
+		if inventory[i] == null:
+			inventory[i] = item
+			item.take(self)
+			if controller != null:
+				controller.on_change("ui")
+			return true
+	if drop:
+		drop(item)
+	return false
+
+func unstore(item):
+	for i in range(inventory.size()):
+		if inventory[i] == item:
+			item.host = null
+			inventory[i] = null
+			if controller != null:
+				controller.on_change("ui")
+			return true
+	return false
+
+func drop(item):
+	if item.pos == pos:
+		item.relocate(pos)
+
+func get_defense(_type):
+	var def = .get_defense(_type)
+	for i in equipments:
+		var cov = equipments[i].dat.g("coverage", 1)
+		var ar = equipments[i].dat.g("armor", 0)
+		if G.rng.r_percent(cov):
+			if _type == "bash":
+				def += int(ar / 2)
+			elif _type != "true":
+				def += ar
+	return def
+
+func get_item_skills():
+	var sks = []
+	for i in equipments:
+		sks += equipments[i].dat.g("skills", [])
+	for i in inventory:
+		if i != null:
+			sks += i.dat.g("skills", [])
+	return sks
+
+func serialize():
+	var data = .serialize()
+	var save_eq = {}
+	var save_inv = []
+	for i in equipments:
+		save_eq[i] = equipments[i].item_name
+		unaccomodate_stats(equipments[i])
+	for i in inventory:
+		if i != null:
+			save_inv.append(i.item_name)
+	data["equip"] = save_eq
+	data["inventory"] = save_inv
+	return data
+
+func unserialize_equipment(data):
+	for i in data:
+		var item = G.factory.make_item(data[i], null)
+		equip(i, item)
+
+func unserialize_inventory(data):
+	for i in data:
+		var item = G.factory.make_item(i, null)
+		store(item, true)
+
+func get_active_slots():
+	var skills = .get_active_slots()
+	var slots = 0
+	var actives = get_item_skills()
+	for i in range(actives.size()):
+		var data = G.data.skill_data.get(actives[i])
+		if data != null:
+			slots += data.get("cost", 0)
+	return skills - slots

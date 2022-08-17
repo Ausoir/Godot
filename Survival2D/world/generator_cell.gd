@@ -10,6 +10,6 @@ func generate_ruins():
 			var fromx = x * 7
 			var fromy = y * 7
 			var estate = [fromx, fromy, fromx+6, fromy+6]
-			make_vault(estate, "map_cell", R.ir(0, 3))
+			make_vault(estate, "map_cell", G.rng.ir(0, 3))
 	make_border(['soil'])
 	paint_map()

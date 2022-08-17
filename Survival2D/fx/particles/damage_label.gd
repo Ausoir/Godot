@@ -7,8 +7,8 @@ var scale_mod
 var speed_mod = 800
 
 func _ready():
-	vel = Vector2(R.ir(-48, 48), R.ir(-48, 0))
-	vel_angle = R.fr(-1, 1)
+	vel = Vector2(G.rng.ir(-48, 48), G.rng.ir(-48, 0))
+	vel_angle = G.rng.fr(-1, 1)
 
 func set_damage(dmg, color, _scale, _speed):
 	set_text(str(dmg))

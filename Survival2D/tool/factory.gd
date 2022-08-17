@@ -1,0 +1,141 @@
+const Item = preload("res://entity/item.gd")
+const Unit = preload("res://entity/Unit.tscn")
+const Script_Unit = preload("res://entity/unit.gd")
+const Script_Humanoid = preload("res://entity/humanoid.gd")
+const Properties = preload("res://tool/properties.gd")
+const Projectile = preload("res://entity/Projectile.tscn")
+
+func make_any(arg, pos):
+	var r
+	if arg[0] == "g" and arg[1] == "_":
+		r = make_group(arg, pos)
+	else:
+		r = make_mob(arg, pos)
+		if r == null:
+			r = make_unit(arg, pos)
+			if r == null:
+				r = make_item(arg, pos)
+	return r
+
+func make_group(arg, pos):
+	var groups = G.data.get_group(arg)
+	if !groups.empty():
+		var made
+		var adjs
+		var adj = pos
+		for group in groups:
+			for _i in range(group[1]):
+				if adj != null:
+					made = make_any(group[0], adj)
+					if made != null and made.col & 4 > 0:
+						adjs = adj.get_available_adjacents(12)
+						adj = G.rng.r_arr(adjs)
+		return made
+
+func make_mob(arg, pos):
+	var mob_data = G.data.mob_data.get(arg)
+	if mob_data != null:
+		return make_mob_from_data(mob_data, pos)
+
+func make_mob_from_data(mob_data, pos):
+	var unit
+	var unit_pos = pos
+	unit = make_unit(mob_data.unit, unit_pos)
+	if unit != null:
+		unit.dat.combine(mob_data.get("dat", {}))
+		var equips = mob_data.get("equip")
+		if equips != null:
+			for equip in equips:
+				var list = G.data.get_combo(equip)
+				for list_item in list:
+					var equip_item = G.factory.make_item(list_item)
+					if equip_item != null:
+						unit.auto_equip(equip_item)
+		return unit
+	else:
+		push_error("Invalid unit "+str(mob_data[1]))
+
+func make_unit(arg, pos):
+	var unit_data = G.data.unit_data.get(arg)
+	if unit_data != null:
+		return make_unit_from_data(unit_data, pos)
+
+func make_unit_from_data(unit_data, pos):
+	var r = Unit.instance()
+	var sprite
+	if unit_data.get("type") != "other":
+		r.set_script(Script_Humanoid)
+	else:
+		r.set_script(Script_Unit)
+	r.item_name = unit_data.get("name")
+	r.item_type = "unit"
+	r.dat = Properties.new(unit_data)
+	if r.dat.g("type") != "man":
+		sprite = G.data.get_image(unit_data.img)
+		r.get_node("Sprites/Sprite").texture = sprite
+		var img_size = sprite.get_size()
+		if img_size.y > 32:
+			r.get_node("Sprites/Sprite").offset.y = -int((img_size.y - 32) / 2)
+	r.col = -1
+	r.pos = pos
+	r.relocate(pos)
+	r.set_seed()
+	G.world.turn.add(r)
+	if r.get_script() == Script_Humanoid:
+		r.unserialize_equipment(unit_data.get("equip", {}))
+		r.unserialize_inventory(unit_data.get("inventory", []))
+	var party = r.dat.g("party", [])
+	if !party.empty():
+		for member in party:
+			G.factory.make_unit_from_data(member, pos.get_rand_offset(1, 1))
+	return r
+
+func make_item(arg, pos=null):
+	var item_data = G.data.item_data.get(arg)
+	if item_data != null:
+		var img = item_data.get("img")
+		var r = Sprite.new()
+		if img != null:
+			G.data.set_sprite_texture(r, img, item_data.get("autotile", 0))
+			if r.texture != null:
+				if !r.region_enabled:
+					var img_size = r.texture.get_size()
+					if img_size.y > 32:
+						r.offset.y = -int((img_size.y - 32) / 2)
+		r.set_script(Item)
+		r.item_name = arg
+		r.item_type = "item"
+		r.dat = Properties.new(item_data)
+		r.on_change("dat")
+		if pos != null:
+			r.pos = pos
+			r.relocate(pos)
+		return r
+
+func make_projectile(host, arg, pos, dest):
+	if G.is_vec_visible(pos) or G.is_vec_visible(dest):
+		var item_data = G.data.item_data.get(arg)
+		if item_data != null:
+			var r = Projectile.instance()
+			var img = G.data.get_image(item_data.get("img"))
+			r.init(host, img, pos, dest, item_data.get("speed"), item_data.get("variation", [0,0]))
+			r.lifetime = item_data.get("time", 2)
+			r.onattack = item_data.get("onattack")
+			r.onmiss = item_data.get("onmiss")
+			var onshoot = item_data.get("onshoot")
+			if onshoot != null:
+				G.cmds(onshoot, host, dest)
+			return r
+
+func make_corpse(host, pos):
+	var r = G.data.get_particle("Corpse")
+	r.item_name = "corpse"
+	r.item_type = "item"
+	r.make(host)
+	var item_data = G.data.item_data.get("corpse")
+	if item_data != null:
+		r.dat = G.factory.Properties.new(item_data)
+	if pos != null:
+		r.pos = pos
+		r.relocate(pos)
+	return r

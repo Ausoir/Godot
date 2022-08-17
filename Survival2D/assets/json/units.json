@@ -33,7 +33,7 @@
 		"strength": 0,
 		"agility": 4,
 		"intelligence": 0,
-		"perception": 4,
+		"perception": 7,
 		"skills": ["laser","laser","laser"],
 		"flags": [],
 		"faction": 1,

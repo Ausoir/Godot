@@ -22,6 +22,8 @@ const Tile = preload("res://world/tile.gd")
 const Damage_Label = preload("res://fx/particles/Damage_Label.tscn")
 const Gfx = preload("res://fx/Gfx.tscn")
 var void_tile
+var rng
+var game
 var id
 var sfx
 var influence
@@ -44,17 +46,19 @@ func _ready():
 	temp = {"discover": null}
 	events = []
 	void_tile = Tile.new(null, 0, 0)
+	rng = preload("res://tool/rng.gd").new()
+	game = preload("res://tool/gamestate.gd").new()
 	sfx = preload("res://fx/Sfx.tscn").instance()
-	influence = preload("res://classes/influence.gd").new()
-	data = preload("res://classes/json.gd").new()
-	time = preload("res://classes/time.gd").new()
-	factory = preload("res://classes/factory.gd").new()
+	influence = preload("res://tool/influence.gd").new()
+	data = preload("res://tool/json.gd").new()
+	time = preload("res://tool/time.gd").new()
+	factory = preload("res://tool/factory.gd").new()
 	world = preload("res://world/World.tscn").instance()
-	ui = preload("res://interface/Interface.tscn").instance()
+	ui = preload("res://ui/Interface.tscn").instance()
 	you = preload("res://view/Player.tscn").instance()
 	camera = preload("res://view/Camera.tscn").instance()
-	custom = preload("res://classes/custom.gd").new()
-	command = load("res://classes/command.gd").new()
+	custom = preload("res://tool/custom.gd").new()
+	command = load("res://tool/command.gd").new()
 	add_child(camera)
 	get_tree().get_root().call_deferred("add_child", ui)
 	time.reset()

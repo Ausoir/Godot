@@ -23,30 +23,30 @@ func generate_maze(sx, sy):
 
 func place_buildings():
 	for _i in range(20):
-		var fromx = R.ir(8, width-17)
-		var fromy = R.ir(8, height-17)
+		var fromx = G.rng.ir(8, width-17)
+		var fromy = G.rng.ir(8, height-17)
 		var estate = [fromx, fromy, fromx+7, fromy+7]
-		make_vault(estate, "map_maze", R.ir(0, 3))
+		make_vault(estate, "map_maze", G.rng.ir(0, 3))
 
 func paint_spawn(dir):
 	var floor_tile = 'tile'
 	if dir == 0:
-		var x = R.ir(1, width-2)
+		var x = G.rng.ir(1, width-2)
 		G.world.set_terrain(x, 0, floor_tile)
 		G.world.set_terrain(x, 1, floor_tile)
 		G.world.spawn_points.append(G.world.tiles[0][x])
 	elif dir == 1:
-		var y = R.ir(1, height-2)
+		var y = G.rng.ir(1, height-2)
 		G.world.set_terrain(width-1, y, floor_tile)
 		G.world.set_terrain(width-2, y, floor_tile)
 		G.world.spawn_points.append(G.world.tiles[y][width-1])
 	elif dir == 2:
-		var x = R.ir(1, width-2)
+		var x = G.rng.ir(1, width-2)
 		G.world.set_terrain(x, height-1, floor_tile)
 		G.world.set_terrain(x, height-2, floor_tile)
 		G.world.spawn_points.append(G.world.tiles[height-1][x])
 	elif dir == 3:
-		var y = R.ir(1, height-2)
+		var y = G.rng.ir(1, height-2)
 		G.world.set_terrain(0, y, floor_tile)
 		G.world.set_terrain(1, y, floor_tile)
 		G.world.spawn_points.append(G.world.tiles[y][0])
@@ -83,8 +83,8 @@ func partition(x1, y1, x2, y2):
 	if availX.size() < 1 or availY.size() < 1:
 		return
 
-	var rx = R.r_arr(availX)
-	var ry = R.r_arr(availY)
+	var rx = G.rng.r_arr(availX)
+	var ry = G.rng.r_arr(availY)
 
 	base[ry][rx] = WALL_TILE
 
@@ -118,13 +118,13 @@ func partition(x1, y1, x2, y2):
 		if (j % 2):
 			bottom.append([rx, j])
 
-	var solid = R.r_arr(walls)
+	var solid = G.rng.r_arr(walls)
 	for i in range(walls.size()):
 		var w = walls[i]
 		if (w == solid):
 			continue
 		elif !w.empty():
-			var hole = R.r_arr(w)
+			var hole = G.rng.r_arr(w)
 			base[hole[1]][hole[0]] = 2
 
 	_stack.append([x1, y1, rx-1, ry-1]) #left top

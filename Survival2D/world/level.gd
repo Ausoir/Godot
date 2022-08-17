@@ -42,7 +42,7 @@ func set_area(p):
 		var dat = G.data.vars.area[i]
 		if p < dat.biome:
 			area = i
-			objective = R.r_arr(dat.modes)
+			objective = G.rng.r_arr(dat.modes)
 			return
 
 func set_mode(p):
@@ -69,8 +69,8 @@ func on_loading():
 	G.get_tree().set_pause(true)
 	G.get_tree().get_root().remove_child(map)
 	map.queue_free()
-	R.set_seed(G.vars.seed)
-	gamestate.travel(area)
+	G.rng.set_seed(G.vars.seed)
+	G.game.travel(area)
 	if G.world.paint_spawn(side) != null:
 		var load_data = G.vars.get("load_data")
 		if load_data != null: #From char creation

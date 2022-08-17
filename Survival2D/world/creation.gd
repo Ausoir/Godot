@@ -27,7 +27,7 @@ func start():
 	for i in stats:
 		cmds.append(["*=", "$p", i, stats[i]])
 	G.temp.creation = cmds
-	gamestate.load_travel("town")
+	G.game.load_travel("town")
 #	get_tree().change_scene_to(load("res://world/Levels.tscn"))
 
 func update():
@@ -71,30 +71,30 @@ func _on_meta_hover_ended(_meta):
 	G.ui.description.hide()
 
 func randomize_unit():
-	specie = R.r_arr(G.data.vars.species)
+	specie = G.rng.r_arr(G.data.vars.species)
 	var specie_data = G.data.unit_data.get(specie)
 	var count = 0
-	var distribution = R.r_pie(G.data.vars.stats.size()+1)
+	var distribution = G.rng.r_pie(G.data.vars.stats.size()+1)
 	for i in G.data.vars.stats:
 		var s = G.data.vars.stats[i]
 		var maxvariance = s.variance * (distribution[count] - 1)
 		stats[s.name] = round(specie_data.get(s.name, 0) + maxvariance)
 		count += 1
 	if distribution[count] < .7:
-		skills[0] = R.r_arr(G.data.vars.skills.bad)
+		skills[0] = G.rng.r_arr(G.data.vars.skills.bad)
 	elif distribution[count] < 1.4:
-		skills[0] = R.r_arr(G.data.vars.skills.good)
-	elif R.b():
-		skills[0] = R.r_arr(G.data.vars.skills.great)
+		skills[0] = G.rng.r_arr(G.data.vars.skills.good)
+	elif G.rng.b():
+		skills[0] = G.rng.r_arr(G.data.vars.skills.great)
 	else:
-		skills[0] = R.r_arr(G.data.vars.skills.bad)
-		skills[1] = R.r_arr(G.data.vars.skills.active)
+		skills[0] = G.rng.r_arr(G.data.vars.skills.bad)
+		skills[1] = G.rng.r_arr(G.data.vars.skills.active)
 
-	items = [R.r_arr(G.data.vars.loadouts.armor)]
-	var loadout_heavy = R.b()
+	items = [G.rng.r_arr(G.data.vars.loadouts.armor)]
+	var loadout_heavy = G.rng.b()
 	if loadout_heavy:
-		items.append(R.r_arr(G.data.vars.loadouts.good_weapon))
+		items.append(G.rng.r_arr(G.data.vars.loadouts.good_weapon))
 	else:
-		items.append(R.r_arr(G.data.vars.loadouts.equipment))
-		items.append(R.r_arr(G.data.vars.loadouts.bad_weapon))
-		items.append(R.r_arr(G.data.vars.loadouts.accessory))
+		items.append(G.rng.r_arr(G.data.vars.loadouts.equipment))
+		items.append(G.rng.r_arr(G.data.vars.loadouts.bad_weapon))
+		items.append(G.rng.r_arr(G.data.vars.loadouts.accessory))

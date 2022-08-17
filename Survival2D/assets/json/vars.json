@@ -5,7 +5,7 @@
 	"female": ["female_1","female_2","female_3","female_4","female_5","female_6","female_7","female_8",
 			"female_9","female_10","female_11","female_12","female_13","female_14","female_15","female_16",],
 	"species": ["human","human","human","human","human", "human","human","human","human","human", "human","human","human","human","human", "human","human","human","human","human",
-			"manzard", "mantle", "manfly", "mansect", "manbird"],
+			"manzard", "mantle", "mansect", "manbird"],
 	"stats": {
 		"vit": {
 			"name": "vitality",
@@ -34,7 +34,7 @@
 		},
 		"per": {
 			"name": "perception",
-			"variance": 3,
+			"variance": 4,
 			"desc": "Perception determines sight range."
 		},
 		"ms": {

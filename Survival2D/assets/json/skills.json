@@ -85,6 +85,7 @@
 		"onstart": [["action","$h","attack"],["attack","$h","$t","bash", 35]],
 		"desc_dmg": "35% Bash",
 		"desc": "Fast basic attack that deals minor damage.",
+		"noise": 6
 	},
 	"headbutt": {
 		"target": "onattack",
@@ -236,8 +237,9 @@
 		"turns": 6,
 		"onstart": [["*+","$h","perception", -6]],
 		"onturn": [["gfx","particle","Fire","$hv"],["attack","$h","$t","true",1]],
-		"onend": [["*+","$h","perception", 6]],
-		"desc": "You are burning. -2 Vitality, -6 Perception",
+		"onend": [["*+","$h","perception", 4]],
+		"desc": "You are burning. -4 Perception",
+		"noise": 8,
 	},
 
 
@@ -264,7 +266,7 @@
 		"desc_dmg": "6x3 Cut",
 		"cancelable": true,
 		"onturn": [["projectile","shot .223"]],
-		"noise": 16,
+		"noise": 18,
 	},
 	"full auto .223": {
 		"img": "gui/sk_shoot",
@@ -278,7 +280,7 @@
 		"cooldown": 12,
 		"onturn": [["projectile","shot .223"]],
 		"onend": [["cooldown", "$h", "full auto", 12]],
-		"noise": 16,
+		"noise": 24,
 	},
 	"shoot arrow I": {
 		"img": "gui/sk_shoot",
@@ -289,7 +291,7 @@
 		"cooldown": 16,
 		"desc_dmg": "4 Cut",
 		"onstart": [["action","$h","headbutt"],["projectile","shot arrow"],["delay","$t",12]],
-		"noise": 5,
+		"noise": 8,
 	},
 	"shoot arrow II": {
 		"img": "gui/sk_shoot",
@@ -300,7 +302,7 @@
 		"cooldown": 12,
 		"desc_dmg": "4 Cut",
 		"onstart": [["action","$h","headbutt"],["projectile","shot arrow"],["delay","$t",6]],
-		"noise": 5,
+		"noise": 14,
 	},
 	"shoot arrow III": {
 		"img": "gui/sk_shoot",
@@ -311,7 +313,7 @@
 		"cooldown": 36,
 		"desc_dmg": "2d6 Cut",
 		"onstart": [["action","$h","headbutt"],["projectile","shot strong arrow"],["delay","$t",16]],
-		"noise": 7,
+		"noise": 10,
 	},
 	"shoot bolt": {
 		"img": "gui/sk_shoot",
@@ -322,7 +324,7 @@
 		"cooldown": 12,
 		"desc_dmg": "2d4 Cut",
 		"onstart": [["projectile","shot bolt"]],
-		"noise": 5,
+		"noise": 7,
 	},
 	"laser": {
 		"img": "gui/sk_shoot",
@@ -345,7 +347,7 @@
 		"cancelable": true,
 		"onturn": [["projectile","shot laser"]],
 		"onend": [["cooldown", "$h", "laser", 8]],
-		"noise": 10,
+		"noise": 14,
 	},
 
 

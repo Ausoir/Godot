@@ -1,6 +1,6 @@
 {
 	"onstart": {
-		"onmake": [["make","mode {scavenge,survive,assault,escape}","$0"],["*=","$t","rating","{1~4}"],["*=","$t","area","{town,ruins,fields,woods,lab,caverns}"]]
+		"onmake": [["make","mode {scavenge,survive,assault,escape}","$0"],["*=","$t","rating","{1~4}"],["*=","$t","area","{urban,hive,military,mutant}"]]
 	},
 	"mode scavenge": {
 		"turn": 12,
@@ -13,7 +13,7 @@
 		"onturn": [["run",[["?=","{1~4}",1],["make", "g_{area}{rating}", "$L"],["hunt", "$t", "$p"]]],["repeat",8]],
 	},
 	"mode assault": {
-		"onmake": [["make","g_as{rating}","$R"],["*=","$h","target","$t"],["&=","discover",[["?>!","{{-2~180}","{rating}"],["make","g_{area}{rating}","$$t",15]]],["remove","$h"]],
+		"onmake": [["run",[["make","g_as{rating}","$R"],["hunt","$t","$p"]],["repeat","{rating}"],["remove","$h"]]]
 	},
 	"mode escape": {
 		"turn": 8,

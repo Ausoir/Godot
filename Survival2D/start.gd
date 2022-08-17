@@ -3,7 +3,7 @@ extends Control
 var state = 1
 
 func _ready():
-	R.set_seed()
+	G.rng.set_seed()
 
 func _input(event):
 	G.get_tree().set_input_as_handled()
@@ -21,4 +21,4 @@ func start():
 		$AnimationPlayer.play("FadeOut")
 
 func on_fadeout():
-	gamestate.start_game()
+	G.game.start_game()

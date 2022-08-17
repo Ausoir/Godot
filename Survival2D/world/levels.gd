@@ -11,8 +11,8 @@ var position_y: int
 var pressed
 
 func _ready():
-	R.set_seed(G.vars.map.seed)
-	G.vars.map.seed = R.init_seed
+	G.rng.set_seed(G.vars.map.seed)
+	G.vars.map.seed = G.rng.init_seed
 	position = int(G.vars.map.current)
 	position_x = position % sx
 	#warning-ignore:integer_division
@@ -40,7 +40,7 @@ func _ready():
 			else:
 				var lvl = Level.instance()
 				blueprint[y][x] = lvl
-				lvl.rating = int(clamp(max(x/float(sx*.8), y/float(sy*1.3)) + R.fr(-.3, 0), 0, 1)/.25)+1
+				lvl.rating = int(clamp(max(x/float(sx*.8), y/float(sy*1.3)) + G.rng.fr(-.3, 0), 0, 1)/.25)+1
 				lvl.set_area(biomemap[y][x])
 				lvl.map = self
 				lvl.refresh(x, y, y*sy+x)

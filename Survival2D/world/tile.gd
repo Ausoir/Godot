@@ -78,7 +78,7 @@ func remove_item(item):
 
 func smash(_dmg, _type="true"):
 	for item in items:
-		if item.hit(_type, R.ir(0, _dmg), null):
+		if item.hit(_type, G.rng.ir(0, _dmg), null):
 			return true
 
 func update_tile():
@@ -218,8 +218,8 @@ func get_edge():
 	return -1
 
 func get_rand_offset(_x, _y):
-	var rx = R.ir(-_x, _x)
-	var ry = R.ir(-_y, _y)
+	var rx = G.rng.ir(-_x, _x)
+	var ry = G.rng.ir(-_y, _y)
 	return world.fit_bound(x + rx, y + ry)
 
 func get_beam_to(dest, col_mask, distance=-1):

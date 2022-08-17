@@ -1,0 +1,294 @@
+extends "res://entity/item.gd"
+
+const Ai = preload("res://entity/ai.gd")
+const Buffs = preload("res://entity/buffs.gd")
+
+onready var n_sprites = $Sprites
+onready var n_animation = $Animation
+onready var n_sprite = $Sprites/Sprite
+onready var n_skeleton = $Skeleton2D
+
+var delay = 0
+
+var skills = []
+var is_dead = false
+var controller
+var cooldowns = {}
+var buffs = Buffs.new(self)
+var current_action = ""
+var has_on_turn = false
+var move_speed = 0
+
+func _ready():
+	n_collider = get_node("Body")
+	n_collider.parent = self
+	for i in dat.g("buffs", []):
+		G.influence.do(i, self)
+	if !dat.g("controlled", false):
+		possess()
+
+func set_seed():
+	pass
+
+func on_change(p):
+	if p == "dat":
+		move_speed = dat.g("move speed", 0)
+		layer = dat.g("layer", 0)
+		var oldcol = col
+		col = dat.g("col", 12)
+		if col != oldcol:
+			update_col(col)
+		for team in G.world.team:
+			if self in team:
+				team.erase(self)
+		var faction = dat.g("faction", -1)
+		if faction != -1:
+			if !(self in G.world.team[faction]):
+				G.world.team[faction].append(self)
+				for i in range(G.world.team.size()):
+					if i != faction:
+						G.world.team[i].erase(self)
+		flags = dat.g("flags", [])
+		if dat.g("onturn") != null:
+			has_on_turn = true
+		else:
+			has_on_turn = false
+		skills.clear()
+		for skill in dat.g("skills", []):
+			var data = G.data.skill_data.get(skill)
+			skills.append(data)
+	if controller != null:
+		controller.on_change(p)
+
+func update_col(p):
+	var body = get_node("Body")
+	body.collision_mask = p
+	if p & 12 > 0:
+		body.collision_layer = p | 2
+	else:
+		body.collision_layer = p
+
+func possess(ctlr = null):
+	if ctlr == null:
+		ctlr = Ai.new()
+	else:
+		ctlr.unassign()
+	if controller != null:
+		controller.remove()
+		controller = null
+	controller = ctlr
+	ctlr.unit = self
+	ctlr.on_assign()
+
+func can_carry(_w):
+	return false
+
+func ability(idx, at):
+	if idx < skills.size():
+		var skill = skills[idx]
+		var cooldown = skill.get("cooldown")
+		if cooldown != null:
+			if skill.name in cooldowns:
+				return false
+			cooldowns[skill.name] = G.time.s + cooldown
+		face_toward(at)
+		return G.influence.do(skills[idx], self, at)
+
+func get_damage(ptype, p):
+	if ptype == "bash":
+		return round(G.rng.f() * dat.g("strength", 1) * p * .01)
+	elif ptype == "cut" or ptype == "steal":
+		return round(G.rng.f() * p)
+	else:
+		return p
+
+func on_relocate():
+	.on_relocate()
+	n_collider.position = Vector2()
+	n_collider.global_position = position
+
+func slide(p):
+	n_collider.stop = false
+	var deg = atan2(p.y, p.x)
+	var vx = cos(deg)
+	var vy = sin(deg)
+	if move_speed > 0:
+		var ms = move_speed
+		if !("float" in flags):
+			ms = ms * pos.slow
+		if n_collider.moved_dist != null:
+			var dist = n_collider.moved_dist.length()
+			n_animation.play("walk", -1, dist/20)
+		if vx > .1:
+			face(1)
+		elif vx < -.1:
+			face(-1)
+		n_collider.vel.x = vx * ms
+		n_collider.vel.y = vy * ms
+	return on_slide()
+
+func on_slide():
+	var newpos = pos.world.from_vec(position)
+	if newpos != pos:
+		pos.remove_item(self)
+		newpos.add_item(self)
+		.on_relocate()
+		newpos.play_step_sound()
+		if !newpos.visible:
+			if prev_pos != null and prev_pos.visible:
+				G.you.on_enemy_sighted(self, false)
+			if G.camera.is_in_range(newpos):
+				G.make_particle("Sound", newpos.position, null, true)
+		elif prev_pos == null or !prev_pos.visible:
+			G.you.on_enemy_sighted(self, true)
+
+func set_animation(p, spd=0):
+	current_action = p
+	if spd > 0:
+		n_animation.play(p, -1, 1/(spd*.15))
+	else:
+		n_animation.play(p)
+
+func roll_skill(type, mode=0):
+	for skill in skills:
+		if skill.get("trigger", 0) == 0 and skill.target == type:
+			if G.rng.r_percent(skill.chance):
+				G.influence.do(skill, self, controller.target, mode)
+				return skill
+	return null
+
+func on_kill(killed):
+	if "cannibal" in flags:
+		hit("true", -2, self)
+	controller.on_kill(killed)
+
+func get_defense(_type):
+	var def = .get_defense(_type)
+	if _type == "true":
+		return 0
+	elif _type == "bash":
+		return int(def/2)
+	else:
+		return def
+
+func hit(_type, dmg, _hitter):
+	if dmg > 0:
+		if _hitter != null and controller != null:
+			controller.on_hit(_hitter)
+		if _type != "true":
+			var block = get_defense(_type)
+			var used = roll_skill("onhit", 3)
+			var skillblock = 0
+			if used != null:
+				skillblock = used.get("block", 0)
+			if block >= dmg:
+				G.display_damage("BLOCK", pos.position, Color.darkgray)
+				return
+			elif block + skillblock >= dmg:
+				G.display_damage(used.get("block quote"), pos.position, Color.darkgray)
+				return
+			else:
+				dmg -= block
+			if dmg > 0:
+				if _type == "cut":
+					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
+					G.make_particle("Cut", pos.position)
+				elif _type == "bash":
+					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
+					G.make_particle("Hit", pos.position)
+				elif _type == "steal":
+					G.sfx.play_hit(_type, dat.g("mat","flesh"), position)
+					G.make_particle("Cut", pos.position)
+					if _hitter != null:
+						G.cmd(["*dmg",_hitter,-dmg])
+			else:
+				G.make_particle("Glance", pos.position)
+		dat.add("damage", dmg, 0)
+		buffs.disrupt_hit = true
+		show_healthbar()
+		G.make_particle("Blood", pos.position, {"direction": Vector3(G.rng.fr(-1, 1), G.rng.fr(-1, 1), 0), "spread": 60})
+		G.display_damage(round(dmg), pos.position, Color.red)
+		flash(0, dmg * .2)
+		on_health_change()
+		if is_dead:
+			if _hitter != null:
+				_hitter.on_kill(self)
+	elif dmg < 0:
+		dat.add("damage", dmg, 0, dat.g("vitality"))
+		show_healthbar()
+		flash(1, dmg * -.2)
+		G.display_damage(round(dmg), pos.position, Color.green)
+
+func on_health_change():
+	var health_percent = get_health()
+	if health_percent <= 0:
+		is_dead = true
+	elif health_percent <= .5:
+		if !buffs.has("injury"):
+			G.influence.do(G.data.skill_data.get("injury"), self)
+
+func on_turn():
+	if is_dead:
+		die()
+	else:
+		if dirty_dat:
+			on_change("dat")
+			dirty_dat = false
+		if delay == 0:
+			if controller != null:
+				controller.on_turn()
+		else:
+			if delay > 0:
+				delay -= 1
+				n_collider.stop_move()
+			if delay == 0:
+				set_animation("idle")
+		for i in cooldowns:
+			if G.time.s >= cooldowns[i]:
+				cooldowns.erase(i)
+				if cooldowns.empty():
+					update_cooldowns()
+		if has_on_turn:
+			.on_turn()
+
+func face(p):
+	if (p > 0) != (n_sprites.scale.x > 0):
+		n_sprites.scale.x *= -1
+		n_skeleton.scale.x *= -1
+
+func face_toward(p):
+	if p != null:
+		if p.x > position.x:
+			face(1)
+		elif p.x < position.x:
+			face(-1)
+
+func die():
+	var faction = dat.g("faction", -1)
+	if faction != -1:
+		pos.world.team[faction].erase(self)
+	G.factory.make_corpse(self, pos)
+	remove()
+
+func remove():
+	if n_collider != null:
+		n_collider.queue_free()
+	if controller != null:
+		controller.remove()
+	$Shadow.queue_free()
+	for child in get_children():
+		child.queue_free()
+	.remove()
+	buffs.remove()
+
+func update_cooldowns():
+	pass
+
+func get_active_slots():
+	var slots = 0
+	var actives = dat.g("skills", [])
+	for i in range(actives.size()):
+		var data = G.data.skill_data.get(actives[i])
+		if data != null:
+			slots += data.get("cost", 0)
+	return slots

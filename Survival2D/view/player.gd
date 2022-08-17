@@ -1,8 +1,8 @@
-extends "res://objects/controller.gd"
+extends "res://entity/controller.gd"
 
 const Step = preload("res://view/Step.tscn")
 
-onready var control = preload("res://objects/controller.gd")
+onready var control = preload("res://entity/controller.gd")
 onready var n_cursor = $Cursor
 onready var n_steps = $Steps
 
@@ -21,7 +21,7 @@ var closest_enemy
 func on_change(p):
 	.on_change(p)
 	if p == "dat":
-		if G.camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1)):
+		if G.camera.set_sight(unit.dat.gi("perception", 1)+1, unit.dat.gi("sight", 1)):
 			G.camera.update_pos(unit.pos, last_pos)
 		var bodytype_list = G.data.get_json_data("bodytypes")
 		var bodyparts = bodytype_list.get(unit.dat.g("type"))
@@ -41,7 +41,7 @@ func on_assign():
 	G.ui.update_hud()
 
 func on_kill(_victim):
-	var money = R.ir(0, _victim.dat.g("value", 0))
+	var money = G.rng.ir(0, _victim.dat.g("value", 0))
 	if money > 0:
 		make_money(money)
 
@@ -49,7 +49,8 @@ func on_touch(col):
 	if unit.n_collider.stop:
 		var r = .on_touch(col)
 		if r == 1:
-			interact(col)
+			if col.dat.g("oninteract") != null:
+				tasks = [["interact", col]]
 
 func make_money(p):
 	G.vars.money = G.vars.money+p

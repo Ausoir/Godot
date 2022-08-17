@@ -518,7 +518,7 @@
 		"autotile": 1,
 		"mat": "wood",
 		"vitality": 20,
-		"slow": 0.8,
+		"slow": 0.5,
 		"col": 2,
 	},
 	"chainfence": {

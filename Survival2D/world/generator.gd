@@ -70,7 +70,7 @@ func make_random(sx, sy):
 	for _y in range(sy):
 		var row = []
 		for _x in range(sx):
-			row.append(R.f())
+			row.append(G.rng.f())
 		r.append(row)
 	return r
 

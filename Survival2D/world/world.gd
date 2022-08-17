@@ -1,6 +1,6 @@
 extends Node
 
-const Turn = preload("res://classes/turn.gd")
+const Turn = preload("res://tool/turn.gd")
 var tileset = preload("res://assets/tileset.tres")
 var turn = Turn.new()
 var size
@@ -86,12 +86,12 @@ func place_mobs(type, num):
 		var limit = 8
 		while adj == null and limit > 0:
 			limit -= 1
-			var x = R.ir(0, size.x-1)
-			var y = R.ir(0, size.y-1)
+			var x = G.rng.ir(0, size.x-1)
+			var y = G.rng.ir(0, size.y-1)
 			adj = tiles[y][x]
 			if adj.is_col(12):
 				var adjs = tiles[y][x].get_available_adjacents(12)
-				adj = R.r_arr(adjs)
+				adj = G.rng.r_arr(adjs)
 		if adj != null:
 			G.factory.make_group(type, adj)
 
@@ -165,7 +165,7 @@ func fit_bound(x, y):
 
 func get_spawn_point():
 	if !spawn_points.empty():
-		return R.r_arr(spawn_points)
+		return G.rng.r_arr(spawn_points)
 
 func get_routes(pos, cols, opens=false, strength=0):
 	var r = []
@@ -203,7 +203,7 @@ func paint_spawn(dir):
 			if !tiles[y][0].is_col(4) and !tiles[y][1].is_col(4):
 				spawn_points.append(tiles[y][0])
 	for _i in range(100):
-		var tile = tiles[R.ir(0, size.y-1)][R.ir(0, size.x-1)]
+		var tile = tiles[G.rng.ir(0, size.y-1)][G.rng.ir(0, size.x-1)]
 		if !tile.is_col(4):
 			spawn_points.append(tile)
 			break
