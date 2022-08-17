@@ -13,7 +13,7 @@
 		"desc_dmg": "2 True, Burn",
 		"onstart": [["action","$h", "attack"],["attack","$h","$t","true", 2],["cast","burning","$t","$t"]],
 		"desc": "A low chance attack that sets fire on the enemy.",
-		"noise": 4,
+		"noise": 8,
 	},
 	"quick strike": {
 		"target": "onattack",
@@ -23,6 +23,7 @@
 		"desc_dmg": "25% Bash",
 		"onstart": [["action","$h","strike"],["attack","$h","$t","bash", 25]],
 		"desc": "A quick attack that delivers minor damage.",
+		"noise": 4,
 	},
 	"quick stab": {
 		"target": "onattack",
@@ -41,7 +42,7 @@
 		"desc_dmg": "25% Bash, 2 Cut",
 		"onstart": [["action","$h","strike"],["push","$t","$hv",160],["attack","$h","$t","bash", 25],["attack","$h","$t","cut", 2]],
 		"desc": "A low chance attack that delivers both cut and brute damage.",
-		"noise": 4,
+		"noise": 6,
 	},
 	"swipe": {
 		"target": "onattack",
@@ -65,7 +66,7 @@
 		"desc_dmg": "3 Cut",
 		"onstart": [["action","$h","strike"],["attack","$h","$t","cut", 3]],
 		"desc": "An attack that deals cut damage.",
-		"noise": 3,
+		"noise": 5,
 	},
 	"stab": {
 		"target": "onattack",
@@ -96,7 +97,7 @@
 		"onstart": [["action","$h","headbutt"]],
 		"onend": [["push","$t","$hv",160],["attack","$h","$t","bash", 60]],
 		"desc": "Heavy attack that deals moderate damage and knockback.",
-		"noise": 6,
+		"noise": 8,
 	},
 	"venomous bite": {
 		"target": "onattack",
@@ -155,7 +156,7 @@
 		"onstart": [["action","$h","kick"]],
 		"onend": [["push","$t","$hv",320],["attack","$h","$t","bash",150],["delay","$t",24],["action","$t","knockout"]],
 		"desc": "Very slow attack that delivers extreme damage to push and stun the target.",
-		"noise": 6,
+		"noise": 9,
 	},
 	"somersault": {
 		"target": "onattack",
@@ -167,7 +168,7 @@
 		"onstart": [["action","$h","flip"]],
 		"onend": [["aoe","$hp",1,[["push","$$t","$hv",80],["attack","$h","$$t","bash",50],["delay","$$t",24],["action","$$t","knockout"]]]],
 		"desc": "Very slow attack that delivers major damage to anything nearby.",
-		"noise": 6,
+		"noise": 10,
 	},
 	"parry": {
 		"target": "onhit",
@@ -181,6 +182,7 @@
 		"block": 2,
 		"block quote": "PARRY",
 		"desc": "Block 2 damage and retaliate.",
+		"noise": 6,
 	},
 	"dodge": {
 		"target": "onhit",

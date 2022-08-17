@@ -69,6 +69,8 @@ func replace_vars(host, _args):
 						unit = get_rand_pos(14)
 					elif arg[1] == "L":
 						unit = get_los(14)
+					elif arg[1] == "0":
+						unit = G.world.tiles[0][0]
 					if unit == null:
 						r.append(null)
 						continue
@@ -236,7 +238,11 @@ func run(p, host):
 							subject.dat.d(args[2])
 							subject.dirty_dat = true
 						elif command[1] == "^":
-							subject.dat.g(args[2]).append(args[3])
+							var t = subject.dat.g(args[2])
+							if t != null:
+								subject.dat.g(args[2]).append(args[3])
+							else:
+								subject.dat.a([args[3]])
 							subject.dirty_dat = true
 						elif command == "*dmg":
 							var hp = subject.dat.add("damage", args[2])

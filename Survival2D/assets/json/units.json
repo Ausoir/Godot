@@ -20,6 +20,7 @@
 		"agility": 8,
 		"intelligence": 8,
 		"perception": 8,
+		"charisma": 8,
 		"skills": ["bash"],
 		"flags": ["user"],
 		"faction": 1,

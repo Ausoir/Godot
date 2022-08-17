@@ -536,6 +536,7 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id=11]
 resource_name = "walk"
+loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Skeleton2D/Lower:rotation_degrees")
 tracks/0/interp = 1

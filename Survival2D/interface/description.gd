@@ -87,6 +87,8 @@ func display_skill(header, skill):
 	desc += "[color=#1B9]"+ str(skill.get("delay", 0)) +" Turns[/color]\n"
 	if "desc_dmg" in skill:
 		desc += "[color=red]"+ skill.desc_dmg +"[/color]\n"
+	if "noise" in skill:
+		desc += "[color=orange]"+ skill.noise +"[/color]\n"
 	desc += skill.get("desc", "")
 	on_display(header, desc)
 

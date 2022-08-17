@@ -185,7 +185,6 @@
 		"col": 14,
 		"openable": true,
 		"vitality": 4,
-		"slow": 0.5,
 		"height": 1,
 		"oninteract": [["make", "window open", "$hp"], ["remove", "$h"]],
 		"ondie": [["make", "window broken", "$hp"]],
@@ -206,7 +205,7 @@
 		"mat": "glass",
 		"col": 0,
 		"height": 1,
-		"slow": 0.5,
+		"slow": 0.4,
 		"armor": 3,
 		"vitality": 2,
 		"desc": "A broken window."

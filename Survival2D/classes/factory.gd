@@ -118,7 +118,6 @@ func make_projectile(host, arg, pos, dest):
 		var item_data = G.data.item_data.get(arg)
 		if item_data != null:
 			var r = Projectile.instance()
-			r.item_name = arg
 			var img = G.data.get_image(item_data.get("img"))
 			r.init(host, img, pos, dest, item_data.get("speed"), item_data.get("variation", [0,0]))
 			r.lifetime = item_data.get("time", 2)

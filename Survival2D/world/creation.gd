@@ -27,7 +27,8 @@ func start():
 	for i in stats:
 		cmds.append(["*=", "$p", i, stats[i]])
 	G.temp.creation = cmds
-	get_tree().change_scene_to(load("res://world/Levels.tscn"))
+	gamestate.load_travel("town")
+#	get_tree().change_scene_to(load("res://world/Levels.tscn"))
 
 func update():
 	var txt = "[i]" + specie.capitalize() + "[/i]\n"

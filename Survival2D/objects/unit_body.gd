@@ -6,15 +6,18 @@ var vel = Vector2()
 var last_col
 var last_touch
 var stop = false
+var moved_dist
 
 func _physics_process(_delta):
-	move_and_slide(vel)
+	moved_dist = move_and_slide(vel)
 	last_col = get_last_slide_collision()
 	if last_col != null:
 		last_touch = last_col.collider.position
 		var itype = last_col.collider.get("item_type")
 		if itype != null:
 			last_col = last_col.collider.get_parent()
+			if parent.delay == 0:
+				parent.controller.on_touch(last_col)
 		else:
 			last_col = null
 	else:
@@ -24,6 +27,11 @@ func _physics_process(_delta):
 	position.y = 0
 	if stop:
 		vel *= .9
+
+func stop_move():
+	stop = true
+	if parent.n_animation.current_animation == "walk":
+		parent.n_animation.play("idle", -1)
 
 func check_overlap():
 	if last_col != null:

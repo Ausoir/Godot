@@ -1,4 +1,7 @@
 {
+	"onstart": {
+		"onmake": [["make","mode {scavenge,survive,assault,escape}","$0"],["*=","$t","rating","{1~4}"],["*=","$t","area","{town,ruins,fields,woods,lab,caverns}"]]
+	},
 	"mode scavenge": {
 		"turn": 12,
 		"onmake": [["&=","discover",[["?>!","{{-4~160}","{rating}"],["make","g_{area}{rating}","$$t",15]]]],

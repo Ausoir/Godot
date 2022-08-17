@@ -7,7 +7,7 @@
 	"water": {"mat": "water", "col": 6, "height": 0},
 	"asphalt": {"mat": "dirt", "col": 0, "height": 0},
 	"white asphalt": {"mat": "dirt", "col": 0, "height": 0},
-	"window step": {"mat": "wood", "col": 0, "height": 1, "slow": 0.3},
+	"window step": {"mat": "wood", "col": 0, "height": 1, "slow": 0.6},
 	"tile": {"mat": "ceramic", "col": 0, "height": 0, "ceiling": 1},
 	"door frame": {"mat": "wood", "col": 0, "height": 1, "ceiling": 1},
 	"wood floor": {"mat": "dirt", "col": 0, "height": 0, "ceiling": 1},

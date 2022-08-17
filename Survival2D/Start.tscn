@@ -92,13 +92,8 @@ position = Vector2( 320, 240 )
 texture = ExtResource( 3 )
 
 [node name="Label" type="Label" parent="."]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -32.0
-margin_top = -29.0
-margin_right = 32.0
 grow_horizontal = 2
 custom_fonts/font = SubResource( 5 )
 text = "[Press any key to Start]"

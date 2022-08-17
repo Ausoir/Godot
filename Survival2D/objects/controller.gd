@@ -19,7 +19,6 @@ func on_change(p):
 		elif "float" in unit.flags:
 			pathing.hinderance = 0
 		elif "brute" in unit.flags:
-			pathing.brute = true
 			pathing.pathing_times = 1
 			pathing.iterations = 14
 		pathing.smash_to = unit.dat.g("strength", 0)
@@ -28,6 +27,22 @@ func on_assign():
 	unit.dirty_dat = true
 	pathing = Pathing.new(unit.pos.world)
 	target = null
+
+func on_touch(col):
+	if col.dat.g("faction", -1) != unit.dat.g("faction", -2):
+		if col.item_type == "item":
+			if !pathing.can_open:
+				unit.face_toward(col.position)
+				tasks = [["smash", col.pos]]
+				return 3
+			return 1
+		else:
+			target = col
+			unit.face_toward(col.position)
+			unit.n_collider.stop_move()
+			unit.roll_skill("onattack")
+			return 2
+	return 0
 
 func on_hit(_hitter):
 	pass

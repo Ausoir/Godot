@@ -87,7 +87,7 @@ func update_tile():
 	height = dat.height
 	slow = dat.get("slow", 1)
 	for item in items:
-		slow = max(0, slow - item.dat.g("slow", 0))
+		slow = max(0.2, slow - item.dat.g("slow", 0))
 		col = col | item.col
 		var item_height = item.dat.g("height")
 		if item_height != null:

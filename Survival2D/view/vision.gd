@@ -1,4 +1,4 @@
-extends Node
+extends Node2D
 
 const QUADRANT_FLIP = [[1, 0, 1, 0],[0, 1, 1, 0],[1, 0, 0, 1],[0, 1, 0, 1]]
 const QUADRANT_ALL = [1, 1, 1, 1]
@@ -6,7 +6,7 @@ const QUADRANT_ALL = [1, 1, 1, 1]
 var processing_frame: int
 var sight_range = -1
 var sight_range_y = -1
-var sight_ratio = .75
+var sight_ratio = 1
 var sight_frame = 0
 var sight_bits = 1
 var last_pos = G.void_tile
@@ -72,7 +72,7 @@ func set_sight(p, p_col=1):
 		sight_bits = new_sight_bits
 		return true
 
-func update(p_last_pos, p_pos):
+func update_pos(p_last_pos, p_pos):
 	if processing_frame != -2:
 		for _i in range(processing_frame - 3):
 			_process(0)

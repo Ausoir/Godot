@@ -1,9 +1,18 @@
 extends Node
 
+const Loading = preload("res://interface/Loading.tscn")
 var player_name = "Player"
+var loading_page
+
+func load_travel(area):
+	loading_page = Loading.instance()
+	G.ui.add_child(loading_page)
+	G.events.append([0.1, funcref(self, "travel"), [area]])
+	G.time.set_process(true)
 
 func travel(_map):
 	G.get_tree().set_pause(true)
+	R.set_seed(G.vars.seed)
 	G.time.reset()
 	var root = get_tree().get_root()
 	if G.world.get_parent() != null:
@@ -19,6 +28,19 @@ func travel(_map):
 	G.world.players.add_child(G.you)
 	if G.you.unit != null:
 		G.you.unit.move_world(G.world)
+	G.get_tree().set_pause(false)
+	if G.world.paint_spawn(-1) != null:
+		var load_data = G.vars.get("load_data")
+		if load_data != null: #From char creation
+			G.you.unserialize(load_data)
+		G.vars.erase("load_data")
+	else:
+		push_error("No spawn points found")
+	if "creation" in G.temp:
+		G.cmds(G.temp.creation)
+		G.temp.erase("creation")
+	G.cmds([["make","onstart",G.world.tiles[0][0]]])
+	G.ui.remove_child(loading_page)
 	G.get_tree().set_pause(false)
 
 func level_select():
@@ -47,10 +69,11 @@ func clean_up():
 	G.temp.discover = null
 
 func start_game():
-	if !gamestate.load_game():
+	if !load_game():
 		G.get_tree().change_scene_to(load("res://world/Creation.tscn"))
 	else:
-		G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
+		load_travel("town")
+#		G.get_tree().change_scene_to(load("res://world/Levels.tscn"))
 
 func save_game():
 	var save_game = File.new()

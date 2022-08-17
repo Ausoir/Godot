@@ -22,13 +22,13 @@ func on_change(p):
 	.on_change(p)
 	if p == "dat":
 		if G.camera.set_sight(unit.dat.gi("perception", 4), unit.dat.gi("sight", 1)):
-			G.camera.update(unit.pos, last_pos)
+			G.camera.update_pos(unit.pos, last_pos)
 		var bodytype_list = G.data.get_json_data("bodytypes")
 		var bodyparts = bodytype_list.get(unit.dat.g("type"))
 		G.ui.menu.update_equipables(bodyparts)
 		G.ui.menu.update_equipment()
 		G.ui.menu.update_inventory()
-		pathing.can_open = false
+		pathing.can_open = true
 		pathing.smash_to = -1
 		pathing.iterations = 32
 		pathing.pathing_times = 0
@@ -37,13 +37,19 @@ func on_change(p):
 func on_assign():
 	.on_assign()
 	last_pos = unit.pos
-	G.camera.update(last_pos, unit.pos)
+	G.camera.update_pos(last_pos, unit.pos)
 	G.ui.update_hud()
 
 func on_kill(_victim):
 	var money = R.ir(0, _victim.dat.g("value", 0))
 	if money > 0:
 		make_money(money)
+
+func on_touch(col):
+	if unit.n_collider.stop:
+		var r = .on_touch(col)
+		if r == 1:
+			interact(col)
 
 func make_money(p):
 	G.vars.money = G.vars.money+p
@@ -138,7 +144,7 @@ func _physics_process(_delta):
 		elif Input.is_action_pressed("move_left"):
 			dir = 6
 		if dir == -1:
-			unit.n_collider.stop = true
+			unit.n_collider.stop_move()
 		if interruptible and aiming == -1:
 			if unhandled_input and Input.is_action_pressed("use"):
 				tasks = []
@@ -160,16 +166,12 @@ func on_turn():
 			if G.vars.setting.autofight:
 				if closest_enemy != null:
 					var t = closest_enemy.position.distance_squared_to(unit.position)
-					if t < G.V:
+					if t < G.V + 320:
 						tasks = [["moveto", closest_enemy.position, 0]]
 						autoed = true
-		if !autoed:
-			var t = unit.n_collider.last_col
-			if t != null and t.dat.g("faction",-1) == 1:
-				t.controller.path_to(t.pos.get_rand_offset(2, 2), 0)
 	.on_turn()
 	if view_dirty or last_pos != unit.pos:
-		G.camera.update(last_pos, unit.pos)
+		G.camera.update_pos(last_pos, unit.pos)
 		view_dirty = false
 		last_pos = unit.pos
 		check_edge()
@@ -218,10 +220,6 @@ func check_nearby_interactibles():
 			interactables = ninteractables
 			G.ui.update_hud()
 
-func on_hit(_hitter):
-	if _hitter != null and target == null:
-		target = _hitter
-
 func interact(item):
 	if !G.ui.on:
 		var oninteract = item.dat.g("oninteract")
@@ -236,10 +234,13 @@ func interact(item):
 			G.ui.menu.search_inventory(item.pos)
 
 func move_and_interact(tile):
-	path_to(tile, 1)
-	remove_steps()
-	show_steps()
-	tasks.append(["interact", tile])
+	for i in tile.items:
+		if i.dat.g("oninteract") != null or unit.can_carry(i.dat.g("weight",-1)):
+			path_to(tile, 1)
+			remove_steps()
+			show_steps()
+			tasks.append(["interact", tile])
+			return true
 
 func aim_ability(idx):
 	Input.set_default_cursor_shape(Input.CURSOR_CROSS)

@@ -1,7 +1,5 @@
 extends KinematicBody2D
 
-var item_type = "projectile"
-var item_name = "projectile"
 var dest: Vector2
 var vel: Vector2
 var speed: int

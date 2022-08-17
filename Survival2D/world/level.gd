@@ -1,6 +1,5 @@
 extends BaseButton
 
-onready var Loading = preload("res://interface/Loading.tscn")
 var loading_page
 var area
 var position
@@ -60,10 +59,11 @@ func set_mode(p):
 			modulate.b = .4
 
 func _on_pressed():
-	loading_page = Loading.instance()
-	G.ui.add_child(loading_page)
-	G.events.append([0.1, funcref(self, "on_loading"), []])
-	G.time.set_process(true)
+	pass
+#	loading_page = Loading.instance()
+#	G.ui.add_child(loading_page)
+#	G.events.append([0.1, funcref(self, "on_loading"), []])
+#	G.time.set_process(true)
 
 func on_loading():
 	G.get_tree().set_pause(true)

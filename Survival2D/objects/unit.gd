@@ -17,7 +17,7 @@ var cooldowns = {}
 var buffs = Buffs.new(self)
 var current_action = ""
 var has_on_turn = false
-var move_speed
+var move_speed = 0
 
 func _ready():
 	n_collider = get_node("Body")
@@ -115,11 +115,10 @@ func slide(p):
 	if move_speed > 0:
 		var ms = move_speed
 		if !("float" in flags):
-			ms = max(.3, ms * pos.slow)
-		if n_collider.last_col == null:
-			n_animation.play("walk", -1, ms / 20)
-		else:
-			n_animation.play("idle", -1)
+			ms = ms * pos.slow
+		if n_collider.moved_dist != null:
+			var dist = n_collider.moved_dist.length()
+			n_animation.play("walk", -1, dist/20)
 		if vx > .1:
 			face(1)
 		elif vx < -.1:
@@ -142,16 +141,6 @@ func on_slide():
 				G.make_particle("Sound", newpos.position, null, true)
 		elif prev_pos == null or !prev_pos.visible:
 			G.you.on_enemy_sighted(self, true)
-	if delay == 0:
-		var col = n_collider.last_col
-		if col != null and col.dat.g("faction", -1) != dat.g("faction", -2):
-			controller.target = col
-			face_toward(col.position)
-			if col.item_type == "item" and controller.pathing.brute:
-				controller.tasks = [["smash", col.pos]]
-			else:
-				roll_skill("onattack")
-			return col
 
 func set_animation(p, spd=0):
 	current_action = p
@@ -251,7 +240,7 @@ func on_turn():
 		else:
 			if delay > 0:
 				delay -= 1
-				n_collider.stop = true
+				n_collider.stop_move()
 			if delay == 0:
 				set_animation("idle")
 		for i in cooldowns:
